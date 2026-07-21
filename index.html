@@ -1,1 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RETA - Plataforma de Gestión Deportiva</title>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+  <!-- BARRA DE NAVEGACIÓN -->
+  <header class="navbar">
+    <div class="logo-container">
+      <!-- Sustituye la ruta por tu logo -->
+      <img src="logo_reta.png" alt="RETA Logo" class="logo-img">
+    </div>
+    <nav class="nav-links">
+      <a href="#inicio">Inicio</a>
+      <a href="#por-que">¿Por qué RETA?</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#socios">Socios</a>
+      <a href="#patrocinadores">Patrocinadores</a>
+    </nav>
+    <a href="usuarios.html" class="btn-user"><i class="fa-solid fa-user"></i> Acceso Usuarios</a>
+  </header>
+
+  <!-- VENTANA EMERGENTE (MODAL VIDEO) -->
+  <div id="videoModal" class="modal-overlay">
+    <div class="modal-content glass-card">
+      <button class="close-modal" id="closeModal">&times;</button>
+      <h3>¡Bienvenido a RETA! ⚽</h3>
+      <p>Descubre cómo revolucionar la gestión de tus torneos deportivos.</p>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video Promocional RETA" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN HERO CON SLIDESHOW -->
+  <section id="inicio" class="hero">
+    <div class="hero-content">
+      <h1>LLEVA TUS TORNEOS AL <span class="text-gradient">SIGUIENTE NIVEL</span></h1>
+      <p>La plataforma tecnológica definitiva para administrar ligas, torneos de fútbol y eventos deportivos en tiempo real.</p>
+      
+      <!-- BOTONES DE DESCARGA -->
+      <div class="app-buttons">
+        <a href="#" class="btn-store">
+          <i class="fa-brands fa-google-play"></i>
+          <div><small>Disponible en</small><span>Google Play</span></div>
+        </a>
+        <a href="#" class="btn-store">
+          <i class="fa-brands fa-apple"></i>
+          <div><small>Consíguelo en el</small><span>App Store</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- SLIDESHOW (5 IMÁGENES) -->
+    <div class="slider-container glass-card">
+      <div class="slide active"><img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80" alt="Fútbol 1"></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80" alt="Estadio"></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80" alt="Trofeo"></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=800&q=80" alt="Jugador"></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80" alt="Balón"></div>
+      <button class="prev" id="prevSlide">&#10094;</button>
+      <button class="next" id="nextSlide">&#10095;</button>
+    </div>
+  </section>
+
+  <!-- ¿POR QUÉ ELEGIR RETA? -->
+  <section id="por-que" class="section-container">
+    <h2 class="section-title">¿Por qué elegir <span class="text-gradient">RETA</span>?</h2>
+    <div class="grid-3">
+      <div class="glass-card feature-card">
+        <i class="fa-solid fa-bolt icon"></i>
+        <h3>Automatización Total</h3>
+        <p>Genera calendarios, tablas de posiciones y estadísticas al instante sin complicaciones en Excel.</p>
+      </div>
+      <div class="glass-card feature-card">
+        <i class="fa-solid fa-chart-line icon"></i>
+        <h3>Tiempo Real</h3>
+        <p>Notificaciones, marcadores e incidencias de partidos sincronizados para jugadores y afición.</p>
+      </div>
+      <div class="glass-card feature-card">
+        <i class="fa-solid fa-shield-halved icon"></i>
+        <h3>Control y Seguridad</h3>
+        <p>Cédulas digitales, control de arbitraje y sancionados con respaldo en la nube.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS (CON EFECTO GLOW INTERACTIVO JS) -->
+  <section id="servicios" class="section-container">
+    <h2 class="section-title">Nuestros <span class="text-gradient">Servicios</span></h2>
+    <div class="grid-glow-container">
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-trophy glow-icon"></i>
+          <h3>Administración de Eventos</h3>
+          <p>Organización logística punta a punta para competencias deportivas masivas e inter-empresariales.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-football glow-icon"></i>
+          <h3>Gestión de Torneos</h3>
+          <p>Control de fases de grupos, liguillas, eliminatorias directas y cédulas arbitrales.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-ranking-star glow-icon"></i>
+          <h3>Tablas y Estadísticas</h3>
+          <p>Seguimiento detallado de goleadores, tarjetas, asistencias y rendimiento de equipos.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-map-location-dot glow-icon"></i>
+          <h3>Reserva de Canchas</h3>
+          <p>Módulo para que administradores gestionen sedes, horarios y cobros de alquiler.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-id-card glow-icon"></i>
+          <h3>Arbitraje y Sanciones</h3>
+          <p>Herramientas digitales para árbitros con reportes express desde el dispositivo móvil.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-users glow-icon"></i>
+          <h3>Matchmaking & Comunidad</h3>
+          <p>Red interactiva para encontrar rivales para partidos amistosos o reclutar jugadores.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTES DESTACADOS -->
+  <section class="section-container">
+    <h2 class="section-title">Clientes Destacados</h2>
+    <div class="grid-3">
+      <div class="glass-card client-card">
+        <h4>Liga Premier Amateur</h4>
+        <p>"RETA transformó por completo la experiencia de nuestros 40 equipos inscritos."</p>
+      </div>
+      <div class="glass-card client-card">
+        <h4>Copa Intercorporativa</h4>
+        <p>"Ahorramos más de 15 horas a la semana organizando jornadas y resultados."</p>
+      </div>
+      <div class="glass-card client-card">
+        <h4>Club Deportivo Norte</h4>
+        <p>"Los jugadores aman ver sus estadísticas al instante desde la app móvil."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIOS Y PATROCINADORES -->
+  <section id="socios" class="section-container">
+    <h2 class="section-title">Socios Comerciales</h2>
+    <div class="logos-grid">
+      <div class="glass-card logo-badge">Socio Tec 1</div>
+      <div class="glass-card logo-badge">Socio Tec 2</div>
+      <div class="glass-card logo-badge">Socio Tec 3</div>
+    </div>
+  </section>
+
+  <section id="patrocinadores" class="section-container">
+    <h2 class="section-title">Patrocinadores Oficiales</h2>
+    <div class="logos-grid">
+      <div class="glass-card logo-badge">Brand Sports</div>
+      <div class="glass-card logo-badge">Energy Drink</div>
+      <div class="glass-card logo-badge">Global Gear</div>
+    </div>
+  </section>
+
+  <!-- FOOTER Y REDES SOCIALES -->
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2026 RETA App. Todos los derechos reservados.</p>
+      <div class="social-links">
+        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BOTÓN FLOTANTE WHATSAPP -->
+  <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <script src="script.js"></script>
+</body>
+</html>
