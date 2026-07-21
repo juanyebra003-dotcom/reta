@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso a Sistema | RETA</title>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-body">
+
+  <!-- BOTÓN PARA REGRESAR -->
+  <a href="index.html" class="btn-back">
+    <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+  </a>
+
+  <!-- CONTENEDOR PRINCIPAL GLASSMORPHISM -->
+  <main class="login-container">
+    <div class="glass-card login-card">
+      <div class="login-header">
+        <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo">
+        <h2>Validación de <span class="text-gradient">Usuarios</span></h2>
+        <p>Ingresa tus credenciales para acceder al panel administrativo</p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div class="input-group">
+          <label for="email"><i class="fa-solid fa-envelope"></i> Correo Electrónico</label>
+          <input type="email" id="email" placeholder="usuario@reta.app" required>
+        </div>
+
+        <div class="input-group">
+          <label for="password"><i class="fa-solid fa-lock"></i> Contraseña</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+
+        <div class="input-group">
+          <label for="role"><i class="fa-solid fa-user-shield"></i> Rol de Acceso</label>
+          <select id="role" required>
+            <option value="" disabled selected>Selecciona tu rol</option>
+            <option value="administrador">Administrador</option>
+            <option value="supervisor">Supervisor</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-login">
+          Ingresar al Sistema <i class="fa-solid fa-right-to-bracket"></i>
+        </button>
+      </form>
+
+      <!-- Mensaje dinámico de respuesta -->
+      <div id="loginMessage" class="login-message"></div>
+    </div>
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
