@@ -3,305 +3,201 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RETA - Lleva tus torneos al siguiente nivel</title>
+  <title>RETA - Plataforma de Gestión Deportiva</title>
   <!-- Google Fonts & FontAwesome Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <!-- BARRA DE NAVEGACIÓN -->
   <header class="navbar">
     <div class="logo-container">
-      <a href="index.html">
-        <img src="img/logo_reta.png" alt="RETA Liga tu Liga" class="logo-img">
-      </a>
+      <!-- Sustituye la ruta por tu logo -->
+      <img src="logo_reta.png" alt="RETA Logo" class="logo-img">
     </div>
     <nav class="nav-links">
       <a href="#inicio">Inicio</a>
       <a href="#por-que">¿Por qué RETA?</a>
-      <a href="#beneficios">Beneficios</a>
-      <a href="#jugadores">Jugadores</a>
-      <a href="#ligas">Ligas</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#socios">Socios</a>
       <a href="#patrocinadores">Patrocinadores</a>
     </nav>
-    <div class="nav-actions">
-      <a href="usuarios.html" class="btn-access">
-        <i class="fa-solid fa-user"></i> Acceso Usuarios
-      </a>
-    </div>
+    <a href="usuarios.html" class="btn-user"><i class="fa-solid fa-user"></i> Acceso Usuarios</a>
   </header>
 
-  <!-- SECCIÓN HERO / INICIO CON SLIDER Y BOTONES SEPARADOS -->
-  <section class="hero" id="inicio">
-    <div class="hero-content">
-      <h1>LLEVA TUS TORNEOS AL <br><span class="text-gradient">SIGUIENTE NIVEL</span></h1>
-      <p class="hero-subtitle">
-        La plataforma tecnológica definitiva para administrar ligas, torneos de fútbol y eventos deportivos en tiempo real.
-      </p>
-      
-      <!-- BOTONES DE TIENDAS DE APLICACIONES (MÁS SEPARADOS) -->
-      <div class="store-buttons">
-        <a href="#" class="btn-store">
-          <i class="fa-brands fa-google-play"></i>
-          <div><small>Disponible en</small><br><span>Google Play</span></div>
-        </a>
-        <a href="#" class="btn-store">
-          <i class="fa-brands fa-apple"></i>
-          <div><small>Consígalo en el</small><br><span>App Store</span></div>
-        </a>
-      </div>
-    </div>
-
-    <!-- SLIDER PRINCIPAL DEL HERO -->
-    <div class="hero-slider-container">
-      <div class="hero-slider">
-        <div class="hero-slide active">
-          <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1000&q=80" alt="Fútbol 1">
-          <div class="hero-slide-caption">Control total de tus partidos y cédulas digitales</div>
-        </div>
-        <div class="hero-slide">
-          <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1000&q=80" alt="Fútbol 2">
-          <div class="hero-slide-caption">Estadísticas en tiempo real para jugadores y árbitros</div>
-        </div>
-        <div class="hero-slide">
-          <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=1000&q=80" alt="Fútbol 3">
-          <div class="hero-slide-caption">Gestión automatizada de convocatorias y finanzas</div>
-        </div>
-      </div>
-      <div class="hero-slider-dots">
-        <span class="h-dot active" data-index="0"></span>
-        <span class="h-dot" data-index="1"></span>
-        <span class="h-dot" data-index="2"></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECCIÓN: CONTEO RÁPIDO (MÉTRICAS DEL SISTEMA) -->
-  <section class="section-stats">
-    <div class="container grid-stats">
-      <div class="glass-card stat-card">
-        <i class="fa-solid fa-trophy stat-icon"></i>
-        <div class="stat-number" data-target="150">0</div>
-        <p class="stat-label">Ligas Registradas</p>
-      </div>
-      <div class="glass-card stat-card">
-        <i class="fa-solid fa-users stat-icon"></i>
-        <div class="stat-number" data-target="12500">0</div>
-        <p class="stat-label">Jugadores Registrados</p>
-      </div>
-      <div class="glass-card stat-card">
-        <i class="fa-solid fa-handshake stat-icon"></i>
-        <div class="stat-number" data-target="45">0</div>
-        <p class="stat-label">Aliados Comerciales</p>
-      </div>
-      <div class="glass-card stat-card">
-        <i class="fa-solid fa-building-columns stat-icon"></i>
-        <div class="stat-number" data-target="12">0</div>
-        <p class="stat-label">Gobiernos Apoyando al Deporte</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECCIÓN: ¿POR QUÉ RETA? -->
-  <section class="section-services" id="por-que">
-    <div class="container">
-      <h2 class="section-title">¿Por qué elegir <span class="text-gradient">RETA</span>?</h2>
-      <div class="grid-cards">
-        <div class="glass-card feature-card">
-          <i class="fa-solid fa-bolt feature-icon"></i>
-          <h3>Estadísticas en Tiempo Real</h3>
-          <p>Tabla de posiciones, goleadores, amarillas y rojas actualizadas al instante por los árbitros.</p>
-        </div>
-        <div class="glass-card feature-card">
-          <i class="fa-solid fa-calendar-days feature-icon"></i>
-          <h3>Gestión de Roleos</h3>
-          <p>Genera calendarios, asignación de canchas y horarios automáticamente sin complicaciones.</p>
-        </div>
-        <div class="glass-card feature-card">
-          <i class="fa-solid fa-mobile-screen-button feature-icon"></i>
-          <h3>App Móvil para Jugadores</h3>
-          <p>Tus jugadores podrán seguir a sus equipos, consultar convocatorias y récords personales.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECCIÓN: BENEFICIOS RESTAURADA -->
-  <section class="section-benefits" id="beneficios">
-    <div class="container">
-      <h2 class="section-title">Beneficios para tu <span class="text-gradient">Liga</span></h2>
-      <div class="grid-cards">
-        <div class="glass-card feature-card">
-          <i class="fa-solid fa-chart-line feature-icon"></i>
-          <h3>Aumento de Visibilidad</h3>
-          <p>Proyecta tu liga profesionalmente y atrae nuevos patrocinadores y equipos participantes.</p>
-        </div>
-        <div class="glass-card feature-card">
-          <i class="fa-solid fa-shield-cat feature-icon"></i>
-          <h3>Cero Papel</h3>
-          <p>Elimina cédulas físicas. Árbitros y delegados administran digitalmente en el terreno de juego.</p>
-        </div>
-        <div class="glass-card feature-card">
-          <i class="fa-solid fa-wallet feature-icon"></i>
-          <h3>Control Financiero</h3>
-          <p>Seguimiento claro de pagos de arbitraje, inscripciones y sanciones sin margen de error.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECCIÓN: JUGADORES DESTACADOS (SCROLL HORIZONTAL) -->
-  <section class="section-featured" id="jugadores">
-    <div class="container">
-      <h2 class="section-title">Jugadores <span class="text-gradient">Destacados</span></h2>
-      <div class="scroll-row">
-        <!-- Tarjeta 1 -->
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
-          <div class="card-body">
-            <div class="team-badge"><i class="fa-solid fa-shield-halved"></i> Gallos FC</div>
-            <h3>Carlos Mendoza</h3>
-            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga Premier MX</p>
-            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Clausura 2026</p>
-          </div>
-        </div>
-        <!-- Tarjeta 2 -->
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
-          <div class="card-body">
-            <div class="team-badge"><i class="fa-solid fa-shield-halved"></i> Real San José</div>
-            <h3>Mateo Ramírez</h3>
-            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga San José</p>
-            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Copa de Verano</p>
-          </div>
-        </div>
-        <!-- Tarjeta 3 -->
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1543351611-58f69d7c1781?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
-          <div class="card-body">
-            <div class="team-badge"><i class="fa-solid fa-shield-halved"></i> Deportivo Unión</div>
-            <h3>Luis Fernando Torres</h3>
-            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga Bajío Intersemanal</p>
-            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Apertura</p>
-          </div>
-        </div>
-        <!-- Tarjeta 4 -->
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1560272564-669520747490?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
-          <div class="card-body">
-            <div class="team-badge"><i class="fa-solid fa-shield-halved"></i> Atletas del Valle</div>
-            <h3>Javier Hernández</h3>
-            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga Municipal Moroleón</p>
-            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Nocturno</p>
-          </div>
-        </div>
-        <!-- Tarjeta 5 -->
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
-          <div class="card-body">
-            <div class="team-badge"><i class="fa-solid fa-shield-halved"></i> Tigres Urbano</div>
-            <h3>Diego Gómez</h3>
-            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga Élite 7</p>
-            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Campeón de Campeones</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECCIÓN: LIGAS O TORNEOS DESTACADOS (SCROLL HORIZONTAL) -->
-  <section class="section-featured" id="ligas">
-    <div class="container">
-      <h2 class="section-title">Ligas y Torneos <span class="text-gradient">Destacados</span></h2>
-      <div class="scroll-row">
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=400&q=80" alt="Liga Premier" class="card-img">
-          <div class="card-body">
-            <h3>Liga Premier RETA</h3>
-            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Sede Principal</p>
-            <p class="card-submeta"><i class="fa-solid fa-users"></i> 32 Equipos Activos</p>
-          </div>
-        </div>
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80" alt="Copa Bajío" class="card-img">
-          <div class="card-body">
-            <h3>Copa Internacional Bajío</h3>
-            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Bajío MX</p>
-            <p class="card-submeta"><i class="fa-solid fa-users"></i> 64 Equipos Activos</p>
-          </div>
-        </div>
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=400&q=80" alt="Liga Nocturna" class="card-img">
-          <div class="card-body">
-            <h3>Liga Nocturna de Fútbol 7</h3>
-            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Centro Deportivo</p>
-            <p class="card-submeta"><i class="fa-solid fa-users"></i> 24 Equipos Activos</p>
-          </div>
-        </div>
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=400&q=80" alt="Torneo Femenil" class="card-img">
-          <div class="card-body">
-            <h3>Torneo Femenil RETA</h3>
-            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Moroleón / Uriangato</p>
-            <p class="card-submeta"><i class="fa-solid fa-users"></i> 16 Equipos Activos</p>
-          </div>
-        </div>
-        <div class="glass-card card-item">
-          <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80" alt="Copa Empresarial" class="card-img">
-          <div class="card-body">
-            <h3>Copa Empresarial RETA</h3>
-            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Zona Industrial</p>
-            <p class="card-submeta"><i class="fa-solid fa-users"></i> 20 Equipos Activos</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECCIÓN: ALIADOS COMERCIALES Y PATROCINADORES RESTAURADA -->
-  <section class="section-sponsors" id="patrocinadores">
-    <div class="container">
-      <h2 class="section-title">Aliados y <span class="text-gradient">Patrocinadores</span></h2>
-      <div class="sponsors-grid">
-        <div class="glass-card sponsor-card"><i class="fa-solid fa-shirt sponsor-icon"></i><span>SportPro Jerseys</span></div>
-        <div class="glass-card sponsor-card"><i class="fa-solid fa-bottle-water sponsor-icon"></i><span>HydraTech</span></div>
-        <div class="glass-card sponsor-card"><i class="fa-solid fa-shield-heart sponsor-icon"></i><span>Salud Deportiva</span></div>
-        <div class="glass-card sponsor-card"><i class="fa-solid fa-building-columns sponsor-icon"></i><span>Gobierno del Estado</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- VENTANA EMERGENTE (MODAL CON VIDEO DE BIENVENIDA RESTAURADO) -->
-  <div id="videoModal" class="modal-overlay active">
-    <div class="modal-card glass-card modal-video-card">
-      <button class="close-modal" id="closeVideoModal">&times;</button>
-      <h3>Bienvenido a <span class="text-gradient">RETA</span></h3>
-      <p>Descubre cómo revolucionar la administración de tus torneos</p>
+  <!-- VENTANA EMERGENTE (MODAL VIDEO) -->
+  <div id="videoModal" class="modal-overlay">
+    <div class="modal-content glass-card">
+      <button class="close-modal" id="closeModal">&times;</button>
+      <h3>¡Bienvenido a RETA! ⚽</h3>
+      <p>Descubre cómo revolucionar la gestión de tus torneos deportivos.</p>
       <div class="video-container">
-        <iframe id="promoVideo" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1" title="RETA Video Promocional" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Video Promocional RETA" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 
-  <!-- FOOTER / PIE DE PÁGINA -->
-  <footer class="footer">
-    <div class="container footer-content">
+  <!-- SECCIÓN HERO CON SLIDESHOW -->
+  <section id="inicio" class="hero">
+    <div class="hero-content">
+      <h1>LLEVA TUS TORNEOS AL <span class="text-gradient">SIGUIENTE NIVEL</span></h1>
+      <p>La plataforma tecnológica definitiva para administrar ligas, torneos de fútbol y eventos deportivos en tiempo real.</p>
+      
+      <!-- BOTONES DE DESCARGA -->
+      <div class="app-buttons">
+        <a href="#" class="btn-store">
+          <i class="fa-brands fa-google-play"></i>
+          <div><small>Disponible en</small><span>Google Play</span></div>
+        </a>
+        <a href="#" class="btn-store">
+          <i class="fa-brands fa-apple"></i>
+          <div><small>Consíguelo en el</small><span>App Store</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- SLIDESHOW (5 IMÁGENES) -->
+    <div class="slider-container glass-card">
+      <div class="slide active"><img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80" alt="Fútbol 1"></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80" alt="Estadio"></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80" alt="Trofeo"></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=800&q=80" alt="Jugador"></div>
+      <div class="slide"><img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80" alt="Balón"></div>
+      <button class="prev" id="prevSlide">&#10094;</button>
+      <button class="next" id="nextSlide">&#10095;</button>
+    </div>
+  </section>
+
+  <!-- ¿POR QUÉ ELEGIR RETA? -->
+  <section id="por-que" class="section-container">
+    <h2 class="section-title">¿Por qué elegir <span class="text-gradient">RETA</span>?</h2>
+    <div class="grid-3">
+      <div class="glass-card feature-card">
+        <i class="fa-solid fa-bolt icon"></i>
+        <h3>Automatización Total</h3>
+        <p>Genera calendarios, tablas de posiciones y estadísticas al instante sin complicaciones en Excel.</p>
+      </div>
+      <div class="glass-card feature-card">
+        <i class="fa-solid fa-chart-line icon"></i>
+        <h3>Tiempo Real</h3>
+        <p>Notificaciones, marcadores e incidencias de partidos sincronizados para jugadores y afición.</p>
+      </div>
+      <div class="glass-card feature-card">
+        <i class="fa-solid fa-shield-halved icon"></i>
+        <h3>Control y Seguridad</h3>
+        <p>Cédulas digitales, control de arbitraje y sancionados con respaldo en la nube.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS (CON EFECTO GLOW INTERACTIVO JS) -->
+  <section id="servicios" class="section-container">
+    <h2 class="section-title">Nuestros <span class="text-gradient">Servicios</span></h2>
+    <div class="grid-glow-container">
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-trophy glow-icon"></i>
+          <h3>Administración de Eventos</h3>
+          <p>Organización logística punta a punta para competencias deportivas masivas e inter-empresariales.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-football glow-icon"></i>
+          <h3>Gestión de Torneos</h3>
+          <p>Control de fases de grupos, liguillas, eliminatorias directas y cédulas arbitrales.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-ranking-star glow-icon"></i>
+          <h3>Tablas y Estadísticas</h3>
+          <p>Seguimiento detallado de goleadores, tarjetas, asistencias y rendimiento de equipos.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-map-location-dot glow-icon"></i>
+          <h3>Reserva de Canchas</h3>
+          <p>Módulo para que administradores gestionen sedes, horarios y cobros de alquiler.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-id-card glow-icon"></i>
+          <h3>Arbitraje y Sanciones</h3>
+          <p>Herramientas digitales para árbitros con reportes express desde el dispositivo móvil.</p>
+        </div>
+      </div>
+      <div class="glow-card">
+        <div class="glow-card-content">
+          <i class="fa-solid fa-users glow-icon"></i>
+          <h3>Matchmaking & Comunidad</h3>
+          <p>Red interactiva para encontrar rivales para partidos amistosos o reclutar jugadores.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTES DESTACADOS -->
+  <section class="section-container">
+    <h2 class="section-title">Clientes Destacados</h2>
+    <div class="grid-3">
+      <div class="glass-card client-card">
+        <h4>Liga Premier Amateur</h4>
+        <p>"RETA transformó por completo la experiencia de nuestros 40 equipos inscritos."</p>
+      </div>
+      <div class="glass-card client-card">
+        <h4>Copa Intercorporativa</h4>
+        <p>"Ahorramos más de 15 horas a la semana organizando jornadas y resultados."</p>
+      </div>
+      <div class="glass-card client-card">
+        <h4>Club Deportivo Norte</h4>
+        <p>"Los jugadores aman ver sus estadísticas al instante desde la app móvil."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIOS Y PATROCINADORES -->
+  <section id="socios" class="section-container">
+    <h2 class="section-title">Socios Comerciales</h2>
+    <div class="logos-grid">
+      <div class="glass-card logo-badge">Socio Tec 1</div>
+      <div class="glass-card logo-badge">Socio Tec 2</div>
+      <div class="glass-card logo-badge">Socio Tec 3</div>
+    </div>
+  </section>
+
+  <section id="patrocinadores" class="section-container">
+    <h2 class="section-title">Patrocinadores Oficiales</h2>
+    <div class="logos-grid">
+      <div class="glass-card logo-badge">Brand Sports</div>
+      <div class="glass-card logo-badge">Energy Drink</div>
+      <div class="glass-card logo-badge">Global Gear</div>
+    </div>
+  </section>
+
+  <!-- FOOTER Y REDES SOCIALES -->
+  <footer>
+    <div class="footer-content">
       <p>&copy; 2026 RETA App. Todos los derechos reservados.</p>
       <div class="social-links">
         <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
         <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
         <a href="#"><i class="fa-brands fa-youtube"></i></a>
       </div>
     </div>
   </footer>
 
-  <!-- BOTÓN FLOTANTE DE WHATSAPP -->
-  <a href="https://wa.me/5214737374394?text=Hola,%20quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20RETA" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contacto WhatsApp">
+  <!-- BOTÓN FLOTANTE WHATSAPP -->
+  <a href="https://wa.me/1234567890" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
     <i class="fa-brands fa-whatsapp"></i>
   </a>
 
-  <script src="js/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
