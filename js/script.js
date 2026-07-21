@@ -57,3 +57,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+// --- LÓGICA DE MODAL Y SLIDER DE PATROCINADORES ---
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('sponsorModal');
+  const openBtn = document.getElementById('openSponsorsBtn');
+  const closeBtn = document.getElementById('closeSponsorModal');
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.dot');
+  const prevBtn = document.getElementById('prevSlide');
+  const nextBtn = document.getElementById('nextSlide');
+  let currentSlide = 0;
+
+  // Mostrar modal automáticamente a los 2 segundos (opcional)
+  setTimeout(() => {
+    if(modal) modal.classList.add('active');
+  }, 2000);
+
+  if(openBtn) openBtn.addEventListener('click', () => modal.classList.add('active'));
+  if(closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+  function showSlide(index) {
+    slides.forEach(s => s.classList.remove('active'));
+    dots.forEach(d => d.classList.remove('active'));
+    
+    currentSlide = (index + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+  }
+
+  if(nextBtn) nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+  if(prevBtn) prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', (e) => {
+      showSlide(parseInt(e.target.dataset.index));
+    });
+  });
+});
