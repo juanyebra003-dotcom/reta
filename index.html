@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RETA - Lleva tus Torneos al Siguiente Nivel</title>
-  <!-- Google Fonts & FontAwesome -->
+  <title>RETA - Lleva tus torneos al siguiente nivel</title>
+  <!-- Google Fonts & FontAwesome Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
@@ -20,23 +20,29 @@
     </div>
     <nav class="nav-links">
       <a href="#inicio">Inicio</a>
-      <a href="#jugadores">Jugadores</a>
-      <a href="#torneos">Ligas</a>
-      <a href="#estadisticas">Impacto</a>
       <a href="#por-que">¿Por qué RETA?</a>
+      <a href="#jugadores">Jugadores</a>
+      <a href="#ligas">Ligas</a>
       <a href="#servicios">Servicios</a>
+      <a href="#socios">Socios</a>
+      <a href="#patrocinadores">Patrocinadores</a>
     </nav>
-    <a href="usuarios.html" class="btn-primary">
-      <i class="fa-solid fa-user"></i> Acceso Usuarios
-    </a>
+    <div class="nav-actions">
+      <a href="usuarios.html" class="btn-access">
+        <i class="fa-solid fa-user"></i> Acceso Usuarios
+      </a>
+    </div>
   </header>
 
   <!-- SECCIÓN HERO / INICIO -->
-  <section id="inicio" class="hero">
+  <section class="hero" id="inicio">
     <div class="hero-content">
-      <h1 class="hero-title">LLEVA TUS TORNEOS AL <br><span class="text-gradient">SIGUIENTE NIVEL</span></h1>
-      <p class="hero-subtitle">La plataforma tecnológica definitiva para administrar ligas, torneos de fútbol y eventos deportivos en tiempo real.</p>
+      <h1>LLEVA TUS TORNEOS AL <br><span class="text-gradient">SIGUIENTE NIVEL</span></h1>
+      <p class="hero-subtitle">
+        La plataforma tecnológica definitiva para administrar ligas, torneos de fútbol y eventos deportivos en tiempo real.
+      </p>
       
+      <!-- BOTONES DE TIENDAS DE APLICACIONES -->
       <div class="store-buttons">
         <a href="#" class="btn-store">
           <i class="fa-brands fa-google-play"></i>
@@ -44,236 +50,205 @@
         </a>
         <a href="#" class="btn-store">
           <i class="fa-brands fa-apple"></i>
-          <div><small>Consíguelo en el</small><br><span>App Store</span></div>
+          <div><small>Consígalo en el</small><br><span>App Store</span></div>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- MODIFICACIÓN 3: SECCIÓN DE ESTADÍSTICAS / CONTEO RÁPIDO -->
-  <section id="estadisticas" class="stats-section">
+  <!-- MODIFICACIÓN 1: JUGADORES DESTACADOS (SCROLL HORIZONTAL) -->
+  <section class="section-featured" id="jugadores">
     <div class="container">
-      <div class="glass-card stats-grid">
-        <div class="stat-item">
-          <i class="fa-solid fa-trophy stat-icon"></i>
-          <h3 class="stat-number" data-target="150">0</h3>
-          <p class="stat-label">Ligas Registradas</p>
-        </div>
-        <div class="stat-item">
-          <i class="fa-solid fa-users stat-icon"></i>
-          <h3 class="stat-number" data-target="12500">0</h3>
-          <p class="stat-label">Jugadores Registrados</p>
-        </div>
-        <div class="stat-item">
-          <i class="fa-solid fa-handshake stat-icon"></i>
-          <h3 class="stat-number" data-target="45">0</h3>
-          <p class="stat-label">Aliados Comerciales</p>
-        </div>
-        <div class="stat-item">
-          <i class="fa-solid fa-building-columns stat-icon"></i>
-          <h3 class="stat-number" data-target="12">0</h3>
-          <p class="stat-label">Gobiernos Apoyando</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MODIFICACIÓN 1: SECCIÓN JUGADORES DESTACADOS (SCROLL ROLL) -->
-  <section id="jugadores" class="section-container">
-    <div class="section-header">
-      <h2>Jugadores <span class="text-gradient">Destacados</span></h2>
-      <p>Los cracks más valiosos y máximos anotadores del torneo actual</p>
-    </div>
-
-    <div class="scroll-wrapper">
-      <button class="scroll-btn left-btn" onclick="scrollContainer('players-scroll', -320)"><i class="fa-solid fa-chevron-left"></i></button>
-      
-      <div class="scroll-container" id="players-scroll">
-        <!-- Jugador 1 -->
-        <div class="glass-card player-card">
-          <div class="player-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="player-photo">
-            <span class="badge-mvp">MVP</span>
-          </div>
-          <div class="player-info">
-            <h3>Carlos "El Chino" López</h3>
-            <div class="team-meta">
-              <i class="fa-solid fa-shield-halved team-logo-icon"></i>
-              <span>Deportivo Solares</span>
+      <h2 class="section-title">Jugadores <span class="text-gradient">Destacados</span></h2>
+      <div class="scroll-row">
+        <!-- Tarjeta 1 -->
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
+          <div class="card-body">
+            <div class="team-badge">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Gallos FC</span>
             </div>
-            <p class="league-meta"><i class="fa-solid fa-trophy"></i> Liga Premier de Bajío</p>
-            <p class="tournament-meta"><i class="fa-solid fa-calendar-days"></i> Torneo Clausura 2026</p>
+            <h3>Carlos Mendoza</h3>
+            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga Premier MX</p>
+            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Clausura 2026</p>
           </div>
         </div>
-
-        <!-- Jugador 2 -->
-        <div class="glass-card player-card">
-          <div class="player-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="player-photo">
-            <span class="badge-mvp">Goleador</span>
-          </div>
-          <div class="player-info">
+        <!-- Tarjeta 2 -->
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
+          <div class="card-body">
+            <div class="team-badge">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Real San José</span>
+            </div>
             <h3>Mateo Ramírez</h3>
-            <div class="team-meta">
-              <i class="fa-solid fa-shield-halved team-logo-icon"></i>
-              <span>Galgos F.C.</span>
-            </div>
-            <p class="league-meta"><i class="fa-solid fa-trophy"></i> Liga Municipal Moroleón</p>
-            <p class="tournament-meta"><i class="fa-solid fa-calendar-days"></i> Torneo de Invierno</p>
+            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga San José</p>
+            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Copa de Verano</p>
           </div>
         </div>
-
-        <!-- Jugador 3 -->
-        <div class="glass-card player-card">
-          <div class="player-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="player-photo">
-            <span class="badge-mvp">Portero 0</span>
-          </div>
-          <div class="player-info">
-            <h3>Santiago Guadarrama</h3>
-            <div class="team-meta">
-              <i class="fa-solid fa-shield-halved team-logo-icon"></i>
-              <span>Atletas del Sur</span>
+        <!-- Tarjeta 3 -->
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1543351611-58f69d7c1781?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
+          <div class="card-body">
+            <div class="team-badge">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Deportivo Unión</span>
             </div>
-            <p class="league-meta"><i class="fa-solid fa-trophy"></i> Superliga Regional</p>
-            <p class="tournament-meta"><i class="fa-solid fa-calendar-days"></i> Copa de Campeones</p>
+            <h3>Luis Fernando Torres</h3>
+            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga Bajío Intersemanal</p>
+            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Apertura</p>
           </div>
         </div>
-
-        <!-- Jugador 4 -->
-        <div class="glass-card player-card">
-          <div class="player-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1560272564-6694e074a480?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="player-photo">
-            <span class="badge-mvp">Crack</span>
-          </div>
-          <div class="player-info">
-            <h3>Diego Hernández</h3>
-            <div class="team-meta">
-              <i class="fa-solid fa-shield-halved team-logo-icon"></i>
-              <span>Real Azteca</span>
+        <!-- Tarjeta 4 -->
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1560272564-669520747490?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
+          <div class="card-body">
+            <div class="team-badge">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Atletas del Valle</span>
             </div>
-            <p class="league-meta"><i class="fa-solid fa-trophy"></i> Liga Empresarial RETA</p>
-            <p class="tournament-meta"><i class="fa-solid fa-calendar-days"></i> Torneo Nocturno</p>
+            <h3>Javier Hernández</h3>
+            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga Municipal Moroleón</p>
+            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Nocturno</p>
           </div>
         </div>
-
-        <!-- Jugador 5 -->
-        <div class="glass-card player-card">
-          <div class="player-img-wrapper">
-            <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="player-photo">
-            <span class="badge-mvp">Promesa</span>
-          </div>
-          <div class="player-info">
-            <h3>Javier "Javi" Torres</h3>
-            <div class="team-meta">
-              <i class="fa-solid fa-shield-halved team-logo-icon"></i>
-              <span>Academia Moroleón</span>
+        <!-- Tarjeta 5 -->
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
+          <div class="card-body">
+            <div class="team-badge">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Tigres Urbano</span>
             </div>
-            <p class="league-meta"><i class="fa-solid fa-trophy"></i> Liga Juvenil RETA</p>
-            <p class="tournament-meta"><i class="fa-solid fa-calendar-days"></i> Torneo Apertura 2026</p>
+            <h3>Diego Gómez</h3>
+            <p class="card-meta"><i class="fa-solid fa-trophy"></i> Liga Élite 7</p>
+            <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Campeón de Campeones</p>
           </div>
         </div>
       </div>
-
-      <button class="scroll-btn right-btn" onclick="scrollContainer('players-scroll', 320)"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
-  <!-- MODIFICACIÓN 2: SECCIÓN LIGAS / TORNEOS DESTACADOS (SCROLL ROLL) -->
-  <section id="torneos" class="section-container">
-    <div class="section-header">
-      <h2>Ligas y Torneos <span class="text-gradient">Destacados</span></h2>
-      <p>Explora las competencias con más pasión y nivel de la red RETA</p>
-    </div>
-
-    <div class="scroll-wrapper">
-      <button class="scroll-btn left-btn" onclick="scrollContainer('leagues-scroll', -340)"><i class="fa-solid fa-chevron-left"></i></button>
-      
-      <div class="scroll-container" id="leagues-scroll">
+  <!-- MODIFICACIÓN 2: LIGAS O TORNEOS DESTACADOS (SCROLL HORIZONTAL) -->
+  <section class="section-featured" id="ligas">
+    <div class="container">
+      <h2 class="section-title">Ligas y Torneos <span class="text-gradient">Destacados</span></h2>
+      <div class="scroll-row">
         <!-- Liga 1 -->
-        <div class="glass-card league-card">
-          <div class="league-banner" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=500&q=80');">
-            <span class="league-tag"><i class="fa-solid fa-location-dot"></i> Moroleón, GTO</span>
-          </div>
-          <div class="league-content">
-            <h3>Liga Premier RETA Moroleón</h3>
-            <p class="league-desc">Fútbol 11 Categoría Libre con arbitraje certificado.</p>
-            <div class="league-stats">
-              <span><i class="fa-solid fa-people-group"></i> 24 Equipos</span>
-              <span><i class="fa-solid fa-volleyball"></i> Fútbol 11</span>
-            </div>
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=400&q=80" alt="Liga Premier" class="card-img">
+          <div class="card-body">
+            <h3>Liga Premier RETA</h3>
+            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Sede Principal</p>
+            <p class="card-submeta"><i class="fa-solid fa-users"></i> 32 Equipos Activos</p>
           </div>
         </div>
-
         <!-- Liga 2 -->
-        <div class="glass-card league-card">
-          <div class="league-banner" style="background-image: url('https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=500&q=80');">
-            <span class="league-tag"><i class="fa-solid fa-location-dot"></i> Uriangato, GTO</span>
-          </div>
-          <div class="league-content">
-            <h3>Copa de Campeones Nocturna</h3>
-            <p class="league-desc">Torneo de Fútbol 7 rápido con partidos bajo reflectores.</p>
-            <div class="league-stats">
-              <span><i class="fa-solid fa-people-group"></i> 16 Equipos</span>
-              <span><i class="fa-solid fa-futbol"></i> Fútbol 7</span>
-            </div>
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80" alt="Copa Bajío" class="card-img">
+          <div class="card-body">
+            <h3>Copa Internacional Bajío</h3>
+            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Bajío MX</p>
+            <p class="card-submeta"><i class="fa-solid fa-users"></i> 64 Equipos Activos</p>
           </div>
         </div>
-
         <!-- Liga 3 -->
-        <div class="glass-card league-card">
-          <div class="league-banner" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=500&q=80');">
-            <span class="league-tag"><i class="fa-solid fa-location-dot"></i> Celaya, GTO</span>
-          </div>
-          <div class="league-content">
-            <h3>Liga Femenil RETA Stars</h3>
-            <p class="league-desc">El torneo más competitivo de fútbol femenino del bajío.</p>
-            <div class="league-stats">
-              <span><i class="fa-solid fa-people-group"></i> 18 Equipos</span>
-              <span><i class="fa-solid fa-futbol"></i> Femenil</span>
-            </div>
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=400&q=80" alt="Liga Nocturna" class="card-img">
+          <div class="card-body">
+            <h3>Liga Nocturna de Fútbol 7</h3>
+            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Centro Deportivo</p>
+            <p class="card-submeta"><i class="fa-solid fa-users"></i> 24 Equipos Activos</p>
           </div>
         </div>
-
         <!-- Liga 4 -->
-        <div class="glass-card league-card">
-          <div class="league-banner" style="background-image: url('https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?auto=format&fit=crop&w=500&q=80');">
-            <span class="league-tag"><i class="fa-solid fa-location-dot"></i> Morelia, MICH</span>
-          </div>
-          <div class="league-content">
-            <h3>Superliga Empresarial</h3>
-            <p class="league-desc">Torneo corporativo para conectar empresas mediante el deporte.</p>
-            <div class="league-stats">
-              <span><i class="fa-solid fa-people-group"></i> 20 Equipos</span>
-              <span><i class="fa-solid fa-futbol"></i> Empresarial</span>
-            </div>
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=400&q=80" alt="Torneo Femenil" class="card-img">
+          <div class="card-body">
+            <h3>Torneo Femenil RETA</h3>
+            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Moroleón / Uriangato</p>
+            <p class="card-submeta"><i class="fa-solid fa-users"></i> 16 Equipos Activos</p>
           </div>
         </div>
-
         <!-- Liga 5 -->
-        <div class="glass-card league-card">
-          <div class="league-banner" style="background-image: url('https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=500&q=80');">
-            <span class="league-tag"><i class="fa-solid fa-location-dot"></i> Salamanca, GTO</span>
-          </div>
-          <div class="league-content">
-            <h3>Liga Infantil Futuras Promesas</h3>
-            <p class="league-desc">Formación y competencia para niños y jóvenes talentos.</p>
-            <div class="league-stats">
-              <span><i class="fa-solid fa-people-group"></i> 30 Equipos</span>
-              <span><i class="fa-solid fa-child"></i> Infantil</span>
-            </div>
+        <div class="glass-card card-item">
+          <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80" alt="Copa Empresarial" class="card-img">
+          <div class="card-body">
+            <h3>Copa Empresarial RETA</h3>
+            <p class="card-meta"><i class="fa-solid fa-location-dot"></i> Zona Industrial</p>
+            <p class="card-submeta"><i class="fa-solid fa-users"></i> 20 Equipos Activos</p>
           </div>
         </div>
       </div>
-
-      <button class="scroll-btn right-btn" onclick="scrollContainer('leagues-scroll', 340)"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
+
+  <!-- MODIFICACIÓN 3: CONTEO RÁPIDO (MÉTRICAS DEL SISTEMA) -->
+  <section class="section-stats">
+    <div class="container grid-stats">
+      <div class="glass-card stat-card">
+        <i class="fa-solid fa-trophy stat-icon"></i>
+        <div class="stat-number" data-target="150">0</div>
+        <p class="stat-label">Ligas Registradas</p>
+      </div>
+      <div class="glass-card stat-card">
+        <i class="fa-solid fa-users stat-icon"></i>
+        <div class="stat-number" data-target="12500">0</div>
+        <p class="stat-label">Jugadores Registrados</p>
+      </div>
+      <div class="glass-card stat-card">
+        <i class="fa-solid fa-handshake stat-icon"></i>
+        <div class="stat-number" data-target="45">0</div>
+        <p class="stat-label">Aliados Comerciales</p>
+      </div>
+      <div class="glass-card stat-card">
+        <i class="fa-solid fa-building-columns stat-icon"></i>
+        <div class="stat-number" data-target="12">0</div>
+        <p class="stat-label">Gobiernos Apoyando al Deporte</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN ¿POR QUÉ RETA? / SERVICIOS -->
+  <section class="section-services" id="por-que">
+    <div class="container">
+      <h2 class="section-title">¿Por qué elegir <span class="text-gradient">RETA</span>?</h2>
+      <div class="grid-cards">
+        <div class="glass-card feature-card">
+          <i class="fa-solid fa-bolt feature-icon"></i>
+          <h3>Estadísticas en Tiempo Real</h3>
+          <p>Tabla de posiciones, goleadores, amarillas y rojas actualizadas al instante por los árbitros.</p>
+        </div>
+        <div class="glass-card feature-card">
+          <i class="fa-solid fa-calendar-days feature-icon"></i>
+          <h3>Gestión de Roleos</h3>
+          <p>Genera calendarios, asignación de canchas y horarios automáticamente sin complicaciones.</p>
+        </div>
+        <div class="glass-card feature-card">
+          <i class="fa-solid fa-mobile-screen-button feature-icon"></i>
+          <h3>App Móvil para Jugadores</h3>
+          <p>Tus jugadores podrán seguir a sus equipos, consultar convocatorias y récords personales.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER / PIE DE PÁGINA -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>&copy; 2026 RETA App. Todos los derechos reservados.</p>
+      <div class="social-links">
+        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
 
   <!-- MODIFICACIÓN 4: BOTÓN FLOTANTE DE WHATSAPP -->
-  <a href="https://wa.me/5214451234567?text=Hola,%20quisiera%20recibir%20más%20información%20sobre%20la%20plataforma%20RETA" class="whatsapp-btn" target="_blank" title="Contactar por WhatsApp">
+  <a href="https://wa.me/5210000000000?text=Hola,%20quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20RETA" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contacto WhatsApp">
     <i class="fa-brands fa-whatsapp"></i>
-    <span class="whatsapp-text">¿Dudas? Chatea con nosotros</span>
   </a>
 
   <script src="js/script.js"></script>
