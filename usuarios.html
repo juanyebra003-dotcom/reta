@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acceso a Sistema | RETA</title>
-  <!-- Google Fonts & FontAwesome Icons -->
+  <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
@@ -16,13 +16,19 @@
     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
   </a>
 
+  <!-- BOTÓN PARA VER PATROCINADORES (MODAL) -->
+  <button id="openSponsorsBtn" class="btn-sponsors-trigger">
+    <i class="fa-solid fa-star"></i> Patrocinadores
+  </button>
+
   <!-- CONTENEDOR PRINCIPAL GLASSMORPHISM -->
   <main class="login-container">
     <div class="glass-card login-card">
       <div class="login-header">
-        <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo">
+        <!-- Logo con clase para resaltado en fondo oscuro -->
+        <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
         <h2>Validación de <span class="text-gradient">Usuarios</span></h2>
-        <p>Ingresa tus credenciales para acceder al panel administrativo</p>
+        <p>Ingresa tus credenciales para acceder al panel</p>
       </div>
 
       <form id="loginForm" class="login-form">
@@ -40,8 +46,11 @@
           <label for="role"><i class="fa-solid fa-user-shield"></i> Rol de Acceso</label>
           <select id="role" required>
             <option value="" disabled selected>Selecciona tu rol</option>
-            <option value="administrador">Administrador</option>
+            <option value="usuario">Usuario</option>
+            <option value="usuario_master">Usuario Master</option>
+            <option value="referee">Referee / Árbitro</option>
             <option value="supervisor">Supervisor</option>
+            <option value="administrador">Administrador</option>
           </select>
         </div>
 
@@ -50,10 +59,55 @@
         </button>
       </form>
 
-      <!-- Mensaje dinámico de respuesta -->
+      <!-- MODIFICACIÓN 3: Enlace a Registro -->
+      <div class="register-link-container">
+        <p>¿No tienes usuario? <a href="registro.html" class="highlight-link">Regístrate aquí</a></p>
+      </div>
+
       <div id="loginMessage" class="login-message"></div>
     </div>
   </main>
+
+  <!-- MODIFICACIÓN 4: Ventana Emergente (Modal) con Slider/Carrusel -->
+  <div id="sponsorModal" class="modal-overlay">
+    <div class="modal-card glass-card">
+      <button class="close-modal" id="closeSponsorModal">&times;</button>
+      
+      <div class="slider-container">
+        <!-- Slide 1: Logo RETA -->
+        <div class="slide active">
+          <img src="img/logo_reta.png" alt="RETA" class="slide-img glow-effect">
+          <h3>Bienvenido a <span class="text-gradient">RETA</span></h3>
+          <p>La plataforma definitiva para gestión de ligas y torneos deportivos.</p>
+        </div>
+
+        <!-- Slide 2: Patrocinador Deportivo (Uniformes) -->
+        <div class="slide">
+          <div class="slide-icon"><i class="fa-solid fa-shirt"></i></div>
+          <h3>SportPro <span class="text-gradient">Jerseys</span></h3>
+          <p>Patrocinador Oficial de Uniformes y Equipamiento Deportivo de Alta Rendimiento.</p>
+        </div>
+
+        <!-- Slide 3: Patrocinador de Hidratación -->
+        <div class="slide">
+          <div class="slide-icon"><i class="fa-solid fa-bottle-water"></i></div>
+          <h3>HydraTech <span class="text-gradient">Electrolytes</span></h3>
+          <p>Hidratación oficial para mantener al máximo el rendimiento en cada partido.</p>
+        </div>
+
+        <!-- Controles del Slider -->
+        <button class="slider-btn prev-btn" id="prevSlide"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="slider-btn next-btn" id="nextSlide"><i class="fa-solid fa-chevron-right"></i></button>
+
+        <!-- Indicadores de Puntos -->
+        <div class="slider-dots">
+          <span class="dot active" data-index="0"></span>
+          <span class="dot" data-index="1"></span>
+          <span class="dot" data-index="2"></span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="js/script.js"></script>
 </body>
