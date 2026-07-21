@@ -369,3 +369,119 @@ footer {
   .app-buttons { justify-content: center; }
   .nav-links { display: none; }
 }
+/* ESTILOS ESPECÍFICOS PARA LA PÁGINA DE LOGIN */
+.login-body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.btn-back {
+  position: absolute;
+  top: 25px;
+  left: 5%;
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 600;
+  background: var(--glass-bg);
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--cyan-neon);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 450px;
+  padding: 20px;
+}
+
+.login-card {
+  padding: 40px 30px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-logo {
+  height: 65px;
+  margin-bottom: 15px;
+}
+
+.login-header p {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  margin-top: 5px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.input-group input, 
+.input-group select {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-group select option {
+  background: #0a0e17;
+  color: #fff;
+}
+
+.input-group input:focus, 
+.input-group select:focus {
+  border-color: var(--cyan-neon);
+}
+
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--blue-electric), var(--cyan-neon));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+}
+
+.login-message {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
