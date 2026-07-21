@@ -1,139 +1,101 @@
+/* ==========================================================================
+   RETA - LÓGICA JAVASCRIPT PRINCIPAL
+   ========================================================================== */
+
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. MODAL DE VIDEO AL CARGAR LA PÁGINA
-  const modal = document.getElementById("videoModal");
-  const closeModal = document.getElementById("closeModal");
+  // ----------------------------------------------------------------------
+  // 1. CONTADOR ANIMADO (MÉTRICAS / CONTEO RÁPIDO)
+  // ----------------------------------------------------------------------
+  const statNumbers = document.querySelectorAll(".stat-number");
 
-  // Mostrar modal tras un breve retraso
-  setTimeout(() => {
-    modal.classList.add("show");
-  }, 1000);
+  if (statNumbers.length > 0) {
+    const runCounter = () => {
+      statNumbers.forEach((stat) => {
+        const target = +stat.getAttribute("data-target");
+        let count = 0;
+        const speed = target / 40;
 
-  closeModal.addEventListener("click", () => {
-    modal.classList.remove("show");
-  });
+        const updateCount = () => {
+          count += speed;
+          if (count < target) {
+            stat.innerText = Math.ceil(count).toLocaleString();
+            setTimeout(updateCount, 30);
+          } else {
+            stat.innerText = target.toLocaleString() + "+";
+          }
+        };
 
-  // 2. SLIDESHOW DE 5 IMÁGENES
+        updateCount();
+      });
+    };
+
+    runCounter();
+  }
+
+  // ----------------------------------------------------------------------
+  // 2. MODAL Y SLIDER DE PATROCINADORES (`usuarios.html`)
+  // ----------------------------------------------------------------------
+  const modal = document.getElementById("sponsorModal");
+  const openBtn = document.getElementById("openSponsorsBtn");
+  const closeBtn = document.getElementById("closeSponsorModal");
   const slides = document.querySelectorAll(".slide");
+  const dots = document.querySelectorAll(".dot");
   const prevBtn = document.getElementById("prevSlide");
   const nextBtn = document.getElementById("nextSlide");
   let currentSlide = 0;
 
-  function showSlide(index) {
-    slides.forEach((slide, i) => {
-      slide.classList.remove("active");
-      if (i === index) slide.classList.add("active");
+  if (modal) {
+    // Abrir automáticamente a los 2.5 segundos de carga
+    setTimeout(() => {
+      modal.classList.add("active");
+    }, 2500);
+
+    if (openBtn) openBtn.addEventListener("click", () => modal.classList.add("active"));
+    if (closeBtn) closeBtn.addEventListener("click", () => modal.classList.remove("active"));
+
+    // Cerrar si hace clic fuera del contenido
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.classList.remove("active");
     });
-  }
 
-  function nextSlide() {
-    currentSlide = (currentSlide + 1) % slides.length;
-    showSlide(currentSlide);
-  }
+    const showSlide = (index) => {
+      slides.forEach((s) => s.classList.remove("active"));
+      dots.forEach((d) => d.classList.remove("active"));
 
-  function prevSlide() {
-    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-    showSlide(currentSlide);
-  }
+      currentSlide = (index + slides.length) % slides.length;
+      slides[currentSlide].classList.add("active");
+      dots[currentSlide].classList.add("active");
+    };
 
-  nextBtn.addEventListener("click", nextSlide);
-  prevBtn.addEventListener("click", prevSlide);
+    if (nextBtn) nextBtn.addEventListener("click", () => showSlide(currentSlide + 1));
+    if (prevBtn) prevBtn.addEventListener("click", () => showSlide(currentSlide - 1));
 
-  // Cambio automático cada 4 segundos
-  setInterval(nextSlide, 4000);
-
-  // 3. EFECTO INTERACTIVO GLOW (SEGUIMIENTO DE RATÓN EN TARJETAS)
-  const glowCards = document.querySelectorAll(".glow-card");
-
-  glowCards.forEach((card) => {
-    card.addEventListener("mousemove", (e) => {
-      const rect = card.getBoundingClientRect();
-      // Calcula la posición relativa del ratón dentro de la tarjeta
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      // Asigna variables CSS personalizadas
-      card.style.setProperty("--x", `${x}px`);
-      card.style.setProperty("--y", `${y}px`);
-    });
-  });
-});
-// --- LÓGICA DE MODAL Y SLIDER DE PATROCINADORES ---
-document.addEventListener('DOMContentLoaded', () => {
-  const modal = document.getElementById('sponsorModal');
-  const openBtn = document.getElementById('openSponsorsBtn');
-  const closeBtn = document.getElementById('closeSponsorModal');
-  const slides = document.querySelectorAll('.slide');
-  const dots = document.querySelectorAll('.dot');
-  const prevBtn = document.getElementById('prevSlide');
-  const nextBtn = document.getElementById('nextSlide');
-  let currentSlide = 0;
-
-  // Mostrar modal automáticamente a los 2 segundos (opcional)
-  setTimeout(() => {
-    if(modal) modal.classList.add('active');
-  }, 2000);
-
-  if(openBtn) openBtn.addEventListener('click', () => modal.classList.add('active'));
-  if(closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('active'));
-
-  function showSlide(index) {
-    slides.forEach(s => s.classList.remove('active'));
-    dots.forEach(d => d.classList.remove('active'));
-    
-    currentSlide = (index + slides.length) % slides.length;
-    slides[currentSlide].classList.add('active');
-    dots[currentSlide].classList.add('active');
-  }
-
-  if(nextBtn) nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
-  if(prevBtn) prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
-
-  dots.forEach(dot => {
-    dot.addEventListener('click', (e) => {
-      showSlide(parseInt(e.target.dataset.index));
-    });
-  });
-});
-// FUNCIONALIDAD PARA SCROLL HORIZONTAL
-function scrollContainer(containerId, distance) {
-  const container = document.getElementById(containerId);
-  if (container) {
-    container.scrollBy({ left: distance, behavior: 'smooth' });
-  }
-}
-
-// ANIMACIÓN DE CONTEO RÁPIDO PARA ESTADÍSTICAS
-document.addEventListener('DOMContentLoaded', () => {
-  const statNumbers = document.querySelectorAll('.stat-number');
-  
-  const animateStats = () => {
-    statNumbers.forEach(stat => {
-      const target = +stat.getAttribute('data-target');
-      const count = +stat.innerText;
-      const speed = 200; // Ajustar velocidad
-      const increment = target / speed;
-
-      if (count < target) {
-        stat.innerText = Math.ceil(count + increment);
-        setTimeout(animateStats, 15);
-      } else {
-        stat.innerText = target.toLocaleString() + '+';
-      }
-    });
-  };
-
-  // Iniciar animación con el observador de la pantalla
-  const statsSection = document.querySelector('.stats-section');
-  if (statsSection) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          animateStats();
-          observer.unobserve(entry.target);
-        }
+    dots.forEach((dot) => {
+      dot.addEventListener("click", (e) => {
+        showSlide(parseInt(e.target.dataset.index));
       });
-    }, { threshold: 0.5 });
+    });
+  }
 
-    observer.observe(statsSection);
+  // ----------------------------------------------------------------------
+  // 3. CAPTURA DE FORMULARIO DE LOGIN (SIMULACIÓN DE VALIDACIÓN)
+  // ----------------------------------------------------------------------
+  const loginForm = document.getElementById("loginForm");
+  const loginMessage = document.getElementById("loginMessage");
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const role = document.getElementById("role").value;
+
+      loginMessage.style.color = "#00d4ff";
+      loginMessage.innerText = `Validando credenciales para ${email} como (${role.toUpperCase()})...`;
+
+      setTimeout(() => {
+        loginMessage.style.color = "#48bb78";
+        loginMessage.innerText = "¡Acceso concedido! Redirigiendo al panel...";
+      }, 1500);
+    });
   }
 });
