@@ -94,3 +94,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+// FUNCIONALIDAD PARA SCROLL HORIZONTAL
+function scrollContainer(containerId, distance) {
+  const container = document.getElementById(containerId);
+  if (container) {
+    container.scrollBy({ left: distance, behavior: 'smooth' });
+  }
+}
+
+// ANIMACIÓN DE CONTEO RÁPIDO PARA ESTADÍSTICAS
+document.addEventListener('DOMContentLoaded', () => {
+  const statNumbers = document.querySelectorAll('.stat-number');
+  
+  const animateStats = () => {
+    statNumbers.forEach(stat => {
+      const target = +stat.getAttribute('data-target');
+      const count = +stat.innerText;
+      const speed = 200; // Ajustar velocidad
+      const increment = target / speed;
+
+      if (count < target) {
+        stat.innerText = Math.ceil(count + increment);
+        setTimeout(animateStats, 15);
+      } else {
+        stat.innerText = target.toLocaleString() + '+';
+      }
+    });
+  };
+
+  // Iniciar animación con el observador de la pantalla
+  const statsSection = document.querySelector('.stats-section');
+  if (statsSection) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateStats();
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(statsSection);
+  }
+});
