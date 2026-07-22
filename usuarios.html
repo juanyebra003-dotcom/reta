@@ -7,8 +7,145 @@
   <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Asegúrate de que la ruta apunte correctamente a tu archivo CSS -->
+  
+  <!-- Rutas de CSS de contingencia -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- Estilos de Rescate Directo (Asegura el diseño aunque falle la ruta del CSS) -->
+  <style>
+    body.login-body {
+      background-color: #070a12;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .btn-back {
+      position: absolute;
+      top: 25px;
+      left: 5%;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+
+    .login-logo-glow {
+      max-height: 80px;
+      width: auto;
+      margin-bottom: 15px;
+      filter: drop-shadow(0px 0px 12px rgba(0, 212, 255, 0.7));
+    }
+
+    .login-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    .login-header p {
+      color: #a0aec0;
+      font-size: 0.85rem;
+      margin-bottom: 25px;
+    }
+
+    .text-gradient {
+      background: linear-gradient(135deg, #00d4ff, #0055ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    .input-group input, 
+    .input-group select {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .input-group select option {
+      background: #070a12;
+      color: #ffffff;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #0055ff, #00d4ff);
+      border: none;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+    }
+
+    .register-link-container {
+      margin-top: 20px;
+      font-size: 0.88rem;
+      color: #a0aec0;
+    }
+
+    .highlight-link {
+      color: #00d4ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body class="login-body">
 
@@ -17,19 +154,14 @@
     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
   </a>
 
-  <!-- Botón para abrir modal de patrocinadores opcional -->
-  <button id="openSponsorsBtn" class="btn-sponsors-trigger">
-    <i class="fa-solid fa-handshake"></i> Patrocinadores
-  </button>
-
   <!-- Tarjeta de Login Centrada -->
   <div class="login-container">
-    <div class="glass-card login-card">
+    <div class="login-card">
       
       <!-- Encabezado y Logo Limitado -->
       <div class="login-header">
         <a href="index.html">
-          <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
+          <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow" style="max-height: 80px !important; width: auto !important;">
         </a>
         <h2>Validación de <span class="text-gradient">Usuarios</span></h2>
         <p>Ingresa tus credenciales para acceder al panel</p>
@@ -70,43 +202,8 @@
         <p>¿No tienes usuario? <a href="#" class="highlight-link">Regístrate aquí</a></p>
       </div>
 
-      <div id="loginMessage" class="login-message"></div>
+      <div id="loginMessage" class="login-message" style="margin-top: 15px; font-weight: 600;"></div>
 
-    </div>
-  </div>
-
-  <!-- Modal con Slider de Patrocinadores (Sponsors) -->
-  <div id="sponsorModal" class="modal-overlay">
-    <div class="modal-card glass-card">
-      <button class="close-modal" id="closeSponsorModal">&times;</button>
-      <h3>Nuestros <span class="text-gradient">Aliados</span></h3>
-      
-      <div class="slider-container">
-        <div class="slide active">
-          <i class="fa-solid fa-shirt slide-icon"></i>
-          <h4>SportPro Jerseys</h4>
-          <p>Uniformes oficiales de alta calidad para tus torneos.</p>
-        </div>
-        <div class="slide">
-          <i class="fa-solid fa-bottle-water slide-icon"></i>
-          <h4>HydraTech</h4>
-          <p>Hidratación oficial para todos nuestros atletas RETA.</p>
-        </div>
-        <div class="slide">
-          <i class="fa-solid fa-shield-heart slide-icon"></i>
-          <h4>Salud Deportiva</h4>
-          <p>Cobertura médica y asistencia en cancha.</p>
-        </div>
-
-        <button class="slider-btn prev-btn" id="prevSlide"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="slider-btn next-btn" id="nextSlide"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-
-      <div class="slider-dots">
-        <span class="dot active" data-index="0"></span>
-        <span class="dot" data-index="1"></span>
-        <span class="dot" data-index="2"></span>
-      </div>
     </div>
   </div>
 
