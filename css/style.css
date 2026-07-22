@@ -966,3 +966,117 @@ body {
   .form-row, .method-selector { grid-template-columns: 1fr; }
   .credential-body { grid-template-columns: 1fr; text-align: center; }
 }
+/* ==========================================================================
+   ESTILOS DE TÉRMINOS LEGALES, EVIDENCIA IP Y CREDENCIAL AJUSTADA
+   ========================================================================== */
+
+/* MODAL TÉRMINOS Y CONDICIONES */
+.terms-modal-card {
+  max-width: 650px;
+  text-align: left;
+  padding: 30px;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modal-icon-glow {
+  font-size: 2.8rem;
+  color: var(--cyan-neon);
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6));
+}
+
+.modal-subtitle {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.terms-scroll-body {
+  max-height: 280px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--glass-border);
+  padding: 18px;
+  border-radius: 12px;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.terms-scroll-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terms-scroll-body::-webkit-scrollbar-thumb {
+  background: var(--cyan-neon);
+  border-radius: 10px;
+}
+
+.terms-scroll-body h4 {
+  color: var(--cyan-neon);
+  margin: 14px 0 6px 0;
+  font-size: 0.88rem;
+}
+
+.terms-scroll-body h4:first-child {
+  margin-top: 0;
+}
+
+.modal-footer-terms {
+  text-align: center;
+}
+
+/* TEXTO AUDITORÍA IP */
+.ip-audit-text {
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 212, 255, 0.08);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px dashed var(--cyan-neon);
+}
+
+/* CREDENCIAL VIRTUAL: ESCUDO DE EQUIPO MÁS GRANDE Y PROMINENTE */
+.cred-badge-qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.cred-team-logo-hero-wrapper {
+  width: 75px;
+  height: 75px;
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 4px;
+  border: 2px solid var(--cyan-neon);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cred-team-logo-hero {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.cred-qr-box img#credQrCode {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  background: #fff;
+  padding: 4px;
+}
