@@ -222,6 +222,270 @@ body {
 .btn-store small { font-size: 0.75rem; color: var(--text-muted); }
 .btn-store span { font-weight: 600; font-size: 0.95rem; }
 
+/* ==========================================================================
+   ESTILOS DE LA SECCIÓN 1: ÚLTIMOS MARCADORES
+   ========================================================================== */
+.section-scores {
+  padding: 40px 0;
+}
+
+.scores-scroll-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 10px 5px 25px 5px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cyan-neon) transparent;
+}
+
+.scores-scroll-row::-webkit-scrollbar { height: 6px; }
+.scores-scroll-row::-webkit-scrollbar-thumb { background: var(--cyan-neon); border-radius: 10px; }
+
+.score-card {
+  min-width: 280px;
+  max-width: 280px;
+  padding: 20px 15px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.score-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+}
+
+.score-league {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cyan-neon);
+  text-align: center;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.score-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.team-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 35%;
+  text-align: center;
+}
+
+.team-icon-logo {
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.team-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.score-board {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+}
+
+.score-board .goals {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--cyan-neon);
+}
+
+.score-board .divider {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.score-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ==========================================================================
+   ESTILOS DE LA SECCIÓN 2: ESTAMPAS DE JUGADORES RETA (ESTILO PANINI CON ZOOM)
+   ========================================================================== */
+.section-stickers {
+  padding: 60px 0;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: -15px;
+  margin-bottom: 35px;
+}
+
+.stickers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 30px;
+  justify-items: center;
+}
+
+.panini-sticker {
+  width: 220px;
+  height: 310px;
+  perspective: 1000px;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), z-index 0.3s;
+  position: relative;
+}
+
+.panini-sticker:hover,
+.panini-sticker.zoomed {
+  transform: scale(1.18) translateY(-10px);
+  z-index: 50;
+}
+
+.sticker-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  padding: 6px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.sticker-bg-art {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Paletas Temáticas para las Estampas */
+.teal-theme { background: linear-gradient(135deg, #00b4db, #0083b0); }
+.blue-theme { background: linear-gradient(135deg, #1e3c72, #2a5298); }
+.orange-theme { background: linear-gradient(135deg, #ff7e5f, #feb47b); }
+.purple-theme { background: linear-gradient(135deg, #8e2de2, #4a00e0); }
+.green-theme { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.red-theme { background: linear-gradient(135deg, #cb2d3e, #ef473a); }
+.gold-theme { background: linear-gradient(135deg, #f7971e, #ffd200); }
+
+.sticker-watermark {
+  position: absolute;
+  top: -10px;
+  left: 5px;
+  font-size: 5rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.25);
+  font-family: 'Poppins', sans-serif;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.player-photo {
+  position: absolute;
+  bottom: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 75%;
+  object-fit: cover;
+  border-radius: 8px;
+  filter: drop-shadow(0 5px 8px rgba(0,0,0,0.4));
+}
+
+.sticker-side-brand {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255,255,255,0.9);
+  padding: 4px 6px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.flag-icon { font-size: 1rem; color: #000; }
+.side-text { font-size: 0.65rem; font-weight: 800; color: #000; letter-spacing: 1px; }
+
+.team-logo-badge {
+  position: absolute;
+  bottom: 50px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  color: #111;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+  z-index: 5;
+}
+
+.sticker-footer-info {
+  position: relative;
+  z-index: 6;
+  background: #ff5722;
+  margin: 6px;
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.player-name {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.player-meta {
+  font-size: 0.65rem;
+  opacity: 0.9;
+  margin-top: 1px;
+}
+
+.team-name-tag {
+  background: #111;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
 /* MÉTRICAS (STATS) */
 .section-stats { padding: 50px 0; }
 .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
