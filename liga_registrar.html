@@ -248,9 +248,24 @@
 
   <script src="js/script.js"></script>
   <script>
-    /* LÓGICA ACUMULATIVA DE TORNEOS VINCULADOS Y MEDIA LOGO PREVIEW */
+    /* LÓGICA DE TORNEOS DINÁMICOS Y PREVISUALIZACIÓN DE LOGO */
     let tournamentsList = [];
 
+    // 1. Mostrar u ocultar el campo de texto cuando eligen "Otro"
+    function toggleCustomCategoryInput() {
+      const categorySelect = document.getElementById('tournamentCategorySelect');
+      const customWrapper = document.getElementById('customCategoryWrapper');
+      
+      if (categorySelect.value === 'Otro') {
+        customWrapper.style.display = 'block';
+        document.getElementById('customCategoryInput').focus();
+      } else {
+        customWrapper.style.display = 'none';
+        document.getElementById('customCategoryInput').value = '';
+      }
+    }
+
+    // 2. Previsualizar el logo de la liga al subir archivo
     function previewLeagueLogo(event) {
       const file = event.target.files[0];
       if (file) {
@@ -263,40 +278,65 @@
       }
     }
 
+    // 3. Procesar y agregar torneo a la lista acumulativa
     function addTournamentToList() {
-      const select = document.getElementById('tournamentCategorySelect');
+      const nameInput = document.getElementById('tournamentNameInput');
+      const categorySelect = document.getElementById('tournamentCategorySelect');
+      const customCategoryInput = document.getElementById('customCategoryInput');
+      const branchSelect = document.getElementById('tournamentBranchSelect');
       const teamsInput = document.getElementById('teamsCountInput');
-      
-      const tournamentName = select.value;
+
+      const name = nameInput.value.trim();
+      let category = categorySelect.value;
+      const branch = branchSelect.value;
       const teamsExpected = parseInt(teamsInput.value) || 0;
 
+      // Si seleccionó "Otro", tomar el valor digitado manualmente
+      if (category === 'Otro') {
+        category = customCategoryInput.value.trim();
+      }
+
+      if (!name) {
+        alert("Por favor ingresa el nombre del torneo.");
+        return;
+      }
+
+      if (!category) {
+        alert("Por favor selecciona o especifica una categoría para el torneo.");
+        return;
+      }
+
       if (!teamsExpected || teamsExpected < 2) {
-        alert("Ingresa un número válido de equipos (Mínimo 2 equipos).");
+        alert("Ingresa un número válido de equipos (Mínimo 2).");
         return;
       }
 
-      // Verificar si el torneo ya está en la lista acumulativa
-      const exists = tournamentsList.find(t => t.nombre === tournamentName);
-      if (exists) {
-        alert("Este torneo ya se encuentra agregado a tu lista.");
-        return;
-      }
-
-      // Agregar al arreglo vinculado
+      // Guardar en la lista acumulativa
       tournamentsList.push({
         id: Date.now(),
-        nombre: tournamentName,
+        nombre: name,
+        categoria: category,
+        rama: branch,
         equipos_esperados: teamsExpected
       });
+
+      // Limpiar el formulario para el siguiente torneo
+      nameInput.value = '';
+      categorySelect.selectedIndex = 0;
+      customCategoryInput.value = '';
+      document.getElementById('customCategoryWrapper').style.display = 'none';
+      teamsInput.value = '10';
 
       renderTournamentsList();
     }
 
+    // 4. Eliminar torneo de la lista
     function removeTournament(id) {
       tournamentsList = tournamentsList.filter(t => t.id !== id);
       renderTournamentsList();
     }
 
+    // 5. Renderizar / Dibujar la lista de torneos en pantalla
     function renderTournamentsList() {
       const container = document.getElementById('tournamentsContainer');
       const countLabel = document.getElementById('totalTournamentsCount');
@@ -312,7 +352,8 @@
         <div class="tournament-card-item">
           <div class="t-item-info">
             <h5><i class="fa-solid fa-trophy text-cyan"></i> ${t.nombre}</h5>
-            <span><i class="fa-solid fa-shield-halved"></i> <strong>${t.equipos_esperados}</strong> Equipos Proyectados</span>
+            <span><i class="fa-solid fa-layer-group"></i> ${t.categoria} | <i class="fa-solid fa-venus-mars"></i> ${t.rama}</span><br>
+            <span><i class="fa-solid fa-shield-halved"></i> <strong>${t.equipos_esperados}</strong> Equipos Estimados</span>
           </div>
           <button type="button" class="btn-remove-t" onclick="removeTournament(${t.id})" title="Eliminar Torneo">
             <i class="fa-solid fa-trash-can"></i>
@@ -321,6 +362,7 @@
       `).join('');
     }
 
+    // 6. Envío del Formulario
     function handleLeagueSubmit(e) {
       e.preventDefault();
 
