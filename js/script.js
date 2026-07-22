@@ -83,7 +83,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 40000);
 
   // ----------------------------------------------------------------------
-  // 4. CONTADOR ANIMADO (MÉTRICAS / CONTEO RÁPIDO)
+  // 4. INTERACTIVIDAD PARA LAS ESTAMPAS DE JUGADORES RETA (ZOOM AL CLIC/TAP)
+  // ----------------------------------------------------------------------
+  const stickers = document.querySelectorAll('.panini-sticker');
+
+  stickers.forEach(sticker => {
+    sticker.addEventListener('click', () => {
+      // Remover zoom de otras estampas
+      stickers.forEach(s => {
+        if (s !== sticker) s.classList.remove('zoomed');
+      });
+      // Alternar zoom en la estampa seleccionada
+      sticker.classList.toggle('zoomed');
+    });
+  });
+
+  // ----------------------------------------------------------------------
+  // 5. CONTADOR ANIMADO (MÉTRICAS / CONTEO RÁPIDO)
   // ----------------------------------------------------------------------
   const statNumbers = document.querySelectorAll(".stat-number");
 
