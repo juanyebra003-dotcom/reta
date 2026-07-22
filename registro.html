@@ -146,26 +146,28 @@
             </div>
           </div>
 
-          <!-- Validación de Correo y Términos con Firma Legal e IP -->
-          <div class="input-group checkbox-group">
-            <label class="custom-checkbox">
+          <!-- BLOQUE A: Términos y Validación Legal Organizados -->
+          <div class="terms-container">
+            <label class="custom-checkbox-row">
               <input type="checkbox" id="verifyEmailCheckbox" required>
-              <span class="checkmark"></span>
-              Confirmo que el correo electrónico ingresado es válido y tengo acceso a él.
+              <span class="checkbox-text">Confirmo que el correo electrónico ingresado es válido y tengo acceso a él.</span>
             </label>
-          </div>
 
-          <div class="input-group checkbox-group">
-            <label class="custom-checkbox">
+            <label class="custom-checkbox-row">
               <input type="checkbox" id="acceptTermsCheckbox" required>
-              <span class="checkmark"></span>
-              Acepto los <a href="#" class="highlight-link" onclick="openTermsModal(event)">Términos, Condiciones y Deslinde de Responsabilidades Legales</a> en eventos deportivos RETA.
+              <span class="checkbox-text">
+                Acepto los <a href="#" class="highlight-link" onclick="openTermsModal(event)">Términos, Condiciones y Deslinde de Responsabilidades Legales</a> en eventos deportivos RETA.
+              </span>
             </label>
-            <small id="ipAuditText" class="ip-audit-text" style="display:none; color: var(--cyan-neon); margin-top: 5px; font-weight: 600;"></small>
+
+            <div id="ipAuditText" class="ip-audit-text" style="display:none;"></div>
           </div>
 
+          <!-- Botón Único de Siguiente -->
           <div class="wizard-buttons">
-            <button type="button" class="btn-login" onclick="validateStep1AndProceed()">Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i></button>
+            <button type="button" class="btn-login" onclick="validateStep1AndProceed()">
+              Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>
+            </button>
           </div>
         </div>
 
@@ -198,11 +200,6 @@
       </div>
     </div>
   </div>
-
-          <div class="wizard-buttons">
-            <button type="button" class="btn-login" onclick="goToStep(2)">Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i></button>
-          </div>
-        </div>
 
         <!-- ================= PASO 2: LIGA Y TORNEO ================= -->
         <div class="wizard-step" id="wizard-step-2">
@@ -343,56 +340,69 @@
           </div>
         </div>
 
-     <!-- ==================== PASO 4: CREDENCIAL VIRTUAL GENERADA ==================== -->
-          <div class="wizard-step" id="wizard-step-4">
-            
-            <!-- TARJETA DE CREDENCIAL VIRTUAL DIGITAL -->
-            <div class="digital-credential-card glass-card" id="digitalCredential">
-              <div class="credential-header">
-                <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
-                <div class="cred-league-badge" id="credLeagueName">LIGA PREMIER RETA</div>
+        <!-- ==================== BLOQUE B: PASO 4 CON CREDENCIAL Y PATROCINADORES ==================== -->
+        <div class="wizard-step" id="wizard-step-4">
+          
+          <!-- TARJETA DE CREDENCIAL VIRTUAL DIGITAL CON PATROCINADORES -->
+          <div class="digital-credential-card glass-card" id="digitalCredential">
+            <div class="credential-header">
+              <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
+              <div class="cred-league-badge" id="credLeagueName">LIGA PREMIER RETA</div>
+            </div>
+
+            <div class="credential-body">
+              <!-- Foto del Jugador -->
+              <div class="cred-photo-box">
+                <img id="credPlayerPhoto" src="" alt="Foto Oficial">
+                <span class="cred-dorsal" id="credDorsal">#10</span>
               </div>
 
-              <div class="credential-body">
-                <!-- Foto del Jugador -->
-                <div class="cred-photo-box">
-                  <img id="credPlayerPhoto" src="" alt="Foto Oficial">
-                  <span class="cred-dorsal" id="credDorsal">#10</span>
-                </div>
-
-                <!-- Información Principal -->
-                <div class="cred-info-box">
-                  <h3 id="credPlayerName">CARLOS FLORES</h3>
-                  <p class="cred-meta-line"><strong>ID ÚNICO:</strong> <span id="credUniqueCode" class="text-gradient">RETA-0012-GTO-001</span></p>
-                  <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
-                  <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
-                  <div class="cred-medical-strip">
-                    <span><strong>SANGRE:</strong> <span id="credBlood">O+</span></span> | 
-                    <span><strong>ALERGIAS:</strong> <span id="credAllergies">Ninguna</span></span>
-                  </div>
-                </div>
-
-                <!-- Bloque Destacado: Escudo del Equipo + Código QR -->
-                <div class="cred-badge-qr-container">
-                  <div class="cred-team-logo-hero-wrapper">
-                    <img id="credTeamLogo" src="" class="cred-team-logo-hero" alt="Escudo Equipo">
-                  </div>
-                  <div class="cred-qr-box">
-                    <img id="credQrCode" src="" alt="Código QR Único">
-                  </div>
+              <!-- Información Principal -->
+              <div class="cred-info-box">
+                <h3 id="credPlayerName">CARLOS FLORES</h3>
+                <p class="cred-meta-line"><strong>ID ÚNICO:</strong> <span id="credUniqueCode" class="text-gradient">RETA-0012-GTO-001</span></p>
+                <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
+                <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
+                <div class="cred-medical-strip">
+                  <span><strong>SANGRE:</strong> <span id="credBlood">O+</span></span> | 
+                  <span><strong>ALERGIAS:</strong> <span id="credAllergies">Ninguna</span></span>
                 </div>
               </div>
 
-              <div class="credential-footer">
-                <span>DOCUMENTO OFICIAL DIGITAL - TEMPORADA 2026</span>
+              <!-- Escudo del Equipo + Código QR -->
+              <div class="cred-badge-qr-container">
+                <div class="cred-team-logo-hero-wrapper">
+                  <img id="credTeamLogo" src="" class="cred-team-logo-hero" alt="Escudo Equipo">
+                </div>
+                <div class="cred-qr-box">
+                  <img id="credQrCode" src="" alt="Código QR Único">
+                </div>
               </div>
             </div>
 
-            <div class="wizard-buttons">
-              <button type="button" class="btn-login" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Credencial</button>
+            <!-- SECCIÓN DE PATROCINADORES OFICIALES -->
+            <div class="cred-sponsors-strip">
+              <span class="sponsors-label">PATROCINADORES OFICIALES</span>
+              <div class="sponsors-logos">
+                <img src="https://via.placeholder.com/100x35/0a0f1d/00d4ff?text=SPONSOR+1" alt="Patrocinador 1" class="sponsor-logo">
+                <img src="https://via.placeholder.com/100x35/0a0f1d/00d4ff?text=SPONSOR+2" alt="Patrocinador 2" class="sponsor-logo">
+              </div>
             </div>
 
-          </div> <!-- CIERRE DEL WIZARD-STEP-4 -->
+            <div class="credential-footer">
+              <span>DOCUMENTO OFICIAL DIGITAL - TEMPORADA 2026</span>
+            </div>
+          </div>
+
+          <div class="wizard-buttons">
+            <button type="button" class="btn-login" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Credencial</button>
+          </div>
+
+        </div> <!-- CIERRE DEL WIZARD-STEP-4 -->
+
+      </form>
+    </div>
+  </div>
 
   <script src="js/script.js"></script>
 </body>
