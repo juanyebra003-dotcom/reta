@@ -1080,3 +1080,78 @@ body {
   background: #fff;
   padding: 4px;
 }
+/* ALINEACIÓN CORRECTA DE CHECKBOXES */
+.terms-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.custom-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: #e2e8f0;
+  line-height: 1.4;
+}
+
+.custom-checkbox-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--cyan-neon);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox-text {
+  flex: 1;
+}
+
+.highlight-link {
+  color: var(--cyan-neon);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* SECCIÓN PATROCINADORES EN CREDENCIAL */
+.cred-sponsors-strip {
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.sponsors-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.sponsors-logos {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.sponsor-logo {
+  height: 26px;
+  object-fit: contain;
+  opacity: 0.85;
+  filter: grayscale(30%);
+  transition: all 0.3s ease;
+}
+
+.sponsor-logo:hover {
+  opacity: 1;
+  filter: grayscale(0%);
+}
