@@ -169,41 +169,42 @@
           </div>
         </div>
 
-    <!-- SECCIÓN 3: CONFIGURADOR DINÁMICO DE TORNEOS Y CAPACIDAD -->
+        <!-- SECCIÓN 3: ESTRUCTURA DE TORNEOS Y CAPACIDAD -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-layer-group"></i> 3. Estructura de Torneos y Capacidad de Equipos</h3>
-          <p class="section-desc">Ingresa los datos correspondientes para agregar cada torneo o categoría que gestionará tu liga.</p>
+          <p class="section-desc">Agrega fácilmente todos los torneos que albergará esta liga. Puedes registrar múltiples torneos de forma acumulativa.</p>
 
-          <!-- Interfaz Agregar Torneo Personalizado -->
           <div class="tournament-builder-box">
+            <!-- Fila 1: Nombre del Torneo y Categoría -->
             <div class="form-row">
               <div class="input-group">
                 <label for="tournamentNameInput"><i class="fa-solid fa-trophy"></i> Nombre del Torneo (*)</label>
-                <input type="text" id="tournamentNameInput" placeholder="Ej. Torneo Apertura 2026">
+                <input type="text" id="tournamentNameInput" placeholder="Ej. Torneo Apertura 2026 / Liga Premier">
               </div>
 
-           <div class="input-group">
-                <label for="tournamentCategorySelect"><i class="fa-solid fa-layer-group"></i> Categoría (*)</label>
-                <select id="tournamentCategorySelect" onchange="toggleCustomCategoryInput()">
+              <div class="input-group">
+                <label for="tournamentCategorySelect"><i class="fa-solid fa-list-check"></i> Categoría (*)</label>
+                <select id="tournamentCategorySelect" onchange="checkCategoryOption()">
                   <option value="" disabled selected>Selecciona Categoría</option>
-                  <option value="Libre">Libre</option>
-                  <option value="Juvenil (Sub-18)">Juvenil (Sub-18)</option>
-                  <option value="Infantil">Infantil</option>
+                  <option value="Libre">Libre (Cualquier edad)</option>
+                  <option value="Primera División">Primera División</option>
+                  <option value="Segunda División">Segunda División</option>
+                  <option value="Juvenil A (Sub-18)">Juvenil A (Sub-18)</option>
+                  <option value="Juvenil B (Sub-15)">Juvenil B (Sub-15)</option>
+                  <option value="Infantil A (Sub-12)">Infantil A (Sub-12)</option>
+                  <option value="Infantil B (Sub-10)">Infantil B (Sub-10)</option>
+                  <option value="Baby (Sub-8)">Baby (Sub-8)</option>
                   <option value="Veteranos (+35)">Veteranos (+35)</option>
                   <option value="Master (+40)">Master (+40)</option>
-                  <option value="Baby">Baby</option>
-                  <option value="Clasificados / Empresarial">Clasificados / Empresarial</option>
-                  <option value="Otro">Otro (Especificar)</option>
+                  <option value="Super Master (+50)">Super Master (+50)</option>
+                  <option value="Empresarial / Comercial">Empresarial / Comercial</option>
+                  <option value="Otro">Otro (Definir categoría personalizada...)</option>
                 </select>
               </div>
+            </div>
 
-              <!-- Campo oculto por defecto para Categoría Personalizada -->
-              <div class="input-group" id="customCategoryWrapper" style="display: none; margin-top: 10px;">
-                <label for="customCategoryInput"><i class="fa-solid fa-pen-to-square"></i> Escribe la Categoría Personalizada (*)</label>
-                <input type="text" id="customCategoryInput" placeholder="Ej. Sub-13, Super Veteranos +50, etc.">
-              </div>
-
-            <div class="form-row" style="margin-top: 10px;">
+            <!-- Fila 2: Rama y Equipos Estimados -->
+            <div class="form-row" style="margin-top: 15px;">
               <div class="input-group">
                 <label for="tournamentBranchSelect"><i class="fa-solid fa-venus-mars"></i> Rama (*)</label>
                 <select id="tournamentBranchSelect">
@@ -214,23 +215,24 @@
               </div>
 
               <div class="input-group">
-                <label for="teamsCountInput"><i class="fa-solid fa-shield-halved"></i> N° de Equipos Aproximado (*)</label>
-                <input type="number" id="teamsCountInput" placeholder="Ej. 12" min="2" max="100" value="10">
+                <label for="teamsCountInput"><i class="fa-solid fa-shield-halved"></i> Número de Equipos Aproximado (*)</label>
+                <input type="number" id="teamsCountInput" placeholder="Ej. 16" min="2" max="128" value="12">
               </div>
             </div>
 
-            <div class="btn-add-wrapper" style="margin-top: 15px;">
-              <button type="button" class="btn-add-tournament" onclick="addTournamentToList()">
+            <!-- Botón de Agregar Torneo -->
+            <div style="margin-top: 20px;">
+              <button type="button" class="btn-add-tournament-action" onclick="addTournamentToList()">
                 <i class="fa-solid fa-plus-circle"></i> Agregar Torneo a la Liga
               </button>
             </div>
           </div>
 
-          <!-- Lista Acumulativa de Torneos Registrados -->
+          <!-- LISTA ACUMULATIVA DE TORNEOS REGISTRADOS -->
           <div class="tournaments-list-wrapper">
             <h4 class="list-title"><i class="fa-solid fa-list-ol"></i> Torneos Configurados (<span id="totalTournamentsCount">0</span>)</h4>
             <div id="tournamentsContainer" class="tournaments-grid">
-              <p class="empty-list-msg" id="emptyTournamentsMsg">No has agregado ningún torneo a la estructura de la liga.</p>
+              <p class="empty-list-msg" id="emptyTournamentsMsg">No has agregado ningún torneo a la estructura de la liga aún.</p>
             </div>
           </div>
         </div>
@@ -246,26 +248,108 @@
     </div>
   </div>
 
+  <!-- MODAL / VENTANA EMERGENTE PARA CATEGORÍA PERSONALIZADA ("OTRO") -->
+  <div id="customCategoryModal" class="modal-overlay" style="display: none;">
+    <div class="glass-card modal-content-box">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-sliders text-cyan"></i> Definir Categoría Personalizada</h3>
+        <button type="button" class="btn-close-modal" onclick="closeCustomModal()">&times;</button>
+      </div>
+      <p class="modal-subtitle">Especifica el nombre exacto de la categoría y el rango de edad sugerido para el torneo.</p>
+
+      <div class="input-group" style="margin-bottom: 15px;">
+        <label for="modalCategoryName"><i class="fa-solid fa-font"></i> Nombre de la Categoría (*)</label>
+        <input type="text" id="modalCategoryName" placeholder="Ej. Baby Plus, Máster Especial, etc.">
+      </div>
+
+      <div class="form-row">
+        <div class="input-group">
+          <label for="modalMinAge"><i class="fa-solid fa-child"></i> Edad Mínima (Años)</label>
+          <input type="number" id="modalMinAge" placeholder="Ej. 6" min="3" max="80">
+        </div>
+        <div class="input-group">
+          <label for="modalMaxAge"><i class="fa-solid fa-user-large"></i> Edad Máxima (Años)</label>
+          <input type="number" id="modalMaxAge" placeholder="Ej. 9" min="3" max="80">
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="btn-modal-cancel" onclick="closeCustomModal()">Cancelar</button>
+        <button type="button" class="btn-modal-save" onclick="saveCustomCategory()">Guardar Categoría</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/script.js"></script>
   <script>
-    /* LÓGICA DE TORNEOS DINÁMICOS Y PREVISUALIZACIÓN DE LOGO */
+    /* ESTADO GLOBAL DE TORNEOS ACUMULATIVOS Y CATEGORÍA CUSTOM */
     let tournamentsList = [];
+    let customCategoryData = null; // Guardará { nombre: 'Baby Plus', rango: '6 a 9 años' }
 
-    // 1. Mostrar u ocultar el campo de texto cuando eligen "Otro"
-    function toggleCustomCategoryInput() {
+    // Detectar cuando seleccionan "Otro" en el combo de categorías
+    function checkCategoryOption() {
       const categorySelect = document.getElementById('tournamentCategorySelect');
-      const customWrapper = document.getElementById('customCategoryWrapper');
-      
       if (categorySelect.value === 'Otro') {
-        customWrapper.style.display = 'block';
-        document.getElementById('customCategoryInput').focus();
+        openCustomModal();
       } else {
-        customWrapper.style.display = 'none';
-        document.getElementById('customCategoryInput').value = '';
+        customCategoryData = null;
       }
     }
 
-    // 2. Previsualizar el logo de la liga al subir archivo
+    // Modal Control
+    function openCustomModal() {
+      document.getElementById('customCategoryModal').style.display = 'flex';
+      document.getElementById('modalCategoryName').focus();
+    }
+
+    function closeCustomModal() {
+      document.getElementById('customCategoryModal').style.display = 'none';
+      const categorySelect = document.getElementById('tournamentCategorySelect');
+      if (!customCategoryData) {
+        categorySelect.selectedIndex = 0; // Reset si canceló
+      }
+    }
+
+    function saveCustomCategory() {
+      const name = document.getElementById('modalCategoryName').value.trim();
+      const minAge = document.getElementById('modalMinAge').value;
+      const maxAge = document.getElementById('modalMaxAge').value;
+
+      if (!name) {
+        alert("Ingresa el nombre de la categoría personalizada.");
+        return;
+      }
+
+      let ageRange = "Edad Libre";
+      if (minAge && maxAge) {
+        ageRange = `${minAge} a ${maxAge} años`;
+      } else if (minAge) {
+        ageRange = `Desde ${minAge} años`;
+      } else if (maxAge) {
+        ageRange = `Hasta ${maxAge} años`;
+      }
+
+      customCategoryData = {
+        nombre: name,
+        rango: ageRange
+      };
+
+      // Crear o seleccionar una opción temporal en el select
+      const categorySelect = document.getElementById('tournamentCategorySelect');
+      let customOption = document.getElementById('tempCustomOption');
+      if (!customOption) {
+        customOption = document.createElement('option');
+        customOption.id = 'tempCustomOption';
+        categorySelect.insertBefore(customOption, categorySelect.lastElementChild);
+      }
+      customOption.value = `${name} (${ageRange})`;
+      customOption.textContent = `★ ${name} (${ageRange})`;
+      categorySelect.value = customOption.value;
+
+      document.getElementById('customCategoryModal').style.display = 'none';
+    }
+
+    // Previsualización del Escudo
     function previewLeagueLogo(event) {
       const file = event.target.files[0];
       if (file) {
@@ -278,23 +362,17 @@
       }
     }
 
-    // 3. Procesar y agregar torneo a la lista acumulativa
+    // Agregar Torneo a la Lista Acumulativa
     function addTournamentToList() {
       const nameInput = document.getElementById('tournamentNameInput');
       const categorySelect = document.getElementById('tournamentCategorySelect');
-      const customCategoryInput = document.getElementById('customCategoryInput');
       const branchSelect = document.getElementById('tournamentBranchSelect');
       const teamsInput = document.getElementById('teamsCountInput');
 
       const name = nameInput.value.trim();
-      let category = categorySelect.value;
+      const category = categorySelect.value;
       const branch = branchSelect.value;
       const teamsExpected = parseInt(teamsInput.value) || 0;
-
-      // Si seleccionó "Otro", tomar el valor digitado manualmente
-      if (category === 'Otro') {
-        category = customCategoryInput.value.trim();
-      }
 
       if (!name) {
         alert("Por favor ingresa el nombre del torneo.");
@@ -302,16 +380,16 @@
       }
 
       if (!category) {
-        alert("Por favor selecciona o especifica una categoría para el torneo.");
+        alert("Selecciona una categoría válida.");
         return;
       }
 
       if (!teamsExpected || teamsExpected < 2) {
-        alert("Ingresa un número válido de equipos (Mínimo 2).");
+        alert("Ingresa un número válido de equipos aproximado (Mínimo 2).");
         return;
       }
 
-      // Guardar en la lista acumulativa
+      // Guardar en la estructura acumulativa
       tournamentsList.push({
         id: Date.now(),
         nombre: name,
@@ -320,23 +398,24 @@
         equipos_esperados: teamsExpected
       });
 
-      // Limpiar el formulario para el siguiente torneo
+      // Limpiar formulario para el siguiente torneo
       nameInput.value = '';
       categorySelect.selectedIndex = 0;
-      customCategoryInput.value = '';
-      document.getElementById('customCategoryWrapper').style.display = 'none';
-      teamsInput.value = '10';
+      teamsInput.value = '12';
+      customCategoryData = null;
+      const tempOpt = document.getElementById('tempCustomOption');
+      if (tempOpt) tempOpt.remove();
 
       renderTournamentsList();
     }
 
-    // 4. Eliminar torneo de la lista
+    // Eliminar Torneo de la Lista
     function removeTournament(id) {
       tournamentsList = tournamentsList.filter(t => t.id !== id);
       renderTournamentsList();
     }
 
-    // 5. Renderizar / Dibujar la lista de torneos en pantalla
+    // Renderizar la lista de torneos configurados
     function renderTournamentsList() {
       const container = document.getElementById('tournamentsContainer');
       const countLabel = document.getElementById('totalTournamentsCount');
@@ -344,7 +423,7 @@
       countLabel.textContent = tournamentsList.length;
 
       if (tournamentsList.length === 0) {
-        container.innerHTML = `<p class="empty-list-msg">No has agregado ningún torneo a la estructura de la liga.</p>`;
+        container.innerHTML = `<p class="empty-list-msg">No has agregado ningún torneo a la estructura de la liga aún.</p>`;
         return;
       }
 
@@ -352,8 +431,11 @@
         <div class="tournament-card-item">
           <div class="t-item-info">
             <h5><i class="fa-solid fa-trophy text-cyan"></i> ${t.nombre}</h5>
-            <span><i class="fa-solid fa-layer-group"></i> ${t.categoria} | <i class="fa-solid fa-venus-mars"></i> ${t.rama}</span><br>
-            <span><i class="fa-solid fa-shield-halved"></i> <strong>${t.equipos_esperados}</strong> Equipos Estimados</span>
+            <div class="t-badges">
+              <span class="badge-cat"><i class="fa-solid fa-list-check"></i> ${t.categoria}</span>
+              <span class="badge-branch"><i class="fa-solid fa-venus-mars"></i> Rama ${t.rama}</span>
+            </div>
+            <span class="t-teams-count"><i class="fa-solid fa-shield-halved"></i> <strong>${t.equipos_esperados}</strong> Equipos Estimados</span>
           </div>
           <button type="button" class="btn-remove-t" onclick="removeTournament(${t.id})" title="Eliminar Torneo">
             <i class="fa-solid fa-trash-can"></i>
@@ -362,7 +444,7 @@
       `).join('');
     }
 
-    // 6. Envío del Formulario
+    // Submit del Formulario Completo
     function handleLeagueSubmit(e) {
       e.preventDefault();
 
@@ -386,11 +468,11 @@
         disciplina: document.getElementById('sportType').value,
         telefono_liga: document.getElementById('leaguePhone').value,
         email_liga: document.getElementById('leagueEmail').value,
-        torneos: tournamentsList
+        torneos_registrados: tournamentsList
       };
 
-      console.log("Datos Ejecutivos de la Liga:", leagueData);
-      alert("¡Liga registrada exitosamente con " + tournamentsList.length + " torneos vinculados!");
+      console.log("Objeto Final Registrado en Base de Datos:", leagueData);
+      alert("¡Liga registrada oficialmente con " + tournamentsList.length + " torneos vinculados en RETA!");
       window.location.href = "equipo_registrar.html";
     }
   </script>
