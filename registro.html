@@ -3,179 +3,348 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RETA - Registro de Usuarios</title>
+  <title>RETA - Registro Integral de Jugadores</title>
   <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
-
-  <!-- Estilos directos de contingencia y animación para campos dinámicos -->
-  <style>
-    .dynamic-field-group {
-      display: none;
-      animation: fadeIn 0.4s ease forwards;
-    }
-    
-    .dynamic-field-group.active {
-      display: block;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    @media (max-width: 600px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .register-card {
-      max-width: 580px;
-      margin: 40px auto;
-    }
-  </style>
 </head>
 <body class="login-body">
 
-  <!-- Botón para volver al Inicio -->
   <a href="index.html" class="btn-back">
     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
   </a>
 
-  <!-- Tarjeta de Registro Centrada -->
-  <div class="login-container register-card">
-    <div class="glass-card login-card">
+  <div class="login-container full-register-container">
+    <div class="glass-card login-card register-wizard-card">
       
-      <!-- Encabezado y Logo -->
+      <!-- Encabezado -->
       <div class="login-header">
         <a href="index.html">
-          <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow" style="max-height: 75px; width: auto;">
+          <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
         </a>
-        <h2>Crea tu Cuenta en <span class="text-gradient">RETA</span></h2>
-        <p>Selecciona tu perfil y completa tus datos para comenzar</p>
+        <h2>Registro Oficial de <span class="text-gradient">Jugadores</span></h2>
+        <p>Completa tu expediente para obtener tu Credencial Virtual Única RETA</p>
       </div>
 
-      <!-- Formulario de Registro -->
-      <form id="registerForm">
-        
-        <!-- Datos Generales Básicos -->
-        <div class="form-row">
-          <div class="input-group">
-            <label for="fullName"><i class="fa-solid fa-user"></i> Nombre Completo</label>
-            <input type="text" id="fullName" placeholder="Ej. Juan Pérez" required>
-          </div>
-          <div class="input-group">
-            <label for="regEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico</label>
-            <input type="email" id="regEmail" placeholder="usuario@correo.com" required>
-          </div>
-        </div>
+      <!-- Barra de Progreso Wizard -->
+      <div class="wizard-progress">
+        <div class="step-indicator active" id="step-dot-1">1. Identificación</div>
+        <div class="step-indicator" id="step-dot-2">2. Liga & Equipo</div>
+        <div class="step-indicator" id="step-dot-3">3. Ficha Médica</div>
+        <div class="step-indicator" id="step-dot-4">4. Credencial</div>
+      </div>
 
-        <div class="form-row">
-          <div class="input-group">
-            <label for="regPassword"><i class="fa-solid fa-lock"></i> Contraseña</label>
-            <input type="password" id="regPassword" placeholder="••••••••" required minlength="6">
+      <form id="fullRegisterForm">
+
+        <!-- ================= PASO 1: IDENTIFICACIÓN Y DATOS GENERALES ================= -->
+        <div class="wizard-step active" id="wizard-step-1">
+          <h3 class="step-title"><i class="fa-solid fa-id-card"></i> Paso 1: Identificación y Datos Personales</h3>
+          
+          <!-- Selección INE vs Menor de Edad -->
+          <div class="method-selector">
+            <label class="radio-card active" id="optionIneLabel">
+              <input type="radio" name="idMethod" value="ine" checked id="methodIne">
+              <i class="fa-solid fa-camera"></i> Escanear INE (OCR Automático)
+            </label>
+            <label class="radio-card" id="optionMinorLabel">
+              <input type="radio" name="idMethod" value="minor" id="methodMinor">
+              <i class="fa-solid fa-child"></i> Menor de Edad (Registro Manual + Responsiva)
+            </label>
           </div>
-          <div class="input-group">
-            <label for="regPhone"><i class="fa-solid fa-phone"></i> Teléfono / WhatsApp</label>
-            <input type="tel" id="regPhone" placeholder="445 123 4567" required>
+
+          <!-- Módulo INE / OCR -->
+          <div id="ineOcrSection" class="ocr-dropzone-container">
+            <div class="ocr-dropzone" id="ineDropzone">
+              <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
+              <p>Arrastra tu INE (Frente) o <strong>haz clic aquí para subirla</strong></p>
+              <span class="subtext">Soporta JPG, PNG (El sistema extraerá tus datos automáticamente)</span>
+              <input type="file" id="ineFileInput" accept="image/*" hidden>
+            </div>
+            <div id="ocrStatus" class="ocr-status-message"></div>
           </div>
-        </div>
 
-        <!-- Selección de Rol de Usuario -->
-        <div class="input-group">
-          <label for="regRole"><i class="fa-solid fa-user-gear"></i> Tipo de Usuario / Rol</label>
-          <select id="regRole" required>
-            <option value="" disabled selected>Selecciona cómo usarás RETA</option>
-            <option value="jugador">Jugador / Usuario</option>
-            <option value="referee">Árbitro / Referee</option>
-            <option value="supervisor">Supervisor de Campo</option>
-            <option value="master">Director de Liga / Master</option>
-            <option value="admin">Administrador del Sistema</option>
-          </select>
-        </div>
+          <!-- Módulo Menor de Edad (Carta Responsiva) -->
+          <div id="minorSection" class="minor-upload-section" style="display: none;">
+            <div class="input-group">
+              <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Adjuntar Carta Responsiva Firmada por Padres/Tutores (*Requerido)</label>
+              <input type="file" id="responsivaFile" accept="image/*,.pdf">
+              <small class="help-text">Si no cuentas con el formato, <a href="#" class="highlight-link">descarga la Carta Responsiva RETA aquí</a>.</small>
+            </div>
+          </div>
 
-        <!-- SECCIONES DINÁMICAS POR ROL -->
+          <!-- Fotografía del Jugador -->
+          <div class="photo-upload-wrapper">
+            <div class="photo-preview-box">
+              <img id="playerPhotoPreview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Jugador">
+            </div>
+            <div class="photo-controls">
+              <label for="playerPhotoInput" class="btn-secondary-action"><i class="fa-solid fa-upload"></i> Subir / Replicar Fotografía</label>
+              <input type="file" id="playerPhotoInput" accept="image/*" hidden>
+              <small>Esta foto aparecerá en tu credencial y ficha oficial RETA.</small>
+            </div>
+          </div>
 
-        <!-- 1. Campos para JUGADOR -->
-        <div id="fields-jugador" class="dynamic-field-group">
+          <!-- Formulario de Datos Personales Extraídos o Manuales -->
           <div class="form-row">
             <div class="input-group">
-              <label for="position"><i class="fa-solid fa-futbol"></i> Posición Principal</label>
-              <select id="position">
-                <option value="portero">Portero</option>
-                <option value="defensa">Defensa</option>
-                <option value="medio">Medio / Volante</option>
-                <option value="delantero">Delantero</option>
+              <label for="firstName"><i class="fa-solid fa-user"></i> Nombre(s)</label>
+              <input type="text" id="firstName" placeholder="Nombre(s)" required>
+            </div>
+            <div class="input-group">
+              <label for="lastName"><i class="fa-solid fa-user"></i> Apellidos</label>
+              <input type="text" id="lastName" placeholder="Apellidos" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP</label>
+              <input type="text" id="curp" placeholder="18 Caracteres" required maxlength="18">
+            </div>
+            <div class="input-group">
+              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad</label>
+              <input type="number" id="age" placeholder="Años" min="5" max="99" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género</label>
+              <select id="gender" required>
+                <option value="" disabled selected>Selecciona</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
               </select>
             </div>
             <div class="input-group">
-              <label for="dorsal"><i class="fa-solid fa-shirt"></i> Número Preferido</label>
-              <input type="number" id="dorsal" placeholder="Ej. 10" min="1" max="99">
+              <label for="dorsalNumber"><i class="fa-solid fa-shirt"></i> Número Dorsal Preferido</label>
+              <input type="number" id="dorsalNumber" placeholder="Ej. 10" min="1" max="99" required>
             </div>
           </div>
-        </div>
 
-        <!-- 2. Campos para ÁRBITRO -->
-        <div id="fields-referee" class="dynamic-field-group">
           <div class="form-row">
             <div class="input-group">
-              <label for="refereeExperience"><i class="fa-solid fa-stopwatch"></i> Años de Experiencia</label>
-              <input type="number" id="refereeExperience" placeholder="Ej. 3" min="0">
+              <label for="stateRes"><i class="fa-solid fa-map-location-dot"></i> Estado de Residencia</label>
+              <input type="text" id="stateRes" placeholder="Ej. Guanajuato" required>
             </div>
             <div class="input-group">
-              <label for="refereeZone"><i class="fa-solid fa-location-dot"></i> Zona / Ciudad</label>
-              <input type="text" id="refereeZone" placeholder="Ej. Moroleón / Uriangato">
+              <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia</label>
+              <input type="text" id="cityRes" placeholder="Ej. Moroleón" required>
             </div>
           </div>
-        </div>
 
-        <!-- 3. Campos para SUPERVISOR -->
-        <div id="fields-supervisor" class="dynamic-field-group">
-          <div class="input-group">
-            <label for="assignedFields"><i class="fa-solid fa-building-flag"></i> Unidades / Canchas Asignadas</label>
-            <input type="text" id="assignedFields" placeholder="Ej. Unidad Deportiva Félix Ireta">
-          </div>
-        </div>
-
-        <!-- 4. Campos para DIRECTOR DE LIGA / MASTER -->
-        <div id="fields-master" class="dynamic-field-group">
           <div class="form-row">
             <div class="input-group">
-              <label for="leagueName"><i class="fa-solid fa-trophy"></i> Nombre de la Liga</label>
-              <input type="text" id="leagueName" placeholder="Ej. Liga Premier Nocturna">
+              <label for="userPhone"><i class="fa-solid fa-phone"></i> Teléfono Móvil</label>
+              <input type="tel" id="userPhone" placeholder="445 123 4567" required>
             </div>
             <div class="input-group">
-              <label for="teamCount"><i class="fa-solid fa-users-gear"></i> No. Estimado de Equipos</label>
-              <input type="number" id="teamCount" placeholder="Ej. 16">
+              <label for="userEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico</label>
+              <input type="email" id="userEmail" placeholder="jugador@ejemplo.com" required>
             </div>
           </div>
-        </div>
 
-        <!-- 5. Campos para ADMIN -->
-        <div id="fields-admin" class="dynamic-field-group">
-          <div class="input-group">
-            <label for="adminKey"><i class="fa-solid fa-key"></i> Clave de Verificación de Administrador</label>
-            <input type="password" id="adminKey" placeholder="Código de autorización previa">
+          <div class="input-group checkbox-group">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="verifyEmailCheckbox" required>
+              <span class="checkmark"></span>
+              Confirmo que el correo electrónico ingresado es válido y tengo acceso a él.
+            </label>
+          </div>
+
+          <div class="wizard-buttons">
+            <button type="button" class="btn-login" onclick="goToStep(2)">Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i></button>
           </div>
         </div>
 
-        <!-- Botón de Envío -->
-        <button type="submit" class="btn-login" style="margin-top: 15px;">
-          Completar Registro <i class="fa-solid fa-user-plus"></i>
-        </button>
+        <!-- ================= PASO 2: LIGA Y TORNEO ================= -->
+        <div class="wizard-step" id="wizard-step-2">
+          <h3 class="step-title"><i class="fa-solid fa-trophy"></i> Paso 2: Datos de Liga, Torneo y Equipo</h3>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
+              <select id="leagueSelect" required>
+                <option value="" disabled selected>Cargando Ligas de Supabase...</option>
+                <option value="LIGA-PREMIER-GTO" data-state="GTO" data-tournament="001">Liga Premier RETA (Guanajuato)</option>
+                <option value="COPA-BAJIO-GTO" data-state="GTO" data-tournament="002">Copa Internacional Bajío (Guanajuato)</option>
+                <option value="NOCTURNA-MICH" data-state="MIC" data-tournament="003">Liga Nocturna F7 (Michoacán)</option>
+                <option value="FEMENIL-GTO" data-state="GTO" data-tournament="004">Torneo Femenil RETA (Guanajuato)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece</label>
+              <select id="teamSelect" required>
+                <option value="" disabled selected>Selecciona tu equipo</option>
+                <option value="Gallos FC" data-logo="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=100&q=80">Gallos FC</option>
+                <option value="Real San José" data-logo="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=100&q=80">Real San José</option>
+                <option value="Deportivo Bajío" data-logo="https://images.unsplash.com/photo-1543351611-58f69d7c1781?auto=format&fit=crop&w=100&q=80">Deportivo Bajío</option>
+                <option value="Rayo Moroleón" data-logo="https://images.unsplash.com/photo-1560272564-669520747490?auto=format&fit=crop&w=100&q=80">Rayo Moroleón</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="tournamentCity"><i class="fa-solid fa-location-dot"></i> Ciudad de la Sede</label>
+              <input type="text" id="tournamentCity" value="Moroleón" readonly>
+            </div>
+            <div class="input-group">
+              <label for="tournamentState"><i class="fa-solid fa-map"></i> Estado de la Sede</label>
+              <input type="text" id="tournamentState" value="Guanajuato" readonly>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría</label>
+              <select id="categorySelect" required>
+                <option value="Libre">Libre</option>
+                <option value="Juvenil">Juvenil (Sub-18)</option>
+                <option value="Veteranos">Veteranos (+35)</option>
+                <option value="Infantil">Infantil</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama</label>
+              <select id="branchSelect" required>
+                <option value="Varonil">Varonil</option>
+                <option value="Femenil">Femenil</option>
+                <option value="Mixto">Mixto</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="wizard-buttons">
+            <button type="button" class="btn-secondary-action" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+            <button type="button" class="btn-login" onclick="goToStep(3)">Siguiente: Ficha Médica <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- ================= PASO 3: INFORMACIÓN MÉDICA ================= -->
+        <div class="wizard-step" id="wizard-step-3">
+          <h3 class="step-title"><i class="fa-solid fa-notes-medical"></i> Paso 3: Ficha Médica y Contacto de Emergencia</h3>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="bloodType"><i class="fa-solid fa-droplet"></i> Tipo de Sangre</label>
+              <select id="bloodType" required>
+                <option value="" disabled selected>Selecciona tipo de sangre</option>
+                <option value="O+">O Positivo (O+)</option>
+                <option value="O-">O Negativo (O-)</option>
+                <option value="A+">A Positivo (A+)</option>
+                <option value="A-">A Negativo (A-)</option>
+                <option value="B+">B Positivo (B+)</option>
+                <option value="B-">B Negativo (B-)</option>
+                <option value="AB+">AB Positivo (AB+)</option>
+                <option value="AB-">AB Negativo (AB-)</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="allergiesSelect"><i class="fa-solid fa-hand-dots"></i> Alergias Comunes</label>
+              <select id="allergiesSelect" required>
+                <option value="Ninguna">Ninguna Conocida</option>
+                <option value="Medicamentos (Penicilina/Aspirina)">Medicamentos (Penicilina / Aspirina / AINEs)</option>
+                <option value="Picaduras de Insectos / Abejas">Picaduras de Insectos / Abejas</option>
+                <option value="Alimentos (Mariscos/Nueces/Lácteos)">Alimentos (Mariscos / Nueces / Lácteos)</option>
+                <option value="Polen / Ácaros / Asma alérgica">Polen / Ácaros / Ambiental</option>
+                <option value="Otras Alergias Específicas">Otras Alergias Específicas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="medicalConditions"><i class="fa-solid fa-heart-pulse"></i> Padecimientos / Impedimentos Médicos</label>
+              <select id="medicalConditions" required>
+                <option value="Ninguno">Ninguno / APTO PARA DEPORTE ALTO RENDIMIENTO</option>
+                <option value="Hipertensión Arterial">Hipertensión Arterial (Cardiovascular)</option>
+                <option value="Arritmia / Soplos Cardíacos">Arritmia / Soplos Cardíacos</option>
+                <option value="Asma Bronquial / Hiperreactividad Vía Aérea">Asma Bronquial (Pulmonar)</option>
+                <option value="Diabetes Mellitus Type 1/2">Diabetes (Metabólico)</option>
+                <option value="Lesión Articular / Cirugía Previa">Lesión Articular / Ligamentos / Lesión Ósea</option>
+                <option value="Epilepsia / Padecimientos Neurológicos">Epilepsia / Convulsiones</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="medicalService"><i class="fa-solid fa-hospital"></i> Servicio Médico / Afore / Seguro</label>
+              <select id="medicalService" required>
+                <option value="IMSS">IMSS</option>
+                <option value="ISSSTE">ISSSTE</option>
+                <option value="Particular / Gastos Médicos">Seguro de Gastos Médicos Particular</option>
+                <option value="Cruz Roja / Ninguno">Cruz Roja / Ninguno</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="emergencyContactName"><i class="fa-solid fa-user-nurse"></i> Persona de Contacto en Emergencia</label>
+              <input type="text" id="emergencyContactName" placeholder="Nombre completo del familiar/tutor" required>
+            </div>
+            <div class="input-group">
+              <label for="emergencyPhone"><i class="fa-solid fa-phone-triangle"></i> Teléfono de Emergencia</label>
+              <input type="tel" id="emergencyPhone" placeholder="Teléfono directo" required>
+            </div>
+          </div>
+
+          <div class="wizard-buttons">
+            <button type="button" class="btn-secondary-action" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+            <button type="button" class="btn-login" onclick="processFinalRegistration()">Generar Credencial Virtual <i class="fa-solid fa-qrcode"></i></button>
+          </div>
+        </div>
+
+        <!-- ================= PASO 4: CREDENCIAL VIRTUAL GENERADA ================= -->
+        <div class="wizard-step" id="wizard-step-4">
+          <h3 class="step-title"><i class="fa-solid fa-id-badge"></i> ¡Registro Exitoso! Tu Credencial Virtual RETA</h3>
+          
+          <!-- TARJETA DE CREDENCIAL VIRTUAL DIGITAL -->
+          <div class="digital-credential-card glass-card" id="digitalCredential">
+            <div class="credential-header">
+              <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
+              <div class="cred-league-badge" id="credLeagueName">LIGA PREMIER RETA</div>
+            </div>
+
+            <div class="credential-body">
+              <div class="cred-photo-box">
+                <img id="credPlayerPhoto" src="" alt="Foto Oficial">
+                <span class="cred-dorsal" id="credDorsal">#10</span>
+              </div>
+
+              <div class="cred-info-box">
+                <h3 id="credPlayerName">CARLOS FLORES</h3>
+                <p class="cred-meta-line"><strong>ID ÚNICO:</strong> <span id="credUniqueCode" class="text-gradient">RETA-0012-GTO-001</span></p>
+                <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
+                <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
+                <div class="cred-medical-strip">
+                  <span><strong>SANGRE:</strong> <span id="credBlood">O+</span></span> | 
+                  <span><strong>ALERGIAS:</strong> <span id="credAllergies">Ninguna</span></span>
+                </div>
+              </div>
+
+              <div class="cred-qr-box">
+                <!-- Servidor dinámico de QR enlazado a tabla jugadores de Supabase -->
+                <img id="credQrCode" src="" alt="Código QR Único">
+                <img id="credTeamLogo" src="" class="cred-team-logo" alt="Logo Equipo">
+              </div>
+            </div>
+
+            <div class="credential-footer">
+              <span>DOCUMENTO OFICIAL DIGITAL - TEMPORADA 2026</span>
+            </div>
+          </div>
+
+          <div class="wizard-buttons">
+            <button type="button" class="btn-secondary-action" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Credencial</button>
+            <a href="usuarios.html" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Ir al Panel de Usuarios</a>
+          </div>
+        </div>
 
       </form>
-
-      <!-- Enlace a Login -->
-      <div class="register-link-container">
-        <p>¿Ya tienes una cuenta? <a href="usuarios.html" class="highlight-link">Inicia Sesión aquí</a></p>
-      </div>
-
-      <div id="registerMessage" class="login-message" style="margin-top: 15px; font-weight: 600;"></div>
-
     </div>
   </div>
 
