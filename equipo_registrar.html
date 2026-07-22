@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RETA - Registro de Equipo</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-body">
+
+  <a href="index.html" class="btn-back">
+    <i class="fa-solid fa-arrow-left"></i> Volver al Panel
+  </a>
+
+  <div class="login-container full-register-container">
+    <div class="glass-card login-card register-wizard-card">
+      
+      <!-- Encabezado -->
+      <div class="login-header">
+        <a href="index.html">
+          <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
+        </a>
+        <h2>Registro Oficial de <span class="text-gradient">Equipo</span></h2>
+        <p>Alta de club y configuración de identidad deportiva en la plataforma RETA</p>
+      </div>
+
+      <form id="teamRegisterForm" onsubmit="handleTeamSubmit(event)">
+
+        <!-- SECCIÓN 1: DATOS AUTOMÁTICOS DEL DELEGADO / SUPERVISOR -->
+        <div class="form-section-block">
+          <h3 class="step-title"><i class="fa-solid fa-user-shield"></i> 1. Datos del Delegado Responsable</h3>
+          
+          <div class="form-row">
+            <div class="input-group">
+              <label for="delegateName"><i class="fa-solid fa-user"></i> Nombre del Delegado</label>
+              <input type="text" id="delegateName" value="Juan Yebra (Autenticado)" readonly class="input-readonly">
+            </div>
+            <div class="input-group">
+              <label for="delegateCurp"><i class="fa-solid fa-fingerprint"></i> CURP</label>
+              <input type="text" id="delegateCurp" value="YE381023HGTR09" readonly class="input-readonly">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="delegateState"><i class="fa-solid fa-map-location-dot"></i> Estado</label>
+              <input type="text" id="delegateState" value="Guanajuato" readonly class="input-readonly">
+            </div>
+            <div class="input-group">
+              <label for="delegateCity"><i class="fa-solid fa-city"></i> Ciudad</label>
+              <input type="text" id="delegateCity" value="Moroleón" readonly class="input-readonly">
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 2: DATOS DEL EQUIPO Y LIGA -->
+        <div class="form-section-block">
+          <h3 class="step-title"><i class="fa-solid fa-shield-halved"></i> 2. Información General del Club</h3>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="teamName"><i class="fa-solid fa-font"></i> Nombre Oficial del Equipo (*)</label>
+              <input type="text" id="teamName" placeholder="Ej. Real San José FC" required oninput="updateLogoText()">
+            </div>
+            <div class="input-group">
+              <label for="teamShortName"><i class="fa-solid fa-i-cursor"></i> Abreviatura / Nombre Corto (*)</label>
+              <input type="text" id="teamShortName" placeholder="Ej. RSJ" maxlength="4" style="text-transform: uppercase;" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="targetLeague"><i class="fa-solid fa-trophy"></i> Liga / Torneo a Inscribirse (*)</label>
+              <select id="targetLeague" required>
+                <option value="" disabled selected>Selecciona Liga Destino</option>
+                <option value="LIGA-PREMIER-GTO">Liga Premier RETA (Guanajuato)</option>
+                <option value="COPA-BAJIO-GTO">Copa Internacional Bajío (Guanajuato)</option>
+                <option value="NOCTURNA-MICH">Liga Nocturna F7 (Michoacán)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="foundedYear"><i class="fa-solid fa-calendar-days"></i> Año de Fundado</label>
+              <input type="number" id="foundedYear" placeholder="Ej. 2020" min="1900" max="2026">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="homeField"><i class="fa-solid fa-stadium"></i> Cancha Sede / Localía Preferida</label>
+              <input type="text" id="homeField" placeholder="Ej. Unidad Deportiva Moroleón - Cancha 1">
+            </div>
+            <div class="input-group">
+              <label for="prefSchedule"><i class="fa-solid fa-clock"></i> Horario Preferido de Juego</label>
+              <select id="prefSchedule">
+                <option value="Sábado Tarde (16:00 - 18:00)">Sábado Tarde (16:00 - 18:00)</option>
+                <option value="Domingo Mañana (09:00 - 12:00)">Domingo Mañana (09:00 - 12:00)</option>
+                <option value="Domingo Tarde (14:00 - 17:00)">Domingo Tarde (14:00 - 17:00)</option>
+                <option value="Nocturno Entre Semana (20:00 - 22:00)">Nocturno Entre Semana (20:00 - 22:00)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Uniformes -->
+          <div class="form-row">
+            <div class="input-group">
+              <label for="kitLocalColor"><i class="fa-solid fa-shirt"></i> Color Principal (Uniforme Local)</label>
+              <input type="text" id="kitLocalColor" placeholder="Ej. Azul Marino / Blanco">
+            </div>
+            <div class="input-group">
+              <label for="kitVisitorColor"><i class="fa-solid fa-shirt"></i> Color Secundario (Uniforme Visitante)</label>
+              <input type="text" id="kitVisitorColor" placeholder="Ej. Rojo / Negro">
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 3: INTERFAZ INTERNA CREADORA DE LOGO / ESCUDO -->
+        <div class="form-section-block">
+          <h3 class="step-title"><i class="fa-solid fa-paintbrush"></i> 3. Identidad Visual: Escudo del Equipo</h3>
+
+          <!-- Selector de Modo de Escudo -->
+          <div class="logo-mode-selector">
+            <button type="button" class="btn-mode active" id="btnModeBuilder" onclick="switchLogoMode('builder')">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Diseñar Escudo Automático
+            </button>
+            <button type="button" class="btn-mode" id="btnModeUpload" onclick="switchLogoMode('upload')">
+              <i class="fa-solid fa-upload"></i> Subir Imagen Propia
+            </button>
+          </div>
+
+          <!-- MÓDULO A: GENERADOR AUTOMÁTICO DE ESCUDO (LOGO BUILDER) -->
+          <div id="logoBuilderModule" class="logo-builder-container">
+            <div class="builder-layout">
+              
+              <!-- Vista Previa SVG Dinámica -->
+              <div class="logo-preview-card">
+                <div class="logo-svg-wrapper" id="logoSvgContainer">
+                  <svg id="customLogoSvg" viewBox="0 0 200 220" width="160" height="176">
+                    <defs>
+                      <!-- Clip Path para la forma del escudo -->
+                      <clipPath id="shieldClip">
+                        <path id="svgShieldPath" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" />
+                      </clipPath>
+                    </defs>
+
+                    <!-- Base de fondo con Clip -->
+                    <g clip-path="url(#shieldClip)">
+                      <!-- Color Primario -->
+                      <rect id="svgBgPrimary" x="0" y="0" width="200" height="220" fill="#00d4ff" />
+                      <!-- Color Secundario (Patrón) -->
+                      <path id="svgPattern" d="M 100,0 L 200,0 L 200,220 Z" fill="#0a0f1d" />
+                    </g>
+
+                    <!-- Borde del Escudo -->
+                    <path id="svgShieldBorder" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" fill="none" stroke="#ffffff" stroke-width="6" />
+
+                    <!-- Icono Central -->
+                    <text id="svgCentralIcon" x="100" y="115" font-family="FontAwesome" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central">&#xf1e3;</text>
+
+                    <!-- Texto Inferior del Nombre -->
+                    <path id="textArcPath" d="M 40,150 Q 100,195 160,150" fill="none" />
+                    <text font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">
+                      <textPath href="#textArcPath" startOffset="50%" id="svgTeamText">
+                        EQUIPO FC
+                      </textPath>
+                    </text>
+                  </svg>
+                </div>
+                <span class="preview-label">Vista Previa Oficial</span>
+              </div>
+
+              <!-- Panel de Controles del Diseñador -->
+              <div class="builder-controls">
+                
+                <!-- Forma del Escudo -->
+                <div class="control-group">
+                  <label><i class="fa-solid fa-shapes"></i> Forma del Escudo</label>
+                  <div class="btn-group-options">
+                    <button type="button" class="opt-btn active" onclick="setShieldShape('classic')">Clásico</button>
+                    <button type="button" class="opt-btn" onclick="setShieldShape('circle')">Circular</button>
+                    <button type="button" class="opt-btn" onclick="setShieldShape('diamond')">Diamante</button>
+                  </div>
+                </div>
+
+                <!-- Estilo de Patrón -->
+                <div class="control-group">
+                  <label><i class="fa-solid fa-table-cells"></i> Estilo Interno</label>
+                  <div class="btn-group-options">
+                    <button type="button" class="opt-btn active" onclick="setPatternStyle('half')">Mitad</button>
+                    <button type="button" class="opt-btn" onclick="setPatternStyle('stripes')">Franjas</button>
+                    <button type="button" class="opt-btn" onclick="setPatternStyle('solid')">Sólido</button>
+                  </div>
+                </div>
+
+                <!-- Selección de Colores -->
+                <div class="control-group form-row">
+                  <div>
+                    <label><i class="fa-solid fa-palette"></i> Primario</label>
+                    <input type="color" id="primaryColorInput" value="#00d4ff" onchange="updateColors()">
+                  </div>
+                  <div>
+                    <label><i class="fa-solid fa-palette"></i> Secundario</label>
+                    <input type="color" id="secondaryColorInput" value="#0a0f1d" onchange="updateColors()">
+                  </div>
+                  <div>
+                    <label><i class="fa-solid fa-border-top-left"></i> Borde</label>
+                    <input type="color" id="borderColorInput" value="#ffffff" onchange="updateColors()">
+                  </div>
+                </div>
+
+                <!-- Icono Emblema Central -->
+                <div class="control-group">
+                  <label><i class="fa-solid fa-icons"></i> Emblema Central</label>
+                  <div class="icon-selector-grid">
+                    <button type="button" class="icon-btn active" onclick="setIcon('&#xf1e3;')"><i class="fa-solid fa-futbol"></i></button>
+                    <button type="button" class="icon-btn" onclick="setIcon('&#xf6de;')"><i class="fa-solid fa-crown"></i></button>
+                    <button type="button" class="icon-btn" onclick="setIcon('&#xf005;')"><i class="fa-solid fa-star"></i></button>
+                    <button type="button" class="icon-btn" onclick="setIcon('&#xf0e7;')"><i class="fa-solid fa-bolt"></i></button>
+                    <button type="button" class="icon-btn" onclick="setIcon('&#xf6d9;')"><i class="fa-solid fa-dragon"></i></button>
+                    <button type="button" class="icon-btn" onclick="setIcon('&#xf521;')"><i class="fa-solid fa-chess-king"></i></button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- MÓDULO B: SUBIR ARCHIVO PROPIO -->
+          <div id="logoUploadModule" class="minor-upload-section" style="display: none;">
+            <div class="ocr-dropzone">
+              <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
+              <p>Arrastra el archivo de tu escudo o <strong>haz clic aquí</strong></p>
+              <span class="subtext">Soporta formatos PNG transparentes, JPG (Máx. 5MB)</span>
+              <input type="file" id="customTeamLogoInput" accept="image/*" onchange="previewUploadedLogo(event)">
+            </div>
+            <div id="uploadedLogoPreviewContainer" style="display:none; text-align:center; margin-top:15px;">
+              <img id="uploadedLogoImg" src="" alt="Escudo Subido" style="max-height: 120px; border-radius: 10px; border: 2px solid var(--cyan-neon);">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTÓN DE ACCIÓN FINAL -->
+        <div class="wizard-buttons">
+          <button type="submit" class="btn-login">
+            <i class="fa-solid fa-shield-plus"></i> Registrar y Guardar Equipo en RETA
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script>
+    /* LÓGICA ESPECÍFICA PARA EL DISEÑADOR DE LOGOS Y MODO DE REGISTRO */
+    let currentShape = 'classic';
+    let currentPattern = 'half';
+
+    function switchLogoMode(mode) {
+      const btnBuilder = document.getElementById('btnModeBuilder');
+      const btnUpload = document.getElementById('btnModeUpload');
+      const modBuilder = document.getElementById('logoBuilderModule');
+      const modUpload = document.getElementById('logoUploadModule');
+
+      if (mode === 'builder') {
+        btnBuilder.classList.add('active');
+        btnUpload.classList.remove('active');
+        modBuilder.style.display = 'block';
+        modUpload.style.display = 'none';
+      } else {
+        btnUpload.classList.add('active');
+        btnBuilder.classList.remove('active');
+        modUpload.style.display = 'block';
+        modBuilder.style.display = 'none';
+      }
+    }
+
+    function updateLogoText() {
+      const name = document.getElementById('teamName').value.trim();
+      const svgText = document.getElementById('svgTeamText');
+      svgText.textContent = name.length > 0 ? name.toUpperCase() : 'EQUIPO FC';
+    }
+
+    function updateColors() {
+      const pColor = document.getElementById('primaryColorInput').value;
+      const sColor = document.getElementById('secondaryColorInput').value;
+      const bColor = document.getElementById('borderColorInput').value;
+
+      document.getElementById('svgBgPrimary').setAttribute('fill', pColor);
+      document.getElementById('svgPattern').setAttribute('fill', sColor);
+      document.getElementById('svgShieldBorder').setAttribute('stroke', bColor);
+    }
+
+    function setIcon(iconCode) {
+      document.getElementById('svgCentralIcon').innerHTML = iconCode;
+      document.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }
+
+    function setShieldShape(shape) {
+      const pathShield = document.getElementById('svgShieldPath');
+      const borderShield = document.getElementById('svgShieldBorder');
+      
+      let pathD = '';
+      if (shape === 'classic') {
+        pathD = "M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z";
+      } else if (shape === 'circle') {
+        pathD = "M 100,10 A 90,90 0 1,1 99.9,10 Z";
+      } else if (shape === 'diamond') {
+        pathD = "M 100,10 L 185,110 L 100,210 L 15,110 Z";
+      }
+
+      pathShield.setAttribute('d', pathD);
+      borderShield.setAttribute('d', pathD);
+
+      // Actualizar estado botones
+      const btns = event.target.parentElement.querySelectorAll('.opt-btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function setPatternStyle(pattern) {
+      const svgPattern = document.getElementById('svgPattern');
+      
+      if (pattern === 'half') {
+        svgPattern.setAttribute('d', "M 100,0 L 200,0 L 200,220 L 100,220 Z");
+      } else if (pattern === 'stripes') {
+        svgPattern.setAttribute('d', "M 40,0 H 70 V 220 H 40 Z M 130,0 H 160 V 220 H 130 Z");
+      } else if (pattern === 'solid') {
+        svgPattern.setAttribute('d', "");
+      }
+
+      const btns = event.target.parentElement.querySelectorAll('.opt-btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function previewUploadedLogo(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('uploadedLogoImg');
+          img.src = e.target.result;
+          document.getElementById('uploadedLogoPreviewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleTeamSubmit(e) {
+      e.preventDefault();
+      alert("¡Equipo registrado con éxito en la plataforma RETA!");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
