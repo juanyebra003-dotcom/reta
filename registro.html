@@ -146,6 +146,7 @@
             </div>
           </div>
 
+          <!-- Validación de Correo y Términos con Firma Legal e IP -->
           <div class="input-group checkbox-group">
             <label class="custom-checkbox">
               <input type="checkbox" id="verifyEmailCheckbox" required>
@@ -153,6 +154,50 @@
               Confirmo que el correo electrónico ingresado es válido y tengo acceso a él.
             </label>
           </div>
+
+          <div class="input-group checkbox-group">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="acceptTermsCheckbox" required>
+              <span class="checkmark"></span>
+              Acepto los <a href="#" class="highlight-link" onclick="openTermsModal(event)">Términos, Condiciones y Deslinde de Responsabilidades Legales</a> en eventos deportivos RETA.
+            </label>
+            <small id="ipAuditText" class="ip-audit-text" style="display:none; color: var(--cyan-neon); margin-top: 5px; font-weight: 600;"></small>
+          </div>
+
+          <div class="wizard-buttons">
+            <button type="button" class="btn-login" onclick="validateStep1AndProceed()">Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+  <!-- MODAL JURÍDICO: TÉRMINOS, CONDICIONES Y DESLINDE DE RESPONSABILIDAD -->
+  <div class="modal-overlay" id="termsModal">
+    <div class="glass-card modal-card terms-modal-card">
+      <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
+      <div class="modal-header">
+        <i class="fa-solid fa-scale-balanced modal-icon-glow"></i>
+        <h3>Aviso Legal, Términos y Deslinde de Responsabilidad Deportiva</h3>
+        <p class="modal-subtitle">RETA Sports Management & Logistics</p>
+      </div>
+      
+      <div class="terms-scroll-body">
+        <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
+        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento. Reconoce de manera expresa que el fútbol y las disciplinas asociadas conllevan un riesgo intrínseco de lesiones físicas, incluyendo pero no limitándose a: esguinces, fracturas, contusiones, paros cardiacos o emergencias cardiovasculares derivado del esfuerzo físico, así como colisiones accidentales con otros participantes, equipamiento o instalaciones.</p>
+
+        <h4>2. DESLINDE DE RESPONSABILIDAD Y EXONERACIÓN LEGAL</h4>
+        <p>El participante (o en su defecto, sus padres o tutores legales en caso de menores de edad) exime de manera incondicional e irrevocable a los organizadores, dueños de canchas, árbitros, supervisores, directivos de liga y a la plataforma digital <strong>RETA</strong> de cualquier responsabilidad civil, penal, administrativa o patrimonial derivada de accidentes, lesiones, incapacidades o fallecimiento ocurridos antes, durante o después de los encuentros deportivos disputados dentro del marco del torneo registrado.</p>
+
+        <h4>3. ATENCIÓN MÉDICA DE EMERGENCIA</h4>
+        <p>El usuario autoriza al personal de supervisión y auxilio a coordinar el traslado a instituciones de salud públicas o privadas en caso de una emergencia médica en campo. El participante o su contacto de emergencia asumirán los costos médicos, deducibles o gastos derivados no cubiertos por seguros privados o públicos.</p>
+
+        <h4>4. AUDITORÍA DIGITAL Y REGISTRO DE EVIDENCIA (DIRECCIÓN IP)</h4>
+        <p>De conformidad con la legislación de comercio electrónico y firma digital, el consentimiento otorgado mediante la casilla de verificación será vinculado de forma unívoca e inalterable a la dirección IP de conexión del dispositivo, sello de tiempo (timestamp) y datos del navegador, los cuales se conservarán como evidencia legal y vinculante de la aceptación de este instrumento.</p>
+      </div>
+
+      <div class="modal-footer-terms">
+        <button type="button" class="btn-login" onclick="acceptTermsFromModal()">Entendido y Aceptar Carta Jurídica <i class="fa-solid fa-check-double"></i></button>
+      </div>
+    </div>
+  </div>
 
           <div class="wizard-buttons">
             <button type="button" class="btn-login" onclick="goToStep(2)">Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i></button>
@@ -299,10 +344,8 @@
         </div>
 
         <!-- ================= PASO 4: CREDENCIAL VIRTUAL GENERADA ================= -->
-        <div class="wizard-step" id="wizard-step-4">
-          <h3 class="step-title"><i class="fa-solid fa-id-badge"></i> ¡Registro Exitoso! Tu Credencial Virtual RETA</h3>
-          
-          <!-- TARJETA DE CREDENCIAL VIRTUAL DIGITAL -->
+        
+<!-- TARJETA DE CREDENCIAL VIRTUAL DIGITAL -->
           <div class="digital-credential-card glass-card" id="digitalCredential">
             <div class="credential-header">
               <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
@@ -310,11 +353,13 @@
             </div>
 
             <div class="credential-body">
+              <!-- Foto del Jugador -->
               <div class="cred-photo-box">
                 <img id="credPlayerPhoto" src="" alt="Foto Oficial">
                 <span class="cred-dorsal" id="credDorsal">#10</span>
               </div>
 
+              <!-- Información Principal -->
               <div class="cred-info-box">
                 <h3 id="credPlayerName">CARLOS FLORES</h3>
                 <p class="cred-meta-line"><strong>ID ÚNICO:</strong> <span id="credUniqueCode" class="text-gradient">RETA-0012-GTO-001</span></p>
@@ -326,10 +371,14 @@
                 </div>
               </div>
 
-              <div class="cred-qr-box">
-                <!-- Servidor dinámico de QR enlazado a tabla jugadores de Supabase -->
-                <img id="credQrCode" src="" alt="Código QR Único">
-                <img id="credTeamLogo" src="" class="cred-team-logo" alt="Logo Equipo">
+              <!-- Bloque Destacado: Escudo del Equipo + Código QR -->
+              <div class="cred-badge-qr-container">
+                <div class="cred-team-logo-hero-wrapper">
+                  <img id="credTeamLogo" src="" class="cred-team-logo-hero" alt="Escudo Equipo">
+                </div>
+                <div class="cred-qr-box">
+                  <img id="credQrCode" src="" alt="Código QR Único">
+                </div>
               </div>
             </div>
 
@@ -337,16 +386,6 @@
               <span>DOCUMENTO OFICIAL DIGITAL - TEMPORADA 2026</span>
             </div>
           </div>
-
-          <div class="wizard-buttons">
-            <button type="button" class="btn-secondary-action" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Credencial</button>
-            <a href="usuarios.html" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Ir al Panel de Usuarios</a>
-          </div>
-        </div>
-
-      </form>
-    </div>
-  </div>
 
   <script src="js/script.js"></script>
 </body>
