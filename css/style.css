@@ -1,5 +1,5 @@
 /* ==========================================================================
-   RETA - ESTILOS GENERALES (GLASSMORPHISM DARK THEME)
+   RETA - ESTILOS GENERALES Y UNIFICADOS (GLASSMORPHISM DARK THEME)
    ========================================================================== */
 
 :root {
@@ -584,10 +584,385 @@ body {
 }
 .whatsapp-float:hover { transform: scale(1.1); }
 
+/* ==========================================================================
+   ESTILOS ADICIONALES: REGISTRO WIZARD Y CREDENCIAL DIGITAL
+   ========================================================================== */
+.login-body {
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-back {
+  position: absolute;
+  top: 25px;
+  left: 5%;
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--cyan-neon);
+}
+
+.full-register-container {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.register-wizard-card {
+  padding: 40px 35px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.login-logo-glow {
+  max-height: 75px;
+  width: auto;
+  margin-bottom: 15px;
+  filter: drop-shadow(0px 0px 12px rgba(0, 212, 255, 0.7));
+}
+
+.login-header h2 { font-size: 1.8rem; margin-bottom: 5px; }
+.login-header p { color: var(--text-muted); font-size: 0.88rem; }
+
+/* BARRA DE PROGRESO WIZARD */
+.wizard-progress {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 15px;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.step-indicator {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.step-indicator.active {
+  background: linear-gradient(135deg, var(--blue-electric), var(--cyan-neon));
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+}
+
+/* PASOS DEL WIZARD */
+.wizard-step {
+  display: none;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.wizard-step.active {
+  display: block;
+}
+
+.step-title {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--cyan-neon);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* FORMULARIO GRID Y INPUTS */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.input-group input, 
+.input-group select {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.92rem;
+  outline: none;
+}
+
+.input-group select option {
+  background: #070a12;
+  color: #fff;
+}
+
+/* RADIO CARDS MÉTODO INE / MENOR */
+.method-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.radio-card {
+  padding: 15px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+}
+
+.radio-card.active {
+  border-color: var(--cyan-neon);
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--cyan-neon);
+}
+
+.radio-card input { display: none; }
+
+/* DROPZONE OCR INE */
+.ocr-dropzone-container { margin-bottom: 25px; }
+
+.ocr-dropzone {
+  border: 2px dashed var(--cyan-neon);
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  background: rgba(0, 212, 255, 0.03);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.ocr-dropzone:hover { background: rgba(0, 212, 255, 0.08); }
+.ocr-icon { font-size: 2.5rem; color: var(--cyan-neon); margin-bottom: 10px; }
+.subtext { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 5px; }
+
+.ocr-status-message {
+  margin-top: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* FOTOGRAFÍA PREVIEW */
+.photo-upload-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+  background: rgba(255,255,255,0.03);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+}
+
+.photo-preview-box img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid var(--cyan-neon);
+}
+
+.photo-controls { display: flex; flex-direction: column; gap: 6px; }
+.photo-controls small { font-size: 0.75rem; color: var(--text-muted); }
+
+/* CHECKBOX */
+.checkbox-group { margin: 15px 0 25px 0; }
+.custom-checkbox { font-size: 0.85rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 10px; }
+
+/* BOTONES DEL WIZARD */
+.wizard-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn-secondary-action {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-secondary-action:hover { background: rgba(255, 255, 255, 0.2); }
+
+.btn-login {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--blue-electric), var(--cyan-neon));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* CREDENCIAL DIGITAL VIRTUAL RETA */
+.digital-credential-card {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto 30px auto;
+  border: 2px solid var(--cyan-neon);
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a0e17, #121824);
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.3);
+}
+
+.credential-header {
+  background: rgba(0, 212, 255, 0.15);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.cred-reta-logo { height: 45px; }
+
+.cred-league-badge {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--cyan-neon);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.credential-body {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 110px 1fr 100px;
+  gap: 18px;
+  align-items: center;
+}
+
+.cred-photo-box { position: relative; text-align: center; }
+
+.cred-photo-box img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid var(--cyan-neon);
+}
+
+.cred-dorsal {
+  position: absolute;
+  bottom: -8px;
+  right: 0px;
+  background: var(--blue-electric);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.cred-info-box h3 {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.cred-meta-line {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.cred-medical-strip {
+  margin-top: 8px;
+  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 5px 8px;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.cred-qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.cred-qr-box img#credQrCode {
+  width: 85px;
+  height: 85px;
+  border-radius: 8px;
+  background: #fff;
+  padding: 4px;
+}
+
+.cred-team-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.credential-footer {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* RESPONSIVO */
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; gap: 30px; }
   .hero-slideshow { height: 280px; }
   .hero-content { text-align: center; }
   .store-buttons { justify-content: center; }
+}
+
+@media (max-width: 650px) {
+  .form-row, .method-selector { grid-template-columns: 1fr; }
+  .credential-body { grid-template-columns: 1fr; text-align: center; }
 }
