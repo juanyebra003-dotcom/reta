@@ -169,46 +169,54 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 3: CONFIGURADOR DINÁMICO ACUMULATIVO DE TORNEOS -->
+    <!-- SECCIÓN 3: CONFIGURADOR DINÁMICO DE TORNEOS Y CAPACIDAD -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-layer-group"></i> 3. Estructura de Torneos y Capacidad de Equipos</h3>
-          <p class="section-desc">Agrega todos los torneos o categorías que gestionará tu liga para vincularlos a la base de datos.</p>
+          <p class="section-desc">Ingresa los datos correspondientes para agregar cada torneo o categoría que gestionará tu liga.</p>
 
-          <!-- Interfaz Agregar Torneo -->
+          <!-- Interfaz Agregar Torneo Personalizado -->
           <div class="tournament-builder-box">
             <div class="form-row">
               <div class="input-group">
-                <label for="tournamentCategorySelect"><i class="fa-solid fa-list-check"></i> Seleccionar Torneo / Categoria</label>
+                <label for="tournamentNameInput"><i class="fa-solid fa-trophy"></i> Nombre del Torneo (*)</label>
+                <input type="text" id="tournamentNameInput" placeholder="Ej. Torneo Apertura 2026">
+              </div>
+
+              <div class="input-group">
+                <label for="tournamentCategorySelect"><i class="fa-solid fa-layer-group"></i> Categoría (*)</label>
                 <select id="tournamentCategorySelect">
-                  <option value="Torneo Libre Varonil">Torneo Libre Varonil</option>
-                  <option value="Torneo Libre Femenil">Torneo Libre Femenil</option>
-                  <option value="Torneo A Masculino">Torneo A Masculino</option>
-                  <option value="Torneo A Femenil">Torneo A Femenil</option>
-                  <option value="Torneo B Masculino">Torneo B Masculino</option>
-                  <option value="Torneo B Femenil">Torneo B Femenil</option>
-                  <option value="Torneo Juvenil Varonil">Torneo Juvenil Varonil</option>
-                  <option value="Torneo Juvenil Femenil">Torneo Juvenil Femenil</option>
-                  <option value="Torneo Infantil A Niños">Torneo Infantil A Niños</option>
-                  <option value="Torneo Infantil B Niños">Torneo Infantil B Niños</option>
-                  <option value="Torneo C Master Varonil">Torneo C Master Varonil</option>
-                  <option value="Torneo C Master Femenil">Torneo C Master Femenil</option>
-                  <option value="Torneo Baby Varonil">Torneo Baby Varonil</option>
-                  <option value="Torneo Baby Femenil">Torneo Baby Femenil</option>
-                  <option value="Torneo Mixto A">Torneo Mixto A</option>
-                  <option value="Torneo Mixto B">Torneo Mixto B</option>
+                  <option value="" disabled selected>Selecciona Categoría</option>
+                  <option value="Libre">Libre</option>
+                  <option value="Juvenil (Sub-18)">Juvenil (Sub-18)</option>
+                  <option value="Infantil">Infantil</option>
+                  <option value="Veteranos (+35)">Veteranos (+35)</option>
+                  <option value="Master (+40)">Master (+40)</option>
+                  <option value="Baby">Baby</option>
+                  <option value="Clasificados / Empresarial">Clasificados / Empresarial</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row" style="margin-top: 10px;">
+              <div class="input-group">
+                <label for="tournamentBranchSelect"><i class="fa-solid fa-venus-mars"></i> Rama (*)</label>
+                <select id="tournamentBranchSelect">
+                  <option value="Varonil">Varonil</option>
+                  <option value="Femenil">Femenil</option>
+                  <option value="Mixto">Mixto</option>
                 </select>
               </div>
 
               <div class="input-group">
-                <label for="teamsCountInput"><i class="fa-solid fa-shield"></i> Número de Equipos Estimado / Proyectado</label>
-                <input type="number" id="teamsCountInput" placeholder="Ej. 12" min="2" max="64" value="10">
+                <label for="teamsCountInput"><i class="fa-solid fa-shield-halved"></i> N° de Equipos Aproximado (*)</label>
+                <input type="number" id="teamsCountInput" placeholder="Ej. 12" min="2" max="100" value="10">
               </div>
+            </div>
 
-              <div class="input-group btn-add-wrapper">
-                <button type="button" class="btn-secondary-action btn-add-tournament" onclick="addTournamentToList()">
-                  <i class="fa-solid fa-plus-circle"></i> Agregar Torneo
-                </button>
-              </div>
+            <div class="btn-add-wrapper" style="margin-top: 15px;">
+              <button type="button" class="btn-add-tournament" onclick="addTournamentToList()">
+                <i class="fa-solid fa-plus-circle"></i> Agregar Torneo a la Liga
+              </button>
             </div>
           </div>
 
