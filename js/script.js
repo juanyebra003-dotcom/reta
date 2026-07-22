@@ -301,3 +301,78 @@ document.addEventListener("DOMContentLoaded", () => {
     goToStep(4);
   };
 });
+/* ==========================================================================
+   LÓGICA DE AUDITORÍA IP, TÉRMINOS LEGALES Y CREDENCIAL CON ESCUDO AMPLIA
+   ========================================================================== */
+
+let userPublicIP = "Obteniendo IP...";
+
+// Función para obtener la dirección IP pública del usuario mediante servicio API gratuito
+async function fetchUserIP() {
+  try {
+    const response = await fetch("https://api.ipify.org?format=json");
+    const data = await response.json();
+    userPublicIP = data.ip;
+  } catch (error) {
+    userPublicIP = "192.168.1.1 (IP Local)";
+  }
+}
+
+// Ejecutar obtención de IP al cargar la página
+fetchUserIP();
+
+function openTermsModal(event) {
+  if (event) event.preventDefault();
+  const modal = document.getElementById("termsModal");
+  if (modal) modal.classList.add("active");
+}
+
+function acceptTermsFromModal() {
+  const checkbox = document.getElementById("acceptTermsCheckbox");
+  if (checkbox) {
+    checkbox.checked = true;
+    triggerIpAudit();
+  }
+  closeModal("termsModal");
+}
+
+function triggerIpAudit() {
+  const ipText = document.getElementById("ipAuditText");
+  if (ipText) {
+    const now = new Date().toLocaleString("es-MX");
+    ipText.style.display = "flex";
+    ipText.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Registro Aceptado Legalmente | IP: ${userPublicIP} | Fecha: ${now}`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const acceptTermsCheckbox = document.getElementById("acceptTermsCheckbox");
+  if (acceptTermsCheckbox) {
+    acceptTermsCheckbox.addEventListener("change", (e) => {
+      if (e.target.checked) {
+        triggerIpAudit();
+      } else {
+        const ipText = document.getElementById("ipAuditText");
+        if (ipText) ipText.style.display = "none";
+      }
+    });
+  }
+});
+
+// Validación del Paso 1 antes de avanzar
+function validateStep1AndProceed() {
+  const emailCheckbox = document.getElementById("verifyEmailCheckbox");
+  const termsCheckbox = document.getElementById("acceptTermsCheckbox");
+
+  if (!emailCheckbox || !emailCheckbox.checked) {
+    alert("Por favor confirma que tu correo electrónico es válido.");
+    return;
+  }
+
+  if (!termsCheckbox || !termsCheckbox.checked) {
+    alert("Debes aceptar los Términos, Condiciones y Deslinde de Responsabilidad para continuar.");
+    return;
+  }
+
+  goToStep(2);
+}
