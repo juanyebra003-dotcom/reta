@@ -343,49 +343,56 @@
           </div>
         </div>
 
-        <!-- ================= PASO 4: CREDENCIAL VIRTUAL GENERADA ================= -->
-        
-<!-- TARJETA DE CREDENCIAL VIRTUAL DIGITAL -->
-          <div class="digital-credential-card glass-card" id="digitalCredential">
-            <div class="credential-header">
-              <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
-              <div class="cred-league-badge" id="credLeagueName">LIGA PREMIER RETA</div>
-            </div>
-
-            <div class="credential-body">
-              <!-- Foto del Jugador -->
-              <div class="cred-photo-box">
-                <img id="credPlayerPhoto" src="" alt="Foto Oficial">
-                <span class="cred-dorsal" id="credDorsal">#10</span>
+     <!-- ==================== PASO 4: CREDENCIAL VIRTUAL GENERADA ==================== -->
+          <div class="wizard-step" id="wizard-step-4">
+            
+            <!-- TARJETA DE CREDENCIAL VIRTUAL DIGITAL -->
+            <div class="digital-credential-card glass-card" id="digitalCredential">
+              <div class="credential-header">
+                <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
+                <div class="cred-league-badge" id="credLeagueName">LIGA PREMIER RETA</div>
               </div>
 
-              <!-- Información Principal -->
-              <div class="cred-info-box">
-                <h3 id="credPlayerName">CARLOS FLORES</h3>
-                <p class="cred-meta-line"><strong>ID ÚNICO:</strong> <span id="credUniqueCode" class="text-gradient">RETA-0012-GTO-001</span></p>
-                <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
-                <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
-                <div class="cred-medical-strip">
-                  <span><strong>SANGRE:</strong> <span id="credBlood">O+</span></span> | 
-                  <span><strong>ALERGIAS:</strong> <span id="credAllergies">Ninguna</span></span>
+              <div class="credential-body">
+                <!-- Foto del Jugador -->
+                <div class="cred-photo-box">
+                  <img id="credPlayerPhoto" src="" alt="Foto Oficial">
+                  <span class="cred-dorsal" id="credDorsal">#10</span>
+                </div>
+
+                <!-- Información Principal -->
+                <div class="cred-info-box">
+                  <h3 id="credPlayerName">CARLOS FLORES</h3>
+                  <p class="cred-meta-line"><strong>ID ÚNICO:</strong> <span id="credUniqueCode" class="text-gradient">RETA-0012-GTO-001</span></p>
+                  <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
+                  <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
+                  <div class="cred-medical-strip">
+                    <span><strong>SANGRE:</strong> <span id="credBlood">O+</span></span> | 
+                    <span><strong>ALERGIAS:</strong> <span id="credAllergies">Ninguna</span></span>
+                  </div>
+                </div>
+
+                <!-- Bloque Destacado: Escudo del Equipo + Código QR -->
+                <div class="cred-badge-qr-container">
+                  <div class="cred-team-logo-hero-wrapper">
+                    <img id="credTeamLogo" src="" class="cred-team-logo-hero" alt="Escudo Equipo">
+                  </div>
+                  <div class="cred-qr-box">
+                    <img id="credQrCode" src="" alt="Código QR Único">
+                  </div>
                 </div>
               </div>
 
-              <!-- Bloque Destacado: Escudo del Equipo + Código QR -->
-              <div class="cred-badge-qr-container">
-                <div class="cred-team-logo-hero-wrapper">
-                  <img id="credTeamLogo" src="" class="cred-team-logo-hero" alt="Escudo Equipo">
-                </div>
-                <div class="cred-qr-box">
-                  <img id="credQrCode" src="" alt="Código QR Único">
-                </div>
+              <div class="credential-footer">
+                <span>DOCUMENTO OFICIAL DIGITAL - TEMPORADA 2026</span>
               </div>
             </div>
 
-            <div class="credential-footer">
-              <span>DOCUMENTO OFICIAL DIGITAL - TEMPORADA 2026</span>
+            <div class="wizard-buttons">
+              <button type="button" class="btn-login" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Credencial</button>
             </div>
-          </div>
+
+          </div> <!-- CIERRE DEL WIZARD-STEP-4 -->
 
   <script src="js/script.js"></script>
 </body>
