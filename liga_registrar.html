@@ -182,9 +182,9 @@
                 <input type="text" id="tournamentNameInput" placeholder="Ej. Torneo Apertura 2026">
               </div>
 
-              <div class="input-group">
+           <div class="input-group">
                 <label for="tournamentCategorySelect"><i class="fa-solid fa-layer-group"></i> Categoría (*)</label>
-                <select id="tournamentCategorySelect">
+                <select id="tournamentCategorySelect" onchange="toggleCustomCategoryInput()">
                   <option value="" disabled selected>Selecciona Categoría</option>
                   <option value="Libre">Libre</option>
                   <option value="Juvenil (Sub-18)">Juvenil (Sub-18)</option>
@@ -193,9 +193,15 @@
                   <option value="Master (+40)">Master (+40)</option>
                   <option value="Baby">Baby</option>
                   <option value="Clasificados / Empresarial">Clasificados / Empresarial</option>
+                  <option value="Otro">Otro (Especificar)</option>
                 </select>
               </div>
-            </div>
+
+              <!-- Campo oculto por defecto para Categoría Personalizada -->
+              <div class="input-group" id="customCategoryWrapper" style="display: none; margin-top: 10px;">
+                <label for="customCategoryInput"><i class="fa-solid fa-pen-to-square"></i> Escribe la Categoría Personalizada (*)</label>
+                <input type="text" id="customCategoryInput" placeholder="Ej. Sub-13, Super Veteranos +50, etc.">
+              </div>
 
             <div class="form-row" style="margin-top: 10px;">
               <div class="input-group">
