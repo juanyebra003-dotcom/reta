@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RETA - Registro Ejecutivo de Liga</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-body">
+
+  <a href="index.html" class="btn-back">
+    <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+  </a>
+
+  <div class="login-container full-register-container">
+    <div class="glass-card login-card register-wizard-card">
+      
+      <!-- Encabezado Ejecutivo -->
+      <div class="login-header">
+        <a href="index.html">
+          <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
+        </a>
+        <h2>Alta Oficial de <span class="text-gradient">Liga / Torneo</span></h2>
+        <p>Configuración del perfil administrador, sedes y estructura acumulativa de torneos</p>
+      </div>
+
+      <form id="leagueRegisterForm" onsubmit="handleLeagueSubmit(event)">
+
+        <!-- SECCIÓN 1: DATOS DEL ADMINISTRADOR / PROPIETARIO -->
+        <div class="form-section-block">
+          <h3 class="step-title"><i class="fa-solid fa-user-tie"></i> 1. Datos del Propietario / Administrador</h3>
+          
+          <div class="form-row">
+            <div class="input-group">
+              <label for="adminFirstName"><i class="fa-solid fa-user"></i> Nombre(s) (*)</label>
+              <input type="text" id="adminFirstName" placeholder="Ej. Juan Carlos" required>
+            </div>
+            <div class="input-group">
+              <label for="adminLastName"><i class="fa-solid fa-user"></i> Apellidos (*)</label>
+              <input type="text" id="adminLastName" placeholder="Ej. Yebra López" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="adminCurp"><i class="fa-solid fa-fingerprint"></i> CURP del Administrador (*)</label>
+              <input type="text" id="adminCurp" placeholder="18 caracteres" maxlength="18" style="text-transform: uppercase;" required>
+            </div>
+            <div class="input-group">
+              <label for="adminPhone"><i class="fa-solid fa-mobile-screen-button"></i> Teléfono Móvil (*)</label>
+              <input type="tel" id="adminPhone" placeholder="445 123 4567" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="adminEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico Personal (*)</label>
+              <input type="email" id="adminEmail" placeholder="admin@ejemplo.com" required>
+            </div>
+            <div class="input-group">
+              <label for="leagueSocial"><i class="fa-solid fa-globe"></i> Sitios Web / Redes Sociales de la Liga</label>
+              <input type="url" id="leagueSocial" placeholder="https://facebook.com/miligaoficial">
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 2: DATOS GENERALES DE LA LIGA Y SEDE -->
+        <div class="form-section-block">
+          <h3 class="step-title"><i class="fa-solid fa-sitemap"></i> 2. Información General de la Liga</h3>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="leagueName"><i class="fa-solid fa-trophy"></i> Nombre Oficial de la Liga (*)</label>
+              <input type="text" id="leagueName" placeholder="Ej. Liga Premier de Fútbol Moroleón" required>
+            </div>
+            <div class="input-group">
+              <label for="leagueKey"><i class="fa-solid fa-key"></i> Clave Corta (3-4 Letras) (*)</label>
+              <input type="text" id="leagueKey" placeholder="Ej. LPM" maxlength="4" style="text-transform: uppercase;" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="leagueState"><i class="fa-solid fa-map-location-dot"></i> Estado (32 Entidades) (*)</label>
+              <select id="leagueState" required>
+                <option value="" disabled selected>Selecciona Estado</option>
+                <option value="Aguascalientes">Aguascalientes</option>
+                <option value="Baja California">Baja California</option>
+                <option value="Baja California Sur">Baja California Sur</option>
+                <option value="Campeche">Campeche</option>
+                <option value="Chiapas">Chiapas</option>
+                <option value="Chihuahua">Chihuahua</option>
+                <option value="Ciudad de México">Ciudad de México</option>
+                <option value="Coahuila">Coahuila</option>
+                <option value="Colima">Colima</option>
+                <option value="Durango">Durango</option>
+                <option value="Guanajuato">Guanajuato</option>
+                <option value="Guerrero">Guerrero</option>
+                <option value="Hidalgo">Hidalgo</option>
+                <option value="Jalisco">Jalisco</option>
+                <option value="Estado de México">Estado de México</option>
+                <option value="Michoacán">Michoacán</option>
+                <option value="Morelos">Morelos</option>
+                <option value="Nayarit">Nayarit</option>
+                <option value="Nuevo León">Nuevo León</option>
+                <option value="Oaxaca">Oaxaca</option>
+                <option value="Puebla">Puebla</option>
+                <option value="Querétaro">Querétaro</option>
+                <option value="Quintana Roo">Quintana Roo</option>
+                <option value="San Luis Potosí">San Luis Potosí</option>
+                <option value="Sinaloa">Sinaloa</option>
+                <option value="Sonora">Sonora</option>
+                <option value="Tabasco">Tabasco</option>
+                <option value="Tamaulipas">Tamaulipas</option>
+                <option value="Tlaxcala">Tlaxcala</option>
+                <option value="Veracruz">Veracruz</option>
+                <option value="Yucatán">Yucatán</option>
+                <option value="Zacatecas">Zacatecas</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="leagueCity"><i class="fa-solid fa-city"></i> Municipio / Ciudad Sede (*)</label>
+              <input type="text" id="leagueCity" placeholder="Ej. Moroleón" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="leagueAddress"><i class="fa-solid fa-location-dot"></i> Campo / Complejo Deportivo Principal (*)</label>
+              <input type="text" id="leagueAddress" placeholder="Ej. Unidad Deportiva Presa de Joyitas" required>
+            </div>
+            <div class="input-group">
+              <label for="sportType"><i class="fa-solid fa-futbol"></i> Disciplina Deportiva (*)</label>
+              <select id="sportType" required>
+                <option value="Fútbol 11">Fútbol 11 (Tradicional)</option>
+                <option value="Fútbol 7">Fútbol 7</option>
+                <option value="Fútbol Rápido">Fútbol Rápido</option>
+                <option value="Futsal / Sala">Futsal / Sala</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="leaguePhone"><i class="fa-solid fa-phone"></i> Teléfono Oficial de la Liga (*)</label>
+              <input type="tel" id="leaguePhone" placeholder="445 000 0000" required>
+            </div>
+            <div class="input-group">
+              <label for="leagueEmail"><i class="fa-solid fa-envelope-open-text"></i> Correo Oficial de la Liga (*)</label>
+              <input type="email" id="leagueEmail" placeholder="contacto@ligapremier.com" required>
+            </div>
+          </div>
+
+          <!-- Carga del Logotipo de la Liga -->
+          <div class="input-group" style="margin-top: 15px;">
+            <label><i class="fa-solid fa-image"></i> Logotipo Oficial de la Liga (*)</label>
+            <div class="ocr-dropzone" onclick="document.getElementById('leagueLogoInput').click()">
+              <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
+              <p>Haz clic o arrastra aquí el <strong>Escudo/Logo de la Liga</strong></p>
+              <span class="subtext">Archivos PNG (Fondo transparente) o JPG (Máx. 5MB)</span>
+              <input type="file" id="leagueLogoInput" accept="image/*" hidden onchange="previewLeagueLogo(event)">
+            </div>
+            <div id="logoPreviewContainer" style="display:none; text-align:center; margin-top:10px;">
+              <img id="leagueLogoPreview" src="" alt="Vista Previa Escudo" style="max-height: 100px; border-radius: 10px; border: 2px solid var(--cyan-neon);">
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 3: CONFIGURADOR DINÁMICO ACUMULATIVO DE TORNEOS -->
+        <div class="form-section-block">
+          <h3 class="step-title"><i class="fa-solid fa-layer-group"></i> 3. Estructura de Torneos y Capacidad de Equipos</h3>
+          <p class="section-desc">Agrega todos los torneos o categorías que gestionará tu liga para vincularlos a la base de datos.</p>
+
+          <!-- Interfaz Agregar Torneo -->
+          <div class="tournament-builder-box">
+            <div class="form-row">
+              <div class="input-group">
+                <label for="tournamentCategorySelect"><i class="fa-solid fa-list-check"></i> Seleccionar Torneo / Categoria</label>
+                <select id="tournamentCategorySelect">
+                  <option value="Torneo Libre Varonil">Torneo Libre Varonil</option>
+                  <option value="Torneo Libre Femenil">Torneo Libre Femenil</option>
+                  <option value="Torneo A Masculino">Torneo A Masculino</option>
+                  <option value="Torneo A Femenil">Torneo A Femenil</option>
+                  <option value="Torneo B Masculino">Torneo B Masculino</option>
+                  <option value="Torneo B Femenil">Torneo B Femenil</option>
+                  <option value="Torneo Juvenil Varonil">Torneo Juvenil Varonil</option>
+                  <option value="Torneo Juvenil Femenil">Torneo Juvenil Femenil</option>
+                  <option value="Torneo Infantil A Niños">Torneo Infantil A Niños</option>
+                  <option value="Torneo Infantil B Niños">Torneo Infantil B Niños</option>
+                  <option value="Torneo C Master Varonil">Torneo C Master Varonil</option>
+                  <option value="Torneo C Master Femenil">Torneo C Master Femenil</option>
+                  <option value="Torneo Baby Varonil">Torneo Baby Varonil</option>
+                  <option value="Torneo Baby Femenil">Torneo Baby Femenil</option>
+                  <option value="Torneo Mixto A">Torneo Mixto A</option>
+                  <option value="Torneo Mixto B">Torneo Mixto B</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label for="teamsCountInput"><i class="fa-solid fa-shield"></i> Número de Equipos Estimado / Proyectado</label>
+                <input type="number" id="teamsCountInput" placeholder="Ej. 12" min="2" max="64" value="10">
+              </div>
+
+              <div class="input-group btn-add-wrapper">
+                <button type="button" class="btn-secondary-action btn-add-tournament" onclick="addTournamentToList()">
+                  <i class="fa-solid fa-plus-circle"></i> Agregar Torneo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lista Acumulativa de Torneos Registrados -->
+          <div class="tournaments-list-wrapper">
+            <h4 class="list-title"><i class="fa-solid fa-list-ol"></i> Torneos Configurados (<span id="totalTournamentsCount">0</span>)</h4>
+            <div id="tournamentsContainer" class="tournaments-grid">
+              <p class="empty-list-msg" id="emptyTournamentsMsg">No has agregado ningún torneo a la estructura de la liga.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTÓN DE GUARDADO FINAL -->
+        <div class="wizard-buttons">
+          <button type="submit" class="btn-login">
+            <i class="fa-solid fa-floppy-disk"></i> Registrar Liga Oficialmente en RETA
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script>
+    /* LÓGICA ACUMULATIVA DE TORNEOS VINCULADOS Y MEDIA LOGO PREVIEW */
+    let tournamentsList = [];
+
+    function previewLeagueLogo(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('leagueLogoPreview').src = e.target.result;
+          document.getElementById('logoPreviewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function addTournamentToList() {
+      const select = document.getElementById('tournamentCategorySelect');
+      const teamsInput = document.getElementById('teamsCountInput');
+      
+      const tournamentName = select.value;
+      const teamsExpected = parseInt(teamsInput.value) || 0;
+
+      if (!teamsExpected || teamsExpected < 2) {
+        alert("Ingresa un número válido de equipos (Mínimo 2 equipos).");
+        return;
+      }
+
+      // Verificar si el torneo ya está en la lista acumulativa
+      const exists = tournamentsList.find(t => t.nombre === tournamentName);
+      if (exists) {
+        alert("Este torneo ya se encuentra agregado a tu lista.");
+        return;
+      }
+
+      // Agregar al arreglo vinculado
+      tournamentsList.push({
+        id: Date.now(),
+        nombre: tournamentName,
+        equipos_esperados: teamsExpected
+      });
+
+      renderTournamentsList();
+    }
+
+    function removeTournament(id) {
+      tournamentsList = tournamentsList.filter(t => t.id !== id);
+      renderTournamentsList();
+    }
+
+    function renderTournamentsList() {
+      const container = document.getElementById('tournamentsContainer');
+      const countLabel = document.getElementById('totalTournamentsCount');
+      
+      countLabel.textContent = tournamentsList.length;
+
+      if (tournamentsList.length === 0) {
+        container.innerHTML = `<p class="empty-list-msg">No has agregado ningún torneo a la estructura de la liga.</p>`;
+        return;
+      }
+
+      container.innerHTML = tournamentsList.map(t => `
+        <div class="tournament-card-item">
+          <div class="t-item-info">
+            <h5><i class="fa-solid fa-trophy text-cyan"></i> ${t.nombre}</h5>
+            <span><i class="fa-solid fa-shield-halved"></i> <strong>${t.equipos_esperados}</strong> Equipos Proyectados</span>
+          </div>
+          <button type="button" class="btn-remove-t" onclick="removeTournament(${t.id})" title="Eliminar Torneo">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function handleLeagueSubmit(e) {
+      e.preventDefault();
+
+      if (tournamentsList.length === 0) {
+        alert("Debes agregar al menos 1 torneo acumulativo para poder registrar la liga.");
+        return;
+      }
+
+      const leagueData = {
+        admin_nombre: document.getElementById('adminFirstName').value,
+        admin_apellidos: document.getElementById('adminLastName').value,
+        admin_curp: document.getElementById('adminCurp').value,
+        admin_telefono: document.getElementById('adminPhone').value,
+        admin_email: document.getElementById('adminEmail').value,
+        redes_sociales: document.getElementById('leagueSocial').value,
+        nombre_liga: document.getElementById('leagueName').value,
+        clave_liga: document.getElementById('leagueKey').value,
+        estado: document.getElementById('leagueState').value,
+        municipio: document.getElementById('leagueCity').value,
+        sede_principal: document.getElementById('leagueAddress').value,
+        disciplina: document.getElementById('sportType').value,
+        telefono_liga: document.getElementById('leaguePhone').value,
+        email_liga: document.getElementById('leagueEmail').value,
+        torneos: tournamentsList
+      };
+
+      console.log("Datos Ejecutivos de la Liga:", leagueData);
+      alert("¡Liga registrada exitosamente con " + tournamentsList.length + " torneos vinculados!");
+      window.location.href = "equipo_registrar.html";
+    }
+  </script>
+</body>
+</html>
