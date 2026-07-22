@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RETA - Registro de Usuarios</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Estilos directos de contingencia y animación para campos dinámicos -->
+  <style>
+    .dynamic-field-group {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    
+    .dynamic-field-group.active {
+      display: block;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .register-card {
+      max-width: 580px;
+      margin: 40px auto;
+    }
+  </style>
+</head>
+<body class="login-body">
+
+  <!-- Botón para volver al Inicio -->
+  <a href="index.html" class="btn-back">
+    <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+  </a>
+
+  <!-- Tarjeta de Registro Centrada -->
+  <div class="login-container register-card">
+    <div class="glass-card login-card">
+      
+      <!-- Encabezado y Logo -->
+      <div class="login-header">
+        <a href="index.html">
+          <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow" style="max-height: 75px; width: auto;">
+        </a>
+        <h2>Crea tu Cuenta en <span class="text-gradient">RETA</span></h2>
+        <p>Selecciona tu perfil y completa tus datos para comenzar</p>
+      </div>
+
+      <!-- Formulario de Registro -->
+      <form id="registerForm">
+        
+        <!-- Datos Generales Básicos -->
+        <div class="form-row">
+          <div class="input-group">
+            <label for="fullName"><i class="fa-solid fa-user"></i> Nombre Completo</label>
+            <input type="text" id="fullName" placeholder="Ej. Juan Pérez" required>
+          </div>
+          <div class="input-group">
+            <label for="regEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico</label>
+            <input type="email" id="regEmail" placeholder="usuario@correo.com" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="regPassword"><i class="fa-solid fa-lock"></i> Contraseña</label>
+            <input type="password" id="regPassword" placeholder="••••••••" required minlength="6">
+          </div>
+          <div class="input-group">
+            <label for="regPhone"><i class="fa-solid fa-phone"></i> Teléfono / WhatsApp</label>
+            <input type="tel" id="regPhone" placeholder="445 123 4567" required>
+          </div>
+        </div>
+
+        <!-- Selección de Rol de Usuario -->
+        <div class="input-group">
+          <label for="regRole"><i class="fa-solid fa-user-gear"></i> Tipo de Usuario / Rol</label>
+          <select id="regRole" required>
+            <option value="" disabled selected>Selecciona cómo usarás RETA</option>
+            <option value="jugador">Jugador / Usuario</option>
+            <option value="referee">Árbitro / Referee</option>
+            <option value="supervisor">Supervisor de Campo</option>
+            <option value="master">Director de Liga / Master</option>
+            <option value="admin">Administrador del Sistema</option>
+          </select>
+        </div>
+
+        <!-- SECCIONES DINÁMICAS POR ROL -->
+
+        <!-- 1. Campos para JUGADOR -->
+        <div id="fields-jugador" class="dynamic-field-group">
+          <div class="form-row">
+            <div class="input-group">
+              <label for="position"><i class="fa-solid fa-futbol"></i> Posición Principal</label>
+              <select id="position">
+                <option value="portero">Portero</option>
+                <option value="defensa">Defensa</option>
+                <option value="medio">Medio / Volante</option>
+                <option value="delantero">Delantero</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="dorsal"><i class="fa-solid fa-shirt"></i> Número Preferido</label>
+              <input type="number" id="dorsal" placeholder="Ej. 10" min="1" max="99">
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Campos para ÁRBITRO -->
+        <div id="fields-referee" class="dynamic-field-group">
+          <div class="form-row">
+            <div class="input-group">
+              <label for="refereeExperience"><i class="fa-solid fa-stopwatch"></i> Años de Experiencia</label>
+              <input type="number" id="refereeExperience" placeholder="Ej. 3" min="0">
+            </div>
+            <div class="input-group">
+              <label for="refereeZone"><i class="fa-solid fa-location-dot"></i> Zona / Ciudad</label>
+              <input type="text" id="refereeZone" placeholder="Ej. Moroleón / Uriangato">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Campos para SUPERVISOR -->
+        <div id="fields-supervisor" class="dynamic-field-group">
+          <div class="input-group">
+            <label for="assignedFields"><i class="fa-solid fa-building-flag"></i> Unidades / Canchas Asignadas</label>
+            <input type="text" id="assignedFields" placeholder="Ej. Unidad Deportiva Félix Ireta">
+          </div>
+        </div>
+
+        <!-- 4. Campos para DIRECTOR DE LIGA / MASTER -->
+        <div id="fields-master" class="dynamic-field-group">
+          <div class="form-row">
+            <div class="input-group">
+              <label for="leagueName"><i class="fa-solid fa-trophy"></i> Nombre de la Liga</label>
+              <input type="text" id="leagueName" placeholder="Ej. Liga Premier Nocturna">
+            </div>
+            <div class="input-group">
+              <label for="teamCount"><i class="fa-solid fa-users-gear"></i> No. Estimado de Equipos</label>
+              <input type="number" id="teamCount" placeholder="Ej. 16">
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Campos para ADMIN -->
+        <div id="fields-admin" class="dynamic-field-group">
+          <div class="input-group">
+            <label for="adminKey"><i class="fa-solid fa-key"></i> Clave de Verificación de Administrador</label>
+            <input type="password" id="adminKey" placeholder="Código de autorización previa">
+          </div>
+        </div>
+
+        <!-- Botón de Envío -->
+        <button type="submit" class="btn-login" style="margin-top: 15px;">
+          Completar Registro <i class="fa-solid fa-user-plus"></i>
+        </button>
+
+      </form>
+
+      <!-- Enlace a Login -->
+      <div class="register-link-container">
+        <p>¿Ya tienes una cuenta? <a href="usuarios.html" class="highlight-link">Inicia Sesión aquí</a></p>
+      </div>
+
+      <div id="registerMessage" class="login-message" style="margin-top: 15px; font-weight: 600;"></div>
+
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
