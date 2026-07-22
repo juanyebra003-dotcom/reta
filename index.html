@@ -33,48 +33,55 @@
     </div>
   </header>
 
-  <!-- SECCIÓN HERO / INICIO CON SLIDER Y BOTONES SEPARADOS -->
-  <section class="hero" id="inicio">
-    <div class="hero-content">
-      <h1>LLEVA TUS TORNEOS AL <br><span class="text-gradient">SIGUIENTE NIVEL</span></h1>
-      <p class="hero-subtitle">
-        La plataforma tecnológica definitiva para administrar ligas, torneos de fútbol y eventos deportivos en tiempo real.
-      </p>
+  <!-- SECCIÓN HERO (GRID: SLIDESHOW A LA IZQUIERDA + TEXTO A LA DERECHA) -->
+  <section class="hero-section" id="inicio">
+    <div class="container hero-grid">
       
-      <!-- BOTONES DE TIENDAS DE APLICACIONES (MÁS SEPARADOS) -->
-      <div class="store-buttons">
-        <a href="#" class="btn-store">
-          <i class="fa-brands fa-google-play"></i>
-          <div><small>Disponible en</small><br><span>Google Play</span></div>
-        </a>
-        <a href="#" class="btn-store">
-          <i class="fa-brands fa-apple"></i>
-          <div><small>Consígalo en el</small><br><span>App Store</span></div>
-        </a>
+      <!-- SLIDESHOW COSTADO IZQUIERDO -->
+      <div class="hero-slideshow-wrapper">
+        <div class="glass-card hero-slideshow">
+          <div class="hero-slide active">
+            <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80" alt="Fútbol 1">
+            <div class="hero-slide-caption">Control total de tus partidos</div>
+          </div>
+          <div class="hero-slide">
+            <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80" alt="Fútbol 2">
+            <div class="hero-slide-caption">Estadísticas en tiempo real</div>
+          </div>
+          <div class="hero-slide">
+            <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=800&q=80" alt="Fútbol 3">
+            <div class="hero-slide-caption">Gestión automatizada de ligas</div>
+          </div>
+          
+          <!-- Indicadores -->
+          <div class="hero-slider-dots">
+            <span class="h-dot active" data-index="0"></span>
+            <span class="h-dot" data-index="1"></span>
+            <span class="h-dot" data-index="2"></span>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- SLIDER PRINCIPAL DEL HERO -->
-    <div class="hero-slider-container">
-      <div class="hero-slider">
-        <div class="hero-slide active">
-          <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1000&q=80" alt="Fútbol 1">
-          <div class="hero-slide-caption">Control total de tus partidos y cédulas digitales</div>
-        </div>
-        <div class="hero-slide">
-          <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1000&q=80" alt="Fútbol 2">
-          <div class="hero-slide-caption">Estadísticas en tiempo real para jugadores y árbitros</div>
-        </div>
-        <div class="hero-slide">
-          <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=1000&q=80" alt="Fútbol 3">
-          <div class="hero-slide-caption">Gestión automatizada de convocatorias y finanzas</div>
+      <!-- CONTENIDO COSTADO DERECHO -->
+      <div class="hero-content">
+        <h1>LLEVA TUS TORNEOS AL <br><span class="text-gradient">SIGUIENTE NIVEL</span></h1>
+        <p class="hero-subtitle">
+          La plataforma tecnológica definitiva para administrar ligas, torneos de fútbol y eventos deportivos en tiempo real.
+        </p>
+        
+        <!-- BOTONES DE TIENDAS SEPARADOS -->
+        <div class="store-buttons">
+          <a href="#" class="btn-store">
+            <i class="fa-brands fa-google-play"></i>
+            <div><small>Disponible en</small><br><span>Google Play</span></div>
+          </a>
+          <a href="#" class="btn-store">
+            <i class="fa-brands fa-apple"></i>
+            <div><small>Consígalo en el</small><br><span>App Store</span></div>
+          </a>
         </div>
       </div>
-      <div class="hero-slider-dots">
-        <span class="h-dot active" data-index="0"></span>
-        <span class="h-dot" data-index="1"></span>
-        <span class="h-dot" data-index="2"></span>
-      </div>
+
     </div>
   </section>
 
@@ -128,7 +135,7 @@
     </div>
   </section>
 
-  <!-- SECCIÓN: BENEFICIOS RESTAURADA -->
+  <!-- SECCIÓN: BENEFICIOS -->
   <section class="section-benefits" id="beneficios">
     <div class="container">
       <h2 class="section-title">Beneficios para tu <span class="text-gradient">Liga</span></h2>
@@ -157,7 +164,6 @@
     <div class="container">
       <h2 class="section-title">Jugadores <span class="text-gradient">Destacados</span></h2>
       <div class="scroll-row">
-        <!-- Tarjeta 1 -->
         <div class="glass-card card-item">
           <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
           <div class="card-body">
@@ -167,7 +173,6 @@
             <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Clausura 2026</p>
           </div>
         </div>
-        <!-- Tarjeta 2 -->
         <div class="glass-card card-item">
           <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
           <div class="card-body">
@@ -177,7 +182,6 @@
             <p class="card-submeta"><i class="fa-solid fa-flag"></i> Copa de Verano</p>
           </div>
         </div>
-        <!-- Tarjeta 3 -->
         <div class="glass-card card-item">
           <img src="https://images.unsplash.com/photo-1543351611-58f69d7c1781?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
           <div class="card-body">
@@ -187,7 +191,6 @@
             <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Apertura</p>
           </div>
         </div>
-        <!-- Tarjeta 4 -->
         <div class="glass-card card-item">
           <img src="https://images.unsplash.com/photo-1560272564-669520747490?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
           <div class="card-body">
@@ -197,7 +200,6 @@
             <p class="card-submeta"><i class="fa-solid fa-flag"></i> Torneo Nocturno</p>
           </div>
         </div>
-        <!-- Tarjeta 5 -->
         <div class="glass-card card-item">
           <img src="https://images.unsplash.com/photo-1526232761682-d26e03ac148e?auto=format&fit=crop&w=400&q=80" alt="Jugador" class="card-img">
           <div class="card-body">
@@ -260,7 +262,7 @@
     </div>
   </section>
 
-  <!-- SECCIÓN: ALIADOS COMERCIALES Y PATROCINADORES RESTAURADA -->
+  <!-- SECCIÓN: ALIADOS COMERCIALES Y PATROCINADORES -->
   <section class="section-sponsors" id="patrocinadores">
     <div class="container">
       <h2 class="section-title">Aliados y <span class="text-gradient">Patrocinadores</span></h2>
@@ -273,7 +275,7 @@
     </div>
   </section>
 
-  <!-- VENTANA EMERGENTE (MODAL CON VIDEO DE BIENVENIDA RESTAURADO) -->
+  <!-- VENTANA EMERGENTE INICIAL (VIDEO DE BIENVENIDA) -->
   <div id="videoModal" class="modal-overlay active">
     <div class="modal-card glass-card modal-video-card">
       <button class="close-modal" id="closeVideoModal">&times;</button>
@@ -285,20 +287,52 @@
     </div>
   </div>
 
-  <!-- FOOTER / PIE DE PÁGINA -->
+  <!-- VENTANA EMERGENTE 1: 20 SEGUNDOS (PATROCINADOR 1) -->
+  <div id="modalSponsor1" class="modal-overlay">
+    <div class="modal-card glass-card">
+      <button class="close-modal" onclick="closeModal('modalSponsor1')">&times;</button>
+      <h3>Nuestros <span class="text-gradient">Patrocinadores</span></h3>
+      <img src="img/img_patro1.jpg" alt="Patrocinador Oficial 1" class="modal-sponsor-img">
+    </div>
+  </div>
+
+  <!-- VENTANA EMERGENTE 2: 30 SEGUNDOS (PATROCINADOR 2) -->
+  <div id="modalSponsor2" class="modal-overlay">
+    <div class="modal-card glass-card">
+      <button class="close-modal" onclick="closeModal('modalSponsor2')">&times;</button>
+      <h3>Patrocinador <span class="text-gradient">Oficial</span></h3>
+      <img src="img/img_patro2.jpg" alt="Patrocinador Oficial 2" class="modal-sponsor-img">
+    </div>
+  </div>
+
+  <!-- VENTANA EMERGENTE 3: 40 SEGUNDOS (PROMOCIÓN RETA) -->
+  <div id="modalPromo" class="modal-overlay">
+    <div class="modal-card glass-card promo-modal-card">
+      <button class="close-modal" onclick="closeModal('modalPromo')">&times;</button>
+      <img src="img/logo_reta.png" alt="RETA Logo" class="promo-logo-glow">
+      <h2>¡Activa tu <span class="text-gradient">Promoción Especial</span>!</h2>
+      <p class="promo-text">Regístrate hoy mismo y obtén <strong>15 días gratis de prueba</strong> para administrar tus ligas y torneos.</p>
+      <a href="registro.html" class="btn-login btn-promo-action">Regístrate Ahora <i class="fa-solid fa-arrow-right"></i></a>
+      <p class="legal-disclaimer">Esta Promoción aplica restricciones y de acuerdo a las condiciones de la promoción.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER CON REDES SOCIALES RESTAURADAS -->
   <footer class="footer">
     <div class="container footer-content">
       <p>&copy; 2026 RETA App. Todos los derechos reservados.</p>
       <div class="social-links">
-        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#" aria-label="Twitter X"><i class="fa-brands fa-x-twitter"></i></a>
       </div>
     </div>
   </footer>
 
   <!-- BOTÓN FLOTANTE DE WHATSAPP -->
-  <a href="https://wa.me/5214737374394?text=Hola,%20quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20RETA" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contacto WhatsApp">
+  <a href="https://wa.me/5210000000000?text=Hola,%20quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20RETA" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contacto WhatsApp">
     <i class="fa-brands fa-whatsapp"></i>
   </a>
 
