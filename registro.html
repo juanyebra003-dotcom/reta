@@ -191,7 +191,7 @@
 
           <!-- Botón Único de Siguiente -->
           <div class="wizard-buttons">
-            <button type="button" class="btn-login" onclick="validateStep1AndProceed()">
+            <button type="button" id="btnStep1" class="btn-login" onclick="validateStep1AndProceed()">
               Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
@@ -480,7 +480,19 @@
       playBeepSound();
       const role = document.getElementById('roleSelect').value;
       const authSection = document.getElementById('adminAuthCodeSection');
-      authSection.style.display = (role === 'ADMIN_LIGA' || role === 'SUPERVISOR') ? 'block' : 'none';
+      const btnStep1 = document.getElementById('btnStep1');
+
+      if (role === 'ADMIN_LIGA' || role === 'SUPERVISOR') {
+        authSection.style.display = 'block';
+        if (role === 'ADMIN_LIGA') {
+          btnStep1.innerHTML = `Validar Token y Crear Liga <i class="fa-solid fa-crown"></i>`;
+        } else {
+          btnStep1.innerHTML = `Validar Token y Acceder <i class="fa-solid fa-key"></i>`;
+        }
+      } else {
+        authSection.style.display = 'none';
+        btnStep1.innerHTML = `Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>`;
+      }
     }
 
     function toggleIdMethod(method) {
@@ -532,12 +544,13 @@
     }
 
     async function validateStep1AndProceed() {
-      const curpVal = document.getElementById('curp').value.trim();
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
       const emailVal = document.getElementById('userEmail').value.trim();
       const roleVal = document.getElementById('roleSelect').value;
       const tokenInput = document.getElementById('adminAuthToken').value.trim();
+      const btnStep1 = document.getElementById('btnStep1');
 
       if (!fname || !lname || !curpVal || !emailVal) {
         alert("Por favor completa los campos obligatorios.");
@@ -549,17 +562,25 @@
         return;
       }
 
-      // Validación de Token para Roles Elevados (ADMIN_LIGA / SUPERVISOR)
+      if (!document.getElementById('acceptTermsCheckbox').checked) {
+        alert("Acepta los Términos para continuar.");
+        return;
+      }
+
+      // LÓGICA DE REDIRECCIÓN PARA ADMINISTRADOR DE LIGA / SUPERVISOR
       if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR') {
         if (!tokenInput) {
           alert("Debes ingresar la Clave / Token de Autorización proporcionado por SuperAdmin RETA.");
           return;
         }
 
-        // Intento de validación dinámica en Supabase tabla tokens_invitacion
+        btnStep1.disabled = true;
+        btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Validando Token...`;
+
+        // Validar Token en Supabase
         let isTokenValid = false;
         try {
-          const { data, error } = await _supabase
+          const { data } = await _supabase
             .from('tokens_invitacion')
             .select('*')
             .eq('codigo_token', tokenInput)
@@ -567,25 +588,66 @@
             .eq('usado', false)
             .maybeSingle();
 
-          if (data) {
-            isTokenValid = true;
-          }
+          if (data) isTokenValid = true;
         } catch (e) {
-          console.warn("Validación de token en Supabase omitida o fallida:", e);
+          console.warn("Consulta Supabase fallida:", e);
         }
 
-        // Fallback: si no está en la tabla o la tabla no existe, compara contra MASTER_ADMIN_TOKEN
+        // Fallback a token maestro
         if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
-          alert("Token de Autorización inválido. Para registrarte libremente, selecciona el rol Jugador o Delegado.");
+          alert("Token de Autorización inválido o expirado.");
+          btnStep1.disabled = false;
+          btnStep1.innerHTML = `Validar Token y Crear Liga <i class="fa-solid fa-crown"></i>`;
+          return;
+        }
+
+        // Guardar/actualizar identidad en Supabase para el Administrador
+        try {
+          const userPayload = {
+            curp: curpVal,
+            nombre: fname,
+            apellidos: lname,
+            email: emailVal,
+            telefono: document.getElementById('userPhone').value.trim()
+          };
+          await _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' });
+
+          // Asignar rol
+          const { data: roleData } = await _supabase.from('roles').select('id').eq('nombre_rol', roleVal).single();
+          if (roleData) {
+            await _supabase.from('usuario_roles').upsert([{
+              curp: curpVal,
+              rol_id: roleData.id,
+              estado_aprobacion: 'APROBADO'
+            }], { onConflict: 'curp,rol_id,liga_id' });
+          }
+
+          // Marcar token como usado
+          await _supabase.from('tokens_invitacion').update({ usado: true }).eq('codigo_token', tokenInput);
+
+          // Guardar sesión rápida del Administrador
+          localStorage.setItem('reta_admin_curp', curpVal);
+          localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
+
+          // Redirección directa al panel de Registro de Liga
+          if (roleVal === 'ADMIN_LIGA') {
+            window.location.href = 'liga_registrar.html';
+          } else {
+            alert("Acceso autorizado de Supervisor.");
+            window.location.href = 'index.html';
+          }
+          return;
+
+        } catch (err) {
+          console.error("Error registrando administrador:", err);
+          alert("Ocurrió un error al registrar tus datos de Administrador: " + err.message);
+          btnStep1.disabled = false;
+          btnStep1.innerHTML = `Validar Token y Crear Liga <i class="fa-solid fa-crown"></i>`;
           return;
         }
       }
 
-      if (!document.getElementById('acceptTermsCheckbox').checked) {
-        alert("Acepta los Términos para continuar.");
-        return;
-      }
-
+      // Para los demás roles (Jugador, Delegado, Árbitro), continúa al Paso 2
       goToStep(2);
     }
 
@@ -657,15 +719,6 @@
           .upsert([roleBinding], { onConflict: 'curp,rol_id,liga_id' });
 
         if (bindErr) throw bindErr;
-
-        // Si se usó un token dinámico, lo marcamos como usado en Supabase
-        const tokenInput = document.getElementById('adminAuthToken').value.trim();
-        if (tokenInput && (roleName === 'ADMIN_LIGA' || roleName === 'SUPERVISOR')) {
-          await _supabase
-            .from('tokens_invitacion')
-            .update({ usado: true })
-            .eq('codigo_token', tokenInput);
-        }
 
         // Poblado de Credencial
         document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
