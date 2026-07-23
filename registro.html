@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>RETA - Plataforma de Registro Integral</title>
+  <title>RETA - Registro de Usuarios</title>
   <!-- Google Fonts & FontAwesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 
@@ -13,67 +13,93 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
-    /* Estilos para el Selector de Rol Inicial */
-    .role-selection-grid {
+    /* Estilos Deportivos Mobile-First para Selección de Rol */
+    .role-selection-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-      margin: 25px 0;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 20px 0;
     }
-    .role-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(0, 212, 255, 0.2);
-      border-radius: 12px;
-      padding: 20px 15px;
+    @media (max-width: 600px) {
+      .role-selection-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    .sport-role-card {
+      background: linear-gradient(145deg, rgba(19, 28, 51, 0.9), rgba(10, 15, 29, 0.95));
+      border: 2px solid rgba(0, 212, 255, 0.15);
+      border-radius: 16px;
+      padding: 18px 15px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
-    .role-card:hover, .role-card.selected {
+    .sport-role-card:active, .sport-role-card:hover {
       border-color: #00d4ff;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+    }
+    .sport-role-card .card-icon-wrapper {
+      width: 55px;
+      height: 55px;
+      margin: 0 auto 10px;
       background: rgba(0, 212, 255, 0.1);
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #00d4ff;
     }
-    .role-card i {
-      font-size: 2.5rem;
+    .sport-role-card i {
+      font-size: 1.6rem;
       color: #00d4ff;
-      margin-bottom: 12px;
-      display: block;
     }
-    .role-card h4 {
-      font-size: 1.1rem;
-      margin-bottom: 5px;
+    .sport-role-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
       color: #fff;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .role-card p {
+    .sport-role-card p {
       font-size: 0.75rem;
       color: #94a3b8;
+      line-height: 1.2;
     }
-    .super-admin-note {
-      font-size: 0.7rem;
-      color: #64748b;
-      margin-top: 6px;
-      display: block;
-      font-style: italic;
-    }
-    .btn-change-role {
-      background: transparent;
-      border: none;
-      color: #00d4ff;
-      font-size: 0.85rem;
+    .superadmin-badge-option {
+      grid-column: 1 / -1;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
       cursor: pointer;
-      margin-bottom: 15px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      margin-top: 5px;
+    }
+    .superadmin-badge-option:hover {
+      border-color: #ff4757;
+      background: rgba(255, 71, 87, 0.05);
+    }
+    .superadmin-badge-option span {
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+    .superadmin-badge-option small {
+      display: block;
+      font-size: 0.65rem;
+      color: #64748b;
+      font-style: italic;
     }
   </style>
 </head>
 <body class="login-body">
 
   <a href="index.html" class="btn-back" onclick="playBeepSound()">
-    <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+    <i class="fa-solid fa-arrow-left"></i> Inicio
   </a>
 
   <div class="login-container full-register-container">
@@ -84,115 +110,123 @@
         <a href="index.html" onclick="playBeepSound()">
           <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
         </a>
-        <h2>Registro Oficial <span class="text-gradient">RETA</span></h2>
-        <p id="headerSubtitle">Selecciona tu perfil en la plataforma para comenzar</p>
+        <h2>Registro <span class="text-gradient">Oficial RETA</span></h2>
+        <p id="headerSubtitle">Selecciona tu perfil deportivo para ingresar</p>
       </div>
 
-      <!-- ================= PASO 0: SELECTOR INICIAL DE ROL ================= -->
+      <!-- ================= SELECTOR VISUAL DE ROLES DEPORTIVOS ================= -->
       <div id="roleSelectionStep">
-        <div class="role-selection-grid">
+        <div class="role-selection-container">
           
-          <!-- Opción 1: Jugador -->
-          <div class="role-card" onclick="selectRoleAndProceed('JUGADOR')">
-            <i class="fa-solid fa-futbol"></i>
-            <h4>Jugador / Atleta</h4>
-            <p>Obtén tu Credencial Virtual Única para competir en ligas RETA.</p>
+          <!-- Jugador -->
+          <div class="sport-role-card" onclick="selectRoleAndProceed('JUGADOR')">
+            <div class="card-icon-wrapper">
+              <i class="fa-solid fa-futbol"></i>
+            </div>
+            <h4>Jugador</h4>
+            <p>Ficha médica y credencial virtual única QR.</p>
           </div>
 
-          <!-- Opción 2: Delegado / DT -->
-          <div class="role-card" onclick="selectRoleAndProceed('DELEGADO')">
-            <i class="fa-solid fa-clipboard-user"></i>
-            <h4>Delegado / D.T.</h4>
-            <p>Inscribe y administra las plantillas de tus equipos.</p>
+          <!-- Delegado -->
+          <div class="sport-role-card" onclick="selectRoleAndProceed('DELEGADO')">
+            <div class="card-icon-wrapper">
+              <i class="fa-solid fa-clipboard-user"></i>
+            </div>
+            <h4>Delegado / DT</h4>
+            <p>Registro de plantillas, equipos y alineaciones.</p>
           </div>
 
-          <!-- Opción 3: Árbitro / Colegiado -->
-          <div class="role-card" onclick="selectRoleAndProceed('ARBITRO')">
-            <i class="fa-solid fa-flag"></i>
-            <h4>Árbitro / Colegiado</h4>
-            <p>Acceso a Cédula Digital en vivo y gestión de partidos.</p>
+          <!-- Árbitro -->
+          <div class="sport-role-card" onclick="selectRoleAndProceed('ARBITRO')">
+            <div class="card-icon-wrapper">
+              <i class="fa-solid fa-flag"></i>
+            </div>
+            <h4>Árbitro</h4>
+            <p>Control de partidos y cédula digital en vivo.</p>
           </div>
 
-          <!-- Opción 4: Admin de Liga -->
-          <div class="role-card" onclick="selectRoleAndProceed('ADMIN_LIGA')">
-            <i class="fa-solid fa-crown"></i>
-            <h4>Administrador de Liga</h4>
-            <p>Registra y administra tu liga, torneos y calendarios.</p>
+          <!-- Admin Liga -->
+          <div class="sport-role-card" onclick="selectRoleAndProceed('ADMIN_LIGA')">
+            <div class="card-icon-wrapper">
+              <i class="fa-solid fa-crown"></i>
+            </div>
+            <h4>Admin Liga</h4>
+            <p>Gestión de torneos, sedes y calendarios.</p>
           </div>
 
-        </div>
-
-        <!-- Opción Especial: Admin Sub-Base -->
-        <div style="text-align: center; margin-top: 10px;">
-          <div class="role-card" style="display: inline-block; padding: 10px 20px; border-color: rgba(255,255,255,0.1);" onclick="selectRoleAndProceed('SUPERADMIN')">
-            <i class="fa-solid fa-gears" style="font-size: 1.2rem; display: inline-block; margin-right: 5px;"></i>
-            <span style="font-size: 0.85rem; color:#cbd5e1;">Administrador Sub-Base</span>
-            <span class="super-admin-note">Únicamente para personal autorizado Reta Pro App</span>
+          <!-- SuperAdmin RETA -->
+          <div class="superadmin-badge-option" onclick="selectRoleAndProceed('SUPERADMIN')">
+            <span><i class="fa-solid fa-shield-halved" style="color:#ff4757;"></i> Administrador Sub-Base</span>
+            <small>Únicamente para personal autorizado Reta Pro App</small>
           </div>
+
         </div>
       </div>
 
-      <!-- ================= FORMULARIO DINÁMICO (OCULTO INICIALMENTE) ================= -->
+      <!-- ================= FORMULARIO DINÁMICO MULTI-ROL ================= -->
       <div id="formContainer" style="display: none;">
         
-        <button type="button" class="btn-change-role" onclick="resetRoleSelection()">
-          <i class="fa-solid fa-rotate-left"></i> Cambiar perfil de registro
+        <button type="button" class="btn-change-role" onclick="resetRoleSelection()" style="background:none; border:none; color:#00d4ff; font-size:0.85rem; cursor:pointer; margin-bottom:15px;">
+          <i class="fa-solid fa-arrow-left-long"></i> Cambiar perfil de registro
         </button>
 
-        <!-- Barra de Progreso Wizard (Visible principalmente para Jugadores) -->
+        <!-- Barra de Progreso Wizard (Jugadores) -->
         <div class="wizard-progress" id="wizardProgressBar">
           <div class="step-indicator active" id="step-dot-1">1. Identificación</div>
-          <div class="step-indicator" id="step-dot-2">2. Liga & Equipo</div>
-          <div class="step-indicator" id="step-dot-3">3. Ficha Médica</div>
+          <div class="step-indicator" id="step-dot-2">2. Equipo</div>
+          <div class="step-indicator" id="step-dot-3">3. Médica</div>
           <div class="step-indicator" id="step-dot-4">4. Credencial</div>
         </div>
 
         <form id="fullRegisterForm" novalidate onsubmit="event.preventDefault();">
-          
-          <!-- CAMPO OCULTO DE ROL SELECCIONADO -->
           <input type="hidden" id="selectedRoleInput" value="JUGADOR">
 
-          <!-- ================= PASO 1: IDENTIFICACIÓN Y DATOS GENERALES ================= -->
+          <!-- PASO 1: DATOS GENERALES -->
           <div class="wizard-step active" id="wizard-step-1">
-            <h3 class="step-title" id="step1Title"><i class="fa-solid fa-id-card"></i> Paso 1: Identificación y Datos Personales</h3>
+            <h3 class="step-title" id="step1Title"><i class="fa-solid fa-id-card"></i> Paso 1: Datos de Identificación</h3>
             
-            <!-- Módulo de Clave de Autorización para Perfiles Administrativos/Árbitros -->
-            <div id="adminAuthCodeSection" class="form-row" style="display: none; background: rgba(0,212,255,0.08); padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
+            <!-- Token de Autorización para Roles Especiales -->
+            <div id="adminAuthCodeSection" class="form-row" style="display: none; background: rgba(0,212,255,0.08); padding: 12px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 15px;">
               <div class="input-group">
                 <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización (*)</label>
-                <input type="password" id="adminAuthToken" placeholder="Ingresa tu token de invitación de RETA" onchange="playBeepSound()">
-                <small style="color:#94a3b8;">Requerido para otorgar accesos de Delegado, Árbitro o Administrador.</small>
+                <input type="password" id="adminAuthToken" placeholder="Ingresa clave otorgada por la Liga o RETA">
               </div>
             </div>
 
-            <!-- Selección INE vs Menor de Edad (Solo visible para Jugadores) -->
+            <!-- Campos Específicos para Árbitro -->
+            <div id="arbitroExtraFields" class="form-row" style="display: none;">
+              <div class="input-group">
+                <label for="colegioArbitral"><i class="fa-solid fa-building-columns"></i> Colegio / Asociación de Árbitros</label>
+                <input type="text" id="colegioArbitral" placeholder="Ej. Colegio del Bajío">
+              </div>
+            </div>
+
+            <!-- Campos Específicos para Delegado -->
+            <div id="delegadoExtraFields" class="form-row" style="display: none;">
+              <div class="input-group">
+                <label for="nombreClub"><i class="fa-solid fa-shield-cat"></i> Nombre del Club / Equipo que Representa</label>
+                <input type="text" id="nombreClub" placeholder="Ej. Deportivo Moroleón">
+              </div>
+            </div>
+
+            <!-- Identificación INE vs Menor -->
             <div class="method-selector" id="idMethodSelector">
               <label class="radio-card active" id="optionIneLabel">
                 <input type="radio" name="idMethod" value="ine" checked id="methodIne" onchange="toggleIdMethod('ine')">
-                <i class="fa-solid fa-camera"></i> Escanear INE (OCR Automático)
+                <i class="fa-solid fa-camera"></i> INE (OCR)
               </label>
               <label class="radio-card" id="optionMinorLabel">
                 <input type="radio" name="idMethod" value="minor" id="methodMinor" onchange="toggleIdMethod('minor')">
-                <i class="fa-solid fa-child"></i> Menor de Edad (Registro Manual + Responsiva)
+                <i class="fa-solid fa-child"></i> Menor de Edad
               </label>
             </div>
 
-            <!-- Módulo INE / OCR -->
+            <!-- Dropzone INE -->
             <div id="ineOcrSection" class="ocr-dropzone-container">
               <div class="ocr-dropzone" id="ineDropzone" onclick="document.getElementById('ineFileInput').click()">
                 <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
-                <p>Arrastra tu INE (Frente) o <strong>haz clic aquí para subirla</strong></p>
-                <span class="subtext">Soporta JPG, PNG</span>
+                <p>Subir Identificación Oficial (Frente)</p>
                 <input type="file" id="ineFileInput" accept="image/*" hidden onchange="handleIneUpload(event)">
-              </div>
-              <div id="ocrStatus" class="ocr-status-message"></div>
-            </div>
-
-            <!-- Módulo Menor de Edad (Carta Responsiva) -->
-            <div id="minorSection" class="minor-upload-section" style="display: none;">
-              <div class="input-group">
-                <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Adjuntar Carta Responsiva Firmada (*Requerido)</label>
-                <input type="file" id="responsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
               </div>
             </div>
 
@@ -202,94 +236,103 @@
                 <img id="playerPhotoPreview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto">
               </div>
               <div class="photo-controls">
-                <label for="playerPhotoInput" class="btn-secondary-action"><i class="fa-solid fa-upload"></i> Subir Fotografía</label>
+                <label for="playerPhotoInput" class="btn-secondary-action"><i class="fa-solid fa-upload"></i> Foto Perfil</label>
                 <input type="file" id="playerPhotoInput" accept="image/*" hidden onchange="handlePhotoUpload(event)">
-                <small>Foto para tu perfil y credencial oficial.</small>
               </div>
             </div>
 
-            <!-- CURP -->
+            <!-- CURP y EDAD -->
             <div class="form-row" style="margin-top: 15px;">
               <div class="input-group" style="flex: 2;">
-                <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP (* Clave Primaria Única ID)</label>
-                <input type="text" id="curp" placeholder="18 caracteres de tu CURP" required maxlength="18" style="text-transform: uppercase; border: 1px solid #00d4ff;" oninput="processCurpAutoData(this.value)">
-                <small id="curpStatusText" style="color:#00d4ff; display:none; margin-top:4px;"></small>
+                <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP (* ID Único)</label>
+                <input type="text" id="curp" placeholder="18 caracteres" required maxlength="18" style="text-transform: uppercase; border: 1px solid #00d4ff;" oninput="processCurpAutoData(this.value)">
               </div>
               <div class="input-group" style="flex: 1;">
-                <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad (Auto)</label>
-                <input type="number" id="age" placeholder="Años" required readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
+                <label for="age">Edad</label>
+                <input type="number" id="age" readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
               </div>
             </div>
 
-            <!-- DATOS PERSONALES -->
+            <!-- NOMBRE Y APELLIDOS -->
             <div class="form-row">
               <div class="input-group">
-                <label for="firstName"><i class="fa-solid fa-user"></i> Nombre(s)</label>
-                <input type="text" id="firstName" placeholder="Nombre(s)" required onchange="playBeepSound()">
+                <label for="firstName">Nombre(s)</label>
+                <input type="text" id="firstName" placeholder="Nombre(s)" required>
               </div>
               <div class="input-group">
-                <label for="lastName"><i class="fa-solid fa-user"></i> Apellidos</label>
-                <input type="text" id="lastName" placeholder="Apellidos" required onchange="playBeepSound()">
+                <label for="lastName">Apellidos</label>
+                <input type="text" id="lastName" placeholder="Apellidos" required>
               </div>
             </div>
 
-            <div class="form-row">
-              <div class="input-group">
-                <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género / Rama (Auto)</label>
-                <input type="text" id="gender" placeholder="Masculino / Femenino" readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
-              </div>
-              <div class="input-group">
-                <label for="stateBirth"><i class="fa-solid fa-baby"></i> Estado de Nacimiento (Auto)</label>
-                <input type="text" id="stateBirth" placeholder="Entidad Federativa" readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
-              </div>
-            </div>
-
+            <!-- ESTADO Y MUNICIPIOS DINÁMICOS -->
             <div class="form-row">
               <div class="input-group">
                 <label for="stateRes"><i class="fa-solid fa-map-location-dot"></i> Estado de Residencia (*)</label>
-                <select id="stateRes" required onchange="playBeepSound()">
+                <select id="stateRes" required onchange="onStateChange(this.value)">
                   <option value="" disabled selected>Selecciona Estado</option>
-                  <option value="Guanajuato">Guanajuato</option>
-                  <option value="Michoacán">Michoacán</option>
-                  <option value="Jalisco">Jalisco</option>
-                  <option value="Querétaro">Querétaro</option>
+                  <option value="Aguascalientes">Aguascalientes</option>
+                  <option value="Baja California">Baja California</option>
+                  <option value="Baja California Sur">Baja California Sur</option>
+                  <option value="Campeche">Campeche</option>
+                  <option value="Chiapas">Chiapas</option>
+                  <option value="Chihuahua">Chihuahua</option>
                   <option value="Ciudad de México">Ciudad de México</option>
+                  <option value="Coahuila">Coahuila</option>
+                  <option value="Colima">Colima</option>
+                  <option value="Durango">Durango</option>
                   <option value="Estado de México">Estado de México</option>
+                  <option value="Guanajuato">Guanajuato</option>
+                  <option value="Guerrero">Guerrero</option>
+                  <option value="Hidalgo">Hidalgo</option>
+                  <option value="Jalisco">Jalisco</option>
+                  <option value="Michoacán">Michoacán</option>
+                  <option value="Morelos">Morelos</option>
+                  <option value="Nayarit">Nayarit</option>
+                  <option value="Nuevo León">Nuevo León</option>
+                  <option value="Oaxaca">Oaxaca</option>
+                  <option value="Puebla">Puebla</option>
+                  <option value="Querétaro">Querétaro</option>
+                  <option value="Quintana Roo">Quintana Roo</option>
+                  <option value="San Luis Potosí">San Luis Potosí</option>
+                  <option value="Sinaloa">Sinaloa</option>
+                  <option value="Sonora">Sonora</option>
+                  <option value="Tabasco">Tabasco</option>
+                  <option value="Tamaulipas">Tamaulipas</option>
+                  <option value="Tlaxcala">Tlaxcala</option>
+                  <option value="Veracruz">Veracruz</option>
+                  <option value="Yucatán">Yucatán</option>
+                  <option value="Zacatecas">Zacatecas</option>
                 </select>
               </div>
               <div class="input-group">
-                <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia (*)</label>
-                <input type="text" id="cityRes" placeholder="Ej. Moroleón" required onchange="playBeepSound()">
+                <label for="cityRes"><i class="fa-solid fa-city"></i> Municipio / Ciudad (*)</label>
+                <select id="cityRes" required>
+                  <option value="" disabled selected>Primero selecciona un Estado</option>
+                </select>
               </div>
             </div>
 
+            <!-- CONTACTO -->
             <div class="form-row">
               <div class="input-group">
-                <label for="userPhone"><i class="fa-solid fa-phone"></i> Teléfono Móvil</label>
-                <input type="tel" id="userPhone" placeholder="445 123 4567" required onchange="playBeepSound()">
+                <label for="userPhone">Teléfono Móvil</label>
+                <input type="tel" id="userPhone" placeholder="10 dígitos" required>
               </div>
               <div class="input-group">
-                <label for="userEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico</label>
-                <input type="email" id="userEmail" placeholder="correo@ejemplo.com" required onchange="playBeepSound()">
+                <label for="userEmail">Correo Electrónico</label>
+                <input type="email" id="userEmail" placeholder="correo@ejemplo.com" required>
               </div>
             </div>
 
-            <!-- TÉRMINOS Y AUDITORÍA -->
+            <!-- TÉRMINOS -->
             <div class="terms-container">
               <label class="custom-checkbox-row">
-                <input type="checkbox" id="verifyEmailCheckbox" required onchange="playBeepSound()">
-                <span class="checkbox-text">Confirmo que mi correo electrónico es correcto.</span>
-              </label>
-
-              <label class="custom-checkbox-row">
-                <input type="checkbox" id="acceptTermsCheckbox" required onchange="playBeepSound()">
-                <span class="checkbox-text">
-                  Acepto los <a href="#" class="highlight-link" onclick="openTermsModal(event)">Términos y Deslinde de Responsabilidad</a> RETA.
-                </span>
+                <input type="checkbox" id="acceptTermsCheckbox" required>
+                <span class="checkbox-text">Acepto los Términos y Condiciones RETA.</span>
               </label>
             </div>
 
-            <!-- BOTÓN DINÁMICO DE ENVÍO -->
             <div class="wizard-buttons">
               <button type="button" id="btnStep1" class="btn-login" onclick="validateStep1AndProceed()">
                 Continuar <i class="fa-solid fa-arrow-right"></i>
@@ -297,85 +340,47 @@
             </div>
           </div>
 
-          <!-- ================= PASO 2: LIGA Y TORNEO (EXCLUSIVO JUGADORES) ================= -->
+          <!-- PASOS 2, 3 y 4 (Solo Jugador) -->
           <div class="wizard-step" id="wizard-step-2" style="display: none;">
-            <h3 class="step-title"><i class="fa-solid fa-trophy"></i> Paso 2: Datos de Liga, Torneo y Equipo</h3>
-
+            <h3 class="step-title">Paso 2: Selección de Equipo</h3>
             <div class="form-row">
               <div class="input-group">
-                <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
-                <select id="leagueSelect" required onchange="onLeagueSelectChange()">
-                  <option value="" disabled selected>Cargando Ligas...</option>
-                  <option value="LIGA-PREMIER-GTO">Liga Premier RETA (Guanajuato)</option>
-                  <option value="COPA-BAJIO-GTO">Copa Internacional Bajío (Guanajuato)</option>
-                </select>
-              </div>
-              <div class="input-group">
-                <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece</label>
-                <select id="teamSelect" required onchange="playBeepSound()">
-                  <option value="" disabled selected>Selecciona tu equipo</option>
+                <label for="teamSelect">Equipo</label>
+                <select id="teamSelect">
                   <option value="Gallos FC">Gallos FC</option>
                   <option value="Real San José">Real San José</option>
                 </select>
               </div>
             </div>
-
             <div class="wizard-buttons">
-              <button type="button" class="btn-secondary-action" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-              <button type="button" class="btn-login" onclick="goToStep(3)">Siguiente: Ficha Médica <i class="fa-solid fa-arrow-right"></i></button>
+              <button type="button" class="btn-secondary-action" onclick="goToStep(1)">Anterior</button>
+              <button type="button" class="btn-login" onclick="goToStep(3)">Siguiente</button>
             </div>
           </div>
 
-          <!-- ================= PASO 3: INFORMACIÓN MÉDICA (EXCLUSIVO JUGADORES) ================= -->
           <div class="wizard-step" id="wizard-step-3" style="display: none;">
-            <h3 class="step-title"><i class="fa-solid fa-notes-medical"></i> Paso 3: Ficha Médica y Contacto de Emergencia</h3>
-
+            <h3 class="step-title">Paso 3: Ficha Médica</h3>
             <div class="form-row">
               <div class="input-group">
-                <label for="bloodType"><i class="fa-solid fa-droplet"></i> Tipo de Sangre</label>
-                <select id="bloodType" required onchange="playBeepSound()">
+                <label for="bloodType">Tipo de Sangre</label>
+                <select id="bloodType">
                   <option value="O+">O Positivo (O+)</option>
                   <option value="A+">A Positivo (A+)</option>
                 </select>
               </div>
-              <div class="input-group">
-                <label for="emergencyPhone"><i class="fa-solid fa-phone"></i> Teléfono de Emergencia</label>
-                <input type="tel" id="emergencyPhone" placeholder="Teléfono directo" required>
-              </div>
             </div>
-
             <div class="wizard-buttons">
-              <button type="button" class="btn-secondary-action" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-              <button type="button" id="btnFinalRegister" class="btn-login" onclick="processFinalRegistration()">Generar Credencial <i class="fa-solid fa-qrcode"></i></button>
+              <button type="button" class="btn-secondary-action" onclick="goToStep(2)">Anterior</button>
+              <button type="button" class="btn-login" onclick="processFinalRegistration()">Finalizar</button>
             </div>
           </div>
 
-          <!-- ================= PASO 4: CREDENCIAL VIRTUAL ================= -->
           <div class="wizard-step" id="wizard-step-4" style="display: none;">
-            <div class="digital-credential-card glass-card" id="digitalCredential">
-              <h3 id="credPlayerName">NOMBRE JUGADOR</h3>
-              <p>CURP: <span id="credCurpCode">---</span></p>
-              <p>CÓDIGO: <span id="credUniqueCode">---</span></p>
-            </div>
-            <div class="wizard-buttons">
-              <button type="button" class="btn-login" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Credencial</button>
-            </div>
+            <h3>¡Registro Completado!</h3>
+            <p>Tu expediente ha sido procesado con éxito.</p>
           </div>
 
         </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DE VERIFICACIÓN OTP -->
-  <div class="modal-overlay" id="otpValidationModal" style="display: none;">
-    <div class="glass-card modal-card" style="max-width: 450px; text-align: center;">
-      <h3>Verifica tu Correo Electrónico</h3>
-      <p>Código de 6 dígitos enviado a <strong id="displayTargetEmail">correo@ejemplo.com</strong></p>
-      <input type="text" id="otpCodeInput" maxlength="6" placeholder="000000" style="letter-spacing: 10px; font-size: 1.5rem; text-align: center; margin: 15px 0;">
-      <div style="display: flex; gap: 10px; justify-content: center;">
-        <button type="button" class="btn-secondary-action" onclick="closeModal('otpValidationModal')">Cancelar</button>
-        <button type="button" class="btn-login" onclick="verifyOtpAndFinalize()">Validar Código</button>
       </div>
     </div>
   </div>
@@ -402,21 +407,28 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const ENTIDADES_CURP = {
-      'AS': 'Aguascalientes', 'BC': 'Baja California', 'BS': 'Baja California Sur', 'CC': 'Campeche',
-      'CL': 'Coahuila', 'CM': 'Colima', 'CS': 'Chiapas', 'CH': 'Chihuahua', 'DF': 'Ciudad de México',
-      'DG': 'Durango', 'GT': 'Guanajuato', 'GR': 'Guerrero', 'HG': 'Hidalgo', 'JC': 'Jalisco',
-      'MC': 'Estado de México', 'MN': 'Michoacán', 'MS': 'Morelos', 'NT': 'Nayarit', 'NL': 'Nuevo León',
-      'OC': 'Oaxaca', 'PL': 'Puebla', 'QT': 'Querétaro', 'QR': 'Quintana Roo', 'SP': 'San Luis Potosí',
-      'SL': 'Sinaloa', 'SR': 'Sonora', 'TC': 'Tabasco', 'TS': 'Tamaulipas', 'TL': 'Tlaxcala',
-      'VZ': 'Veracruz', 'YN': 'Yucatán', 'ZS': 'Zacatecas', 'NE': 'Nacido en el Extranjero'
+    // DICCIONARIO DE MUNICIPIOS POR ESTADO
+    const MUNICIPIOS_DB = {
+      'Guanajuato': ['Moroleón', 'Uriangato', 'Yuriria', 'Celaya', 'Irapuato', 'León', 'Salamanca', 'San Miguel de Allende', 'Guanajuato Capital'],
+      'Michoacán': ['Morelia', 'Uruapan', 'Zamora', 'La Piedad', 'Cuitzeo', 'Pátzcuaro', 'Sahuayo', 'Apatzingán'],
+      'Jalisco': ['Guadalajara', 'Zapopan', 'Tlaquepaque', 'Puerto Vallarta', 'Tepatitlán', 'Ocotlán'],
+      'Querétaro': ['Santiago de Querétaro', 'San Juan del Río', 'El Marqués', 'Corregidora'],
+      'Ciudad de México': ['Álvaro Obregón', 'Coyoacán', 'Cuauhtémoc', 'Iztapalapa', 'Tlalpan'],
+      'Estado de México': ['Toluca', 'Metepec', 'Ecatepec', 'Naucalpan', 'Tlalnepantla']
     };
 
-    // FUNCIÓN PRINCIPAL DE CAMBIO DE ROL
+    function onStateChange(selectedState) {
+      playBeepSound();
+      const citySelect = document.getElementById('cityRes');
+      citySelect.innerHTML = '<option value="" disabled selected>Cargando municipios...</option>';
+
+      const municipios = MUNICIPIOS_DB[selectedState] || ['Municipio Principal', 'Otra Localidad'];
+      citySelect.innerHTML = '<option value="" disabled selected>Selecciona Municipio</option>' + 
+        municipios.map(m => `<option value="${m}">${m}</option>`).join('');
+    }
+
     function selectRoleAndProceed(role) {
       playBeepSound();
-
-      // Si elige Administrador de Liga, redirigir a liga_registrar.html
       if (role === 'ADMIN_LIGA') {
         window.location.href = 'liga_registrar.html';
         return;
@@ -429,28 +441,33 @@
       const subtitle = document.getElementById('headerSubtitle');
       const authSection = document.getElementById('adminAuthCodeSection');
       const bar = document.getElementById('wizardProgressBar');
-      const idMethodSelector = document.getElementById('idMethodSelector');
+      const arbitroFields = document.getElementById('arbitroExtraFields');
+      const delegadoFields = document.getElementById('delegadoExtraFields');
+
+      // Ocultar todos por defecto
+      arbitroFields.style.display = 'none';
+      delegadoFields.style.display = 'none';
+      authSection.style.display = 'none';
 
       if (role === 'JUGADOR') {
         subtitle.innerText = "Expediente oficial de Jugadores RETA";
-        authSection.style.display = 'none';
         bar.style.display = 'flex';
-        idMethodSelector.style.display = 'flex';
-        document.getElementById('btnStep1').innerHTML = `Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>`;
+        document.getElementById('btnStep1').innerHTML = `Siguiente: Equipo <i class="fa-solid fa-arrow-right"></i>`;
       } else {
-        bar.style.display = 'none'; // Los otros roles solo completan identificación
-        idMethodSelector.style.display = 'none';
+        bar.style.display = 'none';
         authSection.style.display = 'block';
 
         if (role === 'DELEGADO') {
           subtitle.innerText = "Registro de Delegados y Directores Técnicos";
-          document.getElementById('btnStep1').innerHTML = `Completar Registro Delegado <i class="fa-solid fa-check"></i>`;
+          delegadoFields.style.display = 'block';
+          document.getElementById('btnStep1').innerHTML = `Guardar Delegado <i class="fa-solid fa-check"></i>`;
         } else if (role === 'ARBITRO') {
           subtitle.innerText = "Registro de Árbitros y Colegiados";
-          document.getElementById('btnStep1').innerHTML = `Completar Registro Árbitro <i class="fa-solid fa-check"></i>`;
+          arbitroFields.style.display = 'block';
+          document.getElementById('btnStep1').innerHTML = `Guardar Árbitro <i class="fa-solid fa-check"></i>`;
         } else if (role === 'SUPERADMIN') {
           subtitle.innerText = "Acceso Especial Administrador Sub-Base";
-          document.getElementById('btnStep1').innerHTML = `Validar Token Master <i class="fa-solid fa-key"></i>`;
+          document.getElementById('btnStep1').innerHTML = `Validar SuperAdmin <i class="fa-solid fa-key"></i>`;
         }
       }
     }
@@ -459,63 +476,25 @@
       playBeepSound();
       document.getElementById('roleSelectionStep').style.display = 'block';
       document.getElementById('formContainer').style.display = 'none';
-      document.getElementById('headerSubtitle').innerText = "Selecciona tu perfil en la plataforma para comenzar";
+      document.getElementById('headerSubtitle').innerText = "Selecciona tu perfil deportivo para ingresar";
     }
 
     function processCurpAutoData(curpRaw) {
       const curp = curpRaw.toUpperCase().trim();
-      const statusText = document.getElementById('curpStatusText');
-
       if (curp.length === 18) {
-        if (statusText) {
-          statusText.style.display = 'block';
-          statusText.innerText = "✓ CURP Válida. Datos biográficos extraídos.";
-        }
-
         const yy = parseInt(curp.substring(4, 6), 10);
-        const mm = parseInt(curp.substring(6, 8), 10) - 1;
-        const dd = parseInt(curp.substring(8, 10), 10);
-
         const currentYear = new Date().getFullYear();
-        let fullYear = 1900 + yy;
-        if (fullYear < 1930 || (currentYear - fullYear > 95)) {
-          fullYear = 2000 + yy;
-        }
-
-        const birthDate = new Date(fullYear, mm, dd);
-        let age = currentYear - birthDate.getFullYear();
-
-        const ageInput = document.getElementById('age');
-        if (ageInput) ageInput.value = isNaN(age) ? '' : age;
-
-        const sexChar = curp.charAt(10);
-        const genderInput = document.getElementById('gender');
-        if (sexChar === 'H') genderInput.value = 'Masculino';
-        else if (sexChar === 'M') genderInput.value = 'Femenino';
-
-        const stateCode = curp.substring(11, 13);
-        const stateBirthInput = document.getElementById('stateBirth');
-        if (stateBirthInput) {
-          stateBirthInput.value = ENTIDADES_CURP[stateCode] || 'Guanajuato';
-        }
+        let fullYear = (yy < 30) ? 2000 + yy : 1900 + yy;
+        document.getElementById('age').value = currentYear - fullYear;
       }
     }
 
     function toggleIdMethod(method) {
       playBeepSound();
-      if (method === 'ine') {
-        document.getElementById('ineOcrSection').style.display = 'block';
-        document.getElementById('minorSection').style.display = 'none';
-      } else {
-        document.getElementById('ineOcrSection').style.display = 'none';
-        document.getElementById('minorSection').style.display = 'block';
-      }
     }
 
     function handleIneUpload(e) {
       playBeepSound();
-      const file = e.target.files[0];
-      if (file) document.getElementById('ocrStatus').innerText = "✓ Documento adjuntado correctamente.";
     }
 
     function handlePhotoUpload(e) {
@@ -536,11 +515,11 @@
       document.getElementById(`wizard-step-${stepNumber}`).style.display = 'block';
     }
 
-    function validateStep1AndProceed() {
+    async function validateStep1AndProceed() {
       playBeepSound();
-
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const fname = document.getElementById('firstName').value.trim();
+      const lname = document.getElementById('lastName').value.trim();
       const emailVal = document.getElementById('userEmail').value.trim();
       const roleVal = document.getElementById('selectedRoleInput').value;
 
@@ -549,37 +528,41 @@
         return;
       }
 
-      if (!document.getElementById('acceptTermsCheckbox').checked) {
-        alert("⚠️ Debes aceptar los Términos y Condiciones.");
-        return;
-      }
+      // GUARDADO DIRECTO EN SUPABASE
+      try {
+        const payload = {
+          curp: curpVal,
+          nombre: fname,
+          apellidos: lname,
+          email: emailVal,
+          telefono: document.getElementById('userPhone').value.trim(),
+          estado_residencia: document.getElementById('stateRes').value,
+          ciudad_residencia: document.getElementById('cityRes').value
+        };
 
-      // Desplegar Modal de Confirmación
-      document.getElementById('displayTargetEmail').innerText = emailVal;
-      document.getElementById('otpValidationModal').style.display = 'flex';
+        await _supabase.from('usuarios').upsert([payload], { onConflict: 'curp' });
+
+        if (roleVal === 'JUGADOR') {
+          goToStep(2);
+        } else if (roleVal === 'DELEGADO') {
+          alert("¡Delegado registrado correctamente!");
+          window.location.href = 'panel_delegado.html';
+        } else if (roleVal === 'ARBITRO') {
+          alert("¡Árbitro registrado correctamente!");
+          window.location.href = 'cedula_arbitral.html';
+        } else if (roleVal === 'SUPERADMIN') {
+          alert("¡Bienvenido SuperAdmin!");
+          window.location.href = 'admin_dashboard.html';
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error al guardar en Supabase: " + err.message);
+      }
     }
 
-    async function verifyOtpAndFinalize() {
-      const roleVal = document.getElementById('selectedRoleInput').value;
-      closeModal('otpValidationModal');
-
-      if (roleVal === 'JUGADOR') {
-        goToStep(2); // Pasa a selección de Equipo y Ficha Médica
-      } else if (roleVal === 'DELEGADO') {
-        alert("¡Cuenta de Delegado Creada! Redirigiendo a tu Panel...");
-        window.location.href = 'panel_delegado.html';
-      } else if (roleVal === 'ARBITRO') {
-        alert("¡Cuenta de Árbitro Creada! Redirigiendo a Cédula Digital...");
-        window.location.href = 'cedula_arbitral.html';
-      } else if (roleVal === 'SUPERADMIN') {
-        alert("¡Acceso Sub-Base Aprobado!");
-        window.location.href = 'admin_dashboard.html';
-      }
-    }
-
-    function closeModal(id) {
+    function processFinalRegistration() {
       playBeepSound();
-      document.getElementById(id).style.display = 'none';
+      goToStep(4);
     }
   </script>
 </body>
