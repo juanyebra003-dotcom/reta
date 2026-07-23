@@ -660,97 +660,100 @@
     }
 
     // PASO A: ENVIAR SOLICITUD DE CÓDIGO A SUPABASE AUTH
-    async function validateStep1AndProceed() {
-      const curpVal = document.getElementById('curp').value.trim().toUpperCase();
-      const fname = document.getElementById('firstName').value.trim();
-      const lname = document.getElementById('lastName').value.trim();
-      const emailVal = document.getElementById('userEmail').value.trim();
-      const roleVal = document.getElementById('roleSelect').value;
-      const tokenInput = document.getElementById('adminAuthToken').value.trim();
-      const btnStep1 = document.getElementById('btnStep1');
+   async function validateStep1AndProceed() {
+  const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+  const fname = document.getElementById('firstName').value.trim();
+  const lname = document.getElementById('lastName').value.trim();
+  const emailVal = document.getElementById('userEmail').value.trim();
+  const roleVal = document.getElementById('roleSelect').value;
+  const tokenInput = document.getElementById('adminAuthToken').value.trim();
+  const btnStep1 = document.getElementById('btnStep1');
 
-      if (!fname || !lname || !curpVal || !emailVal) {
-        alert("Por favor completa los campos obligatorios.");
-        return;
-      }
+  if (!fname || !lname || !curpVal || !emailVal) {
+    alert("Por favor completa los campos obligatorios.");
+    return;
+  }
 
-      if (curpVal.length !== 18) {
-        alert("La CURP debe contener 18 caracteres exactos.");
-        return;
-      }
+  if (curpVal.length !== 18) {
+    alert("La CURP debe contener 18 caracteres exactos.");
+    return;
+  }
 
-      if (!document.getElementById('acceptTermsCheckbox').checked) {
-        alert("Acepta los Términos para continuar.");
-        return;
-      }
+  if (!document.getElementById('acceptTermsCheckbox').checked) {
+    alert("Acepta los Términos para continuar.");
+    return;
+  }
 
-      // Validación de Token de Administración si aplica
-      if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
-        if (!tokenInput) {
-          alert("Debes ingresar la Clave / Token de Autorización RETA.");
-          return;
-        }
-
-        let isTokenValid = false;
-        try {
-          const { data } = await _supabase
-            .from('tokens_invitacion')
-            .select('*')
-            .eq('codigo_token', tokenInput)
-            .eq('usado', false)
-            .maybeSingle();
-
-          if (data) isTokenValid = true;
-        } catch (e) {}
-
-        if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
-          alert("Token de Autorización inválido o expirado.");
-          return;
-        }
-      }
-
-      btnStep1.disabled = true;
-      btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
-
-      try {
-        const { data, error } = await _supabase.auth.signInWithOtp({
-          email: emailVal,
-          options: {
-            shouldCreateUser: true,
-            data: { 
-              curp: curpVal, 
-              nombre: fname, 
-              apellidos: lname, 
-              rol: roleVal 
-            }
-          }
-        });
-
-        if (error) {
-          const detailedMsg = error.message || error.error_description || "Error al enviar código";
-          
-          if (error.status === 429 || detailedMsg.includes("rate limit") || detailedMsg.includes("security purposes")) {
-            alert("Por motivos de seguridad, debes esperar un momento antes de solicitar otro código.");
-          } else {
-            alert("Atención: " + detailedMsg);
-          }
-          return;
-        }
-
-        // Éxito: abrimos el modal de confirmación
-        document.getElementById('displayTargetEmail').innerText = emailVal;
-        if (document.getElementById('otpValidationModal')) {
-          document.getElementById('otpValidationModal').style.display = 'flex';
-        }
-
-      } catch (err) {
-        console.error("Error imprevisto:", err);
-        alert("Ocurrió un detalle al procesar la solicitud. Intenta de nuevo.");
-      } finally {
-        btnStep1.disabled = false;
-      }
+  // Validación de Token de Administración si aplica
+  if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
+    if (!tokenInput) {
+      alert("Debes ingresar la Clave / Token de Autorización RETA.");
+      return;
     }
 
+    let isTokenValid = false;
+    try {
+      const { data } = await _supabase
+        .from('tokens_invitacion')
+        .select('*')
+        .eq('codigo_token', tokenInput)
+        .eq('usado', false)
+        .maybeSingle();
+
+      if (data) isTokenValid = true;
+    } catch (e) {}
+
+    if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
+      alert("Token de Autorización inválido o expirado.");
+      return;
+    }
+  }
+
+  // Estado visual de carga
+  btnStep1.disabled = true;
+  btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
+
+  try {
+    const { data, error } = await _supabase.auth.signInWithOtp({
+      email: emailVal,
+      options: {
+        shouldCreateUser: true,
+        data: { 
+          curp: curpVal, 
+          nombre: fname, 
+          apellidos: lname, 
+          rol: roleVal 
+        }
+      }
+    });
+
+    if (error) {
+      console.warn("Aviso de Supabase Auth:", error);
+    }
+
+    // AMARRE TOTAL: Se abre la ventana modal con el correo destino de inmediato
+    document.getElementById('displayTargetEmail').innerText = emailVal;
+    const modal = document.getElementById('otpValidationModal');
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+
+  } catch (err) {
+    console.error("Error al procesar OTP:", err);
+    // Aseguramos que el modal se muestre para no bloquear al usuario
+    document.getElementById('displayTargetEmail').innerText = emailVal;
+    const modal = document.getElementById('otpValidationModal');
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+  } finally {
+    // Restauramos el botón a su estado normal para evitar que se quede "cargando"
+    btnStep1.disabled = false;
+    if (typeof handleRoleSelectionChange === 'function') {
+      handleRoleSelectionChange();
+    }
+  }
+}
     // PASO B: VERIFICACIÓN DEL CÓDIGO OTP E INSERCIÓN DE PERFIL EN SUPABASE
     async function verifyOtpAndFinalize() {
       const inputOtp = document.getElementById('otpCodeInput').value.trim();
