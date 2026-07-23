@@ -660,84 +660,102 @@
     }
 
     // PASO A: ENVIAR SOLICITUD DE CÓDIGO A SUPABASE AUTH
-    async function validateStep1AndProceed() {
-      const curpVal = document.getElementById('curp').value.trim().toUpperCase();
-      const fname = document.getElementById('firstName').value.trim();
-      const lname = document.getElementById('lastName').value.trim();
-      const emailVal = document.getElementById('userEmail').value.trim();
-      const roleVal = document.getElementById('roleSelect').value;
-      const tokenInput = document.getElementById('adminAuthToken').value.trim();
-      const btnStep1 = document.getElementById('btnStep1');
+   // PASO A: ENVIAR SOLICITUD DE CÓDIGO CON MANEJO DE ERRORES MEJORADO
+async function validateStep1AndProceed() {
+  const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+  const fname = document.getElementById('firstName').value.trim();
+  const lname = document.getElementById('lastName').value.trim();
+  const emailVal = document.getElementById('userEmail').value.trim();
+  const roleVal = document.getElementById('roleSelect').value;
+  const tokenInput = document.getElementById('adminAuthToken').value.trim();
+  const btnStep1 = document.getElementById('btnStep1');
 
-      if (!fname || !lname || !curpVal || !emailVal) {
-        alert("Por favor completa los campos obligatorios.");
-        return;
-      }
+  if (!fname || !lname || !curpVal || !emailVal) {
+    alert("Por favor completa los campos obligatorios.");
+    return;
+  }
 
-      if (curpVal.length !== 18) {
-        alert("La CURP debe contener 18 caracteres exactos.");
-        return;
-      }
+  if (curpVal.length !== 18) {
+    alert("La CURP debe contener 18 caracteres exactos.");
+    return;
+  }
 
-      if (!document.getElementById('acceptTermsCheckbox').checked) {
-        alert("Acepta los Términos para continuar.");
-        return;
-      }
+  if (!document.getElementById('acceptTermsCheckbox').checked) {
+    alert("Acepta los Términos para continuar.");
+    return;
+  }
 
-      if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
-        if (!tokenInput) {
-          alert("Debes ingresar la Clave / Token de Autorización RETA.");
-          return;
-        }
-
-        let isTokenValid = false;
-        try {
-          const { data } = await _supabase
-            .from('tokens_invitacion')
-            .select('*')
-            .eq('codigo_token', tokenInput)
-            .eq('usado', false)
-            .maybeSingle();
-
-          if (data) isTokenValid = true;
-        } catch (e) {}
-
-        if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
-          alert("Token de Autorización inválido o expirado.");
-          return;
-        }
-      }
-
-      btnStep1.disabled = true;
-      btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
-
-      currentTempPassword = `RETA-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      try {
-        const { data, error } = await _supabase.auth.signUp({
-          email: emailVal,
-          password: currentTempPassword,
-          options: {
-            data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
-          }
-        });
-
-        if (error && !error.message.includes("already registered")) {
-          throw error;
-        }
-
-        document.getElementById('displayTargetEmail').innerText = emailVal;
-        document.getElementById('otpValidationModal').style.display = 'flex';
-
-      } catch (err) {
-        console.error("Error en Supabase Auth Paso A:", err);
-        alert("Detalle al solicitar código: " + err.message);
-      } finally {
-        btnStep1.disabled = false;
-        handleRoleSelectionChange();
-      }
+  if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
+    if (!tokenInput) {
+      alert("Debes ingresar la Clave / Token de Autorización RETA.");
+      return;
     }
 
+    let isTokenValid = false;
+    try {
+      const { data } = await _supabase
+        .from('tokens_invitacion')
+        .select('*')
+        .eq('codigo_token', tokenInput)
+        .eq('usado', false)
+        .maybeSingle();
+
+      if (data) isTokenValid = true;
+    } catch (e) {}
+
+    if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
+      alert("Token de Autorización inválido o expirado.");
+      return;
+    }
+  }
+
+  btnStep1.disabled = true;
+  btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
+
+  currentTempPassword = `RETA-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  try {
+    const { data, error } = await _supabase.auth.signUp({
+      email: emailVal,
+      password: currentTempPassword,
+      options: {
+        data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
+      }
+    });
+
+    if (error) {
+      const errorMsg = error.message || JSON.stringify(error);
+      
+      // Manejo de Rate Limit
+      if (error.status === 429 || errorMsg.includes("security purposes")) {
+        alert("Por seguridad, espera un minuto antes de solicitar un nuevo código.");
+        document.getElementById('displayTargetEmail').innerText = emailVal;
+        document.getElementById('otpValidationModal').style.display = 'flex';
+        return;
+      }
+
+      // Si falla el servidor SMTP (500) pero el usuario ya fue creado en Supabase
+      if (error.status === 500 || errorMsg.includes("500") || errorMsg.includes("already registered")) {
+        console.warn("Fallo en servidor SMTP. Abriendo validación modal directa...");
+        document.getElementById('displayTargetEmail').innerText = emailVal;
+        document.getElementById('otpValidationModal').style.display = 'flex';
+        return;
+      }
+
+      throw new Error(errorMsg);
+    }
+
+    document.getElementById('displayTargetEmail').innerText = emailVal;
+    document.getElementById('otpValidationModal').style.display = 'flex';
+
+  } catch (err) {
+    console.error("Error en Supabase Auth Paso A:", err);
+    alert("Detalle al solicitar código: " + (err.message || "Ocurrió un error con el servidor de correos."));
+  } finally {
+    btnStep1.disabled = false;
+    handleRoleSelectionChange();
+  }
+}
     // PASO B: VERIFICACIÓN DEL CÓDIGO OTP E INSERCIÓN DE PERFIL EN SUPABASE
     async function verifyOtpAndFinalize() {
       const inputOtp = document.getElementById('otpCodeInput').value.trim();
