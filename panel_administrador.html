@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>RETA - Panel Administrador de Liga</title>
-  <!-- Google Fonts & FontAwesome -->
+  
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    /* Estilos Adicionales del Dashboard Ejecutivo */
     .dashboard-container {
       max-width: 1200px;
       margin: 30px auto;
@@ -61,7 +64,6 @@
       margin: 0;
     }
 
-    /* Tarjetas de Liga */
     .league-management-card {
       background: rgba(15, 23, 42, 0.85);
       border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
@@ -109,6 +111,7 @@
       display: flex;
       gap: 15px;
       margin-top: 4px;
+      flex-wrap: wrap;
     }
 
     .league-actions-bar {
@@ -138,26 +141,6 @@
       transform: translateY(-2px);
     }
 
-    .btn-action-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff;
-      font-weight: 600;
-      padding: 10px 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-    }
-
-    .btn-action-secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    /* Grilla de Torneos dentro de la Liga */
     .tournaments-dashboard-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -221,7 +204,11 @@
       gap: 5px;
     }
 
-    .btn-link-teams:hover { text-decoration: underline; }
+    .loading-state, .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #94a3b8;
+    }
   </style>
 </head>
 <body class="login-body">
@@ -232,11 +219,11 @@
 
   <div class="dashboard-container">
     
-    <!-- Encabezado del Dashboard -->
+    <!-- Encabezado -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
       <div>
         <h2 style="color: #fff; margin: 0;">Panel de <span class="text-gradient">Administración de Ligas</span></h2>
-        <p style="color: #94a3b8; margin: 4px 0 0 0; font-size: 0.88rem;">Gestión ejecutiva de torneos, delegados y equipos en RETA</p>
+        <p style="color: #94a3b8; margin: 4px 0 0 0; font-size: 0.88rem;">Sincronizado en tiempo real con Supabase</p>
       </div>
 
       <a href="liga_registrar.html" class="btn-action-primary">
@@ -249,7 +236,7 @@
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-trophy"></i></div>
         <div class="kpi-info">
-          <h3 id="kpiLeagues">1</h3>
+          <h3 id="kpiLeagues">0</h3>
           <p>Ligas Registradas</p>
         </div>
       </div>
@@ -257,7 +244,7 @@
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-layer-group"></i></div>
         <div class="kpi-info">
-          <h3 id="kpiTournaments">3</h3>
+          <h3 id="kpiTournaments">0</h3>
           <p>Torneos Activos</p>
         </div>
       </div>
@@ -265,7 +252,7 @@
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-shield-halved"></i></div>
         <div class="kpi-info">
-          <h3 id="kpiTeams">18</h3>
+          <h3 id="kpiTeams">0</h3>
           <p>Equipos Inscritos</p>
         </div>
       </div>
@@ -273,108 +260,146 @@
       <div class="kpi-card">
         <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
         <div class="kpi-info">
-          <h3>288</h3>
+          <h3 id="kpiPlayers">0</h3>
           <p>Jugadores Registrados</p>
         </div>
       </div>
     </div>
 
-    <!-- 2. SECCIÓN PRINCIPAL: LIGAS REGISTRADAS -->
+    <!-- 2. CONTENEDOR DINÁMICO DE LIGAS -->
     <div id="leaguesContainer">
-      
-      <!-- Tarjeta de Ejemplo de Liga Registrada -->
-      <div class="league-management-card">
-        <div class="league-card-header">
-          <div class="league-brand-info">
-            <img src="img/logo_reta.png" alt="Logo Liga" class="league-badge-img">
-            <div class="league-title-box">
-              <h3>Liga Premier de Fútbol Moroleón <span style="font-size:0.75rem; color:#00d4ff; font-weight:normal;">(LPM)</span></h3>
-              <div class="league-meta">
-                <span><i class="fa-solid fa-map-location-dot"></i> Moroleón, Guanajuato</span>
-                <span><i class="fa-solid fa-user-tie"></i> Admin: Juan Yebra</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="league-actions-bar">
-            <a href="equipo_registrar.html" class="btn-action-primary">
-              <i class="fa-solid fa-shield-plus"></i> Registrar Equipo en esta Liga
-            </a>
-            <button type="button" class="btn-action-secondary" onclick="openAddTournamentModal()">
-              <i class="fa-solid fa-plus"></i> Agregar Torneo
-            </button>
-          </div>
-        </div>
-
-        <!-- LISTA DE TORNEOS DE ESTA LIGA -->
-        <h4 style="color:#fff; font-size:0.9rem; margin-bottom:15px;"><i class="fa-solid fa-sitemap text-cyan"></i> Torneos de esta Liga</h4>
-        
-        <div class="tournaments-dashboard-grid">
-          
-          <div class="tournament-dash-card">
-            <div>
-              <div class="td-head">
-                <h4>Torneo Apertura 2026</h4>
-                <span class="td-badge">Libre Varonil</span>
-              </div>
-              <div class="td-info">
-                <span><i class="fa-solid fa-shield-halved"></i> 12 Equipos Esperados</span><br>
-                <span><i class="fa-solid fa-calendar-check"></i> Estatus: Inscripciones Abiertas</span>
-              </div>
-            </div>
-            <div class="td-actions">
-              <a href="equipo_registrar.html" class="btn-link-teams">
-                <i class="fa-solid fa-user-plus"></i> Alta de Equipo
-              </a>
-              <span style="font-size:0.75rem; color:#94a3b8;">8 de 12 Registrados</span>
-            </div>
-          </div>
-
-          <div class="tournament-dash-card">
-            <div>
-              <div class="td-head">
-                <h4>Copa Femenil Moroleón</h4>
-                <span class="td-badge">Libre Femenil</span>
-              </div>
-              <div class="td-info">
-                <span><i class="fa-solid fa-shield-halved"></i> 8 Equipos Esperados</span><br>
-                <span><i class="fa-solid fa-calendar-check"></i> Estatus: Inscripciones Abiertas</span>
-              </div>
-            </div>
-            <div class="td-actions">
-              <a href="equipo_registrar.html" class="btn-link-teams">
-                <i class="fa-solid fa-user-plus"></i> Alta de Equipo
-              </a>
-              <span style="font-size:0.75rem; color:#94a3b8;">4 de 8 Registrados</span>
-            </div>
-          </div>
-
-          <div class="tournament-dash-card">
-            <div>
-              <div class="td-head">
-                <h4>Torneo Baby Plus</h4>
-                <span class="td-badge">Sub-8 Mixto</span>
-              </div>
-              <div class="td-info">
-                <span><i class="fa-solid fa-shield-halved"></i> 10 Equipos Esperados</span><br>
-                <span><i class="fa-solid fa-calendar-check"></i> Estatus: Próximamente</span>
-              </div>
-            </div>
-            <div class="td-actions">
-              <a href="equipo_registrar.html" class="btn-link-teams">
-                <i class="fa-solid fa-user-plus"></i> Alta de Equipo
-              </a>
-              <span style="font-size:0.75rem; color:#94a3b8;">6 de 10 Registrados</span>
-            </div>
-          </div>
-
-        </div>
+      <div class="loading-state">
+        <i class="fa-solid fa-spinner fa-spin fa-2x" style="color: #00d4ff;"></i>
+        <p style="margin-top: 10px;">Cargando ligas y torneos desde Supabase...</p>
       </div>
-
     </div>
 
   </div>
 
-  <script src="js/script.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDashboardData();
+    });
+
+    async function loadDashboardData() {
+      const leaguesContainer = document.getElementById('leaguesContainer');
+
+      try {
+        // 1. Obtener Ligas con sus Torneos relacionales
+        const { data: ligas, error: leaguesErr } = await _supabase
+          .from('ligas')
+          .select(`
+            *,
+            liga_torneo (
+              id,
+              nombre_torneo,
+              categoria,
+              rama,
+              equipos_proyectados
+            )
+          `)
+          .order('creado_en', { ascending: false });
+
+        if (leaguesErr) throw leaguesErr;
+
+        // 2. Obtener conteos totales de Equipos y Jugadores
+        const { count: teamsCount } = await _supabase.from('equipos').select('*', { count: 'exact', head: true });
+        const { count: playersCount } = await _supabase.from('jugadores').select('*', { count: 'exact', head: true });
+
+        // 3. Actualizar KPIs
+        const totalLigas = ligas ? ligas.length : 0;
+        let totalTorneos = 0;
+        if (ligas) {
+          ligas.forEach(l => totalTorneos += (l.liga_torneo ? l.liga_torneo.length : 0));
+        }
+
+        document.getElementById('kpiLeagues').textContent = totalLigas;
+        document.getElementById('kpiTournaments').textContent = totalTorneos;
+        document.getElementById('kpiTeams').textContent = teamsCount || 0;
+        document.getElementById('kpiPlayers').textContent = playersCount || 0;
+
+        // 4. Renderizar Tarjetas de Ligas
+        if (!ligas || ligas.length === 0) {
+          leaguesContainer.innerHTML = `
+            <div class="glass-card empty-state">
+              <i class="fa-solid fa-folder-open fa-3x" style="color: #64748b; margin-bottom: 15px;"></i>
+              <h3>No hay ligas registradas aún</h3>
+              <p>Comienza registrando tu primera liga con sus torneos correspondientes.</p>
+              <a href="liga_registrar.html" class="btn-action-primary" style="display:inline-flex; margin-top:15px;">
+                <i class="fa-solid fa-plus-circle"></i> Registrar Mi Primera Liga
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        // Renderizado dinámico
+        leaguesContainer.innerHTML = ligas.map(liga => `
+          <div class="league-management-card">
+            <div class="league-card-header">
+              <div class="league-brand-info">
+                <img src="${liga.logo_url || 'img/logo_reta.png'}" alt="Logo Liga" class="league-badge-img">
+                <div class="league-title-box">
+                  <h3>${liga.nombre_liga} <span style="font-size:0.75rem; color:#00d4ff; font-weight:normal;">(${liga.clave_liga})</span></h3>
+                  <div class="league-meta">
+                    <span><i class="fa-solid fa-map-location-dot"></i> ${liga.municipio}, ${liga.estado}</span>
+                    <span><i class="fa-solid fa-futbol"></i> ${liga.disciplina}</span>
+                    <span><i class="fa-solid fa-phone"></i> ${liga.telefono_liga || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="league-actions-bar">
+                <a href="equipo_registrar.html?liga_id=${liga.id}" class="btn-action-primary">
+                  <i class="fa-solid fa-shield-plus"></i> Registrar Equipo
+                </a>
+              </div>
+            </div>
+
+            <h4 style="color:#fff; font-size:0.9rem; margin-bottom:15px;">
+              <i class="fa-solid fa-sitemap style-cyan"></i> Torneos Configurados (${liga.liga_torneo ? liga.liga_torneo.length : 0})
+            </h4>
+
+            <div class="tournaments-dashboard-grid">
+              ${
+                liga.liga_torneo && liga.liga_torneo.length > 0 
+                ? liga.liga_torneo.map(t => `
+                    <div class="tournament-dash-card">
+                      <div>
+                        <div class="td-head">
+                          <h4>${t.nombre_torneo || 'Torneo Sin Nombre'}</h4>
+                          <span class="td-badge">${t.categoria || 'Libre'}</span>
+                        </div>
+                        <div class="td-info">
+                          <span><i class="fa-solid fa-venus-mars"></i> Rama: ${t.rama || 'General'}</span><br>
+                          <span><i class="fa-solid fa-shield-halved"></i> ${t.equipos_proyectados || 12} Equipos Esperados</span>
+                        </div>
+                      </div>
+                      <div class="td-actions">
+                        <a href="equipo_registrar.html?liga_torneo_id=${t.id}" class="btn-link-teams">
+                          <i class="fa-solid fa-user-plus"></i> Alta de Equipo
+                        </a>
+                      </div>
+                    </div>
+                  `).join('')
+                : `<p style="color:#64748b; font-size:0.85rem;">No hay torneos asociados a esta liga.</p>`
+              }
+            </div>
+          </div>
+        `).join('');
+
+      } catch (err) {
+        console.error("Error al cargar datos en el panel:", err);
+        leaguesContainer.innerHTML = `
+          <div class="glass-card empty-state" style="border-color: #ff4d4d;">
+            <i class="fa-solid fa-triangle-exclamation fa-3x" style="color: #ff4d4d; margin-bottom: 15px;"></i>
+            <h3>Error al conectar con Supabase</h3>
+            <p>${err.message}</p>
+          </div>
+        `;
+      }
+    }
+  </script>
 </body>
 </html>
