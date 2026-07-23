@@ -659,82 +659,117 @@
       }
     }
 
-    // PASO A: ENVIAR SOLICITUD DE CÓDIGO A SUPABASE AUTH (MODAL GARANTIZADO)
-    async function validateStep1AndProceed() {
-      const curpVal = document.getElementById('curp').value.trim().toUpperCase();
-      const fname = document.getElementById('firstName').value.trim();
-      const lname = document.getElementById('lastName').value.trim();
-      const emailVal = document.getElementById('userEmail').value.trim();
-      const roleVal = document.getElementById('roleSelect').value;
-      const tokenInput = document.getElementById('adminAuthToken').value.trim();
-      const btnStep1 = document.getElementById('btnStep1');
+// PASO A: VALIDACIÓN EXPLICITA Y EXHAUSTIVA (REEMPLAZAR SOLO ESTA FUNCIÓN)
+function validateStep1AndProceed() {
+  playBeepSound();
 
-      if (!fname || !lname || !curpVal || !emailVal) {
-        alert("Por favor completa los campos obligatorios.");
-        return;
-      }
+  // 1. Obtener valores de los campos
+  const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+  const fname = document.getElementById('firstName').value.trim();
+  const lname = document.getElementById('lastName').value.trim();
+  const stateRes = document.getElementById('stateRes').value;
+  const cityRes = document.getElementById('cityRes').value.trim();
+  const phoneVal = document.getElementById('userPhone').value.trim();
+  const emailVal = document.getElementById('userEmail').value.trim();
+  const roleVal = document.getElementById('roleSelect').value;
+  const tokenInput = document.getElementById('adminAuthToken').value.trim();
 
-      if (curpVal.length !== 18) {
-        alert("La CURP debe contener 18 caracteres exactos.");
-        return;
-      }
+  // 2. Validar método de identificación (INE u OCR / Carta Responsiva)
+  const isIneMethod = document.getElementById('methodIne').checked;
+  const ineFile = document.getElementById('ineFileInput').files[0];
+  const responsivaFile = document.getElementById('responsivaFile').files[0];
 
-      if (!document.getElementById('acceptTermsCheckbox').checked) {
-        alert("Acepta los Términos para continuar.");
-        return;
-      }
+  if (isIneMethod && !ineFile) {
+    alert("⚠️ Por favor sube una imagen de tu INE (Frente) para continuar.");
+    return;
+  }
 
-      // Validación de Token de Administración si aplica
-      if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
-        if (!tokenInput) {
-          alert("Debes ingresar la Clave / Token de Autorización RETA.");
-          return;
-        }
+  if (!isIneMethod && !responsivaFile) {
+    alert("⚠️ Por favor adjunta la Carta Responsiva firmada para menores de edad.");
+    return;
+  }
 
-        let isTokenValid = false;
-        try {
-          const { data } = await _supabase
-            .from('tokens_invitacion')
-            .select('*')
-            .eq('codigo_token', tokenInput)
-            .eq('usado', false)
-            .maybeSingle();
+  // 3. Validar Datos Biográficos y Contacto
+  if (!curpVal) {
+    alert("⚠️ El campo CURP es obligatorio.");
+    return;
+  }
 
-          if (data) isTokenValid = true;
-        } catch (e) {}
+  if (curpVal.length !== 18) {
+    alert("⚠️ La CURP debe contener exactamente 18 caracteres.");
+    return;
+  }
 
-        if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
-          alert("Token de Autorización inválido o expirado.");
-          return;
-        }
-      }
+  if (!fname) {
+    alert("⚠️ El campo Nombre(s) es obligatorio.");
+    return;
+  }
 
-      // 1. DESPLIEGUE INMEDIATO Y DIRECTO DEL MODAL
-      document.getElementById('displayTargetEmail').innerText = emailVal;
-      const modal = document.getElementById('otpValidationModal');
-      if (modal) {
-        modal.style.display = 'flex';
-      }
+  if (!lname) {
+    alert("⚠️ El campo Apellidos es obligatorio.");
+    return;
+  }
 
-      // 2. SOLICITUD EN SEGUNDO PLANO SIN 'AWAIT' (Para que el fallo 429 no detenga el navegador)
-      _supabase.auth.signInWithOtp({
-        email: emailVal,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
-          data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
-        }
-      }).catch(err => {
-        console.warn("Excepción de envío de correo capturada en segundo plano:", err);
-      });
+  if (!stateRes) {
+    alert("⚠️ Por favor selecciona tu Estado de Residencia.");
+    return;
+  }
 
-      // Restablecer estado del botón
-      btnStep1.disabled = false;
-      if (typeof handleRoleSelectionChange === 'function') {
-        handleRoleSelectionChange();
-      }
+  if (!cityRes) {
+    alert("⚠️ El campo Ciudad de Residencia es obligatorio.");
+    return;
+  }
+
+  if (!phoneVal) {
+    alert("⚠️ El campo Teléfono Móvil es obligatorio.");
+    return;
+  }
+
+  if (!emailVal) {
+    alert("⚠️ El campo Correo Electrónico es obligatorio.");
+    return;
+  }
+
+  // 4. Validar Checkboxes Legales
+  if (!document.getElementById('verifyEmailCheckbox').checked) {
+    alert("⚠️ Debes confirmar que tienes acceso al correo electrónico ingresado.");
+    return;
+  }
+
+  if (!document.getElementById('acceptTermsCheckbox').checked) {
+    alert("⚠️ Debes aceptar los Términos, Condiciones y Deslinde de Responsabilidad Legal.");
+    return;
+  }
+
+  // 5. Validar Token Administrativo (si aplica)
+  if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
+    if (!tokenInput) {
+      alert("⚠️ Debes ingresar la Clave / Token de Autorización RETA.");
+      return;
     }
+  }
 
+  // SI TODO ESTÁ REQUISITADO CORRECTAMENTE:
+  // A. Mostrar modal
+  document.getElementById('displayTargetEmail').innerText = emailVal;
+  const modal = document.getElementById('otpValidationModal');
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+
+  // B. Disparar OTP en segundo plano sin bloquar el JS
+  try {
+    _supabase.auth.signInWithOtp({
+      email: emailVal,
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
+        data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
+      }
+    }).catch(err => console.warn("Aviso Supabase Auth:", err));
+  } catch (e) {}
+}
+    
     // PASO B: VERIFICACIÓN DEL CÓDIGO OTP E INSERCIÓN DE PERFIL EN SUPABASE
     async function verifyOtpAndFinalize() {
       const inputOtp = document.getElementById('otpCodeInput').value.trim();
