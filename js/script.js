@@ -381,3 +381,94 @@ const SUPABASE_ANON_KEY = 'sb_publishable_brTmFH9EMnR_qkvubKxx2w_bYqexwhF';
 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
+async function validateStep1AndProceed() {
+  const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+  const fname = document.getElementById('firstName').value.trim();
+  const lname = document.getElementById('lastName').value.trim();
+  const emailVal = document.getElementById('userEmail').value.trim();
+  const roleVal = document.getElementById('roleSelect').value;
+  const tokenInput = document.getElementById('adminAuthToken').value.trim();
+  const btnStep1 = document.getElementById('btnStep1');
+
+  if (!fname || !lname || !curpVal || !emailVal) {
+    alert("Por favor completa los campos obligatorios.");
+    return;
+  }
+
+  if (curpVal.length !== 18) {
+    alert("La CURP debe contener 18 caracteres exactos.");
+    return;
+  }
+
+  if (!document.getElementById('acceptTermsCheckbox').checked) {
+    alert("Acepta los Términos para continuar.");
+    return;
+  }
+
+  // Validación de Token de Administración si aplica
+  if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
+    if (!tokenInput) {
+      alert("Debes ingresar la Clave / Token de Autorización RETA.");
+      return;
+    }
+
+    let isTokenValid = false;
+    try {
+      const { data } = await _supabase
+        .from('tokens_invitacion')
+        .select('*')
+        .eq('codigo_token', tokenInput)
+        .eq('usado', false)
+        .maybeSingle();
+
+      if (data) isTokenValid = true;
+    } catch (e) {}
+
+    if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
+      alert("Token de Autorización inválido o expirado.");
+      return;
+    }
+  }
+
+  btnStep1.disabled = true;
+  btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
+
+  try {
+    // Solicitamos el envío de OTP por correo con el proveedor de Supabase
+    const { data, error } = await _supabase.auth.signInWithOtp({
+      email: emailVal,
+      options: {
+        shouldCreateUser: true,
+        data: { 
+          curp: curpVal, 
+          nombre: fname, 
+          apellidos: lname, 
+          rol: roleVal 
+        }
+      }
+    });
+
+    if (error) {
+      const detailedMsg = error.message || error.error_description || "Error al enviar código";
+      
+      if (error.status === 429 || detailedMsg.includes("rate limit") || detailedMsg.includes("security purposes")) {
+        alert("Por motivos de seguridad, debes esperar un momento antes de solicitar otro código.");
+      } else {
+        alert("Atención: " + detailedMsg);
+      }
+      return;
+    }
+
+    // Éxito: abrimos la ventana flotante para ingresar el código de 6 dígitos
+    document.getElementById('displayTargetEmail').innerText = emailVal;
+    if (document.getElementById('otpValidationModal')) {
+      document.getElementById('otpValidationModal').style.display = 'flex';
+    }
+
+  } catch (err) {
+    console.error("Error imprevisto:", err);
+    alert("Ocurrió un detalle al procesar la solicitud. Intenta de nuevo.");
+  } finally {
+    btnStep1.disabled = false;
+  }
+}
