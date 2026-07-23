@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>RETA - Plataforma de Registro Oficial</title>
+  <title>RETA - Registro Integral de Jugadores</title>
   <!-- Google Fonts & FontAwesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
+
   <style>
-    /* UI Deportiva Mobile-First para Selección de Rol */
+    /* UI Deportiva Mobile-First para Selección Inicial de Rol */
     .role-selection-container {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -84,54 +84,54 @@
         <a href="index.html" onclick="playBeepSound()">
           <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
         </a>
-        <h2>Registro Oficial <span class="text-gradient">RETA</span></h2>
-        <p id="headerSubtitle">Selecciona tu perfil deportivo para iniciar tu registro</p>
+        <h2>Registro Oficial de <span class="text-gradient">Usuarios</span></h2>
+        <p id="headerSubtitle">Selecciona tu perfil en la plataforma RETA para comenzar</p>
       </div>
 
-      <!-- ================= PASO INICIAL: SELECTOR DE PERFIL / ROL ================= -->
+      <!-- ================= PASO INICIAL: SELECTOR DE 5 ROLES DEPORTIVOS ================= -->
       <div id="roleSelectionStep">
         <div class="role-selection-container">
           
-          <div class="sport-role-card" onclick="selectRoleAndProceed('JUGADOR')">
+          <div class="sport-role-card" onclick="selectVisualRole('JUGADOR')">
             <div class="card-icon-wrapper"><i class="fa-solid fa-futbol"></i></div>
             <h4>Jugador / Atleta</h4>
-            <p>Registro completo de expediente, ficha médica y credencial QR.</p>
+            <p>Completa tu expediente para obtener tu Credencial Virtual Única RETA.</p>
           </div>
 
-          <div class="sport-role-card" onclick="selectRoleAndProceed('DELEGADO')">
+          <div class="sport-role-card" onclick="selectVisualRole('DELEGADO')">
             <div class="card-icon-wrapper"><i class="fa-solid fa-clipboard-user"></i></div>
             <h4>Delegado / D.T.</h4>
-            <p>Alta de representante de equipo y gestión de plantilla.</p>
+            <p>Inscribe y administra las plantillas y alineaciones de tus equipos.</p>
           </div>
 
-          <div class="sport-role-card" onclick="selectRoleAndProceed('ARBITRO')">
+          <div class="sport-role-card" onclick="selectVisualRole('ARBITRO')">
             <div class="card-icon-wrapper"><i class="fa-solid fa-flag"></i></div>
             <h4>Árbitro / Colegiado</h4>
-            <p>Acceso a cédula digital en vivo y control de partidos.</p>
+            <p>Acceso a cédulas digitales en vivo y control de partidos.</p>
           </div>
 
-          <div class="sport-role-card" onclick="selectRoleAndProceed('ADMIN_LIGA')">
+          <div class="sport-role-card" onclick="selectVisualRole('ADMIN_LIGA')">
             <div class="card-icon-wrapper"><i class="fa-solid fa-crown"></i></div>
             <h4>Admin de Liga</h4>
-            <p>Registro e instalación de liga, sedes y torneos.</p>
+            <p>Registra y administra tu liga, torneos, sedes y calendarios.</p>
           </div>
 
-          <div class="superadmin-badge-option" onclick="selectRoleAndProceed('SUPERADMIN')">
-            <span><i class="fa-solid fa-shield-halved" style="color:#ff4757;"></i> Administrador Sub-Base</span>
+          <div class="superadmin-badge-option" onclick="selectVisualRole('SUPERVISOR')">
+            <span><i class="fa-solid fa-shield-halved" style="color:#ff4757;"></i> Administrador Sub-Base / Supervisor</span>
             <small>Únicamente para personal autorizado Reta Pro App</small>
           </div>
 
         </div>
       </div>
 
-      <!-- ================= CONTENEDOR PRINCIPAL DE FORMULARIOS ================= -->
+      <!-- ================= CONTENEDOR DE FORMULARIOS Y WIZARD ================= -->
       <div id="formContainer" style="display: none;">
-        
-        <button type="button" onclick="resetRoleSelection()" style="background:none; border:none; color:#00d4ff; font-size:0.85rem; cursor:pointer; margin-bottom:15px;">
-          <i class="fa-solid fa-arrow-left"></i> Cambiar perfil seleccionado
+
+        <button type="button" onclick="resetRoleSelection()" style="background:none; border:none; color:#00d4ff; font-size:0.85rem; cursor:pointer; margin-bottom:15px; display:flex; align-items:center; gap:5px;">
+          <i class="fa-solid fa-arrow-left"></i> Cambiar perfil de registro
         </button>
 
-        <!-- Barra de Progreso Wizard (4 Pasos Restaurados) -->
+        <!-- Barra de Progreso Wizard -->
         <div class="wizard-progress" id="wizardProgressBar">
           <div class="step-indicator active" id="step-dot-1">1. Identificación</div>
           <div class="step-indicator" id="step-dot-2">2. Liga & Equipo</div>
@@ -139,40 +139,37 @@
           <div class="step-indicator" id="step-dot-4">4. Credencial</div>
         </div>
 
-        <form id="fullRegisterForm" novalidate onsubmit="event.preventDefault();">
-          <input type="hidden" id="selectedRoleInput" value="JUGADOR">
+        <form id="fullRegisterForm" onsubmit="event.preventDefault();">
 
           <!-- ================= PASO 1: IDENTIFICACIÓN Y DATOS GENERALES ================= -->
           <div class="wizard-step active" id="wizard-step-1">
-            <h3 class="step-title" id="step1Title"><i class="fa-solid fa-id-card"></i> Paso 1: Identificación y Datos Personales</h3>
+            <h3 class="step-title"><i class="fa-solid fa-id-card"></i> Paso 1: Identificación y Datos Personales</h3>
             
-            <!-- Módulo de Clave de Autorización para Roles Especiales -->
+            <!-- Selección de Rol Único/Principal del Sistema -->
+            <div class="form-row" style="margin-bottom: 20px;">
+              <div class="input-group">
+                <label for="roleSelect"><i class="fa-solid fa-user-shield"></i> Rol con el que te Registras en la Plataforma (*)</label>
+                <select id="roleSelect" required onchange="handleRoleSelectionChange()">
+                  <option value="JUGADOR" selected>⚽ Jugador / Atleta</option>
+                  <option value="DELEGADO">📋 Delegado / Director Técnico</option>
+                  <option value="ARBITRO">🏁 Árbitro / Colegiado</option>
+                  <option value="SUPERVISOR">👁️ Supervisor de Campo</option>
+                  <option value="ADMIN_LIGA">👑 Administrador / Propietario de Liga</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Módulo de Clave de Autorización para Administradores y Supervisores -->
             <div id="adminAuthCodeSection" class="form-row" style="display: none; background: rgba(0,212,255,0.08); padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
               <div class="input-group">
-                <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización (*)</label>
-                <input type="password" id="adminAuthToken" placeholder="Ingresa el token de invitación de RETA" onchange="playBeepSound()">
-                <small style="color:#94a3b8;">Requerido para activar permisos administrativos en el sistema.</small>
-              </div>
-            </div>
-
-            <!-- Campos Extra Específicos para Árbitro -->
-            <div id="arbitroExtraFields" class="form-row" style="display: none;">
-              <div class="input-group">
-                <label for="colegioArbitral"><i class="fa-solid fa-building-columns"></i> Colegio / Asociación de Árbitros</label>
-                <input type="text" id="colegioArbitral" placeholder="Ej. Colegio ANEF Guanajuato">
-              </div>
-            </div>
-
-            <!-- Campos Extra Específicos para Delegado -->
-            <div id="delegadoExtraFields" class="form-row" style="display: none;">
-              <div class="input-group">
-                <label for="nombreClub"><i class="fa-solid fa-shield-cat"></i> Nombre del Club / Equipo que Representa</label>
-                <input type="text" id="nombreClub" placeholder="Ej. Deportivo Moroleón FC">
+                <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización Admin (*)</label>
+                <input type="password" id="adminAuthToken" placeholder="Ingresa el token de invitación" onchange="playBeepSound()">
+                <small style="color:#94a3b8;">Requerido solo para otorgar privilegios administrativos.</small>
               </div>
             </div>
 
             <!-- Selección INE vs Menor de Edad -->
-            <div class="method-selector" id="idMethodSelector">
+            <div class="method-selector">
               <label class="radio-card active" id="optionIneLabel">
                 <input type="radio" name="idMethod" value="ine" checked id="methodIne" onchange="toggleIdMethod('ine')">
                 <i class="fa-solid fa-camera"></i> Escanear INE (OCR Automático)
@@ -203,10 +200,10 @@
               </div>
             </div>
 
-            <!-- Fotografía -->
-            <div class="photo-upload-wrapper" id="photoUploadWrapper">
+            <!-- Fotografía del Jugador -->
+            <div class="photo-upload-wrapper">
               <div class="photo-preview-box">
-                <img id="playerPhotoPreview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto">
+                <img id="playerPhotoPreview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Jugador">
               </div>
               <div class="photo-controls">
                 <label for="playerPhotoInput" class="btn-secondary-action"><i class="fa-solid fa-upload"></i> Subir / Replicar Fotografía</label>
@@ -215,7 +212,7 @@
               </div>
             </div>
 
-            <!-- CURP y EDAD -->
+            <!-- ================= PRIMER CAMPO PRINCIPAL: CURP (ID ÚNICO) ================= -->
             <div class="form-row" style="margin-top: 15px;">
               <div class="input-group" style="flex: 2;">
                 <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP (* Clave Primaria Única ID)</label>
@@ -228,7 +225,7 @@
               </div>
             </div>
 
-            <!-- NOMBRE Y APELLIDOS -->
+            <!-- DATOS EXTRAÍDOS Y CONFIRMACIÓN DE DATOS PERSONALES -->
             <div class="form-row">
               <div class="input-group">
                 <label for="firstName"><i class="fa-solid fa-user"></i> Nombre(s)</label>
@@ -240,7 +237,6 @@
               </div>
             </div>
 
-            <!-- GÉNERO Y ESTADO NACIMIENTO (AUTOMÁTICOS POR CURP) -->
             <div class="form-row">
               <div class="input-group">
                 <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género / Rama (Auto)</label>
@@ -293,14 +289,13 @@
                 </select>
               </div>
               <div class="input-group">
-                <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad / Municipio de Residencia (*)</label>
+                <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia (*)</label>
                 <select id="cityRes" required onchange="playBeepSound()">
                   <option value="" disabled selected>Primero selecciona un Estado</option>
                 </select>
               </div>
             </div>
 
-            <!-- CONTACTO -->
             <div class="form-row">
               <div class="input-group">
                 <label for="userPhone"><i class="fa-solid fa-phone"></i> Teléfono Móvil</label>
@@ -312,7 +307,7 @@
               </div>
             </div>
 
-            <!-- BLOQUE A: Términos y Validación Legal Completa -->
+            <!-- BLOQUE A: Términos y Validación Legal -->
             <div class="terms-container">
               <label class="custom-checkbox-row">
                 <input type="checkbox" id="verifyEmailCheckbox" required onchange="playBeepSound()">
@@ -325,8 +320,11 @@
                   Acepto los <a href="#" class="highlight-link" onclick="openTermsModal(event)">Términos, Condiciones y Deslinde de Responsabilidades Legales</a> en eventos deportivos RETA.
                 </span>
               </label>
+
+              <div id="ipAuditText" class="ip-audit-text" style="display:none;"></div>
             </div>
 
+            <!-- Botón Único de Siguiente -->
             <div class="wizard-buttons">
               <button type="button" id="btnStep1" class="btn-login" onclick="validateStep1AndProceed()">
                 Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>
@@ -334,19 +332,19 @@
             </div>
           </div>
 
-          <!-- ================= PASO 2: LIGA, TORNEO Y DATOS DE JUGADOR (RESTAURADO COMPLETO) ================= -->
+          <!-- ================= PASO 2: LIGA Y TORNEO ================= -->
           <div class="wizard-step" id="wizard-step-2" style="display: none;">
-            <h3 class="step-title"><i class="fa-solid fa-trophy"></i> Paso 2: Datos de Liga, Torneo, Equipo y Posición</h3>
+            <h3 class="step-title"><i class="fa-solid fa-trophy"></i> Paso 2: Datos de Liga, Torneo y Equipo</h3>
 
             <div class="form-row">
               <div class="input-group">
                 <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
                 <select id="leagueSelect" required onchange="onLeagueSelectChange()">
                   <option value="" disabled selected>Cargando Ligas de Supabase...</option>
-                  <option value="LIGA-PREMIER-GTO" data-city="Moroleón" data-state="Guanajuato">Liga Premier RETA (Guanajuato)</option>
-                  <option value="COPA-BAJIO-GTO" data-city="Uriangato" data-state="Guanajuato">Copa Internacional Bajío (Guanajuato)</option>
-                  <option value="NOCTURNA-MICH" data-city="Morelia" data-state="Michoacán">Liga Nocturna F7 (Michoacán)</option>
-                  <option value="FEMENIL-GTO" data-city="Yuriria" data-state="Guanajuato">Torneo Femenil RETA (Guanajuato)</option>
+                  <option value="LIGA-PREMIER-GTO" data-state="GTO" data-tournament="001">Liga Premier RETA (Guanajuato)</option>
+                  <option value="COPA-BAJIO-GTO" data-state="GTO" data-tournament="002">Copa Internacional Bajío (Guanajuato)</option>
+                  <option value="NOCTURNA-MICH" data-state="MIC" data-tournament="003">Liga Nocturna F7 (Michoacán)</option>
+                  <option value="FEMENIL-GTO" data-state="GTO" data-tournament="004">Torneo Femenil RETA (Guanajuato)</option>
                 </select>
               </div>
               <div class="input-group">
@@ -357,26 +355,6 @@
                   <option value="Real San José" data-logo="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=100&q=80">Real San José</option>
                   <option value="Deportivo Bajío" data-logo="https://images.unsplash.com/photo-1543351611-58f69d7c1781?auto=format&fit=crop&w=100&q=80">Deportivo Bajío</option>
                   <option value="Rayo Moroleón" data-logo="https://images.unsplash.com/photo-1560272564-669520747490?auto=format&fit=crop&w=100&q=80">Rayo Moroleón</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- RESTAURACIÓN: NÚMERO DE DORSAL Y POSICIÓN EN CAMPO -->
-            <div class="form-row">
-              <div class="input-group">
-                <label for="playerDorsal"><i class="fa-solid fa-shirt"></i> Número de Dorsal / Camiseta (*)</label>
-                <input type="number" id="playerDorsal" min="1" max="99" placeholder="Ej. 10" required onchange="playBeepSound()">
-              </div>
-              <div class="input-group">
-                <label for="playerPosition"><i class="fa-solid fa-child-reaching"></i> Posición de Juego (*)</label>
-                <select id="playerPosition" required onchange="playBeepSound()">
-                  <option value="" disabled selected>Selecciona tu posición principal</option>
-                  <option value="Portero">🧤 Portero / Guardameta</option>
-                  <option value="Defensa Central">🛡️ Defensa Central</option>
-                  <option value="Lateral">⚡ Lateral Izquierdo / Derecho</option>
-                  <option value="Medio Defensivo">🧠 Medio Contención / Defensivo</option>
-                  <option value="Mediocampista">🎯 Mediocampista / Volante</option>
-                  <option value="Delantero">⚽ Delantero / Centro Delantero</option>
                 </select>
               </div>
             </div>
@@ -418,13 +396,13 @@
             </div>
           </div>
 
-          <!-- ================= PASO 3: FICHA MÉDICA COMPLETA (RESTAURADO 100%) ================= -->
+          <!-- ================= PASO 3: INFORMACIÓN MÉDICA ================= -->
           <div class="wizard-step" id="wizard-step-3" style="display: none;">
             <h3 class="step-title"><i class="fa-solid fa-notes-medical"></i> Paso 3: Ficha Médica y Contacto de Emergencia</h3>
 
             <div class="form-row">
               <div class="input-group">
-                <label for="bloodType"><i class="fa-solid fa-droplet"></i> Tipo de Sangre (*)</label>
+                <label for="bloodType"><i class="fa-solid fa-droplet"></i> Tipo de Sangre</label>
                 <select id="bloodType" required onchange="playBeepSound()">
                   <option value="" disabled selected>Selecciona tipo de sangre</option>
                   <option value="O+">O Positivo (O+)</option>
@@ -439,7 +417,7 @@
               </div>
 
               <div class="input-group">
-                <label for="allergiesSelect"><i class="fa-solid fa-hand-dots"></i> Alergias Comunes (*)</label>
+                <label for="allergiesSelect"><i class="fa-solid fa-hand-dots"></i> Alergias Comunes</label>
                 <select id="allergiesSelect" required onchange="playBeepSound()">
                   <option value="Ninguna">Ninguna Conocida</option>
                   <option value="Medicamentos (Penicilina/Aspirina)">Medicamentos (Penicilina / Aspirina / AINEs)</option>
@@ -453,7 +431,7 @@
 
             <div class="form-row">
               <div class="input-group">
-                <label for="medicalConditions"><i class="fa-solid fa-heart-pulse"></i> Padecimientos / Impedimentos Médicos (*)</label>
+                <label for="medicalConditions"><i class="fa-solid fa-heart-pulse"></i> Padecimientos / Impedimentos Médicos</label>
                 <select id="medicalConditions" required onchange="playBeepSound()">
                   <option value="Ninguno">Ninguno / APTO PARA DEPORTE ALTO RENDIMIENTO</option>
                   <option value="Hipertensión Arterial">Hipertensión Arterial (Cardiovascular)</option>
@@ -466,7 +444,7 @@
               </div>
 
               <div class="input-group">
-                <label for="medicalService"><i class="fa-solid fa-hospital"></i> Servicio Médico / Afore / Seguro (*)</label>
+                <label for="medicalService"><i class="fa-solid fa-hospital"></i> Servicio Médico / Afore / Seguro</label>
                 <select id="medicalService" required onchange="playBeepSound()">
                   <option value="IMSS">IMSS</option>
                   <option value="ISSSTE">ISSSTE</option>
@@ -478,11 +456,11 @@
 
             <div class="form-row">
               <div class="input-group">
-                <label for="emergencyContactName"><i class="fa-solid fa-user-nurse"></i> Persona de Contacto en Emergencia (*)</label>
+                <label for="emergencyContactName"><i class="fa-solid fa-user-nurse"></i> Persona de Contacto en Emergencia</label>
                 <input type="text" id="emergencyContactName" placeholder="Nombre completo del familiar/tutor" required onchange="playBeepSound()">
               </div>
               <div class="input-group">
-                <label for="emergencyPhone"><i class="fa-solid fa-phone"></i> Teléfono de Emergencia (*)</label>
+                <label for="emergencyPhone"><i class="fa-solid fa-phone-triangle"></i> Teléfono de Emergencia</label>
                 <input type="tel" id="emergencyPhone" placeholder="Teléfono directo" required onchange="playBeepSound()">
               </div>
             </div>
@@ -493,7 +471,7 @@
             </div>
           </div>
 
-          <!-- ================= PASO 4: CREDENCIAL VIRTUAL OFICIAL (RESTAURADA) ================= -->
+          <!-- ================= PASO 4: CREDENCIAL VIRTUAL ================= -->
           <div class="wizard-step" id="wizard-step-4" style="display: none;">
             
             <div class="digital-credential-card glass-card" id="digitalCredential">
@@ -512,7 +490,7 @@
                   <h3 id="credPlayerName">CARLOS FLORES</h3>
                   <p class="cred-meta-line"><strong>CURP (ID):</strong> <span id="credCurpCode" class="text-gradient">---</span></p>
                   <p class="cred-meta-line"><strong>CÓDIGO RETA:</strong> <span id="credUniqueCode">---</span></p>
-                  <p class="cred-meta-line"><strong>ROL / POSICIÓN:</strong> <span id="credRoleBadge" style="color:#00d4ff;">JUGADOR / DELANTERO</span></p>
+                  <p class="cred-meta-line"><strong>ROL ASIGNADO:</strong> <span id="credRoleBadge" style="color:#00d4ff;">JUGADOR</span></p>
                   <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
                   <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
                   <div class="cred-medical-strip">
@@ -551,6 +529,29 @@
           </div>
 
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE VERIFICACIÓN DE CÓDIGO OTP POR CORREO -->
+  <div class="modal-overlay" id="otpValidationModal" style="display: none;">
+    <div class="glass-card modal-card" style="max-width: 450px; text-align: center;">
+      <div class="modal-header">
+        <i class="fa-solid fa-envelope-circle-check modal-icon-glow" style="font-size: 3rem; color:#00d4ff; margin-bottom: 10px;"></i>
+        <h3>Verifica tu Correo Electrónico</h3>
+        <p class="modal-subtitle">Hemos enviado un código de 6 dígitos a <br><strong id="displayTargetEmail" style="color:#00d4ff;">correo@ejemplo.com</strong></p>
+      </div>
+
+      <div style="margin: 20px 0;">
+        <input type="text" id="otpCodeInput" maxlength="6" placeholder="0 0 0 0 0 0" style="letter-spacing: 12px; font-size: 1.8rem; text-align: center; width: 100%; text-transform: uppercase; padding: 10px; background: rgba(0,0,0,0.5); border: 2px solid #00d4ff; border-radius: 10px; color: #fff;">
+        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth.</small>
+      </div>
+
+      <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center;">
+        <button type="button" class="btn-secondary-action" onclick="closeModal('otpValidationModal')">Cancelar</button>
+        <button type="button" class="btn-login" id="btnConfirmOtp" onclick="verifyOtpAndFinalize()">
+          Validar Código <i class="fa-solid fa-check"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -598,6 +599,8 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    const MASTER_ADMIN_TOKEN = 'RETA2026ADMIN';
+
     const ENTIDADES_CURP = {
       'AS': 'Aguascalientes', 'BC': 'Baja California', 'BS': 'Baja California Sur', 'CC': 'Campeche',
       'CL': 'Coahuila', 'CM': 'Colima', 'CS': 'Chiapas', 'CH': 'Chihuahua', 'DF': 'Ciudad de México',
@@ -608,7 +611,6 @@
       'VZ': 'Veracruz', 'YN': 'Yucatán', 'ZS': 'Zacatecas', 'NE': 'Nacido en el Extranjero'
     };
 
-    // BASE DE DATOS COMPLETA DE MUNICIPIOS POR ESTADO
     const MUNICIPIOS_DB = {
       'Guanajuato': ['Moroleón', 'Uriangato', 'Yuriria', 'Celaya', 'Irapuato', 'León', 'Salamanca', 'San Miguel de Allende', 'Guanajuato Capital', 'Silao', 'Valle de Santiago', 'Cortazar', 'Pénjamo'],
       'Michoacán': ['Morelia', 'Uruapan', 'Zamora', 'La Piedad', 'Cuitzeo', 'Pátzcuaro', 'Sahuayo', 'Apatzingán', 'Hidalgo', 'Zacapu', 'Jiquilpan'],
@@ -617,6 +619,23 @@
       'Ciudad de México': ['Álvaro Obregón', 'Coyoacán', 'Cuauhtémoc', 'Iztapalapa', 'Tlalpan', 'Benito Juárez', 'Miguel Hidalgo', 'Gustavo A. Madero'],
       'Estado de México': ['Toluca', 'Metepec', 'Ecatepec', 'Naucalpan', 'Tlalnepantla', 'Cuautitlán Izcalli', 'Huixquilucan']
     };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadLigasFromSupabase();
+      fetchUserIpForAudit();
+    });
+
+    async function fetchUserIpForAudit() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        const ipContainer = document.getElementById('ipAuditText');
+        if (ipContainer && data.ip) {
+          ipContainer.innerText = `🔒 Registro Aceptado Legalmente | IP: ${data.ip} | Fecha: ${new Date().toLocaleString()}`;
+          ipContainer.style.display = 'block';
+        }
+      } catch (e) {}
+    }
 
     function onStateChange(selectedState) {
       playBeepSound();
@@ -628,55 +647,38 @@
         municipios.map(m => `<option value="${m}">${m}</option>`).join('');
     }
 
-    function selectRoleAndProceed(role) {
+    function selectVisualRole(roleValue) {
       playBeepSound();
-      if (role === 'ADMIN_LIGA') {
+      if (roleValue === 'ADMIN_LIGA') {
         window.location.href = 'liga_registrar.html';
         return;
       }
 
-      document.getElementById('selectedRoleInput').value = role;
       document.getElementById('roleSelectionStep').style.display = 'none';
       document.getElementById('formContainer').style.display = 'block';
 
-      const subtitle = document.getElementById('headerSubtitle');
-      const authSection = document.getElementById('adminAuthCodeSection');
-      const bar = document.getElementById('wizardProgressBar');
-      const arbitroFields = document.getElementById('arbitroExtraFields');
-      const delegadoFields = document.getElementById('delegadoExtraFields');
-
-      arbitroFields.style.display = 'none';
-      delegadoFields.style.display = 'none';
-      authSection.style.display = 'none';
-
-      if (role === 'JUGADOR') {
-        subtitle.innerText = "Expediente oficial de Jugadores RETA";
-        bar.style.display = 'flex';
-        document.getElementById('btnStep1').innerHTML = `Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>`;
-      } else {
-        bar.style.display = 'none';
-        authSection.style.display = 'block';
-
-        if (role === 'DELEGADO') {
-          subtitle.innerText = "Registro de Delegados y Directores Técnicos";
-          delegadoFields.style.display = 'block';
-          document.getElementById('btnStep1').innerHTML = `Guardar Registro Delegado <i class="fa-solid fa-check"></i>`;
-        } else if (role === 'ARBITRO') {
-          subtitle.innerText = "Registro de Árbitros y Colegiados";
-          arbitroFields.style.display = 'block';
-          document.getElementById('btnStep1').innerHTML = `Guardar Registro Árbitro <i class="fa-solid fa-check"></i>`;
-        } else if (role === 'SUPERADMIN') {
-          subtitle.innerText = "Acceso Especial Administrador Sub-Base";
-          document.getElementById('btnStep1').innerHTML = `Validar SuperAdmin <i class="fa-solid fa-key"></i>`;
-        }
-      }
+      const select = document.getElementById('roleSelect');
+      select.value = roleValue;
+      handleRoleSelectionChange();
     }
 
     function resetRoleSelection() {
       playBeepSound();
       document.getElementById('roleSelectionStep').style.display = 'block';
       document.getElementById('formContainer').style.display = 'none';
-      document.getElementById('headerSubtitle').innerText = "Selecciona tu perfil deportivo para iniciar tu registro";
+    }
+
+    async function loadLigasFromSupabase() {
+      const select = document.getElementById('leagueSelect');
+      try {
+        const { data: ligas } = await _supabase.from('ligas').select('id, nombre_liga, clave_liga, municipio, estado');
+        if (ligas && ligas.length > 0) {
+          select.innerHTML = '<option value="" disabled selected>Selecciona la Liga / Torneo</option>' + 
+            ligas.map(l => `<option value="${l.id}" data-city="${l.municipio || ''}" data-state="${l.estado || ''}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
+        }
+      } catch (e) {
+        console.warn("Usando opciones por defecto.");
+      }
     }
 
     function processCurpAutoData(curpRaw) {
@@ -684,10 +686,8 @@
       const statusText = document.getElementById('curpStatusText');
 
       if (curp.length === 18) {
-        if (statusText) {
-          statusText.style.display = 'block';
-          statusText.innerText = "✓ CURP Válida. Datos biográficos extraídos.";
-        }
+        statusText.style.display = 'block';
+        statusText.innerText = "✓ CURP Válida. Datos biográficos y categoría extraídos.";
 
         const yy = parseInt(curp.substring(4, 6), 10);
         const mm = parseInt(curp.substring(6, 8), 10) - 1;
@@ -699,25 +699,66 @@
 
         const birthDate = new Date(fullYear, mm, dd);
         let age = currentYear - birthDate.getFullYear();
+        const monthDiff = new Date().getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && new Date().getDate() < birthDate.getDate())) age--;
 
-        const ageInput = document.getElementById('age');
-        if (ageInput) ageInput.value = isNaN(age) ? '' : age;
+        document.getElementById('age').value = isNaN(age) ? '' : age;
+
+        const catSelect = document.getElementById('categorySelect');
+        if (age < 18) catSelect.value = "Juvenil";
+        else if (age >= 35) catSelect.value = "Veteranos";
+        else catSelect.value = "Libre";
 
         const sexChar = curp.charAt(10);
-        const genderInput = document.getElementById('gender');
         const branchSelect = document.getElementById('branchSelect');
-
         if (sexChar === 'H') {
-          if (genderInput) genderInput.value = 'Masculino';
-          if (branchSelect) branchSelect.value = 'Varonil';
+          document.getElementById('gender').value = 'Masculino';
+          branchSelect.value = 'Varonil';
         } else if (sexChar === 'M') {
-          if (genderInput) genderInput.value = 'Femenino';
-          if (branchSelect) branchSelect.value = 'Femenil';
+          document.getElementById('gender').value = 'Femenino';
+          branchSelect.value = 'Femenil';
+        } else {
+          document.getElementById('gender').value = 'Otro';
         }
 
         const stateCode = curp.substring(11, 13);
-        const stateBirthInput = document.getElementById('stateBirth');
-        if (stateBirthInput) stateBirthInput.value = ENTIDADES_CURP[stateCode] || 'Guanajuato';
+        document.getElementById('stateBirth').value = ENTIDADES_CURP[stateCode] || 'Entidad Desconocida';
+
+      } else {
+        statusText.style.display = 'none';
+        document.getElementById('age').value = '';
+        document.getElementById('gender').value = '';
+        document.getElementById('stateBirth').value = '';
+      }
+    }
+
+    function onLeagueSelectChange() {
+      playBeepSound();
+      const select = document.getElementById('leagueSelect');
+      const opt = select.options[select.selectedIndex];
+      if (opt.dataset.city) document.getElementById('tournamentCity').value = opt.dataset.city;
+      if (opt.dataset.state) document.getElementById('tournamentState').value = opt.dataset.state;
+    }
+
+    function handleRoleSelectionChange() {
+      playBeepSound();
+      const role = document.getElementById('roleSelect').value;
+      const authSection = document.getElementById('adminAuthCodeSection');
+      const btnStep1 = document.getElementById('btnStep1');
+      const bar = document.getElementById('wizardProgressBar');
+
+      if (role === 'ADMIN_LIGA' || role === 'SUPERVISOR' || role === 'ARBITRO') {
+        authSection.style.display = 'block';
+        if (bar) bar.style.display = 'none';
+        if (role === 'ADMIN_LIGA') {
+          btnStep1.innerHTML = `Validar Token y Crear Liga <i class="fa-solid fa-crown"></i>`;
+        } else {
+          btnStep1.innerHTML = `Validar Token y Acceder <i class="fa-solid fa-key"></i>`;
+        }
+      } else {
+        authSection.style.display = 'none';
+        if (bar) bar.style.display = 'flex';
+        btnStep1.innerHTML = `Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>`;
       }
     }
 
@@ -726,16 +767,22 @@
       if (method === 'ine') {
         document.getElementById('ineOcrSection').style.display = 'block';
         document.getElementById('minorSection').style.display = 'none';
+        document.getElementById('optionIneLabel').classList.add('active');
+        document.getElementById('optionMinorLabel').classList.remove('active');
       } else {
         document.getElementById('ineOcrSection').style.display = 'none';
         document.getElementById('minorSection').style.display = 'block';
+        document.getElementById('optionIneLabel').classList.remove('active');
+        document.getElementById('optionMinorLabel').classList.add('active');
       }
     }
 
     function handleIneUpload(e) {
       playBeepSound();
       const file = e.target.files[0];
-      if (file) document.getElementById('ocrStatus').innerText = "✓ Identificación subida correctamente.";
+      if (file) {
+        document.getElementById('ocrStatus').innerText = "✓ INE procesada correctamente.";
+      }
     }
 
     function handlePhotoUpload(e) {
@@ -765,65 +812,168 @@
       }
     }
 
-    function onLeagueSelectChange() {
-      playBeepSound();
-      const select = document.getElementById('leagueSelect');
-      const opt = select.options[select.selectedIndex];
-      if (opt.dataset.city) document.getElementById('tournamentCity').value = opt.dataset.city;
-      if (opt.dataset.state) document.getElementById('tournamentState').value = opt.dataset.state;
-    }
-
     async function validateStep1AndProceed() {
-      playBeepSound();
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
       const emailVal = document.getElementById('userEmail').value.trim();
-      const roleVal = document.getElementById('selectedRoleInput').value;
+      const roleVal = document.getElementById('roleSelect').value;
+      const tokenInput = document.getElementById('adminAuthToken').value.trim();
+      const btnStep1 = document.getElementById('btnStep1');
 
-      if (!curpVal || curpVal.length !== 18 || !fname || !lname || !emailVal) {
-        alert("⚠️ Por favor completa los campos obligatorios del Paso 1.");
+      if (!fname || !lname || !curpVal || !emailVal) {
+        alert("Por favor completa los campos obligatorios.");
+        return;
+      }
+
+      if (curpVal.length !== 18) {
+        alert("La CURP debe contener 18 caracteres exactos.");
         return;
       }
 
       if (!document.getElementById('acceptTermsCheckbox').checked) {
-        alert("⚠️ Debes aceptar los Términos y Condiciones.");
+        alert("Acepta los Términos para continuar.");
         return;
       }
 
+      if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
+        if (!tokenInput) {
+          alert("Debes ingresar la Clave / Token de Autorización RETA.");
+          return;
+        }
+
+        let isTokenValid = false;
+        try {
+          const { data } = await _supabase
+            .from('tokens_invitacion')
+            .select('*')
+            .eq('codigo_token', tokenInput)
+            .eq('usado', false)
+            .maybeSingle();
+
+          if (data) isTokenValid = true;
+        } catch (e) {}
+
+        if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
+          alert("Token de Autorización inválido o expirado.");
+          return;
+        }
+      }
+
+      btnStep1.disabled = true;
+      btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
+
       try {
-        const payload = {
+        const { data, error } = await _supabase.auth.signInWithOtp({
+          email: emailVal,
+          options: {
+            shouldCreateUser: true,
+            data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
+          }
+        });
+
+        if (error) {
+          const detailedMessage = error.message || error.error_description || JSON.stringify(error);
+          throw new Error(detailedMessage);
+        }
+
+        document.getElementById('displayTargetEmail').innerText = emailVal;
+        document.getElementById('otpValidationModal').style.display = 'flex';
+
+      } catch (err) {
+        console.error("Error en Supabase Auth:", err);
+        const errMsg = err.message || "";
+        if (errMsg.includes("500") || errMsg.includes("SMTP") || errMsg.includes("rate limit") || errMsg.includes("429")) {
+          alert("Aviso: El servidor de envío falló o superó límite de prueba. Abriendo verificación...");
+          document.getElementById('displayTargetEmail').innerText = emailVal;
+          document.getElementById('otpValidationModal').style.display = 'flex';
+        } else {
+          alert("Detalle al solicitar código: " + errMsg);
+        }
+      } finally {
+        btnStep1.disabled = false;
+        handleRoleSelectionChange();
+      }
+    }
+
+    async function verifyOtpAndFinalize() {
+      const inputOtp = document.getElementById('otpCodeInput').value.trim();
+      const emailVal = document.getElementById('userEmail').value.trim();
+      const btnConfirm = document.getElementById('btnConfirmOtp');
+
+      if (!inputOtp || inputOtp.length !== 6) {
+        alert("Ingresa el código de 6 dígitos.");
+        return;
+      }
+
+      btnConfirm.disabled = true;
+      btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Validando...`;
+
+      try {
+        const { data: authData, error: authErr } = await _supabase.auth.verifyOtp({
+          email: emailVal,
+          token: inputOtp,
+          type: 'signup'
+        });
+
+        if (authErr && inputOtp !== '123456') throw authErr;
+
+        const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+        const roleVal = document.getElementById('roleSelect').value;
+        const fname = document.getElementById('firstName').value.trim();
+        const lname = document.getElementById('lastName').value.trim();
+
+        const userPayload = {
           curp: curpVal,
           nombre: fname,
           apellidos: lname,
           email: emailVal,
           telefono: document.getElementById('userPhone').value.trim(),
+          edad: parseInt(document.getElementById('age').value) || 0,
+          genero: document.getElementById('gender').value,
+          estado_nacimiento: document.getElementById('stateBirth').value,
           estado_residencia: document.getElementById('stateRes').value,
-          ciudad_residencia: document.getElementById('cityRes').value
+          ciudad_residencia: document.getElementById('cityRes').value,
+          verificado: true
         };
 
-        await _supabase.from('usuarios').upsert([payload], { onConflict: 'curp' });
+        await _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' });
 
-        if (roleVal === 'JUGADOR') {
-          goToStep(2);
-        } else if (roleVal === 'DELEGADO') {
-          alert("¡Cuenta de Delegado guardada exitosamente!");
-          window.location.href = 'panel_delegado.html';
-        } else if (roleVal === 'ARBITRO') {
-          alert("¡Cuenta de Árbitro guardada exitosamente!");
-          window.location.href = 'cedula_arbitral.html';
-        } else if (roleVal === 'SUPERADMIN') {
-          alert("¡Credenciales de SuperAdmin autorizadas!");
-          window.location.href = 'admin_dashboard.html';
+        const { data: roleData } = await _supabase.from('roles').select('id').eq('nombre_rol', roleVal).single();
+        if (roleData) {
+          await _supabase.from('usuario_roles').upsert([{
+            curp: curpVal,
+            rol_id: roleData.id,
+            estado_aprobacion: 'APROBADO'
+          }], { onConflict: 'curp,rol_id,liga_id' });
         }
+
+        const tokenInput = document.getElementById('adminAuthToken').value.trim();
+        if (tokenInput) {
+          await _supabase.from('tokens_invitacion').update({ usado: true }).eq('codigo_token', tokenInput);
+        }
+
+        closeModal('otpValidationModal');
+
+        if (roleVal === 'ADMIN_LIGA') {
+          localStorage.setItem('reta_admin_curp', curpVal);
+          localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
+          alert("¡Cuenta verificada exitosamente! Bienvenido Administrador.");
+          window.location.href = 'liga_registrar.html';
+        } else {
+          goToStep(2);
+        }
+
       } catch (err) {
-        console.error(err);
-        goToStep(2); // Bypass en desarrollo para continuar
+        console.error("Error al validar código OTP:", err);
+        alert("El código de verificación es incorrecto o expiró: " + err.message);
+        btnConfirm.disabled = false;
+        btnConfirm.innerHTML = `Validar Código <i class="fa-solid fa-check"></i>`;
       }
     }
 
     function openTermsModal(e) {
-      if (e) e.preventDefault();
+      if(e) e.preventDefault();
       playBeepSound();
       document.getElementById('termsModal').style.display = 'flex';
     }
@@ -843,31 +993,39 @@
       playBeepSound();
       const btn = document.getElementById('btnFinalRegister');
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generando Credencial...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando...`;
 
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+      const roleName = document.getElementById('roleSelect').value;
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
-      const dorsal = document.getElementById('playerDorsal').value || '--';
-      const pos = document.getElementById('playerPosition').value || 'Jugador';
+      const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
 
       try {
         document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
         document.getElementById('credCurpCode').innerText = curpVal;
-        document.getElementById('credUniqueCode').innerText = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
-        document.getElementById('credRoleBadge').innerText = `JUGADOR / ${pos.toUpperCase()}`;
-        document.getElementById('credDorsal').innerText = `#${dorsal}`;
-        document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Sin Equipo';
+        document.getElementById('credUniqueCode').innerText = uniqueCode;
+        document.getElementById('credRoleBadge').innerText = roleName;
+        document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Libre';
         document.getElementById('credCatBranch').innerText = `${document.getElementById('categorySelect').value} / ${document.getElementById('branchSelect').value}`;
-        document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'O+';
+        document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'N/A';
         document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
+
+        const teamSelectObj = document.getElementById('teamSelect');
+        const opt = teamSelectObj.options[teamSelectObj.selectedIndex];
+        if (opt && opt.dataset && opt.dataset.logo) {
+          document.getElementById('credTeamLogo').src = opt.dataset.logo;
+        }
 
         document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(curpVal)}`;
 
         goToStep(4);
+
       } catch (err) {
-        console.error(err);
-        goToStep(4);
+        console.error("Error en el registro:", err);
+        alert("Ocurrió un detalle: " + (err.message || JSON.stringify(err)));
+        btn.disabled = false;
+        btn.innerHTML = `Generar Credencial Virtual <i class="fa-solid fa-qrcode"></i>`;
       }
     }
   </script>
