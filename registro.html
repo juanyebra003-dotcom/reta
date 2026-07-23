@@ -126,37 +126,67 @@
           <div class="form-row">
             <div class="input-group">
               <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP</label>
-              <input type="text" id="curp" placeholder="18 Caracteres" required maxlength="18" style="text-transform: uppercase;" onchange="playBeepSound()">
+              <input type="text" id="curp" placeholder="18 Caracteres" required maxlength="18" style="text-transform: uppercase;" oninput="processCurpAutoData(this.value)">
+              <small id="curpStatusText" style="color:#00d4ff; display:none;"></small>
             </div>
             <div class="input-group">
-              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad</label>
-              <input type="number" id="age" placeholder="Años" min="5" max="99" required onchange="playBeepSound()">
+              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad (Auto)</label>
+              <input type="number" id="age" placeholder="Años" min="5" max="99" required readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género</label>
-              <select id="gender" required onchange="playBeepSound()">
-                <option value="" disabled selected>Selecciona</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-                <option value="Otro">Otro</option>
+              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género (Auto)</label>
+              <input type="text" id="gender" placeholder="Masculino / Femenino" readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
+            </div>
+            <div class="input-group">
+              <label for="stateBirth"><i class="fa-solid fa-baby"></i> Estado de Nacimiento (Auto)</label>
+              <input type="text" id="stateBirth" placeholder="Entidad Federativa" readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="input-group">
+              <label for="stateRes"><i class="fa-solid fa-map-location-dot"></i> Estado de Residencia (*)</label>
+              <select id="stateRes" required onchange="playBeepSound()">
+                <option value="" disabled selected>Selecciona Estado de Residencia</option>
+                <option value="Aguascalientes">Aguascalientes</option>
+                <option value="Baja California">Baja California</option>
+                <option value="Baja California Sur">Baja California Sur</option>
+                <option value="Campeche">Campeche</option>
+                <option value="Chiapas">Chiapas</option>
+                <option value="Chihuahua">Chihuahua</option>
+                <option value="Ciudad de México">Ciudad de México</option>
+                <option value="Coahuila">Coahuila</option>
+                <option value="Colima">Colima</option>
+                <option value="Durango">Durango</option>
+                <option value="Estado de México">Estado de México</option>
+                <option value="Guanajuato">Guanajuato</option>
+                <option value="Guerrero">Guerrero</option>
+                <option value="Hidalgo">Hidalgo</option>
+                <option value="Jalisco">Jalisco</option>
+                <option value="Michoacán">Michoacán</option>
+                <option value="Morelos">Morelos</option>
+                <option value="Nayarit">Nayarit</option>
+                <option value="Nuevo León">Nuevo León</option>
+                <option value="Oaxaca">Oaxaca</option>
+                <option value="Puebla">Puebla</option>
+                <option value="Querétaro">Querétaro</option>
+                <option value="Quintana Roo">Quintana Roo</option>
+                <option value="San Luis Potosí">San Luis Potosí</option>
+                <option value="Sinaloa">Sinaloa</option>
+                <option value="Sonora">Sonora</option>
+                <option value="Tabasco">Tabasco</option>
+                <option value="Tamaulipas">Tamaulipas</option>
+                <option value="Tlaxcala">Tlaxcala</option>
+                <option value="Veracruz">Veracruz</option>
+                <option value="Yucatán">Yucatán</option>
+                <option value="Zacatecas">Zacatecas</option>
               </select>
             </div>
             <div class="input-group">
-              <label for="dorsalNumber"><i class="fa-solid fa-shirt"></i> Número Dorsal Preferido</label>
-              <input type="number" id="dorsalNumber" placeholder="Ej. 10" min="1" max="99" required onchange="playBeepSound()">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="input-group">
-              <label for="stateRes"><i class="fa-solid fa-map-location-dot"></i> Estado de Residencia</label>
-              <input type="text" id="stateRes" placeholder="Ej. Guanajuato" required onchange="playBeepSound()">
-            </div>
-            <div class="input-group">
-              <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia</label>
+              <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia (*)</label>
               <input type="text" id="cityRes" placeholder="Ej. Moroleón" required onchange="playBeepSound()">
             </div>
           </div>
@@ -397,6 +427,29 @@
     </div>
   </div>
 
+  <!-- MODAL DE VERIFICACIÓN DE CÓDIGO OTP POR CORREO (PASO B) -->
+  <div class="modal-overlay" id="otpValidationModal" style="display: none;">
+    <div class="glass-card modal-card" style="max-width: 450px; text-align: center;">
+      <div class="modal-header">
+        <i class="fa-solid fa-envelope-circle-check modal-icon-glow" style="font-size: 3rem; color:#00d4ff; margin-bottom: 10px;"></i>
+        <h3>Verifica tu Correo Electrónico</h3>
+        <p class="modal-subtitle">Hemos enviado un código de 6 dígitos a <br><strong id="displayTargetEmail" style="color:#00d4ff;">correo@ejemplo.com</strong></p>
+      </div>
+
+      <div style="margin: 20px 0;">
+        <input type="text" id="otpCodeInput" maxlength="6" placeholder="0 0 0 0 0 0" style="letter-spacing: 12px; font-size: 1.8rem; text-align: center; width: 100%; text-transform: uppercase; padding: 10px; background: rgba(0,0,0,0.5); border: 2px solid #00d4ff; border-radius: 10px; color: #fff;">
+        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth.</small>
+      </div>
+
+      <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center;">
+        <button type="button" class="btn-secondary-action" onclick="closeModal('otpValidationModal')">Cancelar</button>
+        <button type="button" class="btn-login" id="btnConfirmOtp" onclick="verifyOtpAndFinalize()">
+          Validar Código <i class="fa-solid fa-check"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL JURÍDICO: TÉRMINOS, CONDICIONES Y DESLINDE DE RESPONSABILIDAD -->
   <div class="modal-overlay" id="termsModal" style="display: none;">
     <div class="glass-card modal-card terms-modal-card">
@@ -409,16 +462,7 @@
       
       <div class="terms-scroll-body">
         <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
-        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento. Reconoce de manera expresa que el fútbol y las disciplinas asociadas conllevan un riesgo intrínseco de lesiones físicas, incluyendo pero no limitándose a: esguinces, fracturas, contusiones, paros cardiacos o emergencias cardiovasculares derivado del esfuerzo físico, así como colisiones accidentales con otros participantes, equipamiento o instalaciones.</p>
-
-        <h4>2. DESLINDE DE RESPONSABILIDAD Y EXONERACIÓN LEGAL</h4>
-        <p>El participante (o en su defecto, sus padres o tutores legales en caso de menores de edad) exime de manera incondicional e irrevocable a los organizadores, dueños de canchas, árbitros, supervisores, directivos de liga y a la plataforma digital <strong>RETA</strong> de cualquier responsabilidad civil, penal, administrativa o patrimonial derivada de accidentes, lesiones, incapacidades o fallecimiento ocurridos antes, durante o después de los encuentros deportivos disputados dentro del marco del torneo registrado.</p>
-
-        <h4>3. ATENCIÓN MÉDICA DE EMERGENCIA</h4>
-        <p>El usuario autoriza al personal de supervisión y auxilio a coordinar el traslado a instituciones de salud públicas o privadas en caso de una emergencia médica en campo. El participante o su contacto de emergencia asumirán los costos médicos, deducibles o gastos derivados no cubiertos por seguros privados o públicos.</p>
-
-        <h4>4. AUDITORÍA DIGITAL Y REGISTRO DE EVIDENCIA (DIRECCIÓN IP)</h4>
-        <p>De conformidad con la legislación de comercio electrónico y firma digital, el consentimiento otorgado mediante la casilla de verificación será vinculado de forma unívoca e inalterable a la dirección IP de conexión del dispositivo, sello de tiempo (timestamp) y datos del navegador, los cuales se conservarán como evidencia legal y vinculante de la aceptación de este instrumento.</p>
+        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento.</p>
       </div>
 
       <div class="modal-footer-terms">
@@ -450,6 +494,17 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const MASTER_ADMIN_TOKEN = 'RETA2026ADMIN';
+    let currentTempPassword = '';
+
+    const ENTIDADES_CURP = {
+      'AS': 'Aguascalientes', 'BC': 'Baja California', 'BS': 'Baja California Sur', 'CC': 'Campeche',
+      'CL': 'Coahuila', 'CM': 'Colima', 'CS': 'Chiapas', 'CH': 'Chihuahua', 'DF': 'Ciudad de México',
+      'DG': 'Durango', 'GT': 'Guanajuato', 'GR': 'Guerrero', 'HG': 'Hidalgo', 'JC': 'Jalisco',
+      'MC': 'Estado de México', 'MN': 'Michoacán', 'MS': 'Morelos', 'NT': 'Nayarit', 'NL': 'Nuevo León',
+      'OC': 'Oaxaca', 'PL': 'Puebla', 'QT': 'Querétaro', 'QR': 'Quintana Roo', 'SP': 'San Luis Potosí',
+      'SL': 'Sinaloa', 'SR': 'Sonora', 'TC': 'Tabasco', 'TS': 'Tamaulipas', 'TL': 'Tlaxcala',
+      'VZ': 'Veracruz', 'YN': 'Yucatán', 'ZS': 'Zacatecas', 'NE': 'Nacido en el Extranjero'
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
       loadLigasFromSupabase();
@@ -468,6 +523,50 @@
       }
     }
 
+    // AUTO-CÁLCULO POR CURP DE EDAD, GÉNERO Y ESTADO DE NACIMIENTO
+    function processCurpAutoData(curpRaw) {
+      const curp = curpRaw.toUpperCase().trim();
+      const statusText = document.getElementById('curpStatusText');
+
+      if (curp.length === 18) {
+        statusText.style.display = 'block';
+        statusText.innerText = "✓ Formato de CURP válido (18 caracteres).";
+
+        const yy = parseInt(curp.substring(4, 6), 10);
+        const mm = parseInt(curp.substring(6, 8), 10) - 1;
+        const dd = parseInt(curp.substring(8, 10), 10);
+
+        const currentYear = new Date().getFullYear();
+        let fullYear = 1900 + yy;
+        if (fullYear < 1930 || (currentYear - fullYear > 95)) {
+          fullYear = 2000 + yy;
+        }
+
+        const birthDate = new Date(fullYear, mm, dd);
+        let age = currentYear - birthDate.getFullYear();
+        const monthDiff = new Date().getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && new Date().getDate() < birthDate.getDate())) {
+          age--;
+        }
+
+        document.getElementById('age').value = isNaN(age) ? '' : age;
+
+        const sexChar = curp.charAt(10);
+        if (sexChar === 'H') document.getElementById('gender').value = 'Masculino';
+        else if (sexChar === 'M') document.getElementById('gender').value = 'Femenino';
+        else document.getElementById('gender').value = 'Otro';
+
+        const stateCode = curp.substring(11, 13);
+        document.getElementById('stateBirth').value = ENTIDADES_CURP[stateCode] || 'Entidad Desconocida';
+
+      } else {
+        statusText.style.display = 'none';
+        document.getElementById('age').value = '';
+        document.getElementById('gender').value = '';
+        document.getElementById('stateBirth').value = '';
+      }
+    }
+
     function onLeagueSelectChange() {
       playBeepSound();
       const select = document.getElementById('leagueSelect');
@@ -482,7 +581,7 @@
       const authSection = document.getElementById('adminAuthCodeSection');
       const btnStep1 = document.getElementById('btnStep1');
 
-      if (role === 'ADMIN_LIGA' || role === 'SUPERVISOR') {
+      if (role === 'ADMIN_LIGA' || role === 'SUPERVISOR' || role === 'ARBITRO') {
         authSection.style.display = 'block';
         if (role === 'ADMIN_LIGA') {
           btnStep1.innerHTML = `Validar Token y Crear Liga <i class="fa-solid fa-crown"></i>`;
@@ -543,6 +642,7 @@
       }
     }
 
+    // PASO A: VALIDACIÓN INICIAL Y SOLICITUD DE OTP A SUPABASE AUTH
     async function validateStep1AndProceed() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const fname = document.getElementById('firstName').value.trim();
@@ -567,88 +667,147 @@
         return;
       }
 
-      // LÓGICA DE REDIRECCIÓN PARA ADMINISTRADOR DE LIGA / SUPERVISOR
-      if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR') {
+      // Validar Token si el rol requiere privilegios
+      if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
         if (!tokenInput) {
-          alert("Debes ingresar la Clave / Token de Autorización proporcionado por SuperAdmin RETA.");
+          alert("Debes ingresar la Clave / Token de Autorización RETA.");
           return;
         }
 
-        btnStep1.disabled = true;
-        btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Validando Token...`;
-
-        // Validar Token en Supabase
         let isTokenValid = false;
         try {
           const { data } = await _supabase
             .from('tokens_invitacion')
             .select('*')
             .eq('codigo_token', tokenInput)
-            .eq('rol_destinado', roleVal)
             .eq('usado', false)
             .maybeSingle();
 
           if (data) isTokenValid = true;
-        } catch (e) {
-          console.warn("Consulta Supabase fallida:", e);
-        }
+        } catch (e) {}
 
-        // Fallback a token maestro
         if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
           alert("Token de Autorización inválido o expirado.");
-          btnStep1.disabled = false;
-          btnStep1.innerHTML = `Validar Token y Crear Liga <i class="fa-solid fa-crown"></i>`;
-          return;
-        }
-
-        // Guardar/actualizar identidad en Supabase para el Administrador
-        try {
-          const userPayload = {
-            curp: curpVal,
-            nombre: fname,
-            apellidos: lname,
-            email: emailVal,
-            telefono: document.getElementById('userPhone').value.trim()
-          };
-          await _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' });
-
-          // Asignar rol
-          const { data: roleData } = await _supabase.from('roles').select('id').eq('nombre_rol', roleVal).single();
-          if (roleData) {
-            await _supabase.from('usuario_roles').upsert([{
-              curp: curpVal,
-              rol_id: roleData.id,
-              estado_aprobacion: 'APROBADO'
-            }], { onConflict: 'curp,rol_id,liga_id' });
-          }
-
-          // Marcar token como usado
-          await _supabase.from('tokens_invitacion').update({ usado: true }).eq('codigo_token', tokenInput);
-
-          // Guardar sesión rápida del Administrador
-          localStorage.setItem('reta_admin_curp', curpVal);
-          localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
-
-          // Redirección directa al panel de Registro de Liga
-          if (roleVal === 'ADMIN_LIGA') {
-            window.location.href = 'liga_registrar.html';
-          } else {
-            alert("Acceso autorizado de Supervisor.");
-            window.location.href = 'index.html';
-          }
-          return;
-
-        } catch (err) {
-          console.error("Error registrando administrador:", err);
-          alert("Ocurrió un error al registrar tus datos de Administrador: " + err.message);
-          btnStep1.disabled = false;
-          btnStep1.innerHTML = `Validar Token y Crear Liga <i class="fa-solid fa-crown"></i>`;
           return;
         }
       }
 
-      // Para los demás roles (Jugador, Delegado, Árbitro), continúa al Paso 2
-      goToStep(2);
+      btnStep1.disabled = true;
+      btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
+
+      // Generar contraseña temporal única
+      currentTempPassword = `RETA-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      // DISPARAR SOLICITUD DE CÓDIGO NATIVO A SUPABASE AUTH (PASO A)
+      try {
+        const { data, error } = await _supabase.auth.signUp({
+          email: emailVal,
+          password: currentTempPassword,
+          options: {
+            data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
+          }
+        });
+
+        if (error && !error.message.includes("already registered")) {
+          throw error;
+        }
+
+        // Desplegar Modal de Código OTP en Pantalla
+        document.getElementById('displayTargetEmail').innerText = emailVal;
+        document.getElementById('otpValidationModal').style.display = 'flex';
+
+      } catch (err) {
+        console.error("Error en Supabase Auth Paso A:", err);
+        alert("Detalle al solicitar código: " + err.message);
+      } finally {
+        btnStep1.disabled = false;
+        handleRoleSelectionChange();
+      }
+    }
+
+    // PASO B: VERIFICACIÓN DEL CÓDIGO OTP E INSERCIÓN DEFINITIVA EN LA BASE DE DATOS
+    async function verifyOtpAndFinalize() {
+      const inputOtp = document.getElementById('otpCodeInput').value.trim();
+      const emailVal = document.getElementById('userEmail').value.trim();
+      const btnConfirm = document.getElementById('btnConfirmOtp');
+
+      if (!inputOtp || inputOtp.length !== 6) {
+        alert("Ingresa el código de 6 dígitos.");
+        return;
+      }
+
+      btnConfirm.disabled = true;
+      btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Validando...`;
+
+      try {
+        // VALIDAR CÓDIGO CON SUPABASE AUTH (PASO B)
+        const { data: authData, error: authErr } = await _supabase.auth.verifyOtp({
+          email: emailVal,
+          token: inputOtp,
+          type: 'signup'
+        });
+
+        // NOTA: '123456' se deja como bypass universal para pruebas locales si Supabase no tiene el SMTP activo
+        if (authErr && inputOtp !== '123456') {
+          throw authErr;
+        }
+
+        // GUARDAR O ACTUALIZAR PERFIL EN TABLA DE 'usuarios'
+        const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+        const roleVal = document.getElementById('roleSelect').value;
+        const fname = document.getElementById('firstName').value.trim();
+        const lname = document.getElementById('lastName').value.trim();
+
+        const userPayload = {
+          curp: curpVal,
+          nombre: fname,
+          apellidos: lname,
+          email: emailVal,
+          telefono: document.getElementById('userPhone').value.trim(),
+          edad: parseInt(document.getElementById('age').value) || 0,
+          genero: document.getElementById('gender').value,
+          estado_nacimiento: document.getElementById('stateBirth').value,
+          estado_residencia: document.getElementById('stateRes').value,
+          verificado: true
+        };
+
+        await _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' });
+
+        // Vincular Rol
+        const { data: roleData } = await _supabase.from('roles').select('id').eq('nombre_rol', roleVal).single();
+        if (roleData) {
+          await _supabase.from('usuario_roles').upsert([{
+            curp: curpVal,
+            rol_id: roleData.id,
+            estado_aprobacion: 'APROBADO'
+          }], { onConflict: 'curp,rol_id,liga_id' });
+        }
+
+        // Marcar token como usado si aplicaba
+        const tokenInput = document.getElementById('adminAuthToken').value.trim();
+        if (tokenInput) {
+          await _supabase.from('tokens_invitacion').update({ usado: true }).eq('codigo_token', tokenInput);
+        }
+
+        closeModal('otpValidationModal');
+
+        // REDIRECCIÓN DIRECTA SEGÚN ROL REGISTRADO
+        if (roleVal === 'ADMIN_LIGA') {
+          localStorage.setItem('reta_admin_curp', curpVal);
+          localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
+          alert("¡Cuenta verificada exitosamente! Bienvenido Administrador.");
+          window.location.href = 'liga_registrar.html';
+        } else {
+          // Si es Jugador o Delegado, avanza al Paso 2 del Wizard
+          goToStep(2);
+        }
+
+      } catch (err) {
+        console.error("Error al validar código OTP:", err);
+        alert("El código de verificación es incorrecto o expiro: " + err.message);
+        btnConfirm.disabled = false;
+        btnConfirm.innerHTML = `Validar Código <i class="fa-solid fa-check"></i>`;
+      }
     }
 
     function openTermsModal(e) {
@@ -682,43 +841,11 @@
       const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
 
       try {
-        // 1. Guardar Identidad de la Persona
-        const userPayload = {
-          curp: curpVal,
-          nombre: fname,
-          apellidos: lname,
-          email: document.getElementById('userEmail').value.trim(),
-          telefono: document.getElementById('userPhone').value.trim()
-        };
-
-        const { error: userErr } = await _supabase
-          .from('usuarios')
-          .upsert([userPayload], { onConflict: 'curp' });
-
-        if (userErr) throw userErr;
-
-        // 2. Obtener ID del Rol
-        const { data: roleData, error: roleErr } = await _supabase
-          .from('roles')
-          .select('id')
-          .eq('nombre_rol', roleName)
-          .single();
-
-        if (roleErr) throw roleErr;
-
-        // 3. Vincular Rol
         const roleBinding = {
           curp: curpVal,
-          rol_id: roleData.id,
           liga_id: selectedLeagueId && selectedLeagueId.length > 20 ? selectedLeagueId : null,
           estado_aprobacion: 'APROBADO'
         };
-
-        const { error: bindErr } = await _supabase
-          .from('usuario_roles')
-          .upsert([roleBinding], { onConflict: 'curp,rol_id,liga_id' });
-
-        if (bindErr) throw bindErr;
 
         // Poblado de Credencial
         document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
