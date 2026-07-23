@@ -660,7 +660,7 @@
     }
 
     // PASO A: ENVIAR SOLICITUD DE CÓDIGO A SUPABASE AUTH
-   async function validateStep1AndProceed() {
+ async function validateStep1AndProceed() {
   const curpVal = document.getElementById('curp').value.trim().toUpperCase();
   const fname = document.getElementById('firstName').value.trim();
   const lname = document.getElementById('lastName').value.trim();
@@ -709,45 +709,33 @@
     }
   }
 
-  // Estado visual de carga
   btnStep1.disabled = true;
-  btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
+  btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
 
   try {
-    const { data, error } = await _supabase.auth.signInWithOtp({
+    const { error } = await _supabase.auth.signInWithOtp({
       email: emailVal,
       options: {
         shouldCreateUser: true,
-        data: { 
-          curp: curpVal, 
-          nombre: fname, 
-          apellidos: lname, 
-          rol: roleVal 
-        }
+        emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
+        data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
       }
     });
 
-    if (error) {
-      console.warn("Aviso de Supabase Auth:", error);
-    }
-
-    // AMARRE TOTAL: Se abre la ventana modal con el correo destino de inmediato
-    document.getElementById('displayTargetEmail').innerText = emailVal;
-    const modal = document.getElementById('otpValidationModal');
-    if (modal) {
-      modal.style.display = 'flex';
+    if (error && error.status === 429) {
+      alert("Atención: Has superado el límite de correos de prueba por hora. De todas formas abriremos la ventana para continuar tus pruebas.");
     }
 
   } catch (err) {
-    console.error("Error al procesar OTP:", err);
-    // Aseguramos que el modal se muestre para no bloquear al usuario
+    console.warn("Excepción en OTP:", err);
+  } finally {
+    // ABRIR EL MODAL SÍ O SÍ PARA CERRAR EL FLUJO CONTINUO
     document.getElementById('displayTargetEmail').innerText = emailVal;
     const modal = document.getElementById('otpValidationModal');
     if (modal) {
       modal.style.display = 'flex';
     }
-  } finally {
-    // Restauramos el botón a su estado normal para evitar que se quede "cargando"
+
     btnStep1.disabled = false;
     if (typeof handleRoleSelectionChange === 'function') {
       handleRoleSelectionChange();
