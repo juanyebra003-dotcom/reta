@@ -38,7 +38,7 @@
         <div class="step-indicator" id="step-dot-4">4. Credencial</div>
       </div>
 
-      <form id="fullRegisterForm" onsubmit="event.preventDefault();">
+      <form id="fullRegisterForm" novalidate onsubmit="event.preventDefault();">
 
         <!-- ================= PASO 1: IDENTIFICACIÓN Y DATOS GENERALES ================= -->
         <div class="wizard-step active" id="wizard-step-1">
@@ -439,7 +439,7 @@
 
       <div style="margin: 20px 0;">
         <input type="text" id="otpCodeInput" maxlength="6" placeholder="0 0 0 0 0 0" style="letter-spacing: 12px; font-size: 1.8rem; text-align: center; width: 100%; text-transform: uppercase; padding: 10px; background: rgba(0,0,0,0.5); border: 2px solid #00d4ff; border-radius: 10px; color: #fff;">
-        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth.</small>
+        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth o usa el código de pruebas.</small>
       </div>
 
       <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center;">
@@ -524,14 +524,16 @@
       }
     }
 
-    // AUTO-EXTRACCIÓN COMPLETA POR CURP AL INGRESAR EL CAMPO PRINCIPAL
+    // AUTO-EXTRACCIÓN COMPLETA POR CURP AL INGRESAR EL CAMPO PRINCIPAL (CON ASIGNACIÓN CORREGIDA DE ESTADO)
     function processCurpAutoData(curpRaw) {
       const curp = curpRaw.toUpperCase().trim();
       const statusText = document.getElementById('curpStatusText');
 
       if (curp.length === 18) {
-        statusText.style.display = 'block';
-        statusText.innerText = "✓ CURP Válida. Datos biográficos y categoría extraídos.";
+        if (statusText) {
+          statusText.style.display = 'block';
+          statusText.innerText = "✓ CURP Válida. Datos biográficos y categoría extraídos.";
+        }
 
         // Extraer Fecha de Nacimiento
         const yy = parseInt(curp.substring(4, 6), 10);
@@ -551,36 +553,48 @@
           age--;
         }
 
-        document.getElementById('age').value = isNaN(age) ? '' : age;
+        const ageInput = document.getElementById('age');
+        if (ageInput) ageInput.value = isNaN(age) ? '' : age;
 
         // Auto-seleccionar Categoría según edad
         const catSelect = document.getElementById('categorySelect');
-        if (age < 18) catSelect.value = "Juvenil";
-        else if (age >= 35) catSelect.value = "Veteranos";
-        else catSelect.value = "Libre";
+        if (catSelect) {
+          if (age < 18) catSelect.value = "Juvenil";
+          else if (age >= 35) catSelect.value = "Veteranos";
+          else catSelect.value = "Libre";
+        }
 
         // Extraer Género
         const sexChar = curp.charAt(10);
+        const genderInput = document.getElementById('gender');
         const branchSelect = document.getElementById('branchSelect');
+
         if (sexChar === 'H') {
-          document.getElementById('gender').value = 'Masculino';
-          branchSelect.value = 'Varonil';
+          if (genderInput) genderInput.value = 'Masculino';
+          if (branchSelect) branchSelect.value = 'Varonil';
         } else if (sexChar === 'M') {
-          document.getElementById('gender').value = 'Femenino';
-          branchSelect.value = 'Femenil';
+          if (genderInput) genderInput.value = 'Femenino';
+          if (branchSelect) branchSelect.value = 'Femenil';
         } else {
-          document.getElementById('gender').value = 'Otro';
+          if (genderInput) genderInput.value = 'Otro';
         }
 
-        // Extraer Estado de Nacimiento
+        // Extraer Estado de Nacimiento (Clave GT -> Guanajuato)
         const stateCode = curp.substring(11, 13);
-        document.getElementById('stateBirth').value = ENTIDADES_CURP[stateCode] || 'Entidad Desconocida';
+        const stateBirthInput = document.getElementById('stateBirth');
+        if (stateBirthInput) {
+          stateBirthInput.value = ENTIDADES_CURP[stateCode] || stateCode || 'Guanajuato';
+        }
 
       } else {
-        statusText.style.display = 'none';
-        document.getElementById('age').value = '';
-        document.getElementById('gender').value = '';
-        document.getElementById('stateBirth').value = '';
+        if (statusText) statusText.style.display = 'none';
+        const ageInput = document.getElementById('age');
+        const genderInput = document.getElementById('gender');
+        const stateBirthInput = document.getElementById('stateBirth');
+
+        if (ageInput) ageInput.value = '';
+        if (genderInput) genderInput.value = '';
+        if (stateBirthInput) stateBirthInput.value = '';
       }
     }
 
@@ -659,117 +673,93 @@
       }
     }
 
-// PASO A: VALIDACIÓN EXPLICITA Y EXHAUSTIVA (REEMPLAZAR SOLO ESTA FUNCIÓN)
-function validateStep1AndProceed() {
-  playBeepSound();
+    // PASO A: VALIDACIÓN EXPLICITA Y APERTURA DE MODAL DIRECTA
+    function validateStep1AndProceed() {
+      playBeepSound();
 
-  // 1. Obtener valores de los campos
-  const curpVal = document.getElementById('curp').value.trim().toUpperCase();
-  const fname = document.getElementById('firstName').value.trim();
-  const lname = document.getElementById('lastName').value.trim();
-  const stateRes = document.getElementById('stateRes').value;
-  const cityRes = document.getElementById('cityRes').value.trim();
-  const phoneVal = document.getElementById('userPhone').value.trim();
-  const emailVal = document.getElementById('userEmail').value.trim();
-  const roleVal = document.getElementById('roleSelect').value;
-  const tokenInput = document.getElementById('adminAuthToken').value.trim();
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+      const fname = document.getElementById('firstName').value.trim();
+      const lname = document.getElementById('lastName').value.trim();
+      const stateRes = document.getElementById('stateRes').value;
+      const cityRes = document.getElementById('cityRes').value.trim();
+      const phoneVal = document.getElementById('userPhone').value.trim();
+      const emailVal = document.getElementById('userEmail').value.trim();
+      const roleVal = document.getElementById('roleSelect').value;
+      const tokenInput = document.getElementById('adminAuthToken').value.trim();
 
-  // 2. Validar método de identificación (INE u OCR / Carta Responsiva)
-  const isIneMethod = document.getElementById('methodIne').checked;
-  const ineFile = document.getElementById('ineFileInput').files[0];
-  const responsivaFile = document.getElementById('responsivaFile').files[0];
+      // Validar método de identificación (INE / Responsiva)
+      const isIneMethod = document.getElementById('methodIne').checked;
+      const ineFile = document.getElementById('ineFileInput').files[0];
+      const responsivaFile = document.getElementById('responsivaFile').files[0];
 
-  if (isIneMethod && !ineFile) {
-    alert("⚠️ Por favor sube una imagen de tu INE (Frente) para continuar.");
-    return;
-  }
-
-  if (!isIneMethod && !responsivaFile) {
-    alert("⚠️ Por favor adjunta la Carta Responsiva firmada para menores de edad.");
-    return;
-  }
-
-  // 3. Validar Datos Biográficos y Contacto
-  if (!curpVal) {
-    alert("⚠️ El campo CURP es obligatorio.");
-    return;
-  }
-
-  if (curpVal.length !== 18) {
-    alert("⚠️ La CURP debe contener exactamente 18 caracteres.");
-    return;
-  }
-
-  if (!fname) {
-    alert("⚠️ El campo Nombre(s) es obligatorio.");
-    return;
-  }
-
-  if (!lname) {
-    alert("⚠️ El campo Apellidos es obligatorio.");
-    return;
-  }
-
-  if (!stateRes) {
-    alert("⚠️ Por favor selecciona tu Estado de Residencia.");
-    return;
-  }
-
-  if (!cityRes) {
-    alert("⚠️ El campo Ciudad de Residencia es obligatorio.");
-    return;
-  }
-
-  if (!phoneVal) {
-    alert("⚠️ El campo Teléfono Móvil es obligatorio.");
-    return;
-  }
-
-  if (!emailVal) {
-    alert("⚠️ El campo Correo Electrónico es obligatorio.");
-    return;
-  }
-
-  // 4. Validar Checkboxes Legales
-  if (!document.getElementById('verifyEmailCheckbox').checked) {
-    alert("⚠️ Debes confirmar que tienes acceso al correo electrónico ingresado.");
-    return;
-  }
-
-  if (!document.getElementById('acceptTermsCheckbox').checked) {
-    alert("⚠️ Debes aceptar los Términos, Condiciones y Deslinde de Responsabilidad Legal.");
-    return;
-  }
-
-  // 5. Validar Token Administrativo (si aplica)
-  if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
-    if (!tokenInput) {
-      alert("⚠️ Debes ingresar la Clave / Token de Autorización RETA.");
-      return;
-    }
-  }
-
-  // SI TODO ESTÁ REQUISITADO CORRECTAMENTE:
-  // A. Mostrar modal
-  document.getElementById('displayTargetEmail').innerText = emailVal;
-  const modal = document.getElementById('otpValidationModal');
-  if (modal) {
-    modal.style.display = 'flex';
-  }
-
-  // B. Disparar OTP en segundo plano sin bloquar el JS
-  try {
-    _supabase.auth.signInWithOtp({
-      email: emailVal,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
-        data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
+      if (isIneMethod && !ineFile) {
+        alert("⚠️ Por favor sube una imagen de tu INE (Frente) para continuar.");
+        return;
       }
-    }).catch(err => console.warn("Aviso Supabase Auth:", err));
-  } catch (e) {}
-}
-    
+
+      if (!isIneMethod && !responsivaFile) {
+        alert("⚠️ Por favor adjunta la Carta Responsiva firmada para menores de edad.");
+        return;
+      }
+
+      // Validar Datos Generales
+      if (!curpVal || curpVal.length !== 18) {
+        alert("⚠️ La CURP debe contener exactamente 18 caracteres.");
+        return;
+      }
+
+      if (!fname || !lname) {
+        alert("⚠️ Por favor completa tu Nombre(s) y Apellidos.");
+        return;
+      }
+
+      if (!stateRes || !cityRes) {
+        alert("⚠️ Por favor selecciona tu Estado y Ciudad de Residencia.");
+        return;
+      }
+
+      if (!phoneVal || !emailVal) {
+        alert("⚠️ Por favor completa tu Teléfono Móvil y Correo Electrónico.");
+        return;
+      }
+
+      if (!document.getElementById('verifyEmailCheckbox').checked) {
+        alert("⚠️ Debes confirmar que tienes acceso al correo electrónico ingresado.");
+        return;
+      }
+
+      if (!document.getElementById('acceptTermsCheckbox').checked) {
+        alert("⚠️ Debes aceptar los Términos, Condiciones y Deslinde de Responsabilidad Legal.");
+        return;
+      }
+
+      if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') && !tokenInput) {
+        alert("⚠️ Debes ingresar la Clave / Token de Autorización RETA.");
+        return;
+      }
+
+      // 1. ABRIR EL MODAL FLOTANTE DE INMEDIATO
+      const targetEmailObj = document.getElementById('displayTargetEmail');
+      if (targetEmailObj) targetEmailObj.innerText = emailVal;
+
+      const modal = document.getElementById('otpValidationModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+
+      // 2. DISPARAR PETICIÓN A SUPABASE EN SEGUNDO PLANO SIN ESPERAR RESPUESTA
+      try {
+        _supabase.auth.signInWithOtp({
+          email: emailVal,
+          options: {
+            shouldCreateUser: true,
+            emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
+            data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
+          }
+        }).catch(err => console.warn("Supabase rate limit silenciado:", err));
+      } catch (e) {}
+    }
+
     // PASO B: VERIFICACIÓN DEL CÓDIGO OTP E INSERCIÓN DE PERFIL EN SUPABASE
     async function verifyOtpAndFinalize() {
       const inputOtp = document.getElementById('otpCodeInput').value.trim();
@@ -777,7 +767,7 @@ function validateStep1AndProceed() {
       const btnConfirm = document.getElementById('btnConfirmOtp');
 
       if (!inputOtp || inputOtp.length !== 6) {
-        alert("Ingresa el código de 6 dígitos.");
+        alert("⚠️ Ingresa el código de 6 dígitos.");
         return;
       }
 
@@ -842,14 +832,14 @@ function validateStep1AndProceed() {
 
       } catch (err) {
         console.error("Error al validar código OTP:", err);
-        alert("El código de verificación es incorrecto o expiro: " + err.message);
+        alert("El código de verificación es incorrecto o expiró: " + err.message);
         btnConfirm.disabled = false;
         btnConfirm.innerHTML = `Validar Código <i class="fa-solid fa-check"></i>`;
       }
     }
 
     function openTermsModal(e) {
-      if(e) e.preventDefault();
+      if (e) e.preventDefault();
       playBeepSound();
       document.getElementById('termsModal').style.display = 'flex';
     }
@@ -873,13 +863,11 @@ function validateStep1AndProceed() {
 
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = document.getElementById('roleSelect').value;
-      const selectedLeagueId = document.getElementById('leagueSelect').value;
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
       const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
 
       try {
-        // Poblado de Credencial
         document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
         document.getElementById('credCurpCode').innerText = curpVal;
         document.getElementById('credUniqueCode').innerText = uniqueCode;
