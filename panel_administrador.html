@@ -277,7 +277,7 @@
   </div>
 
   <script>
-    // Inicialización Autosostenible de Supabase
+    // Inicialización Autosostenible de Supabase con tus credenciales
     const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
 
@@ -292,41 +292,42 @@
       const leaguesContainer = document.getElementById('leaguesContainer');
 
       try {
-        // 1. Obtener Ligas con sus Torneos relacionales
+        // 1. Consulta independiente de Ligas
         const { data: ligas, error: leaguesErr } = await _supabase
           .from('ligas')
-          .select(`
-            *,
-            liga_torneo (
-              id,
-              nombre_torneo,
-              categoria,
-              rama,
-              equipos_proyectados
-            )
-          `)
+          .select('*')
           .order('creado_en', { ascending: false });
 
         if (leaguesErr) throw leaguesErr;
 
-        // 2. Obtener conteos totales de Equipos y Jugadores
+        // 2. Consulta independiente de Torneos (Evita dependencias de relación en PostgREST)
+        const { data: torneos, error: torneosErr } = await _supabase
+          .from('liga_torneo')
+          .select('*');
+
+        if (torneosErr) console.warn("Aviso al consultar torneos:", torneosErr);
+
+        // 3. Consulta de conteos totales de Equipos y Jugadores
         const { count: teamsCount } = await _supabase.from('equipos').select('*', { count: 'exact', head: true });
         const { count: playersCount } = await _supabase.from('jugadores').select('*', { count: 'exact', head: true });
 
-        // 3. Actualizar KPIs
-        const totalLigas = ligas ? ligas.length : 0;
-        let totalTorneos = 0;
-        if (ligas) {
-          ligas.forEach(l => totalTorneos += (l.liga_torneo ? l.liga_torneo.length : 0));
-        }
+        // 4. Mapeo en memoria de Torneos dentro de sus Ligas correspondientes
+        const listLigas = (ligas || []).map(liga => {
+          const listTorneos = (torneos || []).filter(t => t.liga_id === liga.id);
+          return { ...liga, liga_torneo: listTorneos };
+        });
+
+        // 5. Actualización de KPIs
+        const totalLigas = listLigas.length;
+        const totalTorneos = (torneos || []).length;
 
         document.getElementById('kpiLeagues').textContent = totalLigas;
         document.getElementById('kpiTournaments').textContent = totalTorneos;
         document.getElementById('kpiTeams').textContent = teamsCount || 0;
         document.getElementById('kpiPlayers').textContent = playersCount || 0;
 
-        // 4. Renderizar Tarjetas de Ligas
-        if (!ligas || ligas.length === 0) {
+        // 6. Estado Vacío (Empty State)
+        if (listLigas.length === 0) {
           leaguesContainer.innerHTML = `
             <div class="glass-card empty-state">
               <i class="fa-solid fa-folder-open fa-3x" style="color: #64748b; margin-bottom: 15px;"></i>
@@ -340,8 +341,8 @@
           return;
         }
 
-        // Renderizado dinámico
-        leaguesContainer.innerHTML = ligas.map(liga => `
+        // 7. Renderizado Dinámico de las Ligas y Torneos
+        leaguesContainer.innerHTML = listLigas.map(liga => `
           <div class="league-management-card">
             <div class="league-card-header">
               <div class="league-brand-info">
@@ -350,7 +351,7 @@
                   <h3>${liga.nombre_liga} <span style="font-size:0.75rem; color:#00d4ff; font-weight:normal;">(${liga.clave_liga})</span></h3>
                   <div class="league-meta">
                     <span><i class="fa-solid fa-map-location-dot"></i> ${liga.municipio}, ${liga.estado}</span>
-                    <span><i class="fa-solid fa-futbol"></i> ${liga.disciplina}</span>
+                    <span><i class="fa-solid fa-futbol"></i> ${liga.disciplina || 'Fútbol'}</span>
                     <span><i class="fa-solid fa-phone"></i> ${liga.telefono_liga || 'N/A'}</span>
                   </div>
                 </div>
@@ -401,7 +402,7 @@
           <div class="glass-card empty-state" style="border-color: #ff4d4d;">
             <i class="fa-solid fa-triangle-exclamation fa-3x" style="color: #ff4d4d; margin-bottom: 15px;"></i>
             <h3>Error al conectar con Supabase</h3>
-            <p>${err.message}</p>
+            <p>${err.message || JSON.stringify(err)}</p>
           </div>
         `;
       }
