@@ -375,4 +375,9 @@ function validateStep1AndProceed() {
   }
 
   goToStep(2);
+   // js/supabase-config.js
+const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_brTmFH9EMnR_qkvubKxx2w_bYqexwhF';
+
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
