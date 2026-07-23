@@ -712,6 +712,7 @@
       btnStep1.disabled = true;
       btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
 
+      // Intenta enviar el OTP, pero silencia la excepción para que el flujo no se detenga
       try {
         await _supabase.auth.signInWithOtp({
           email: emailVal,
@@ -722,19 +723,19 @@
           }
         });
       } catch (err) {
-        console.warn("Excepción al enviar OTP:", err);
-      } finally {
-        // ABRIR EL MODAL SÍ O SÍ PARA CERRAR EL FLUJO CONTINUO
-        document.getElementById('displayTargetEmail').innerText = emailVal;
-        const modal = document.getElementById('otpValidationModal');
-        if (modal) {
-          modal.style.display = 'flex';
-        }
+        console.warn("Supabase limit / Excepción silenciada para continuar flujo:", err);
+      }
 
-        btnStep1.disabled = false;
-        if (typeof handleRoleSelectionChange === 'function') {
-          handleRoleSelectionChange();
-        }
+      // EJECUCIÓN DIRECTA DEL MODAL (Inmune a fallos de red o límite 429)
+      document.getElementById('displayTargetEmail').innerText = emailVal;
+      const modal = document.getElementById('otpValidationModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+
+      btnStep1.disabled = false;
+      if (typeof handleRoleSelectionChange === 'function') {
+        handleRoleSelectionChange();
       }
     }
 
