@@ -8,8 +8,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    /* Estilos Garantizados para la Ventana Emergente (Modal) */
+    /* Estilos para la Ventana Emergente (Modal) */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -117,7 +120,7 @@
 </head>
 <body class="login-body">
 
-  <a href="index.html" class="btn-back">
+  <a href="index.html" class="btn-back" onclick="playBeepSound()">
     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
   </a>
 
@@ -125,7 +128,7 @@
     <div class="glass-card login-card register-wizard-card">
       
       <div class="login-header">
-        <a href="index.html">
+        <a href="index.html" onclick="playBeepSound()">
           <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
         </a>
         <h2>Alta Oficial de <span class="text-gradient">Liga / Torneo</span></h2>
@@ -141,33 +144,33 @@
           <div class="form-row">
             <div class="input-group">
               <label for="adminFirstName"><i class="fa-solid fa-user"></i> Nombre(s) (*)</label>
-              <input type="text" id="adminFirstName" placeholder="Ej. Juan Carlos" required>
+              <input type="text" id="adminFirstName" placeholder="Ej. Juan Carlos" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
               <label for="adminLastName"><i class="fa-solid fa-user"></i> Apellidos (*)</label>
-              <input type="text" id="adminLastName" placeholder="Ej. Yebra López" required>
+              <input type="text" id="adminLastName" placeholder="Ej. Yebra López" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
               <label for="adminCurp"><i class="fa-solid fa-fingerprint"></i> CURP del Administrador (*)</label>
-              <input type="text" id="adminCurp" placeholder="18 caracteres" maxlength="18" style="text-transform: uppercase;" required>
+              <input type="text" id="adminCurp" placeholder="18 caracteres" maxlength="18" style="text-transform: uppercase;" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
               <label for="adminPhone"><i class="fa-solid fa-mobile-screen-button"></i> Teléfono Móvil (*)</label>
-              <input type="tel" id="adminPhone" placeholder="445 123 4567" required>
+              <input type="tel" id="adminPhone" placeholder="445 123 4567" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
               <label for="adminEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico Personal (*)</label>
-              <input type="email" id="adminEmail" placeholder="admin@ejemplo.com" required>
+              <input type="email" id="adminEmail" placeholder="admin@ejemplo.com" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
               <label for="leagueSocial"><i class="fa-solid fa-globe"></i> Sitios Web / Redes Sociales de la Liga</label>
-              <input type="url" id="leagueSocial" placeholder="https://facebook.com/miligaoficial">
+              <input type="url" id="leagueSocial" placeholder="https://facebook.com/miligaoficial" onchange="playBeepSound()">
             </div>
           </div>
         </div>
@@ -179,45 +182,74 @@
           <div class="form-row">
             <div class="input-group">
               <label for="leagueName"><i class="fa-solid fa-trophy"></i> Nombre Oficial de la Liga (*)</label>
-              <input type="text" id="leagueName" placeholder="Ej. Liga Premier de Fútbol Moroleón" required>
+              <input type="text" id="leagueName" placeholder="Ej. Liga Premier de Fútbol Moroleón" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
               <label for="leagueKey"><i class="fa-solid fa-key"></i> Clave Corta (3-4 Letras) (*)</label>
-              <input type="text" id="leagueKey" placeholder="Ej. LPM" maxlength="4" style="text-transform: uppercase;" required>
+              <input type="text" id="leagueKey" placeholder="Ej. LPM" maxlength="4" style="text-transform: uppercase;" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
               <label for="leagueState"><i class="fa-solid fa-map-location-dot"></i> Estado (*)</label>
-              <select id="leagueState" required>
+              <select id="leagueState" required onchange="playBeepSound()">
                 <option value="" disabled selected>Selecciona Estado</option>
-                <option value="Guanajuato">Guanajuato</option>
-                <option value="Michoacán">Michoacán</option>
-                <option value="Jalisco">Jalisco</option>
-                <option value="Querétaro">Querétaro</option>
+                <option value="Aguascalientes">Aguascalientes</option>
+                <option value="Baja California">Baja California</option>
+                <option value="Baja California Sur">Baja California Sur</option>
+                <option value="Campeche">Campeche</option>
+                <option value="Chiapas">Chiapas</option>
+                <option value="Chihuahua">Chihuahua</option>
                 <option value="Ciudad de México">Ciudad de México</option>
-                <!-- Demás estados de México -->
+                <option value="Coahuila">Coahuila</option>
+                <option value="Colima">Colima</option>
+                <option value="Durango">Durango</option>
+                <option value="Estado de México">Estado de México</option>
+                <option value="Guanajuato">Guanajuato</option>
+                <option value="Guerrero">Guerrero</option>
+                <option value="Hidalgo">Hidalgo</option>
+                <option value="Jalisco">Jalisco</option>
+                <option value="Michoacán">Michoacán</option>
+                <option value="Morelos">Morelos</option>
+                <option value="Nayarit">Nayarit</option>
+                <option value="Nuevo León">Nuevo León</option>
+                <option value="Oaxaca">Oaxaca</option>
+                <option value="Puebla">Puebla</option>
+                <option value="Querétaro">Querétaro</option>
+                <option value="Quintana Roo">Quintana Roo</option>
+                <option value="San Luis Potosí">San Luis Potosí</option>
+                <option value="Sinaloa">Sinaloa</option>
+                <option value="Sonora">Sonora</option>
+                <option value="Tabasco">Tabasco</option>
+                <option value="Tamaulipas">Tamaulipas</option>
+                <option value="Tlaxcala">Tlaxcala</option>
+                <option value="Veracruz">Veracruz</option>
+                <option value="Yucatán">Yucatán</option>
+                <option value="Zacatecas">Zacatecas</option>
               </select>
             </div>
             <div class="input-group">
               <label for="leagueCity"><i class="fa-solid fa-city"></i> Municipio / Ciudad Sede (*)</label>
-              <input type="text" id="leagueCity" placeholder="Ej. Moroleón" required>
+              <input type="text" id="leagueCity" placeholder="Ej. Moroleón" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
               <label for="leagueAddress"><i class="fa-solid fa-location-dot"></i> Campo / Complejo Deportivo Principal (*)</label>
-              <input type="text" id="leagueAddress" placeholder="Ej. Unidad Deportiva Presa de Joyitas" required>
+              <input type="text" id="leagueAddress" placeholder="Ej. Unidad Deportiva Presa de Joyitas" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
               <label for="sportType"><i class="fa-solid fa-futbol"></i> Disciplina Deportiva (*)</label>
-              <select id="sportType" required>
-                <option value="Fútbol 11">Fútbol 11 (Tradicional)</option>
-                <option value="Fútbol 7">Fútbol 7</option>
-                <option value="Fútbol Rápido">Fútbol Rápido</option>
-                <option value="Futsal / Sala">Futsal / Sala</option>
+              <select id="sportType" required onchange="playBeepSound()">
+                <option value="" disabled selected>Selecciona Tipo de Fútbol</option>
+                <option value="Fútbol Soccer (11 Jugadores)">Fútbol Soccer (11 Jugadores)</option>
+                <option value="Fútbol Nueve (9 Jugadores)">Fútbol Nueve (9 Jugadores)</option>
+                <option value="Fútbol Siete (7 Jugadores)">Fútbol Siete (7 Jugadores)</option>
+                <option value="Fútbol Sala (5 Jugadores)">Fútbol Sala (5 Jugadores)</option>
+                <option value="Fútbol Rápido (6 Jugadores)">Fútbol Rápido (6 Jugadores)</option>
+                <option value="Fútbol Reta (3 Jugadores)">Fútbol Reta (3 Jugadores)</option>
               </select>
             </div>
           </div>
@@ -225,11 +257,11 @@
           <div class="form-row">
             <div class="input-group">
               <label for="leaguePhone"><i class="fa-solid fa-phone"></i> Teléfono Oficial de la Liga (*)</label>
-              <input type="tel" id="leaguePhone" placeholder="445 000 0000" required>
+              <input type="tel" id="leaguePhone" placeholder="445 000 0000" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
               <label for="leagueEmail"><i class="fa-solid fa-envelope-open-text"></i> Correo Oficial de la Liga (*)</label>
-              <input type="email" id="leagueEmail" placeholder="contacto@ligapremier.com" required>
+              <input type="email" id="leagueEmail" placeholder="contacto@ligapremier.com" required onchange="playBeepSound()">
             </div>
           </div>
         </div>
@@ -243,7 +275,7 @@
             <div class="form-row">
               <div class="input-group">
                 <label for="tournamentNameInput"><i class="fa-solid fa-trophy"></i> Nombre del Torneo (*)</label>
-                <input type="text" id="tournamentNameInput" placeholder="Ej. Torneo Apertura 2026">
+                <input type="text" id="tournamentNameInput" placeholder="Ej. Torneo Apertura 2026" onchange="playBeepSound()">
               </div>
 
               <div class="input-group">
@@ -270,7 +302,7 @@
             <div class="form-row" style="margin-top: 15px;">
               <div class="input-group">
                 <label for="tournamentBranchSelect"><i class="fa-solid fa-venus-mars"></i> Rama (*)</label>
-                <select id="tournamentBranchSelect">
+                <select id="tournamentBranchSelect" onchange="playBeepSound()">
                   <option value="Varonil">Varonil</option>
                   <option value="Femenil">Femenil</option>
                   <option value="Mixto">Mixto</option>
@@ -279,7 +311,7 @@
 
               <div class="input-group">
                 <label for="teamsCountInput"><i class="fa-solid fa-shield-halved"></i> Número de Equipos Aproximado (*)</label>
-                <input type="number" id="teamsCountInput" placeholder="Ej. 16" min="2" max="128" value="12">
+                <input type="number" id="teamsCountInput" placeholder="Ej. 16" min="2" max="128" value="12" onchange="playBeepSound()">
               </div>
             </div>
 
@@ -300,7 +332,7 @@
         </div>
 
         <div class="wizard-buttons">
-          <button type="submit" class="btn-login">
+          <button type="submit" id="btnSubmitLeague" class="btn-login" onclick="playBeepSound()">
             <i class="fa-solid fa-floppy-disk"></i> Registrar Liga Oficialmente en RETA
           </button>
         </div>
@@ -320,34 +352,62 @@
 
       <div class="input-group" style="margin-bottom: 15px;">
         <label for="modalCategoryName"><i class="fa-solid fa-font"></i> Nombre de la Categoría (*)</label>
-        <input type="text" id="modalCategoryName" placeholder="Ej. Baby Plus, Máster Especial, etc.">
+        <input type="text" id="modalCategoryName" placeholder="Ej. Baby Plus, Máster Especial, etc." onchange="playBeepSound()">
       </div>
 
       <div class="form-row">
         <div class="input-group">
           <label for="modalMinAge"><i class="fa-solid fa-child"></i> Edad Mínima (Años)</label>
-          <input type="number" id="modalMinAge" placeholder="Ej. 6" min="3" max="80">
+          <input type="number" id="modalMinAge" placeholder="Ej. 6" min="3" max="80" onchange="playBeepSound()">
         </div>
         <div class="input-group">
           <label for="modalMaxAge"><i class="fa-solid fa-user-large"></i> Edad Máxima (Años)</label>
-          <input type="number" id="modalMaxAge" placeholder="Ej. 9" min="3" max="80">
+          <input type="number" id="modalMaxAge" placeholder="Ej. 9" min="3" max="80" onchange="playBeepSound()">
         </div>
       </div>
 
       <div class="modal-actions" style="margin-top: 25px; display: flex; gap: 12px; justify-content: flex-end;">
         <button type="button" class="btn-modal-cancel" onclick="closeCustomModal()">Cancelar</button>
-        <button type="button" class="btn-modal-save" onclick="saveCustomCategory()">Guardar Categoría</button>
+        <button type="button" class="btn-modal-save" onclick="saveCustomCategory()">Aceptar y Guardar</button>
       </div>
     </div>
   </div>
 
   <script src="js/script.js"></script>
   <script>
+    // Sintetizador del sonido Beep usando Web Audio API
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Tono de 880Hz (La)
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.12);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.12);
+      } catch (e) {
+        // Silencioso en navegadores sin permisos de audio
+      }
+    }
+
+    // Configuración Autosostenible de Supabase
+    const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     let tournamentsList = [];
     let customCategoryResult = null;
 
     // Disparar ventana emergente cuando eligen "Otro"
     function checkCategoryOption(value) {
+      playBeepSound();
       if (value === 'Otro') {
         openCustomModal();
       }
@@ -362,6 +422,7 @@
     }
 
     function closeCustomModal() {
+      playBeepSound();
       document.getElementById('customCategoryModal').style.display = 'none';
       const categorySelect = document.getElementById('tournamentCategorySelect');
       if (!customCategoryResult) {
@@ -370,6 +431,7 @@
     }
 
     function saveCustomCategory() {
+      playBeepSound();
       const name = document.getElementById('modalCategoryName').value.trim();
       const minAge = document.getElementById('modalMinAge').value;
       const maxAge = document.getElementById('modalMaxAge').value;
@@ -385,12 +447,12 @@
       } else if (minAge) {
         ageText = `Desde ${minAge} años`;
       } else if (maxAge) {
-        ageRange = `Hasta ${maxAge} años`;
+        ageText = `Hasta ${maxAge} años`;
       }
 
       customCategoryResult = `${name} (${ageText})`;
 
-      // Insertar dinámicamente la opción en el combobox
+      // Insertar u homologar la opción en el combobox
       const categorySelect = document.getElementById('tournamentCategorySelect');
       let customOpt = document.getElementById('tempCustomOption');
       if (!customOpt) {
@@ -406,6 +468,7 @@
     }
 
     function addTournamentToList() {
+      playBeepSound();
       const nameInput = document.getElementById('tournamentNameInput');
       const categorySelect = document.getElementById('tournamentCategorySelect');
       const branchSelect = document.getElementById('tournamentBranchSelect');
@@ -433,13 +496,12 @@
 
       tournamentsList.push({
         id: Date.now(),
-        nombre: name,
+        nombre_torneo: name,
         categoria: category,
         rama: branch,
-        equipos_esperados: teamsExpected
+        equipos_proyectados: teamsExpected
       });
 
-      // Limpiar campos
       nameInput.value = '';
       categorySelect.selectedIndex = 0;
       teamsInput.value = '12';
@@ -449,6 +511,7 @@
     }
 
     function removeTournament(id) {
+      playBeepSound();
       tournamentsList = tournamentsList.filter(t => t.id !== id);
       renderTournamentsList();
     }
@@ -467,12 +530,12 @@
       container.innerHTML = tournamentsList.map(t => `
         <div class="tournament-card-item">
           <div class="t-item-info">
-            <h5><i class="fa-solid fa-trophy style-cyan"></i> ${t.nombre}</h5>
+            <h5><i class="fa-solid fa-trophy style-cyan"></i> ${t.nombre_torneo}</h5>
             <div style="font-size:0.8rem; margin:4px 0; color:#e2e8f0;">
               <span><i class="fa-solid fa-layer-group"></i> ${t.categoria}</span> | 
               <span><i class="fa-solid fa-venus-mars"></i> Rama ${t.rama}</span>
             </div>
-            <span style="font-size:0.78rem; color:#00d4ff;"><i class="fa-solid fa-shield-halved"></i> <strong>${t.equipos_esperados}</strong> Equipos Estimados</span>
+            <span style="font-size:0.78rem; color:#00d4ff;"><i class="fa-solid fa-shield-halved"></i> <strong>${t.equipos_proyectados}</strong> Equipos Estimados</span>
           </div>
           <button type="button" class="btn-remove-t" onclick="removeTournament(${t.id})" title="Eliminar Torneo">
             <i class="fa-solid fa-trash-can"></i>
@@ -481,14 +544,68 @@
       `).join('');
     }
 
-    function handleLeagueSubmit(e) {
+    // INSERCIÓN REAL EN SUPABASE
+    async function handleLeagueSubmit(e) {
       e.preventDefault();
+      playBeepSound();
+
       if (tournamentsList.length === 0) {
         alert("Debes agregar al menos 1 torneo para registrar la liga.");
         return;
       }
-      alert("¡Liga y Torneos guardados exitosamente!");
-      window.location.href = "panel_administrador.html";
+
+      const submitBtn = document.getElementById('btnSubmitLeague');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Liga en Supabase...`;
+
+      try {
+        const leaguePayload = {
+          nombre_admin: document.getElementById('adminFirstName').value.trim() + ' ' + document.getElementById('adminLastName').value.trim(),
+          curp_admin: document.getElementById('adminCurp').value.trim().toUpperCase(),
+          telefono_admin: document.getElementById('adminPhone').value.trim(),
+          email_admin: document.getElementById('adminEmail').value.trim(),
+          redes_sociales: document.getElementById('leagueSocial').value.trim(),
+          nombre_liga: document.getElementById('leagueName').value.trim(),
+          clave_liga: document.getElementById('leagueKey').value.trim().toUpperCase(),
+          estado: document.getElementById('leagueState').value,
+          municipio: document.getElementById('leagueCity').value.trim(),
+          direccion_complejo: document.getElementById('leagueAddress').value.trim(),
+          disciplina: document.getElementById('sportType').value,
+          telefono_liga: document.getElementById('leaguePhone').value.trim(),
+          email_liga: document.getElementById('leagueEmail').value.trim()
+        };
+
+        const { data: insertedLeague, error: leagueErr } = await _supabase
+          .from('ligas')
+          .insert([leaguePayload])
+          .select()
+          .single();
+
+        if (leagueErr) throw leagueErr;
+
+        const tournamentsPayload = tournamentsList.map(t => ({
+          liga_id: insertedLeague.id,
+          nombre_torneo: t.nombre_torneo,
+          categoria: t.categoria,
+          rama: t.rama,
+          equipos_proyectados: t.equipos_proyectados
+        }));
+
+        const { error: tournamentsErr } = await _supabase
+          .from('liga_torneo')
+          .insert(tournamentsPayload);
+
+        if (tournamentsErr) throw tournamentsErr;
+
+        alert("¡Liga y Torneos guardados con éxito en Supabase!");
+        window.location.href = "panel_administrador.html";
+
+      } catch (err) {
+        console.error("Error al registrar liga:", err);
+        alert("Ocurrió un error al guardar en la base de datos: " + (err.message || JSON.stringify(err)));
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Registrar Liga Oficialmente en RETA`;
+      }
     }
   </script>
 </body>
