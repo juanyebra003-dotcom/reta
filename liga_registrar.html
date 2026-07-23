@@ -545,78 +545,80 @@
     }
 
     // INSERCIÓN EN SUPABASE
-    async function handleLeagueSubmit(e) {
-      e.preventDefault();
-      playBeepSound();
+   async function handleLeagueSubmit(e) {
+  e.preventDefault();
+  playBeepSound();
 
-      if (tournamentsList.length === 0) {
-        alert("Debes agregar al menos 1 torneo para registrar la liga.");
-        return;
+  if (tournamentsList.length === 0) {
+    alert("Debes agregar al menos 1 torneo para registrar la liga.");
+    return;
+  }
+
+  const submitBtn = document.getElementById('btnSubmitLeague');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Liga en Supabase...`;
+
+  try {
+    const rawKey = document.getElementById('leagueKey').value.trim().toUpperCase();
+    const stateVal = document.getElementById('leagueState').value;
+
+    const leaguePayload = {
+      nombre_liga: document.getElementById('leagueName').value.trim(),
+      clave_liga: rawKey,
+      estado: stateVal,
+      municipio: document.getElementById('leagueCity').value.trim(),
+      direccion_complejo: document.getElementById('leagueAddress').value.trim(),
+      disciplina: document.getElementById('sportType').value,
+      telefono_liga: document.getElementById('leaguePhone').value.trim(),
+      email_liga: document.getElementById('leagueEmail').value.trim(),
+      nombre_admin: document.getElementById('adminFirstName').value.trim() + ' ' + document.getElementById('adminLastName').value.trim(),
+      curp_admin: document.getElementById('adminCurp').value.trim().toUpperCase(),
+      telefono_admin: document.getElementById('adminPhone').value.trim(),
+      email_admin: document.getElementById('adminEmail').value.trim(),
+      redes_sociales: document.getElementById('leagueSocial').value.trim()
+    };
+
+    // 1. Insertar Liga (si se duplica la clave, alerta clara al usuario)
+    const { data: insertedLeague, error: leagueErr } = await _supabase
+      .from('ligas')
+      .insert([leaguePayload])
+      .select()
+      .single();
+
+    if (leagueErr) {
+      if (leagueErr.code === '23505') {
+        throw new Error(`La Clave de Liga "${rawKey}" ya está en uso por otra liga. Por favor cambia la clave corta en la Sección 2.`);
       }
-
-      const submitBtn = document.getElementById('btnSubmitLeague');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Liga en Supabase...`;
-
-      try {
-        // Construir Payload de la Liga
-        const leaguePayload = {
-          nombre_liga: document.getElementById('leagueName').value.trim(),
-          clave_liga: document.getElementById('leagueKey').value.trim().toUpperCase(),
-          estado: document.getElementById('leagueState').value,
-          municipio: document.getElementById('leagueCity').value.trim(),
-          direccion_complejo: document.getElementById('leagueAddress').value.trim(),
-          disciplina: document.getElementById('sportType').value,
-          telefono_liga: document.getElementById('leaguePhone').value.trim(),
-          email_liga: document.getElementById('leagueEmail').value.trim(),
-          nombre_admin: document.getElementById('adminFirstName').value.trim() + ' ' + document.getElementById('adminLastName').value.trim(),
-          curp_admin: document.getElementById('adminCurp').value.trim().toUpperCase(),
-          telefono_admin: document.getElementById('adminPhone').value.trim(),
-          email_admin: document.getElementById('adminEmail').value.trim(),
-          redes_sociales: document.getElementById('leagueSocial').value.trim()
-        };
-
-        // 1. Insertar Liga
-        const { data: insertedLeague, error: leagueErr } = await _supabase
-          .from('ligas')
-          .insert([leaguePayload])
-          .select()
-          .single();
-
-        if (leagueErr) throw leagueErr;
-
-        // 2. Insertar Torneos vinculados a la Liga
-    // POR ESTE BLOQUE CON GENERACIÓN AUTOMÁTICA DE CLAVE:
-const tournamentsPayload = tournamentsList.map((t, index) => {
-  // Genera una clave como "LPM-T1", "LPM-T2", etc.
-  const claveAuto = `${leaguePayload.clave_liga || 'TRN'}-T${index + 1}`;
-
-  return {
-    liga_id: insertedLeague.id,
-    clave_torneo: claveAuto,
-    nombre_torneo: t.nombre_torneo,
-    categoria: t.categoria,
-    rama: t.rama,
-    equipos_proyectados: t.equipos_proyectados
-  };
-});
-
-        const { error: tournamentsErr } = await _supabase
-          .from('liga_torneo')
-          .insert(tournamentsPayload);
-
-        if (tournamentsErr) throw tournamentsErr;
-
-        alert("¡Liga y Torneos guardados con éxito en Supabase!");
-        window.location.href = "panel_administrador.html";
-
-      } catch (err) {
-        console.error("Error al registrar liga:", err);
-        alert("Ocurrió un error al guardar en la base de datos: " + (err.message || JSON.stringify(err)));
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Registrar Liga Oficialmente en RETA`;
-      }
+      throw leagueErr;
     }
+
+    // 2. Insertar Torneos vinculando todos los campos requeridos
+    const tournamentsPayload = tournamentsList.map((t, index) => ({
+      liga_id: insertedLeague.id,
+      clave_torneo: `${insertedLeague.clave_liga}-T${index + 1}`,
+      clave_estado: stateVal ? stateVal.substring(0, 3).toUpperCase() : 'GEN',
+      nombre_torneo: t.nombre_torneo,
+      categoria: t.categoria,
+      rama: t.rama,
+      equipos_proyectados: t.equipos_proyectados
+    }));
+
+    const { error: tournamentsErr } = await _supabase
+      .from('liga_torneo')
+      .insert(tournamentsPayload);
+
+    if (tournamentsErr) throw tournamentsErr;
+
+    alert("¡Liga y Torneos guardados con éxito en Supabase!");
+    window.location.href = "panel_administrador.html";
+
+  } catch (err) {
+    console.error("Error al registrar liga:", err);
+    alert("Atención: " + (err.message || JSON.stringify(err)));
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Registrar Liga Oficialmente en RETA`;
+  }
+}
   </script>
 </body>
 </html>
