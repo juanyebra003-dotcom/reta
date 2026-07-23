@@ -531,7 +531,7 @@
       }
     }
 
-    function validateStep1AndProceed() {
+    async function validateStep1AndProceed() {
       const curpVal = document.getElementById('curp').value.trim();
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
@@ -549,9 +549,36 @@
         return;
       }
 
-      if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR') && tokenInput !== MASTER_ADMIN_TOKEN) {
-        alert("Token de Autorización inválido. Para registrarte libremente, selecciona el rol Jugador o Delegado.");
-        return;
+      // Validación de Token para Roles Elevados (ADMIN_LIGA / SUPERVISOR)
+      if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR') {
+        if (!tokenInput) {
+          alert("Debes ingresar la Clave / Token de Autorización proporcionado por SuperAdmin RETA.");
+          return;
+        }
+
+        // Intento de validación dinámica en Supabase tabla tokens_invitacion
+        let isTokenValid = false;
+        try {
+          const { data, error } = await _supabase
+            .from('tokens_invitacion')
+            .select('*')
+            .eq('codigo_token', tokenInput)
+            .eq('rol_destinado', roleVal)
+            .eq('usado', false)
+            .maybeSingle();
+
+          if (data) {
+            isTokenValid = true;
+          }
+        } catch (e) {
+          console.warn("Validación de token en Supabase omitida o fallida:", e);
+        }
+
+        // Fallback: si no está en la tabla o la tabla no existe, compara contra MASTER_ADMIN_TOKEN
+        if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
+          alert("Token de Autorización inválido. Para registrarte libremente, selecciona el rol Jugador o Delegado.");
+          return;
+        }
       }
 
       if (!document.getElementById('acceptTermsCheckbox').checked) {
@@ -630,6 +657,15 @@
           .upsert([roleBinding], { onConflict: 'curp,rol_id,liga_id' });
 
         if (bindErr) throw bindErr;
+
+        // Si se usó un token dinámico, lo marcamos como usado en Supabase
+        const tokenInput = document.getElementById('adminAuthToken').value.trim();
+        if (tokenInput && (roleName === 'ADMIN_LIGA' || roleName === 'SUPERVISOR')) {
+          await _supabase
+            .from('tokens_invitacion')
+            .update({ usado: true })
+            .eq('codigo_token', tokenInput);
+        }
 
         // Poblado de Credencial
         document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
