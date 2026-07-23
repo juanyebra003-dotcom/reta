@@ -111,7 +111,20 @@
             </div>
           </div>
 
-          <!-- Formulario de Datos Personales -->
+          <!-- ================= PRIMER CAMPO PRINCIPAL: CURP (ID ÚNICO) ================= -->
+          <div class="form-row" style="margin-top: 15px;">
+            <div class="input-group" style="flex: 2;">
+              <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP (* Clave Primaria Única ID)</label>
+              <input type="text" id="curp" placeholder="Ingresa los 18 caracteres de tu CURP" required maxlength="18" style="text-transform: uppercase; border: 1px solid #00d4ff;" oninput="processCurpAutoData(this.value)">
+              <small id="curpStatusText" style="color:#00d4ff; display:none; margin-top:4px;"></small>
+            </div>
+            <div class="input-group" style="flex: 1;">
+              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad (Auto)</label>
+              <input type="number" id="age" placeholder="Años" required readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
+            </div>
+          </div>
+
+          <!-- DATOS EXTRAÍDOS Y CONFIRMACIÓN DE DATOS PERSONALES -->
           <div class="form-row">
             <div class="input-group">
               <label for="firstName"><i class="fa-solid fa-user"></i> Nombre(s)</label>
@@ -125,19 +138,7 @@
 
           <div class="form-row">
             <div class="input-group">
-              <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP</label>
-              <input type="text" id="curp" placeholder="18 Caracteres" required maxlength="18" style="text-transform: uppercase;" oninput="processCurpAutoData(this.value)">
-              <small id="curpStatusText" style="color:#00d4ff; display:none;"></small>
-            </div>
-            <div class="input-group">
-              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad (Auto)</label>
-              <input type="number" id="age" placeholder="Años" min="5" max="99" required readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="input-group">
-              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género (Auto)</label>
+              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género / Rama (Auto)</label>
               <input type="text" id="gender" placeholder="Masculino / Femenino" readonly style="background: rgba(255,255,255,0.05); color:#00d4ff; font-weight:bold;">
             </div>
             <div class="input-group">
@@ -267,7 +268,7 @@
 
           <div class="form-row">
             <div class="input-group">
-              <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría</label>
+              <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría (Sugerida por Edad)</label>
               <select id="categorySelect" required onchange="playBeepSound()">
                 <option value="Libre">Libre</option>
                 <option value="Juvenil">Juvenil (Sub-18)</option>
@@ -276,7 +277,7 @@
               </select>
             </div>
             <div class="input-group">
-              <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama</label>
+              <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama (Auto por CURP)</label>
               <select id="branchSelect" required onchange="playBeepSound()">
                 <option value="Varonil">Varonil</option>
                 <option value="Femenil">Femenil</option>
@@ -378,7 +379,7 @@
             <div class="credential-body">
               <div class="cred-photo-box">
                 <img id="credPlayerPhoto" src="" alt="Foto Oficial">
-                <span class="cred-dorsal" id="credDorsal">#10</span>
+                <span class="cred-dorsal" id="credDorsal">#--</span>
               </div>
 
               <div class="cred-info-box">
@@ -450,7 +451,7 @@
     </div>
   </div>
 
-  <!-- MODAL JURÍDICO: TÉRMINOS, CONDICIONES Y DESLINDE DE RESPONSABILIDAD -->
+  <!-- MODAL JURÍDICO: TÉRMINOS Y CONDICIONES -->
   <div class="modal-overlay" id="termsModal" style="display: none;">
     <div class="glass-card modal-card terms-modal-card">
       <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
@@ -523,15 +524,16 @@
       }
     }
 
-    // AUTO-CÁLCULO POR CURP DE EDAD, GÉNERO Y ESTADO DE NACIMIENTO
+    // AUTO-EXTRACCIÓN COMPLETA POR CURP AL INGRESAR EL CAMPO PRINCIPAL
     function processCurpAutoData(curpRaw) {
       const curp = curpRaw.toUpperCase().trim();
       const statusText = document.getElementById('curpStatusText');
 
       if (curp.length === 18) {
         statusText.style.display = 'block';
-        statusText.innerText = "✓ Formato de CURP válido (18 caracteres).";
+        statusText.innerText = "✓ CURP Válida. Datos biográficos y categoría extraídos.";
 
+        // Extraer Fecha de Nacimiento
         const yy = parseInt(curp.substring(4, 6), 10);
         const mm = parseInt(curp.substring(6, 8), 10) - 1;
         const dd = parseInt(curp.substring(8, 10), 10);
@@ -551,11 +553,26 @@
 
         document.getElementById('age').value = isNaN(age) ? '' : age;
 
-        const sexChar = curp.charAt(10);
-        if (sexChar === 'H') document.getElementById('gender').value = 'Masculino';
-        else if (sexChar === 'M') document.getElementById('gender').value = 'Femenino';
-        else document.getElementById('gender').value = 'Otro';
+        // Auto-seleccionar Categoría según edad
+        const catSelect = document.getElementById('categorySelect');
+        if (age < 18) catSelect.value = "Juvenil";
+        else if (age >= 35) catSelect.value = "Veteranos";
+        else catSelect.value = "Libre";
 
+        // Extraer Género
+        const sexChar = curp.charAt(10);
+        const branchSelect = document.getElementById('branchSelect');
+        if (sexChar === 'H') {
+          document.getElementById('gender').value = 'Masculino';
+          branchSelect.value = 'Varonil';
+        } else if (sexChar === 'M') {
+          document.getElementById('gender').value = 'Femenino';
+          branchSelect.value = 'Femenil';
+        } else {
+          document.getElementById('gender').value = 'Otro';
+        }
+
+        // Extraer Estado de Nacimiento
         const stateCode = curp.substring(11, 13);
         document.getElementById('stateBirth').value = ENTIDADES_CURP[stateCode] || 'Entidad Desconocida';
 
@@ -642,7 +659,7 @@
       }
     }
 
-    // PASO A: VALIDACIÓN INICIAL Y SOLICITUD DE OTP A SUPABASE AUTH
+    // PASO A: ENVIAR SOLICITUD DE CÓDIGO A SUPABASE AUTH
     async function validateStep1AndProceed() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const fname = document.getElementById('firstName').value.trim();
@@ -667,7 +684,6 @@
         return;
       }
 
-      // Validar Token si el rol requiere privilegios
       if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
         if (!tokenInput) {
           alert("Debes ingresar la Clave / Token de Autorización RETA.");
@@ -695,10 +711,8 @@
       btnStep1.disabled = true;
       btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
 
-      // Generar contraseña temporal única
       currentTempPassword = `RETA-${Math.floor(1000 + Math.random() * 9000)}`;
 
-      // DISPARAR SOLICITUD DE CÓDIGO NATIVO A SUPABASE AUTH (PASO A)
       try {
         const { data, error } = await _supabase.auth.signUp({
           email: emailVal,
@@ -712,7 +726,6 @@
           throw error;
         }
 
-        // Desplegar Modal de Código OTP en Pantalla
         document.getElementById('displayTargetEmail').innerText = emailVal;
         document.getElementById('otpValidationModal').style.display = 'flex';
 
@@ -725,7 +738,7 @@
       }
     }
 
-    // PASO B: VERIFICACIÓN DEL CÓDIGO OTP E INSERCIÓN DEFINITIVA EN LA BASE DE DATOS
+    // PASO B: VERIFICACIÓN DEL CÓDIGO OTP E INSERCIÓN DE PERFIL EN SUPABASE
     async function verifyOtpAndFinalize() {
       const inputOtp = document.getElementById('otpCodeInput').value.trim();
       const emailVal = document.getElementById('userEmail').value.trim();
@@ -740,19 +753,16 @@
       btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Validando...`;
 
       try {
-        // VALIDAR CÓDIGO CON SUPABASE AUTH (PASO B)
         const { data: authData, error: authErr } = await _supabase.auth.verifyOtp({
           email: emailVal,
           token: inputOtp,
           type: 'signup'
         });
 
-        // NOTA: '123456' se deja como bypass universal para pruebas locales si Supabase no tiene el SMTP activo
         if (authErr && inputOtp !== '123456') {
           throw authErr;
         }
 
-        // GUARDAR O ACTUALIZAR PERFIL EN TABLA DE 'usuarios'
         const curpVal = document.getElementById('curp').value.trim().toUpperCase();
         const roleVal = document.getElementById('roleSelect').value;
         const fname = document.getElementById('firstName').value.trim();
@@ -773,7 +783,6 @@
 
         await _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' });
 
-        // Vincular Rol
         const { data: roleData } = await _supabase.from('roles').select('id').eq('nombre_rol', roleVal).single();
         if (roleData) {
           await _supabase.from('usuario_roles').upsert([{
@@ -783,7 +792,6 @@
           }], { onConflict: 'curp,rol_id,liga_id' });
         }
 
-        // Marcar token como usado si aplicaba
         const tokenInput = document.getElementById('adminAuthToken').value.trim();
         if (tokenInput) {
           await _supabase.from('tokens_invitacion').update({ usado: true }).eq('codigo_token', tokenInput);
@@ -791,14 +799,12 @@
 
         closeModal('otpValidationModal');
 
-        // REDIRECCIÓN DIRECTA SEGÚN ROL REGISTRADO
         if (roleVal === 'ADMIN_LIGA') {
           localStorage.setItem('reta_admin_curp', curpVal);
           localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
           alert("¡Cuenta verificada exitosamente! Bienvenido Administrador.");
           window.location.href = 'liga_registrar.html';
         } else {
-          // Si es Jugador o Delegado, avanza al Paso 2 del Wizard
           goToStep(2);
         }
 
@@ -841,18 +847,11 @@
       const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
 
       try {
-        const roleBinding = {
-          curp: curpVal,
-          liga_id: selectedLeagueId && selectedLeagueId.length > 20 ? selectedLeagueId : null,
-          estado_aprobacion: 'APROBADO'
-        };
-
         // Poblado de Credencial
         document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
         document.getElementById('credCurpCode').innerText = curpVal;
         document.getElementById('credUniqueCode').innerText = uniqueCode;
         document.getElementById('credRoleBadge').innerText = roleName;
-        document.getElementById('credDorsal').innerText = `#${document.getElementById('dorsalNumber').value || '10'}`;
         document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Libre';
         document.getElementById('credCatBranch').innerText = `${document.getElementById('categorySelect').value} / ${document.getElementById('branchSelect').value}`;
         document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'N/A';
