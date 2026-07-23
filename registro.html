@@ -408,8 +408,8 @@
             <div class="cred-sponsors-strip">
               <span class="sponsors-label">PATROCINADORES OFICIALES</span>
               <div class="sponsors-logos">
-                <img src="https://via.placeholder.com/100x35/0a0f1d/00d4ff?text=SPONSOR+1" alt="Patrocinador 1" class="sponsor-logo">
-                <img src="https://via.placeholder.com/100x35/0a0f1d/00d4ff?text=SPONSOR+2" alt="Patrocinador 2" class="sponsor-logo">
+                <img src="img/logo_reta.png" alt="Patrocinador 1" class="sponsor-logo" style="height:30px;">
+                <img src="img/logo_reta.png" alt="Patrocinador 2" class="sponsor-logo" style="height:30px;">
               </div>
             </div>
 
@@ -439,7 +439,7 @@
 
       <div style="margin: 20px 0;">
         <input type="text" id="otpCodeInput" maxlength="6" placeholder="0 0 0 0 0 0" style="letter-spacing: 12px; font-size: 1.8rem; text-align: center; width: 100%; text-transform: uppercase; padding: 10px; background: rgba(0,0,0,0.5); border: 2px solid #00d4ff; border-radius: 10px; color: #fff;">
-        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth o usa el código de pruebas.</small>
+        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth o usa 123456.</small>
       </div>
 
       <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center;">
@@ -495,7 +495,6 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const MASTER_ADMIN_TOKEN = 'RETA2026ADMIN';
-    let currentTempPassword = '';
 
     const ENTIDADES_CURP = {
       'AS': 'Aguascalientes', 'BC': 'Baja California', 'BS': 'Baja California Sur', 'CC': 'Campeche',
@@ -524,7 +523,6 @@
       }
     }
 
-    // AUTO-EXTRACCIÓN COMPLETA POR CURP AL INGRESAR EL CAMPO PRINCIPAL (CON ASIGNACIÓN CORREGIDA DE ESTADO)
     function processCurpAutoData(curpRaw) {
       const curp = curpRaw.toUpperCase().trim();
       const statusText = document.getElementById('curpStatusText');
@@ -535,7 +533,6 @@
           statusText.innerText = "✓ CURP Válida. Datos biográficos y categoría extraídos.";
         }
 
-        // Extraer Fecha de Nacimiento
         const yy = parseInt(curp.substring(4, 6), 10);
         const mm = parseInt(curp.substring(6, 8), 10) - 1;
         const dd = parseInt(curp.substring(8, 10), 10);
@@ -556,7 +553,6 @@
         const ageInput = document.getElementById('age');
         if (ageInput) ageInput.value = isNaN(age) ? '' : age;
 
-        // Auto-seleccionar Categoría según edad
         const catSelect = document.getElementById('categorySelect');
         if (catSelect) {
           if (age < 18) catSelect.value = "Juvenil";
@@ -564,7 +560,6 @@
           else catSelect.value = "Libre";
         }
 
-        // Extraer Género
         const sexChar = curp.charAt(10);
         const genderInput = document.getElementById('gender');
         const branchSelect = document.getElementById('branchSelect');
@@ -579,7 +574,6 @@
           if (genderInput) genderInput.value = 'Otro';
         }
 
-        // Extraer Estado de Nacimiento (Clave GT -> Guanajuato)
         const stateCode = curp.substring(11, 13);
         const stateBirthInput = document.getElementById('stateBirth');
         if (stateBirthInput) {
@@ -673,8 +667,8 @@
       }
     }
 
-    // PASO A: VALIDACIÓN EXPLICITA Y APERTURA DE MODAL GARANTIZADA
-    async function validateStep1AndProceed() {
+    // PASO A: EJECUCIÓN 100% GARANTIZADA DE APERTURA DE MODAL
+    function validateStep1AndProceed() {
       playBeepSound();
 
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
@@ -687,7 +681,7 @@
       const roleVal = document.getElementById('roleSelect').value;
       const tokenInput = document.getElementById('adminAuthToken').value.trim();
 
-      // 1. Validar Método de Identificación (INE / Responsiva)
+      // 1. Validaciones requeridas
       const isIneMethod = document.getElementById('methodIne').checked;
       const ineFile = document.getElementById('ineFileInput').files[0];
       const responsivaFile = document.getElementById('responsivaFile').files[0];
@@ -702,7 +696,6 @@
         return;
       }
 
-      // 2. Validar Datos Obligatorios
       if (!curpVal || curpVal.length !== 18) {
         alert("⚠️ La CURP debe contener exactamente 18 caracteres.");
         return;
@@ -738,8 +731,18 @@
         return;
       }
 
-      // 3. INTENTO ASÍNCRONO A SUPABASE (PROTEGIDO)
-      // Se ejecuta en segundo plano sin bloquear el avance
+      // 2. MOSTRAR EL MODAL PRIMERO DE FORMA SINCRÓNICA (INMEDIATA)
+      const targetEmailObj = document.getElementById('displayTargetEmail');
+      if (targetEmailObj) targetEmailObj.innerText = emailVal;
+
+      const modal = document.getElementById('otpValidationModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      } else {
+        goToStep(2);
+      }
+
+      // 3. ENVIAR A SUPABASE "FIRE AND FORGET" (Sin detener la pantalla si da 429)
       try {
         _supabase.auth.signInWithOtp({
           email: emailVal,
@@ -748,23 +751,13 @@
             emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
             data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
           }
+        }).then(res => {
+          console.log("Respuesta Supabase OTP:", res);
         }).catch(err => {
-          console.warn("Límite de peticiones alcanzado en Supabase (429), continuando en modo pruebas local:", err.message);
+          console.warn("Supabase 429 Capturado pero ignorado de la UI:", err);
         });
-      } catch (e) {
-        console.warn("Excepción de Supabase capturada:", e);
-      }
-
-      // 4. ABRIR EL MODAL DE INMEDIATO SIN IMPORTAR SI SUPABASE DIO 429
-      const targetEmailObj = document.getElementById('displayTargetEmail');
-      if (targetEmailObj) targetEmailObj.innerText = emailVal;
-
-      const modal = document.getElementById('otpValidationModal');
-      if (modal) {
-        modal.style.display = 'flex';
-      } else {
-        // Si por alguna razón el modal no existe, avanza directamente al paso 2
-        goToStep(2);
+      } catch (err) {
+        console.warn("Excepción Supabase ignorada:", err);
       }
     }
 
@@ -783,14 +776,14 @@
       btnConfirm.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Validando...`;
 
       try {
-        const { data: authData, error: authErr } = await _supabase.auth.verifyOtp({
-          email: emailVal,
-          token: inputOtp,
-          type: 'signup'
-        });
-
-        if (authErr && inputOtp !== '123456') {
-          throw authErr;
+        // Permitir pasar directamente si se utiliza el código de desarrollo 123456
+        if (inputOtp !== '123456') {
+          const { data: authData, error: authErr } = await _supabase.auth.verifyOtp({
+            email: emailVal,
+            token: inputOtp,
+            type: 'signup'
+          });
+          if (authErr) throw authErr;
         }
 
         const curpVal = document.getElementById('curp').value.trim().toUpperCase();
