@@ -544,7 +544,7 @@
       `).join('');
     }
 
-    // INSERCIÓN REAL EN SUPABASE
+    // INSERCIÓN EN SUPABASE
     async function handleLeagueSubmit(e) {
       e.preventDefault();
       playBeepSound();
@@ -559,12 +559,8 @@
       submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Liga en Supabase...`;
 
       try {
+        // Construir Payload de la Liga
         const leaguePayload = {
-          nombre_admin: document.getElementById('adminFirstName').value.trim() + ' ' + document.getElementById('adminLastName').value.trim(),
-          curp_admin: document.getElementById('adminCurp').value.trim().toUpperCase(),
-          telefono_admin: document.getElementById('adminPhone').value.trim(),
-          email_admin: document.getElementById('adminEmail').value.trim(),
-          redes_sociales: document.getElementById('leagueSocial').value.trim(),
           nombre_liga: document.getElementById('leagueName').value.trim(),
           clave_liga: document.getElementById('leagueKey').value.trim().toUpperCase(),
           estado: document.getElementById('leagueState').value,
@@ -572,9 +568,15 @@
           direccion_complejo: document.getElementById('leagueAddress').value.trim(),
           disciplina: document.getElementById('sportType').value,
           telefono_liga: document.getElementById('leaguePhone').value.trim(),
-          email_liga: document.getElementById('leagueEmail').value.trim()
+          email_liga: document.getElementById('leagueEmail').value.trim(),
+          nombre_admin: document.getElementById('adminFirstName').value.trim() + ' ' + document.getElementById('adminLastName').value.trim(),
+          curp_admin: document.getElementById('adminCurp').value.trim().toUpperCase(),
+          telefono_admin: document.getElementById('adminPhone').value.trim(),
+          email_admin: document.getElementById('adminEmail').value.trim(),
+          redes_sociales: document.getElementById('leagueSocial').value.trim()
         };
 
+        // 1. Insertar Liga
         const { data: insertedLeague, error: leagueErr } = await _supabase
           .from('ligas')
           .insert([leaguePayload])
@@ -583,6 +585,7 @@
 
         if (leagueErr) throw leagueErr;
 
+        // 2. Insertar Torneos vinculados a la Liga
         const tournamentsPayload = tournamentsList.map(t => ({
           liga_id: insertedLeague.id,
           nombre_torneo: t.nombre_torneo,
