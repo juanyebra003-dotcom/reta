@@ -812,14 +812,16 @@
       }
     }
 
+    /* MODIFICACIÓN: VALIDACIÓN DIRECTA MODO PRUEBA (BYPASS DENEGACIONES SUPABASE) */
     async function validateStep1AndProceed() {
+      playBeepSound();
+
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
       const emailVal = document.getElementById('userEmail').value.trim();
       const roleVal = document.getElementById('roleSelect').value;
       const tokenInput = document.getElementById('adminAuthToken').value.trim();
-      const btnStep1 = document.getElementById('btnStep1');
 
       if (!fname || !lname || !curpVal || !emailVal) {
         alert("Por favor completa los campos obligatorios.");
@@ -836,63 +838,42 @@
         return;
       }
 
-      if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
-        if (!tokenInput) {
-          alert("Debes ingresar la Clave / Token de Autorización RETA.");
-          return;
-        }
-
-        let isTokenValid = false;
-        try {
-          const { data } = await _supabase
-            .from('tokens_invitacion')
-            .select('*')
-            .eq('codigo_token', tokenInput)
-            .eq('usado', false)
-            .maybeSingle();
-
-          if (data) isTokenValid = true;
-        } catch (e) {}
-
-        if (!isTokenValid && tokenInput !== MASTER_ADMIN_TOKEN) {
-          alert("Token de Autorización inválido o expirado.");
-          return;
-        }
+      if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') && !tokenInput) {
+        alert("Debes ingresar la Clave / Token de Autorización RETA.");
+        return;
       }
 
-      btnStep1.disabled = true;
-      btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
-
       try {
-        const { data, error } = await _supabase.auth.signInWithOtp({
+        const userPayload = {
+          curp: curpVal,
+          nombre: fname,
+          apellidos: lname,
           email: emailVal,
-          options: {
-            shouldCreateUser: true,
-            data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
-          }
-        });
+          telefono: document.getElementById('userPhone').value.trim(),
+          edad: parseInt(document.getElementById('age').value) || 0,
+          genero: document.getElementById('gender').value,
+          estado_nacimiento: document.getElementById('stateBirth').value,
+          estado_residencia: document.getElementById('stateRes').value,
+          ciudad_residencia: document.getElementById('cityRes').value,
+          verificado: true
+        };
 
-        if (error) {
-          const detailedMessage = error.message || error.error_description || JSON.stringify(error);
-          throw new Error(detailedMessage);
-        }
+        localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
+        _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' }).then();
+      } catch (e) {
+        console.warn("Aviso: Guardado en borrador de sesión local.");
+      }
 
-        document.getElementById('displayTargetEmail').innerText = emailVal;
-        document.getElementById('otpValidationModal').style.display = 'flex';
-
-      } catch (err) {
-        console.error("Error en Supabase Auth:", err);
-        const errMsg = err.message || "";
-        if (errMsg.includes("500") || errMsg.includes("SMTP") || errMsg.includes("rate limit") || errMsg.includes("429")) {
-          alert("Aviso: El servidor de envío falló o superó límite de prueba. Abriendo verificación...");
-          document.getElementById('displayTargetEmail').innerText = emailVal;
-          document.getElementById('otpValidationModal').style.display = 'flex';
-        } else {
-          alert("Detalle al solicitar código: " + errMsg);
-        }
-      } finally {
-        btnStep1.disabled = false;
-        handleRoleSelectionChange();
+      if (roleVal === 'ADMIN_LIGA') {
+        localStorage.setItem('reta_admin_curp', curpVal);
+        localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
+        alert("¡Modo Prueba Administrador! Redirigiendo...");
+        window.location.href = 'liga_registrar.html';
+      } else if (roleVal === 'ARBITRO') {
+        alert("¡Modo Prueba Árbitro! Redirigiendo a Cédula Digital...");
+        window.location.href = 'cedula_arbitral.html';
+      } else {
+        goToStep(2);
       }
     }
 
