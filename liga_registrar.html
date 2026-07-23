@@ -586,13 +586,20 @@
         if (leagueErr) throw leagueErr;
 
         // 2. Insertar Torneos vinculados a la Liga
-        const tournamentsPayload = tournamentsList.map(t => ({
-          liga_id: insertedLeague.id,
-          nombre_torneo: t.nombre_torneo,
-          categoria: t.categoria,
-          rama: t.rama,
-          equipos_proyectados: t.equipos_proyectados
-        }));
+    // POR ESTE BLOQUE CON GENERACIÓN AUTOMÁTICA DE CLAVE:
+const tournamentsPayload = tournamentsList.map((t, index) => {
+  // Genera una clave como "LPM-T1", "LPM-T2", etc.
+  const claveAuto = `${leaguePayload.clave_liga || 'TRN'}-T${index + 1}`;
+
+  return {
+    liga_id: insertedLeague.id,
+    clave_torneo: claveAuto,
+    nombre_torneo: t.nombre_torneo,
+    categoria: t.categoria,
+    rama: t.rama,
+    equipos_proyectados: t.equipos_proyectados
+  };
+});
 
         const { error: tournamentsErr } = await _supabase
           .from('liga_torneo')
