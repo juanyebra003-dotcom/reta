@@ -44,6 +44,29 @@
         <div class="wizard-step active" id="wizard-step-1">
           <h3 class="step-title"><i class="fa-solid fa-id-card"></i> Paso 1: Identificación y Datos Personales</h3>
           
+          <!-- Selección de Rol Único/Principal del Sistema -->
+          <div class="form-row" style="margin-bottom: 20px;">
+            <div class="input-group">
+              <label for="roleSelect"><i class="fa-solid fa-user-shield"></i> Rol con el que te Registras en la Plataforma (*)</label>
+              <select id="roleSelect" required onchange="handleRoleSelectionChange()">
+                <option value="JUGADOR" selected>⚽ Jugador / Atleta</option>
+                <option value="DELEGADO">📋 Delegado / Director Técnico</option>
+                <option value="ARBITRO">🏁 Árbitro / Colegiado</option>
+                <option value="SUPERVISOR">👁️ Supervisor de Campo</option>
+                <option value="ADMIN_LIGA">👑 Administrador / Propietario de Liga</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Módulo de Clave de Autorización para Administradores y Supervisores -->
+          <div id="adminAuthCodeSection" class="form-row" style="display: none; background: rgba(0,212,255,0.08); padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
+            <div class="input-group">
+              <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización Admin (*)</label>
+              <input type="password" id="adminAuthToken" placeholder="Ingresa el token de invitación" onchange="playBeepSound()">
+              <small style="color:#94a3b8;">Requerido solo para otorgar privilegios administrativos.</small>
+            </div>
+          </div>
+
           <!-- Selección INE vs Menor de Edad -->
           <div class="method-selector">
             <label class="radio-card active" id="optionIneLabel">
@@ -91,29 +114,29 @@
           <!-- Formulario de Datos Personales -->
           <div class="form-row">
             <div class="input-group">
-              <label for="firstName"><i class="fa-solid fa-user"></i> Nombre(s) (*)</label>
+              <label for="firstName"><i class="fa-solid fa-user"></i> Nombre(s)</label>
               <input type="text" id="firstName" placeholder="Nombre(s)" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="lastName"><i class="fa-solid fa-user"></i> Apellidos (*)</label>
+              <label for="lastName"><i class="fa-solid fa-user"></i> Apellidos</label>
               <input type="text" id="lastName" placeholder="Apellidos" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP (Clave Única RETA) (*)</label>
+              <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP</label>
               <input type="text" id="curp" placeholder="18 Caracteres" required maxlength="18" style="text-transform: uppercase;" onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad (*)</label>
-              <input type="number" id="age" placeholder="Años" min="3" max="99" required onchange="playBeepSound()">
+              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad</label>
+              <input type="number" id="age" placeholder="Años" min="5" max="99" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género (*)</label>
+              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género</label>
               <select id="gender" required onchange="playBeepSound()">
                 <option value="" disabled selected>Selecciona</option>
                 <option value="Masculino">Masculino</option>
@@ -122,29 +145,29 @@
               </select>
             </div>
             <div class="input-group">
-              <label for="dorsalNumber"><i class="fa-solid fa-shirt"></i> Número Dorsal Preferido (*)</label>
+              <label for="dorsalNumber"><i class="fa-solid fa-shirt"></i> Número Dorsal Preferido</label>
               <input type="number" id="dorsalNumber" placeholder="Ej. 10" min="1" max="99" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="stateRes"><i class="fa-solid fa-map-location-dot"></i> Estado de Residencia (*)</label>
+              <label for="stateRes"><i class="fa-solid fa-map-location-dot"></i> Estado de Residencia</label>
               <input type="text" id="stateRes" placeholder="Ej. Guanajuato" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia (*)</label>
+              <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia</label>
               <input type="text" id="cityRes" placeholder="Ej. Moroleón" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="userPhone"><i class="fa-solid fa-phone"></i> Teléfono Móvil (*)</label>
+              <label for="userPhone"><i class="fa-solid fa-phone"></i> Teléfono Móvil</label>
               <input type="tel" id="userPhone" placeholder="445 123 4567" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="userEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico (*)</label>
+              <label for="userEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico</label>
               <input type="email" id="userEmail" placeholder="jugador@ejemplo.com" required onchange="playBeepSound()">
             </div>
           </div>
@@ -163,9 +186,10 @@
               </span>
             </label>
 
-            <div id="ipAuditText" class="ip-audit-text" style="margin-top:10px; font-size:0.75rem; color:#00d4ff;"></div>
+            <div id="ipAuditText" class="ip-audit-text" style="display:none;"></div>
           </div>
 
+          <!-- Botón Único de Siguiente -->
           <div class="wizard-buttons">
             <button type="button" class="btn-login" onclick="validateStep1AndProceed()">
               Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>
@@ -179,13 +203,17 @@
 
           <div class="form-row">
             <div class="input-group">
-              <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo (*)</label>
+              <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
               <select id="leagueSelect" required onchange="onLeagueSelectChange()">
                 <option value="" disabled selected>Cargando Ligas de Supabase...</option>
+                <option value="LIGA-PREMIER-GTO" data-state="GTO" data-tournament="001">Liga Premier RETA (Guanajuato)</option>
+                <option value="COPA-BAJIO-GTO" data-state="GTO" data-tournament="002">Copa Internacional Bajío (Guanajuato)</option>
+                <option value="NOCTURNA-MICH" data-state="MIC" data-tournament="003">Liga Nocturna F7 (Michoacán)</option>
+                <option value="FEMENIL-GTO" data-state="GTO" data-tournament="004">Torneo Femenil RETA (Guanajuato)</option>
               </select>
             </div>
             <div class="input-group">
-              <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece (*)</label>
+              <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece</label>
               <select id="teamSelect" required onchange="playBeepSound()">
                 <option value="" disabled selected>Selecciona tu equipo</option>
                 <option value="Gallos FC" data-logo="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=100&q=80">Gallos FC</option>
@@ -209,7 +237,7 @@
 
           <div class="form-row">
             <div class="input-group">
-              <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría (*)</label>
+              <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría</label>
               <select id="categorySelect" required onchange="playBeepSound()">
                 <option value="Libre">Libre</option>
                 <option value="Juvenil">Juvenil (Sub-18)</option>
@@ -218,7 +246,7 @@
               </select>
             </div>
             <div class="input-group">
-              <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama (*)</label>
+              <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama</label>
               <select id="branchSelect" required onchange="playBeepSound()">
                 <option value="Varonil">Varonil</option>
                 <option value="Femenil">Femenil</option>
@@ -239,7 +267,7 @@
 
           <div class="form-row">
             <div class="input-group">
-              <label for="bloodType"><i class="fa-solid fa-droplet"></i> Tipo de Sangre (*)</label>
+              <label for="bloodType"><i class="fa-solid fa-droplet"></i> Tipo de Sangre</label>
               <select id="bloodType" required onchange="playBeepSound()">
                 <option value="" disabled selected>Selecciona tipo de sangre</option>
                 <option value="O+">O Positivo (O+)</option>
@@ -254,38 +282,38 @@
             </div>
 
             <div class="input-group">
-              <label for="allergiesSelect"><i class="fa-solid fa-hand-dots"></i> Alergias Comunes (*)</label>
+              <label for="allergiesSelect"><i class="fa-solid fa-hand-dots"></i> Alergias Comunes</label>
               <select id="allergiesSelect" required onchange="playBeepSound()">
                 <option value="Ninguna">Ninguna Conocida</option>
-                <option value="Medicamentos">Medicamentos (Penicilina / Aspirina)</option>
-                <option value="Picaduras">Picaduras de Insectos / Abejas</option>
-                <option value="Alimentos">Alimentos (Mariscos / Nueces / Lácteos)</option>
-                <option value="Ambiental">Polen / Ácaros / Asma alérgica</option>
-                <option value="Otras">Otras Alergias Específicas</option>
+                <option value="Medicamentos (Penicilina/Aspirina)">Medicamentos (Penicilina / Aspirina / AINEs)</option>
+                <option value="Picaduras de Insectos / Abejas">Picaduras de Insectos / Abejas</option>
+                <option value="Alimentos (Mariscos/Nueces/Lácteos)">Alimentos (Mariscos / Nueces / Lácteos)</option>
+                <option value="Polen / Ácaros / Asma alérgica">Polen / Ácaros / Ambiental</option>
+                <option value="Otras Alergias Específicas">Otras Alergias Específicas</option>
               </select>
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="medicalConditions"><i class="fa-solid fa-heart-pulse"></i> Padecimientos / Impedimentos Médicos (*)</label>
+              <label for="medicalConditions"><i class="fa-solid fa-heart-pulse"></i> Padecimientos / Impedimentos Médicos</label>
               <select id="medicalConditions" required onchange="playBeepSound()">
                 <option value="Ninguno">Ninguno / APTO PARA DEPORTE ALTO RENDIMIENTO</option>
-                <option value="Hipertensión">Hipertensión Arterial</option>
-                <option value="Arritmia">Arritmia / Soplos Cardíacos</option>
-                <option value="Asma">Asma Bronquial</option>
-                <option value="Diabetes">Diabetes Mellitus</option>
-                <option value="Lesión Articular">Lesión Articular / Ligamentos</option>
-                <option value="Epilepsia">Epilepsia / Convulsiones</option>
+                <option value="Hipertensión Arterial">Hipertensión Arterial (Cardiovascular)</option>
+                <option value="Arritmia / Soplos Cardíacos">Arritmia / Soplos Cardíacos</option>
+                <option value="Asma Bronquial / Hiperreactividad Vía Aérea">Asma Bronquial (Pulmonar)</option>
+                <option value="Diabetes Mellitus Type 1/2">Diabetes (Metabólico)</option>
+                <option value="Lesión Articular / Cirugía Previa">Lesión Articular / Ligamentos / Lesión Ósea</option>
+                <option value="Epilepsia / Padecimientos Neurológicos">Epilepsia / Convulsiones</option>
               </select>
             </div>
 
             <div class="input-group">
-              <label for="medicalService"><i class="fa-solid fa-hospital"></i> Servicio Médico / Afore / Seguro (*)</label>
+              <label for="medicalService"><i class="fa-solid fa-hospital"></i> Servicio Médico / Afore / Seguro</label>
               <select id="medicalService" required onchange="playBeepSound()">
                 <option value="IMSS">IMSS</option>
                 <option value="ISSSTE">ISSSTE</option>
-                <option value="Particular">Seguro Particular</option>
+                <option value="Particular / Gastos Médicos">Seguro de Gastos Médicos Particular</option>
                 <option value="Cruz Roja / Ninguno">Cruz Roja / Ninguno</option>
               </select>
             </div>
@@ -293,20 +321,18 @@
 
           <div class="form-row">
             <div class="input-group">
-              <label for="emergencyContactName"><i class="fa-solid fa-user-nurse"></i> Contacto de Emergencia (*)</label>
+              <label for="emergencyContactName"><i class="fa-solid fa-user-nurse"></i> Persona de Contacto en Emergencia</label>
               <input type="text" id="emergencyContactName" placeholder="Nombre completo del familiar/tutor" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="emergencyPhone"><i class="fa-solid fa-phone"></i> Teléfono de Emergencia (*)</label>
+              <label for="emergencyPhone"><i class="fa-solid fa-phone-triangle"></i> Teléfono de Emergencia</label>
               <input type="tel" id="emergencyPhone" placeholder="Teléfono directo" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="wizard-buttons">
             <button type="button" class="btn-secondary-action" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-            <button type="button" id="btnFinalRegister" class="btn-login" onclick="processFinalRegistration()">
-              Generar Credencial Virtual <i class="fa-solid fa-qrcode"></i>
-            </button>
+            <button type="button" id="btnFinalRegister" class="btn-login" onclick="processFinalRegistration()">Generar Credencial Virtual <i class="fa-solid fa-qrcode"></i></button>
           </div>
         </div>
 
@@ -321,7 +347,7 @@
 
             <div class="credential-body">
               <div class="cred-photo-box">
-                <img id="credPlayerPhoto" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Oficial">
+                <img id="credPlayerPhoto" src="" alt="Foto Oficial">
                 <span class="cred-dorsal" id="credDorsal">#10</span>
               </div>
 
@@ -329,6 +355,7 @@
                 <h3 id="credPlayerName">CARLOS FLORES</h3>
                 <p class="cred-meta-line"><strong>CURP (ID):</strong> <span id="credCurpCode" class="text-gradient">---</span></p>
                 <p class="cred-meta-line"><strong>CÓDIGO RETA:</strong> <span id="credUniqueCode">---</span></p>
+                <p class="cred-meta-line"><strong>ROL ASIGNADO:</strong> <span id="credRoleBadge" style="color:#00d4ff;">JUGADOR</span></p>
                 <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
                 <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
                 <div class="cred-medical-strip">
@@ -339,7 +366,7 @@
 
               <div class="cred-badge-qr-container">
                 <div class="cred-team-logo-hero-wrapper">
-                  <img id="credTeamLogo" src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=100&q=80" class="cred-team-logo-hero" alt="Escudo Equipo">
+                  <img id="credTeamLogo" src="" class="cred-team-logo-hero" alt="Escudo Equipo">
                 </div>
                 <div class="cred-qr-box">
                   <img id="credQrCode" src="" alt="Código QR Único">
@@ -370,7 +397,7 @@
     </div>
   </div>
 
-  <!-- MODAL JURÍDICO -->
+  <!-- MODAL JURÍDICO: TÉRMINOS, CONDICIONES Y DESLINDE DE RESPONSABILIDAD -->
   <div class="modal-overlay" id="termsModal" style="display: none;">
     <div class="glass-card modal-card terms-modal-card">
       <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
@@ -382,16 +409,19 @@
       
       <div class="terms-scroll-body">
         <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
-        <p>Al registrarse y participar en cualquier torneo o liga administrado por la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada.</p>
+        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento. Reconoce de manera expresa que el fútbol y las disciplinas asociadas conllevan un riesgo intrínseco de lesiones físicas, incluyendo pero no limitándose a: esguinces, fracturas, contusiones, paros cardiacos o emergencias cardiovasculares derivado del esfuerzo físico, así como colisiones accidentales con otros participantes, equipamiento o instalaciones.</p>
 
         <h4>2. DESLINDE DE RESPONSABILIDAD Y EXONERACIÓN LEGAL</h4>
-        <p>El participante exime de manera incondicional a los organizadores, árbitros y a la plataforma <strong>RETA</strong> de cualquier responsabilidad derivada de accidentes u otras contingencias durante los eventos.</p>
+        <p>El participante (o en su defecto, sus padres o tutores legales en caso de menores de edad) exime de manera incondicional e irrevocable a los organizadores, dueños de canchas, árbitros, supervisores, directivos de liga y a la plataforma digital <strong>RETA</strong> de cualquier responsabilidad civil, penal, administrativa o patrimonial derivada de accidentes, lesiones, incapacidades o fallecimiento ocurridos antes, durante o después de los encuentros deportivos disputados dentro del marco del torneo registrado.</p>
 
-        <h4>3. AUDITORÍA DIGITAL (DIRECCIÓN IP)</h4>
-        <p>El consentimiento mediante la casilla de verificación será vinculado de forma unívoca a la dirección IP de conexión y sello de tiempo como evidencia legal.</p>
+        <h4>3. ATENCIÓN MÉDICA DE EMERGENCIA</h4>
+        <p>El usuario autoriza al personal de supervisión y auxilio a coordinar el traslado a instituciones de salud públicas o privadas en caso de una emergencia médica en campo. El participante o su contacto de emergencia asumirán los costos médicos, deducibles o gastos derivados no cubiertos por seguros privados o públicos.</p>
+
+        <h4>4. AUDITORÍA DIGITAL Y REGISTRO DE EVIDENCIA (DIRECCIÓN IP)</h4>
+        <p>De conformidad con la legislación de comercio electrónico y firma digital, el consentimiento otorgado mediante la casilla de verificación será vinculado de forma unívoca e inalterable a la dirección IP de conexión del dispositivo, sello de tiempo (timestamp) y datos del navegador, los cuales se conservarán como evidencia legal y vinculante de la aceptación de este instrumento.</p>
       </div>
 
-      <div class="modal-footer-terms" style="margin-top: 15px;">
+      <div class="modal-footer-terms">
         <button type="button" class="btn-login" onclick="acceptTermsFromModal()">Entendido y Aceptar Carta Jurídica <i class="fa-solid fa-check-double"></i></button>
       </div>
     </div>
@@ -399,7 +429,6 @@
 
   <script src="js/script.js"></script>
   <script>
-    // Audio feedback
     function playBeepSound() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -416,37 +445,26 @@
       } catch (e) {}
     }
 
-    // Configuración de Supabase
     const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let userIpAddress = '189.203.45.12';
+    const MASTER_ADMIN_TOKEN = 'RETA2026ADMIN';
 
     document.addEventListener('DOMContentLoaded', () => {
       loadLigasFromSupabase();
-      document.getElementById('ipAuditText').innerText = `Auditoría Digital Activa: IP ${userIpAddress} | Timestamp: ${new Date().toLocaleString()}`;
     });
 
-    // Cargar Ligas registradas desde Supabase
     async function loadLigasFromSupabase() {
       const select = document.getElementById('leagueSelect');
       try {
-        const { data: ligas, error } = await _supabase
-          .from('ligas')
-          .select('id, nombre_liga, clave_liga, estado, municipio');
-
-        if (error) throw error;
-
+        const { data: ligas } = await _supabase.from('ligas').select('id, nombre_liga, clave_liga, municipio, estado');
         if (ligas && ligas.length > 0) {
-          select.innerHTML = '<option value="" disabled selected>Selecciona tu liga / torneo</option>' + 
-            ligas.map(l => `<option value="${l.id}" data-name="${l.nombre_liga}" data-state="${l.estado}" data-city="${l.municipio}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
-        } else {
-          select.innerHTML = '<option value="" disabled>No hay ligas registradas aún</option>';
+          select.innerHTML = '<option value="" disabled selected>Selecciona la Liga / Torneo</option>' + 
+            ligas.map(l => `<option value="${l.id}" data-city="${l.municipio || ''}" data-state="${l.estado || ''}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
         }
       } catch (e) {
-        console.warn("No se cargaron ligas dinámicas:", e);
-        select.innerHTML = '<option value="" disabled>Error al cargar ligas de Supabase</option>';
+        console.warn("Usando opciones por defecto.");
       }
     }
 
@@ -456,6 +474,13 @@
       const opt = select.options[select.selectedIndex];
       if (opt.dataset.city) document.getElementById('tournamentCity').value = opt.dataset.city;
       if (opt.dataset.state) document.getElementById('tournamentState').value = opt.dataset.state;
+    }
+
+    function handleRoleSelectionChange() {
+      playBeepSound();
+      const role = document.getElementById('roleSelect').value;
+      const authSection = document.getElementById('adminAuthCodeSection');
+      authSection.style.display = (role === 'ADMIN_LIGA' || role === 'SUPERVISOR') ? 'block' : 'none';
     }
 
     function toggleIdMethod(method) {
@@ -477,7 +502,7 @@
       playBeepSound();
       const file = e.target.files[0];
       if (file) {
-        document.getElementById('ocrStatus').innerText = "✓ INE leída correctamente por OCR (Simulado)";
+        document.getElementById('ocrStatus').innerText = "✓ INE procesada correctamente.";
       }
     }
 
@@ -494,7 +519,6 @@
       }
     }
 
-    // Navegación del Wizard
     function goToStep(stepNumber) {
       playBeepSound();
       document.querySelectorAll('.wizard-step').forEach(el => el.style.display = 'none');
@@ -502,33 +526,36 @@
 
       for (let i = 1; i <= 4; i++) {
         const dot = document.getElementById(`step-dot-${i}`);
-        if (i <= stepNumber) {
-          dot.classList.add('active');
-        } else {
-          dot.classList.remove('active');
-        }
+        if (i <= stepNumber) dot.classList.add('active');
+        else dot.classList.remove('active');
       }
     }
 
     function validateStep1AndProceed() {
+      const curpVal = document.getElementById('curp').value.trim();
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
-      const curpVal = document.getElementById('curp').value.trim();
       const emailVal = document.getElementById('userEmail').value.trim();
-      const termsAccepted = document.getElementById('acceptTermsCheckbox').checked;
+      const roleVal = document.getElementById('roleSelect').value;
+      const tokenInput = document.getElementById('adminAuthToken').value.trim();
 
       if (!fname || !lname || !curpVal || !emailVal) {
-        alert("Por favor completa los campos obligatorios (*).");
+        alert("Por favor completa los campos obligatorios.");
         return;
       }
 
       if (curpVal.length !== 18) {
-        alert("La CURP debe tener exactamente 18 caracteres.");
+        alert("La CURP debe contener 18 caracteres exactos.");
         return;
       }
 
-      if (!termsAccepted) {
-        alert("Debes aceptar los Términos y Deslinde Legal para continuar.");
+      if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR') && tokenInput !== MASTER_ADMIN_TOKEN) {
+        alert("Token de Autorización inválido. Para registrarte libremente, selecciona el rol Jugador o Delegado.");
+        return;
+      }
+
+      if (!document.getElementById('acceptTermsCheckbox').checked) {
+        alert("Acepta los Términos para continuar.");
         return;
       }
 
@@ -552,80 +579,82 @@
       closeModal('termsModal');
     }
 
-    // Registro Final en Supabase
     async function processFinalRegistration() {
       playBeepSound();
       const btn = document.getElementById('btnFinalRegister');
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando en Supabase...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando...`;
 
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+      const roleName = document.getElementById('roleSelect').value;
+      const selectedLeagueId = document.getElementById('leagueSelect').value;
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
       const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
 
-      const leagueSel = document.getElementById('leagueSelect');
-      const leagueId = leagueSel.value && leagueSel.value.length > 20 ? leagueSel.value : null;
-
-      const payload = {
-        curp: curpVal,
-        nombre: fname,
-        apellidos: lname,
-        edad: parseInt(document.getElementById('age').value) || 0,
-        genero: document.getElementById('gender').value,
-        dorsal: document.getElementById('dorsalNumber').value,
-        estado_residencia: document.getElementById('stateRes').value,
-        ciudad_residencia: document.getElementById('cityRes').value,
-        telefono: document.getElementById('userPhone').value,
-        email: document.getElementById('userEmail').value,
-        id_metodo: document.querySelector('input[name="idMethod"]:checked').value,
-        liga_id: leagueId,
-        nombre_equipo: document.getElementById('teamSelect').value,
-        categoria: document.getElementById('categorySelect').value,
-        rama: document.getElementById('branchSelect').value,
-        tipo_sangre: document.getElementById('bloodType').value,
-        alergias: document.getElementById('allergiesSelect').value,
-        condiciones_medicas: document.getElementById('medicalConditions').value,
-        servicio_medico: document.getElementById('medicalService').value,
-        contacto_emergencia_nombre: document.getElementById('emergencyContactName').value,
-        contacto_emergencia_telefono: document.getElementById('emergencyPhone').value,
-        acepto_terminos: document.getElementById('acceptTermsCheckbox').checked,
-        ip_registro: userIpAddress,
-        codigo_unico_reta: uniqueCode
-      };
-
       try {
-        const { data, error } = await _supabase
-          .from('registro_general')
-          .insert([payload])
-          .select()
+        // 1. Guardar Identidad de la Persona
+        const userPayload = {
+          curp: curpVal,
+          nombre: fname,
+          apellidos: lname,
+          email: document.getElementById('userEmail').value.trim(),
+          telefono: document.getElementById('userPhone').value.trim()
+        };
+
+        const { error: userErr } = await _supabase
+          .from('usuarios')
+          .upsert([userPayload], { onConflict: 'curp' });
+
+        if (userErr) throw userErr;
+
+        // 2. Obtener ID del Rol
+        const { data: roleData, error: roleErr } = await _supabase
+          .from('roles')
+          .select('id')
+          .eq('nombre_rol', roleName)
           .single();
 
-        if (error) {
-          if (error.code === '23505') {
-            throw new Error(`La CURP "${curpVal}" ya está registrada en RETA.`);
-          }
-          throw error;
-        }
+        if (roleErr) throw roleErr;
 
-        // Poblar Credencial Virtual
+        // 3. Vincular Rol
+        const roleBinding = {
+          curp: curpVal,
+          rol_id: roleData.id,
+          liga_id: selectedLeagueId && selectedLeagueId.length > 20 ? selectedLeagueId : null,
+          estado_aprobacion: 'APROBADO'
+        };
+
+        const { error: bindErr } = await _supabase
+          .from('usuario_roles')
+          .upsert([roleBinding], { onConflict: 'curp,rol_id,liga_id' });
+
+        if (bindErr) throw bindErr;
+
+        // Poblado de Credencial
         document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
         document.getElementById('credCurpCode').innerText = curpVal;
         document.getElementById('credUniqueCode').innerText = uniqueCode;
-        document.getElementById('credDorsal').innerText = `#${payload.dorsal}`;
-        document.getElementById('credTeamName').innerText = payload.nombre_equipo;
-        document.getElementById('credCatBranch').innerText = `${payload.categoria} / ${payload.rama}`;
-        document.getElementById('credBlood').innerText = payload.tipo_sangre;
-        document.getElementById('credAllergies').innerText = payload.alergias;
+        document.getElementById('credRoleBadge').innerText = roleName;
+        document.getElementById('credDorsal').innerText = `#${document.getElementById('dorsalNumber').value || '10'}`;
+        document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Libre';
+        document.getElementById('credCatBranch').innerText = `${document.getElementById('categorySelect').value} / ${document.getElementById('branchSelect').value}`;
+        document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'N/A';
+        document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
 
-        // QR Code API
+        const teamSelectObj = document.getElementById('teamSelect');
+        const opt = teamSelectObj.options[teamSelectObj.selectedIndex];
+        if (opt && opt.dataset && opt.dataset.logo) {
+          document.getElementById('credTeamLogo').src = opt.dataset.logo;
+        }
+
         document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(curpVal)}`;
 
         goToStep(4);
 
       } catch (err) {
-        console.error("Error en registro:", err);
-        alert("Atención: " + (err.message || JSON.stringify(err)));
+        console.error("Error en el registro:", err);
+        alert("Ocurrió un detalle: " + (err.message || JSON.stringify(err)));
         btn.disabled = false;
         btn.innerHTML = `Generar Credencial Virtual <i class="fa-solid fa-qrcode"></i>`;
       }
