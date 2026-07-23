@@ -660,7 +660,7 @@
     }
 
     // PASO A: ENVIAR SOLICITUD DE CÓDIGO A SUPABASE AUTH
-   // PASO A: ENVIAR SOLICITUD DE CÓDIGO CON MANEJO DE ERRORES MEJORADO
+ // PASO A: ENVIAR CÓDIGO OTP DE 6 DÍGITOS
 async function validateStep1AndProceed() {
   const curpVal = document.getElementById('curp').value.trim().toUpperCase();
   const fname = document.getElementById('firstName').value.trim();
@@ -685,6 +685,7 @@ async function validateStep1AndProceed() {
     return;
   }
 
+  // Validación de Token de Administración si aplica
   if (roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') {
     if (!tokenInput) {
       alert("Debes ingresar la Clave / Token de Autorización RETA.");
@@ -712,45 +713,38 @@ async function validateStep1AndProceed() {
   btnStep1.disabled = true;
   btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Enviando Código...`;
 
-  currentTempPassword = `RETA-${Math.floor(1000 + Math.random() * 9000)}`;
-
   try {
-    const { data, error } = await _supabase.auth.signUp({
+    // Usamos signInWithOtp en lugar de signUp para forzar OTP puro de 6 dígitos
+    const { data, error } = await _supabase.auth.signInWithOtp({
       email: emailVal,
-      password: currentTempPassword,
       options: {
+        shouldCreateUser: true, // Crea el usuario si no existe
         data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
       }
     });
 
     if (error) {
-      const errorMsg = error.message || JSON.stringify(error);
-      
-      // Manejo de Rate Limit
-      if (error.status === 429 || errorMsg.includes("security purposes")) {
-        alert("Por seguridad, espera un minuto antes de solicitar un nuevo código.");
-        document.getElementById('displayTargetEmail').innerText = emailVal;
-        document.getElementById('otpValidationModal').style.display = 'flex';
-        return;
-      }
-
-      // Si falla el servidor SMTP (500) pero el usuario ya fue creado en Supabase
-      if (error.status === 500 || errorMsg.includes("500") || errorMsg.includes("already registered")) {
-        console.warn("Fallo en servidor SMTP. Abriendo validación modal directa...");
-        document.getElementById('displayTargetEmail').innerText = emailVal;
-        document.getElementById('otpValidationModal').style.display = 'flex';
-        return;
-      }
-
-      throw new Error(errorMsg);
+      // Extraemos el mensaje real para evitar que salga {}
+      const detailedMessage = error.message || error.error_description || JSON.stringify(error);
+      throw new Error(detailedMessage);
     }
 
+    // Éxito: abrimos el modal de confirmación
     document.getElementById('displayTargetEmail').innerText = emailVal;
     document.getElementById('otpValidationModal').style.display = 'flex';
 
   } catch (err) {
-    console.error("Error en Supabase Auth Paso A:", err);
-    alert("Detalle al solicitar código: " + (err.message || "Ocurrió un error con el servidor de correos."));
+    console.error("Error en Supabase Auth:", err);
+
+    // Si salta error por límite de Resend o SMTP, abrimos el modal directamente como fallback de pruebas
+    const errMsg = err.message || "";
+    if (errMsg.includes("500") || errMsg.includes("SMTP") || errMsg.includes("rate limit")) {
+      alert("Aviso: El servidor de envío falló o el correo ingresado no coincide con la cuenta de pruebas de Resend. Abriendo ventana de verificación...");
+      document.getElementById('displayTargetEmail').innerText = emailVal;
+      document.getElementById('otpValidationModal').style.display = 'flex';
+    } else {
+      alert("Detalle al solicitar código: " + errMsg);
+    }
   } finally {
     btnStep1.disabled = false;
     handleRoleSelectionChange();
