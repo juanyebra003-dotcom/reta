@@ -7,6 +7,7 @@ function closeModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
     modal.classList.remove("active");
+    modal.style.display = "none";
   }
 }
 
@@ -17,9 +18,11 @@ function goToStep(stepNumber) {
 
   if (steps.length > 0) {
     steps.forEach((step, index) => {
-      step.classList.remove("active");
+      step.style.display = (index === stepNumber - 1) ? "block" : "none";
       if (index === stepNumber - 1) {
         step.classList.add("active");
+      } else {
+        step.classList.remove("active");
       }
     });
 
@@ -87,19 +90,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------------------------
   // 3. SECUENCIA DE VENTANAS EMERGENTES / POPUPS (20s, 30s, 40s)
   // ----------------------------------------------------------------------
-  // Ventana 1: Patrocinador 1 a los 20 segundos
   setTimeout(() => {
     const modal1 = document.getElementById("modalSponsor1");
     if (modal1) modal1.classList.add("active");
   }, 20000);
 
-  // Ventana 2: Patrocinador 2 a los 30 segundos
   setTimeout(() => {
     const modal2 = document.getElementById("modalSponsor2");
     if (modal2) modal2.classList.add("active");
   }, 30000);
 
-  // Ventana 3: Promoción RETA a los 40 segundos
   setTimeout(() => {
     const modal3 = document.getElementById("modalPromo");
     if (modal3) modal3.classList.add("active");
@@ -174,23 +174,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // SIMULACIÓN DE ESCANEO OCR DE LA INE
-  const ineDropzone = document.getElementById("ineDropzone");
+  // MANEJO DE VISTA PREVIA INE / OCR SINO ESTÁ PRESENTE EN EL HTML
   const ineFileInput = document.getElementById("ineFileInput");
   const ocrStatus = document.getElementById("ocrStatus");
 
-  if (ineDropzone && ineFileInput) {
-    ineDropzone.addEventListener("click", () => ineFileInput.click());
-
+  if (ineFileInput) {
     ineFileInput.addEventListener("change", (e) => {
       const file = e.target.files[0];
       if (file) {
         if (ocrStatus) {
           ocrStatus.style.color = "#00d4ff";
-          ocrStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Escaneando INE vía OCR... Extrayendo datos personales...';
+          ocrStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando INE vía OCR... Extrayendo datos biográficos...';
         }
 
-        // Vista previa de la fotografía extraída
         const reader = new FileReader();
         reader.onload = (event) => {
           const previewImg = document.getElementById("playerPhotoPreview");
@@ -198,21 +194,12 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         reader.readAsDataURL(file);
 
-        // Autocompletar datos tras el OCR (Simulado)
         setTimeout(() => {
-          if (document.getElementById("firstName")) document.getElementById("firstName").value = "CARLOS";
-          if (document.getElementById("lastName")) document.getElementById("lastName").value = "FLORES MENDOZA";
-          if (document.getElementById("curp")) document.getElementById("curp").value = "FLMC980417HGTXRR09";
-          if (document.getElementById("age")) document.getElementById("age").value = "28";
-          if (document.getElementById("gender")) document.getElementById("gender").value = "Masculino";
-          if (document.getElementById("stateRes")) document.getElementById("stateRes").value = "Guanajuato";
-          if (document.getElementById("cityRes")) document.getElementById("cityRes").value = "Moroleón";
-
           if (ocrStatus) {
             ocrStatus.style.color = "#48bb78";
-            ocrStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> ¡INE Escaneada con Éxito! Campos autocompletados.';
+            ocrStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> ¡INE Adjuntada con Éxito!';
           }
-        }, 1800);
+        }, 1200);
       }
     });
   }
@@ -232,82 +219,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
-  // ----------------------------------------------------------------------
-  // 7. GENERACIÓN DE CREDENCIAL DIGITAL VIRTUAL CON CÓDIGO ÚNICO + QR
-  // ----------------------------------------------------------------------
-  window.processFinalRegistration = function () {
-    const firstName = (document.getElementById("firstName")?.value || "JUGADOR").toUpperCase();
-    const lastName = (document.getElementById("lastName")?.value || "RETA").toUpperCase();
-    const dorsal = document.getElementById("dorsalNumber")?.value || "10";
-    
-    const leagueSelect = document.getElementById("leagueSelect");
-    let stateKey = "GTO";
-    let tournamentKey = "001";
-    let leagueName = "LIGA PREMIER RETA";
-
-    if (leagueSelect && leagueSelect.selectedIndex !== -1) {
-      const selectedOption = leagueSelect.options[leagueSelect.selectedIndex];
-      stateKey = selectedOption.getAttribute("data-state") || "GTO";
-      tournamentKey = selectedOption.getAttribute("data-tournament") || "001";
-      leagueName = selectedOption.text;
-    }
-
-    const teamSelect = document.getElementById("teamSelect");
-    let teamName = "Equipo RETA";
-    let teamLogoUrl = "";
-
-    if (teamSelect && teamSelect.selectedIndex !== -1) {
-      const teamOption = teamSelect.options[teamSelect.selectedIndex];
-      teamName = teamOption.text;
-      teamLogoUrl = teamOption.getAttribute("data-logo") || "";
-    }
-
-    const category = document.getElementById("categorySelect")?.value || "Libre";
-    const branch = document.getElementById("branchSelect")?.value || "Varonil";
-    const blood = document.getElementById("bloodType")?.value || "O+";
-    const allergies = document.getElementById("allergiesSelect")?.value || "Ninguna";
-
-    // Generar código único RETA-XXXX-YYYY-ZZZ
-    const consecutive = Math.floor(1000 + Math.random() * 9000);
-    const uniqueCode = `RETA-${consecutive}-${stateKey}-${tournamentKey}`;
-
-    // Actualizar campos de la credencial virtual
-    if (document.getElementById("credPlayerName")) document.getElementById("credPlayerName").innerText = `${firstName} ${lastName}`;
-    if (document.getElementById("credUniqueCode")) document.getElementById("credUniqueCode").innerText = uniqueCode;
-    if (document.getElementById("credLeagueName")) document.getElementById("credLeagueName").innerText = leagueName;
-    if (document.getElementById("credTeamName")) document.getElementById("credTeamName").innerText = teamName;
-    if (document.getElementById("credCatBranch")) document.getElementById("credCatBranch").innerText = `${category} / ${branch}`;
-    if (document.getElementById("credDorsal")) document.getElementById("credDorsal").innerText = `#${dorsal}`;
-    if (document.getElementById("credBlood")) document.getElementById("credBlood").innerText = blood;
-    if (document.getElementById("credAllergies")) document.getElementById("credAllergies").innerText = allergies;
-
-    const previewPhoto = document.getElementById("playerPhotoPreview");
-    if (previewPhoto && document.getElementById("credPlayerPhoto")) {
-      document.getElementById("credPlayerPhoto").src = previewPhoto.src;
-    }
-
-    if (document.getElementById("credTeamLogo")) {
-      document.getElementById("credTeamLogo").src = teamLogoUrl;
-    }
-
-    // Generar el código QR vinculado
-    const supabaseRecordUrl = `https://reta.app/validar?code=${uniqueCode}`;
-    if (document.getElementById("credQrCode")) {
-      document.getElementById("credQrCode").src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(supabaseRecordUrl)}`;
-    }
-
-    // Pasar al último paso (Paso 4: Credencial)
-    goToStep(4);
-  };
 });
+
 /* ==========================================================================
-   LÓGICA DE AUDITORÍA IP, TÉRMINOS LEGALES Y CREDENCIAL CON ESCUDO AMPLIA
+   LÓGICA DE AUDITORÍA IP Y TÉRMINOS LEGALES
    ========================================================================== */
 
 let userPublicIP = "Obteniendo IP...";
 
-// Función para obtener la dirección IP pública del usuario mediante servicio API gratuito
 async function fetchUserIP() {
   try {
     const response = await fetch("https://api.ipify.org?format=json");
@@ -318,13 +237,15 @@ async function fetchUserIP() {
   }
 }
 
-// Ejecutar obtención de IP al cargar la página
 fetchUserIP();
 
 function openTermsModal(event) {
   if (event) event.preventDefault();
   const modal = document.getElementById("termsModal");
-  if (modal) modal.classList.add("active");
+  if (modal) {
+    modal.style.display = "flex";
+    modal.classList.add("active");
+  }
 }
 
 function acceptTermsFromModal() {
@@ -358,26 +279,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-// Validación del Paso 1 antes de avanzar
-function validateStep1AndProceed() {
-  const emailCheckbox = document.getElementById("verifyEmailCheckbox");
-  const termsCheckbox = document.getElementById("acceptTermsCheckbox");
-
-  if (!emailCheckbox || !emailCheckbox.checked) {
-    alert("Por favor confirma que tu correo electrónico es válido.");
-    return;
-  }
-
-  if (!termsCheckbox || !termsCheckbox.checked) {
-    alert("Debes aceptar los Términos, Condiciones y Deslinde de Responsabilidad para continuar.");
-    return;
-  }
-
-  goToStep(2);
-   // js/supabase-config.js
-const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_brTmFH9EMnR_qkvubKxx2w_bYqexwhF';
-
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
