@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cédula Digital - Árbitro RETA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0a0f1d;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --primary: #00d4ff;
+      --danger: #ff4757;
+      --warning: #ffa502;
+      --success: #2ed573;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--bg-dark); color: #fff; padding-bottom: 80px; }
+    
+    /* Header del Partido */
+    .match-header { background: linear-gradient(135deg, #131c33 0%, #0a0f1d 100%); padding: 15px; border-bottom: 1px solid var(--primary); }
+    .tournament-badge { display: inline-block; background: var(--primary); color: #000; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; margin-bottom: 5px; }
+    .match-info p { font-size: 0.8rem; color: #a4b0be; margin: 2px 0; display: flex; align-items: center; gap: 5px; }
+    
+    /* Cronómetro Pegajoso */
+    .timer-section { position: sticky; top: 0; background: rgba(10, 15, 29, 0.95); backdrop-filter: blur(10px); padding: 15px; text-align: center; border-bottom: 1px solid #333; z-index: 100; }
+    .timer-display { font-size: 3rem; font-weight: 800; color: var(--primary); line-height: 1; letter-spacing: 2px; }
+    .timer-controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+    .btn-timer { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: #fff; }
+    .btn-start { background: var(--success); }
+    .btn-pause { background: var(--warning); color: #000; }
+    .btn-end { background: var(--danger); }
+
+    /* Marcador */
+    .scoreboard { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; background: var(--card-bg); margin: 15px; border-radius: 12px; }
+    .team { text-align: center; flex: 1; }
+    .team-name { font-size: 1rem; font-weight: 600; display: block; margin-bottom: 5px; }
+    .score { font-size: 2.5rem; font-weight: 800; }
+    .vs { font-size: 1.2rem; color: #747d8c; font-weight: 800; }
+
+    /* Panel de Jugadores */
+    .players-container { padding: 0 15px; }
+    .section-title { font-size: 1rem; margin-bottom: 10px; color: var(--primary); border-bottom: 1px solid #333; padding-bottom: 5px; }
+    
+    .player-row { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); padding: 10px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #333; }
+    .player-row.titular { border-left-color: var(--success); }
+    .player-info { display: flex; align-items: center; gap: 10px; }
+    .dorsal { font-weight: 800; font-size: 1.2rem; color: #fff; width: 30px; }
+    .p-name { font-size: 0.9rem; font-weight: 600; }
+    
+    .action-btns { display: flex; gap: 5px; }
+    .btn-action { width: 35px; height: 35px; border-radius: 5px; border: none; cursor: pointer; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; }
+    .btn-goal { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-yellow { background: var(--warning); color: #000; }
+    .btn-red { background: var(--danger); color: #fff; }
+
+    /* Botón Flotante Protesta */
+    .btn-protesta { width: 100%; padding: 15px; background: transparent; border: 2px dashed var(--warning); color: var(--warning); font-weight: 600; border-radius: 8px; margin-top: 15px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <!-- Cabecera Informativa -->
+  <header class="match-header">
+    <span class="tournament-badge">Liga Premier RETA - J5</span>
+    <div class="match-info">
+      <p><i class="fa-solid fa-location-dot"></i> Cancha 1, Unidad Deportiva Moroleón</p>
+      <p><i class="fa-solid fa-user-shield"></i> Árbitro: Roberto Gómez (Central)</p>
+      <p><i class="fa-solid fa-users-gear"></i> D.T. Local: Juan Pérez | D.T. Visita: Mario F.</p>
+    </div>
+  </header>
+
+  <!-- Cronómetro -->
+  <div class="timer-section">
+    <div class="timer-display" id="displayTimer">00:00</div>
+    <div class="timer-controls">
+      <button class="btn-timer btn-start"><i class="fa-solid fa-play"></i> Iniciar 1T</button>
+      <button class="btn-timer btn-pause"><i class="fa-solid fa-pause"></i> Medio Tiempo</button>
+      <button class="btn-timer btn-end"><i class="fa-solid fa-flag-checkered"></i> Fin</button>
+    </div>
+  </div>
+
+  <!-- Marcador Central -->
+  <div class="scoreboard">
+    <div class="team">
+      <span class="team-name">Gallos FC</span>
+      <span class="score">0</span>
+    </div>
+    <div class="vs">VS</div>
+    <div class="team">
+      <span class="team-name">Real San José</span>
+      <span class="score">0</span>
+    </div>
+  </div>
+
+  <!-- Lista de Jugadores (Ejemplo Equipo A) -->
+  <div class="players-container">
+    <h3 class="section-title">Alineación Local: Gallos FC</h3>
+    
+    <!-- Jugador -->
+    <div class="player-row titular">
+      <div class="player-info">
+        <span class="dorsal">10</span>
+        <div>
+          <p class="p-name">Carlos Flores</p>
+          <small style="color:var(--success); font-size:0.7rem;">Titular</small>
+        </div>
+      </div>
+      <div class="action-btns">
+        <button class="btn-action btn-goal"><i class="fa-regular fa-futbol"></i></button>
+        <button class="btn-action btn-yellow">🟨</button>
+        <button class="btn-action btn-red">🟥</button>
+      </div>
+    </div>
+
+    <!-- Jugador Suplente -->
+    <div class="player-row">
+      <div class="player-info">
+        <span class="dorsal">8</span>
+        <div>
+          <p class="p-name">Miguel Ángel</p>
+          <small style="color:#747d8c; font-size:0.7rem;">Suplente</small>
+        </div>
+      </div>
+      <div class="action-btns">
+        <button class="btn-action btn-goal" style="font-size:0.8rem;"><i class="fa-solid fa-right-left"></i> Cambio</button>
+      </div>
+    </div>
+
+    <!-- Jugar Bajo Protesta -->
+    <button class="btn-protesta"><i class="fa-solid fa-triangle-exclamation"></i> Registrar Jugador Bajo Protesta</button>
+  </div>
+
+</body>
+</html>
