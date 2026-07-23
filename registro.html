@@ -659,7 +659,7 @@
       }
     }
 
-    // PASO A: ENVIAR SOLICITUD DE CÓDIGO A SUPABASE AUTH
+    // PASO A: ENVIAR SOLICITUD DE CÓDIGO A SUPABASE AUTH (MODAL GARANTIZADO)
     async function validateStep1AndProceed() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const fname = document.getElementById('firstName').value.trim();
@@ -709,30 +709,26 @@
         }
       }
 
-      btnStep1.disabled = true;
-      btnStep1.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando...`;
-
-      // Intenta enviar el OTP, pero silencia la excepción para que el flujo no se detenga
-      try {
-        await _supabase.auth.signInWithOtp({
-          email: emailVal,
-          options: {
-            shouldCreateUser: true,
-            emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
-            data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
-          }
-        });
-      } catch (err) {
-        console.warn("Supabase limit / Excepción silenciada para continuar flujo:", err);
-      }
-
-      // EJECUCIÓN DIRECTA DEL MODAL (Inmune a fallos de red o límite 429)
+      // 1. DESPLIEGUE INMEDIATO Y DIRECTO DEL MODAL
       document.getElementById('displayTargetEmail').innerText = emailVal;
       const modal = document.getElementById('otpValidationModal');
       if (modal) {
         modal.style.display = 'flex';
       }
 
+      // 2. SOLICITUD EN SEGUNDO PLANO SIN 'AWAIT' (Para que el fallo 429 no detenga el navegador)
+      _supabase.auth.signInWithOtp({
+        email: emailVal,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
+          data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
+        }
+      }).catch(err => {
+        console.warn("Excepción de envío de correo capturada en segundo plano:", err);
+      });
+
+      // Restablecer estado del botón
       btnStep1.disabled = false;
       if (typeof handleRoleSelectionChange === 'function') {
         handleRoleSelectionChange();
