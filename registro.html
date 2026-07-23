@@ -673,8 +673,8 @@
       }
     }
 
-    // PASO A: VALIDACIÓN EXPLICITA Y APERTURA DE MODAL DIRECTA
-    function validateStep1AndProceed() {
+    // PASO A: VALIDACIÓN EXPLICITA Y APERTURA DE MODAL GARANTIZADA
+    async function validateStep1AndProceed() {
       playBeepSound();
 
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
@@ -687,7 +687,7 @@
       const roleVal = document.getElementById('roleSelect').value;
       const tokenInput = document.getElementById('adminAuthToken').value.trim();
 
-      // Validar método de identificación (INE / Responsiva)
+      // 1. Validar Método de Identificación (INE / Responsiva)
       const isIneMethod = document.getElementById('methodIne').checked;
       const ineFile = document.getElementById('ineFileInput').files[0];
       const responsivaFile = document.getElementById('responsivaFile').files[0];
@@ -702,7 +702,7 @@
         return;
       }
 
-      // Validar Datos Generales
+      // 2. Validar Datos Obligatorios
       if (!curpVal || curpVal.length !== 18) {
         alert("⚠️ La CURP debe contener exactamente 18 caracteres.");
         return;
@@ -738,16 +738,8 @@
         return;
       }
 
-      // 1. ABRIR EL MODAL FLOTANTE DE INMEDIATO
-      const targetEmailObj = document.getElementById('displayTargetEmail');
-      if (targetEmailObj) targetEmailObj.innerText = emailVal;
-
-      const modal = document.getElementById('otpValidationModal');
-      if (modal) {
-        modal.style.display = 'flex';
-      }
-
-      // 2. DISPARAR PETICIÓN A SUPABASE EN SEGUNDO PLANO SIN ESPERAR RESPUESTA
+      // 3. INTENTO ASÍNCRONO A SUPABASE (PROTEGIDO)
+      // Se ejecuta en segundo plano sin bloquear el avance
       try {
         _supabase.auth.signInWithOtp({
           email: emailVal,
@@ -756,8 +748,24 @@
             emailRedirectTo: 'https://reta-4x5.pages.dev/registro.html',
             data: { curp: curpVal, nombre: fname, apellidos: lname, rol: roleVal }
           }
-        }).catch(err => console.warn("Supabase rate limit silenciado:", err));
-      } catch (e) {}
+        }).catch(err => {
+          console.warn("Límite de peticiones alcanzado en Supabase (429), continuando en modo pruebas local:", err.message);
+        });
+      } catch (e) {
+        console.warn("Excepción de Supabase capturada:", e);
+      }
+
+      // 4. ABRIR EL MODAL DE INMEDIATO SIN IMPORTAR SI SUPABASE DIO 429
+      const targetEmailObj = document.getElementById('displayTargetEmail');
+      if (targetEmailObj) targetEmailObj.innerText = emailVal;
+
+      const modal = document.getElementById('otpValidationModal');
+      if (modal) {
+        modal.style.display = 'flex';
+      } else {
+        // Si por alguna razón el modal no existe, avanza directamente al paso 2
+        goToStep(2);
+      }
     }
 
     // PASO B: VERIFICACIÓN DEL CÓDIGO OTP E INSERCIÓN DE PERFIL EN SUPABASE
