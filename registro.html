@@ -2,16 +2,19 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>RETA - Registro Integral de Jugadores</title>
   <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="login-body">
 
-  <a href="index.html" class="btn-back">
+  <a href="index.html" class="btn-back" onclick="playBeepSound()">
     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
   </a>
 
@@ -20,7 +23,7 @@
       
       <!-- Encabezado -->
       <div class="login-header">
-        <a href="index.html">
+        <a href="index.html" onclick="playBeepSound()">
           <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
         </a>
         <h2>Registro Oficial de <span class="text-gradient">Jugadores</span></h2>
@@ -35,7 +38,7 @@
         <div class="step-indicator" id="step-dot-4">4. Credencial</div>
       </div>
 
-      <form id="fullRegisterForm">
+      <form id="fullRegisterForm" onsubmit="event.preventDefault();">
 
         <!-- ================= PASO 1: IDENTIFICACIÓN Y DATOS GENERALES ================= -->
         <div class="wizard-step active" id="wizard-step-1">
@@ -44,22 +47,22 @@
           <!-- Selección INE vs Menor de Edad -->
           <div class="method-selector">
             <label class="radio-card active" id="optionIneLabel">
-              <input type="radio" name="idMethod" value="ine" checked id="methodIne">
+              <input type="radio" name="idMethod" value="ine" checked id="methodIne" onchange="toggleIdMethod('ine')">
               <i class="fa-solid fa-camera"></i> Escanear INE (OCR Automático)
             </label>
             <label class="radio-card" id="optionMinorLabel">
-              <input type="radio" name="idMethod" value="minor" id="methodMinor">
+              <input type="radio" name="idMethod" value="minor" id="methodMinor" onchange="toggleIdMethod('minor')">
               <i class="fa-solid fa-child"></i> Menor de Edad (Registro Manual + Responsiva)
             </label>
           </div>
 
           <!-- Módulo INE / OCR -->
           <div id="ineOcrSection" class="ocr-dropzone-container">
-            <div class="ocr-dropzone" id="ineDropzone">
+            <div class="ocr-dropzone" id="ineDropzone" onclick="document.getElementById('ineFileInput').click()">
               <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
               <p>Arrastra tu INE (Frente) o <strong>haz clic aquí para subirla</strong></p>
               <span class="subtext">Soporta JPG, PNG (El sistema extraerá tus datos automáticamente)</span>
-              <input type="file" id="ineFileInput" accept="image/*" hidden>
+              <input type="file" id="ineFileInput" accept="image/*" hidden onchange="handleIneUpload(event)">
             </div>
             <div id="ocrStatus" class="ocr-status-message"></div>
           </div>
@@ -68,7 +71,7 @@
           <div id="minorSection" class="minor-upload-section" style="display: none;">
             <div class="input-group">
               <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Adjuntar Carta Responsiva Firmada por Padres/Tutores (*Requerido)</label>
-              <input type="file" id="responsivaFile" accept="image/*,.pdf">
+              <input type="file" id="responsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
               <small class="help-text">Si no cuentas con el formato, <a href="#" class="highlight-link">descarga la Carta Responsiva RETA aquí</a>.</small>
             </div>
           </div>
@@ -80,38 +83,38 @@
             </div>
             <div class="photo-controls">
               <label for="playerPhotoInput" class="btn-secondary-action"><i class="fa-solid fa-upload"></i> Subir / Replicar Fotografía</label>
-              <input type="file" id="playerPhotoInput" accept="image/*" hidden>
+              <input type="file" id="playerPhotoInput" accept="image/*" hidden onchange="handlePhotoUpload(event)">
               <small>Esta foto aparecerá en tu credencial y ficha oficial RETA.</small>
             </div>
           </div>
 
-          <!-- Formulario de Datos Personales Extraídos o Manuales -->
+          <!-- Formulario de Datos Personales -->
           <div class="form-row">
             <div class="input-group">
-              <label for="firstName"><i class="fa-solid fa-user"></i> Nombre(s)</label>
-              <input type="text" id="firstName" placeholder="Nombre(s)" required>
+              <label for="firstName"><i class="fa-solid fa-user"></i> Nombre(s) (*)</label>
+              <input type="text" id="firstName" placeholder="Nombre(s)" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="lastName"><i class="fa-solid fa-user"></i> Apellidos</label>
-              <input type="text" id="lastName" placeholder="Apellidos" required>
+              <label for="lastName"><i class="fa-solid fa-user"></i> Apellidos (*)</label>
+              <input type="text" id="lastName" placeholder="Apellidos" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP</label>
-              <input type="text" id="curp" placeholder="18 Caracteres" required maxlength="18">
+              <label for="curp"><i class="fa-solid fa-fingerprint"></i> CURP (Clave Única RETA) (*)</label>
+              <input type="text" id="curp" placeholder="18 Caracteres" required maxlength="18" style="text-transform: uppercase;" onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad</label>
-              <input type="number" id="age" placeholder="Años" min="5" max="99" required>
+              <label for="age"><i class="fa-solid fa-cake-candles"></i> Edad (*)</label>
+              <input type="number" id="age" placeholder="Años" min="3" max="99" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género</label>
-              <select id="gender" required>
+              <label for="gender"><i class="fa-solid fa-venus-mars"></i> Género (*)</label>
+              <select id="gender" required onchange="playBeepSound()">
                 <option value="" disabled selected>Selecciona</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Femenino">Femenino</option>
@@ -119,51 +122,50 @@
               </select>
             </div>
             <div class="input-group">
-              <label for="dorsalNumber"><i class="fa-solid fa-shirt"></i> Número Dorsal Preferido</label>
-              <input type="number" id="dorsalNumber" placeholder="Ej. 10" min="1" max="99" required>
+              <label for="dorsalNumber"><i class="fa-solid fa-shirt"></i> Número Dorsal Preferido (*)</label>
+              <input type="number" id="dorsalNumber" placeholder="Ej. 10" min="1" max="99" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="stateRes"><i class="fa-solid fa-map-location-dot"></i> Estado de Residencia</label>
-              <input type="text" id="stateRes" placeholder="Ej. Guanajuato" required>
+              <label for="stateRes"><i class="fa-solid fa-map-location-dot"></i> Estado de Residencia (*)</label>
+              <input type="text" id="stateRes" placeholder="Ej. Guanajuato" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia</label>
-              <input type="text" id="cityRes" placeholder="Ej. Moroleón" required>
+              <label for="cityRes"><i class="fa-solid fa-city"></i> Ciudad de Residencia (*)</label>
+              <input type="text" id="cityRes" placeholder="Ej. Moroleón" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="userPhone"><i class="fa-solid fa-phone"></i> Teléfono Móvil</label>
-              <input type="tel" id="userPhone" placeholder="445 123 4567" required>
+              <label for="userPhone"><i class="fa-solid fa-phone"></i> Teléfono Móvil (*)</label>
+              <input type="tel" id="userPhone" placeholder="445 123 4567" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="userEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico</label>
-              <input type="email" id="userEmail" placeholder="jugador@ejemplo.com" required>
+              <label for="userEmail"><i class="fa-solid fa-envelope"></i> Correo Electrónico (*)</label>
+              <input type="email" id="userEmail" placeholder="jugador@ejemplo.com" required onchange="playBeepSound()">
             </div>
           </div>
 
-          <!-- BLOQUE A: Términos y Validación Legal Organizados -->
+          <!-- BLOQUE A: Términos y Validación Legal -->
           <div class="terms-container">
             <label class="custom-checkbox-row">
-              <input type="checkbox" id="verifyEmailCheckbox" required>
+              <input type="checkbox" id="verifyEmailCheckbox" required onchange="playBeepSound()">
               <span class="checkbox-text">Confirmo que el correo electrónico ingresado es válido y tengo acceso a él.</span>
             </label>
 
             <label class="custom-checkbox-row">
-              <input type="checkbox" id="acceptTermsCheckbox" required>
+              <input type="checkbox" id="acceptTermsCheckbox" required onchange="playBeepSound()">
               <span class="checkbox-text">
                 Acepto los <a href="#" class="highlight-link" onclick="openTermsModal(event)">Términos, Condiciones y Deslinde de Responsabilidades Legales</a> en eventos deportivos RETA.
               </span>
             </label>
 
-            <div id="ipAuditText" class="ip-audit-text" style="display:none;"></div>
+            <div id="ipAuditText" class="ip-audit-text" style="margin-top:10px; font-size:0.75rem; color:#00d4ff;"></div>
           </div>
 
-          <!-- Botón Único de Siguiente -->
           <div class="wizard-buttons">
             <button type="button" class="btn-login" onclick="validateStep1AndProceed()">
               Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>
@@ -171,54 +173,20 @@
           </div>
         </div>
 
-  <!-- MODAL JURÍDICO: TÉRMINOS, CONDICIONES Y DESLINDE DE RESPONSABILIDAD -->
-  <div class="modal-overlay" id="termsModal">
-    <div class="glass-card modal-card terms-modal-card">
-      <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
-      <div class="modal-header">
-        <i class="fa-solid fa-scale-balanced modal-icon-glow"></i>
-        <h3>Aviso Legal, Términos y Deslinde de Responsabilidad Deportiva</h3>
-        <p class="modal-subtitle">RETA Sports Management & Logistics</p>
-      </div>
-      
-      <div class="terms-scroll-body">
-        <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
-        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento. Reconoce de manera expresa que el fútbol y las disciplinas asociadas conllevan un riesgo intrínseco de lesiones físicas, incluyendo pero no limitándose a: esguinces, fracturas, contusiones, paros cardiacos o emergencias cardiovasculares derivado del esfuerzo físico, así como colisiones accidentales con otros participantes, equipamiento o instalaciones.</p>
-
-        <h4>2. DESLINDE DE RESPONSABILIDAD Y EXONERACIÓN LEGAL</h4>
-        <p>El participante (o en su defecto, sus padres o tutores legales en caso de menores de edad) exime de manera incondicional e irrevocable a los organizadores, dueños de canchas, árbitros, supervisores, directivos de liga y a la plataforma digital <strong>RETA</strong> de cualquier responsabilidad civil, penal, administrativa o patrimonial derivada de accidentes, lesiones, incapacidades o fallecimiento ocurridos antes, durante o después de los encuentros deportivos disputados dentro del marco del torneo registrado.</p>
-
-        <h4>3. ATENCIÓN MÉDICA DE EMERGENCIA</h4>
-        <p>El usuario autoriza al personal de supervisión y auxilio a coordinar el traslado a instituciones de salud públicas o privadas en caso de una emergencia médica en campo. El participante o su contacto de emergencia asumirán los costos médicos, deducibles o gastos derivados no cubiertos por seguros privados o públicos.</p>
-
-        <h4>4. AUDITORÍA DIGITAL Y REGISTRO DE EVIDENCIA (DIRECCIÓN IP)</h4>
-        <p>De conformidad con la legislación de comercio electrónico y firma digital, el consentimiento otorgado mediante la casilla de verificación será vinculado de forma unívoca e inalterable a la dirección IP de conexión del dispositivo, sello de tiempo (timestamp) y datos del navegador, los cuales se conservarán como evidencia legal y vinculante de la aceptación de este instrumento.</p>
-      </div>
-
-      <div class="modal-footer-terms">
-        <button type="button" class="btn-login" onclick="acceptTermsFromModal()">Entendido y Aceptar Carta Jurídica <i class="fa-solid fa-check-double"></i></button>
-      </div>
-    </div>
-  </div>
-
         <!-- ================= PASO 2: LIGA Y TORNEO ================= -->
-        <div class="wizard-step" id="wizard-step-2">
+        <div class="wizard-step" id="wizard-step-2" style="display: none;">
           <h3 class="step-title"><i class="fa-solid fa-trophy"></i> Paso 2: Datos de Liga, Torneo y Equipo</h3>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
-              <select id="leagueSelect" required>
+              <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo (*)</label>
+              <select id="leagueSelect" required onchange="onLeagueSelectChange()">
                 <option value="" disabled selected>Cargando Ligas de Supabase...</option>
-                <option value="LIGA-PREMIER-GTO" data-state="GTO" data-tournament="001">Liga Premier RETA (Guanajuato)</option>
-                <option value="COPA-BAJIO-GTO" data-state="GTO" data-tournament="002">Copa Internacional Bajío (Guanajuato)</option>
-                <option value="NOCTURNA-MICH" data-state="MIC" data-tournament="003">Liga Nocturna F7 (Michoacán)</option>
-                <option value="FEMENIL-GTO" data-state="GTO" data-tournament="004">Torneo Femenil RETA (Guanajuato)</option>
               </select>
             </div>
             <div class="input-group">
-              <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece</label>
-              <select id="teamSelect" required>
+              <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece (*)</label>
+              <select id="teamSelect" required onchange="playBeepSound()">
                 <option value="" disabled selected>Selecciona tu equipo</option>
                 <option value="Gallos FC" data-logo="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=100&q=80">Gallos FC</option>
                 <option value="Real San José" data-logo="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=100&q=80">Real San José</option>
@@ -241,8 +209,8 @@
 
           <div class="form-row">
             <div class="input-group">
-              <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría</label>
-              <select id="categorySelect" required>
+              <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría (*)</label>
+              <select id="categorySelect" required onchange="playBeepSound()">
                 <option value="Libre">Libre</option>
                 <option value="Juvenil">Juvenil (Sub-18)</option>
                 <option value="Veteranos">Veteranos (+35)</option>
@@ -250,8 +218,8 @@
               </select>
             </div>
             <div class="input-group">
-              <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama</label>
-              <select id="branchSelect" required>
+              <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama (*)</label>
+              <select id="branchSelect" required onchange="playBeepSound()">
                 <option value="Varonil">Varonil</option>
                 <option value="Femenil">Femenil</option>
                 <option value="Mixto">Mixto</option>
@@ -266,13 +234,13 @@
         </div>
 
         <!-- ================= PASO 3: INFORMACIÓN MÉDICA ================= -->
-        <div class="wizard-step" id="wizard-step-3">
+        <div class="wizard-step" id="wizard-step-3" style="display: none;">
           <h3 class="step-title"><i class="fa-solid fa-notes-medical"></i> Paso 3: Ficha Médica y Contacto de Emergencia</h3>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="bloodType"><i class="fa-solid fa-droplet"></i> Tipo de Sangre</label>
-              <select id="bloodType" required>
+              <label for="bloodType"><i class="fa-solid fa-droplet"></i> Tipo de Sangre (*)</label>
+              <select id="bloodType" required onchange="playBeepSound()">
                 <option value="" disabled selected>Selecciona tipo de sangre</option>
                 <option value="O+">O Positivo (O+)</option>
                 <option value="O-">O Negativo (O-)</option>
@@ -286,38 +254,38 @@
             </div>
 
             <div class="input-group">
-              <label for="allergiesSelect"><i class="fa-solid fa-hand-dots"></i> Alergias Comunes</label>
-              <select id="allergiesSelect" required>
+              <label for="allergiesSelect"><i class="fa-solid fa-hand-dots"></i> Alergias Comunes (*)</label>
+              <select id="allergiesSelect" required onchange="playBeepSound()">
                 <option value="Ninguna">Ninguna Conocida</option>
-                <option value="Medicamentos (Penicilina/Aspirina)">Medicamentos (Penicilina / Aspirina / AINEs)</option>
-                <option value="Picaduras de Insectos / Abejas">Picaduras de Insectos / Abejas</option>
-                <option value="Alimentos (Mariscos/Nueces/Lácteos)">Alimentos (Mariscos / Nueces / Lácteos)</option>
-                <option value="Polen / Ácaros / Asma alérgica">Polen / Ácaros / Ambiental</option>
-                <option value="Otras Alergias Específicas">Otras Alergias Específicas</option>
+                <option value="Medicamentos">Medicamentos (Penicilina / Aspirina)</option>
+                <option value="Picaduras">Picaduras de Insectos / Abejas</option>
+                <option value="Alimentos">Alimentos (Mariscos / Nueces / Lácteos)</option>
+                <option value="Ambiental">Polen / Ácaros / Asma alérgica</option>
+                <option value="Otras">Otras Alergias Específicas</option>
               </select>
             </div>
           </div>
 
           <div class="form-row">
             <div class="input-group">
-              <label for="medicalConditions"><i class="fa-solid fa-heart-pulse"></i> Padecimientos / Impedimentos Médicos</label>
-              <select id="medicalConditions" required>
+              <label for="medicalConditions"><i class="fa-solid fa-heart-pulse"></i> Padecimientos / Impedimentos Médicos (*)</label>
+              <select id="medicalConditions" required onchange="playBeepSound()">
                 <option value="Ninguno">Ninguno / APTO PARA DEPORTE ALTO RENDIMIENTO</option>
-                <option value="Hipertensión Arterial">Hipertensión Arterial (Cardiovascular)</option>
-                <option value="Arritmia / Soplos Cardíacos">Arritmia / Soplos Cardíacos</option>
-                <option value="Asma Bronquial / Hiperreactividad Vía Aérea">Asma Bronquial (Pulmonar)</option>
-                <option value="Diabetes Mellitus Type 1/2">Diabetes (Metabólico)</option>
-                <option value="Lesión Articular / Cirugía Previa">Lesión Articular / Ligamentos / Lesión Ósea</option>
-                <option value="Epilepsia / Padecimientos Neurológicos">Epilepsia / Convulsiones</option>
+                <option value="Hipertensión">Hipertensión Arterial</option>
+                <option value="Arritmia">Arritmia / Soplos Cardíacos</option>
+                <option value="Asma">Asma Bronquial</option>
+                <option value="Diabetes">Diabetes Mellitus</option>
+                <option value="Lesión Articular">Lesión Articular / Ligamentos</option>
+                <option value="Epilepsia">Epilepsia / Convulsiones</option>
               </select>
             </div>
 
             <div class="input-group">
-              <label for="medicalService"><i class="fa-solid fa-hospital"></i> Servicio Médico / Afore / Seguro</label>
-              <select id="medicalService" required>
+              <label for="medicalService"><i class="fa-solid fa-hospital"></i> Servicio Médico / Afore / Seguro (*)</label>
+              <select id="medicalService" required onchange="playBeepSound()">
                 <option value="IMSS">IMSS</option>
                 <option value="ISSSTE">ISSSTE</option>
-                <option value="Particular / Gastos Médicos">Seguro de Gastos Médicos Particular</option>
+                <option value="Particular">Seguro Particular</option>
                 <option value="Cruz Roja / Ninguno">Cruz Roja / Ninguno</option>
               </select>
             </div>
@@ -325,25 +293,26 @@
 
           <div class="form-row">
             <div class="input-group">
-              <label for="emergencyContactName"><i class="fa-solid fa-user-nurse"></i> Persona de Contacto en Emergencia</label>
-              <input type="text" id="emergencyContactName" placeholder="Nombre completo del familiar/tutor" required>
+              <label for="emergencyContactName"><i class="fa-solid fa-user-nurse"></i> Contacto de Emergencia (*)</label>
+              <input type="text" id="emergencyContactName" placeholder="Nombre completo del familiar/tutor" required onchange="playBeepSound()">
             </div>
             <div class="input-group">
-              <label for="emergencyPhone"><i class="fa-solid fa-phone-triangle"></i> Teléfono de Emergencia</label>
-              <input type="tel" id="emergencyPhone" placeholder="Teléfono directo" required>
+              <label for="emergencyPhone"><i class="fa-solid fa-phone"></i> Teléfono de Emergencia (*)</label>
+              <input type="tel" id="emergencyPhone" placeholder="Teléfono directo" required onchange="playBeepSound()">
             </div>
           </div>
 
           <div class="wizard-buttons">
             <button type="button" class="btn-secondary-action" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-            <button type="button" class="btn-login" onclick="processFinalRegistration()">Generar Credencial Virtual <i class="fa-solid fa-qrcode"></i></button>
+            <button type="button" id="btnFinalRegister" class="btn-login" onclick="processFinalRegistration()">
+              Generar Credencial Virtual <i class="fa-solid fa-qrcode"></i>
+            </button>
           </div>
         </div>
 
-        <!-- ==================== BLOQUE B: PASO 4 CON CREDENCIAL Y PATROCINADORES ==================== -->
-        <div class="wizard-step" id="wizard-step-4">
+        <!-- ================= PASO 4: CREDENCIAL VIRTUAL ================= -->
+        <div class="wizard-step" id="wizard-step-4" style="display: none;">
           
-          <!-- TARJETA DE CREDENCIAL VIRTUAL DIGITAL CON PATROCINADORES -->
           <div class="digital-credential-card glass-card" id="digitalCredential">
             <div class="credential-header">
               <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
@@ -351,16 +320,15 @@
             </div>
 
             <div class="credential-body">
-              <!-- Foto del Jugador -->
               <div class="cred-photo-box">
-                <img id="credPlayerPhoto" src="" alt="Foto Oficial">
+                <img id="credPlayerPhoto" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Oficial">
                 <span class="cred-dorsal" id="credDorsal">#10</span>
               </div>
 
-              <!-- Información Principal -->
               <div class="cred-info-box">
                 <h3 id="credPlayerName">CARLOS FLORES</h3>
-                <p class="cred-meta-line"><strong>ID ÚNICO:</strong> <span id="credUniqueCode" class="text-gradient">RETA-0012-GTO-001</span></p>
+                <p class="cred-meta-line"><strong>CURP (ID):</strong> <span id="credCurpCode" class="text-gradient">---</span></p>
+                <p class="cred-meta-line"><strong>CÓDIGO RETA:</strong> <span id="credUniqueCode">---</span></p>
                 <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
                 <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
                 <div class="cred-medical-strip">
@@ -369,10 +337,9 @@
                 </div>
               </div>
 
-              <!-- Escudo del Equipo + Código QR -->
               <div class="cred-badge-qr-container">
                 <div class="cred-team-logo-hero-wrapper">
-                  <img id="credTeamLogo" src="" class="cred-team-logo-hero" alt="Escudo Equipo">
+                  <img id="credTeamLogo" src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=100&q=80" class="cred-team-logo-hero" alt="Escudo Equipo">
                 </div>
                 <div class="cred-qr-box">
                   <img id="credQrCode" src="" alt="Código QR Único">
@@ -380,7 +347,6 @@
               </div>
             </div>
 
-            <!-- SECCIÓN DE PATROCINADORES OFICIALES -->
             <div class="cred-sponsors-strip">
               <span class="sponsors-label">PATROCINADORES OFICIALES</span>
               <div class="sponsors-logos">
@@ -398,12 +364,272 @@
             <button type="button" class="btn-login" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Credencial</button>
           </div>
 
-        </div> <!-- CIERRE DEL WIZARD-STEP-4 -->
+        </div>
 
       </form>
     </div>
   </div>
 
+  <!-- MODAL JURÍDICO -->
+  <div class="modal-overlay" id="termsModal" style="display: none;">
+    <div class="glass-card modal-card terms-modal-card">
+      <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
+      <div class="modal-header">
+        <i class="fa-solid fa-scale-balanced modal-icon-glow"></i>
+        <h3>Aviso Legal, Términos y Deslinde de Responsabilidad Deportiva</h3>
+        <p class="modal-subtitle">RETA Sports Management & Logistics</p>
+      </div>
+      
+      <div class="terms-scroll-body">
+        <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
+        <p>Al registrarse y participar en cualquier torneo o liga administrado por la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada.</p>
+
+        <h4>2. DESLINDE DE RESPONSABILIDAD Y EXONERACIÓN LEGAL</h4>
+        <p>El participante exime de manera incondicional a los organizadores, árbitros y a la plataforma <strong>RETA</strong> de cualquier responsabilidad derivada de accidentes u otras contingencias durante los eventos.</p>
+
+        <h4>3. AUDITORÍA DIGITAL (DIRECCIÓN IP)</h4>
+        <p>El consentimiento mediante la casilla de verificación será vinculado de forma unívoca a la dirección IP de conexión y sello de tiempo como evidencia legal.</p>
+      </div>
+
+      <div class="modal-footer-terms" style="margin-top: 15px;">
+        <button type="button" class="btn-login" onclick="acceptTermsFromModal()">Entendido y Aceptar Carta Jurídica <i class="fa-solid fa-check-double"></i></button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/script.js"></script>
+  <script>
+    // Audio feedback
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.12);
+      } catch (e) {}
+    }
+
+    // Configuración de Supabase
+    const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let userIpAddress = '189.203.45.12';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadLigasFromSupabase();
+      document.getElementById('ipAuditText').innerText = `Auditoría Digital Activa: IP ${userIpAddress} | Timestamp: ${new Date().toLocaleString()}`;
+    });
+
+    // Cargar Ligas registradas desde Supabase
+    async function loadLigasFromSupabase() {
+      const select = document.getElementById('leagueSelect');
+      try {
+        const { data: ligas, error } = await _supabase
+          .from('ligas')
+          .select('id, nombre_liga, clave_liga, estado, municipio');
+
+        if (error) throw error;
+
+        if (ligas && ligas.length > 0) {
+          select.innerHTML = '<option value="" disabled selected>Selecciona tu liga / torneo</option>' + 
+            ligas.map(l => `<option value="${l.id}" data-name="${l.nombre_liga}" data-state="${l.estado}" data-city="${l.municipio}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
+        } else {
+          select.innerHTML = '<option value="" disabled>No hay ligas registradas aún</option>';
+        }
+      } catch (e) {
+        console.warn("No se cargaron ligas dinámicas:", e);
+        select.innerHTML = '<option value="" disabled>Error al cargar ligas de Supabase</option>';
+      }
+    }
+
+    function onLeagueSelectChange() {
+      playBeepSound();
+      const select = document.getElementById('leagueSelect');
+      const opt = select.options[select.selectedIndex];
+      if (opt.dataset.city) document.getElementById('tournamentCity').value = opt.dataset.city;
+      if (opt.dataset.state) document.getElementById('tournamentState').value = opt.dataset.state;
+    }
+
+    function toggleIdMethod(method) {
+      playBeepSound();
+      if (method === 'ine') {
+        document.getElementById('ineOcrSection').style.display = 'block';
+        document.getElementById('minorSection').style.display = 'none';
+        document.getElementById('optionIneLabel').classList.add('active');
+        document.getElementById('optionMinorLabel').classList.remove('active');
+      } else {
+        document.getElementById('ineOcrSection').style.display = 'none';
+        document.getElementById('minorSection').style.display = 'block';
+        document.getElementById('optionIneLabel').classList.remove('active');
+        document.getElementById('optionMinorLabel').classList.add('active');
+      }
+    }
+
+    function handleIneUpload(e) {
+      playBeepSound();
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('ocrStatus').innerText = "✓ INE leída correctamente por OCR (Simulado)";
+      }
+    }
+
+    function handlePhotoUpload(e) {
+      playBeepSound();
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          document.getElementById('playerPhotoPreview').src = evt.target.result;
+          document.getElementById('credPlayerPhoto').src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Navegación del Wizard
+    function goToStep(stepNumber) {
+      playBeepSound();
+      document.querySelectorAll('.wizard-step').forEach(el => el.style.display = 'none');
+      document.getElementById(`wizard-step-${stepNumber}`).style.display = 'block';
+
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`step-dot-${i}`);
+        if (i <= stepNumber) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      }
+    }
+
+    function validateStep1AndProceed() {
+      const fname = document.getElementById('firstName').value.trim();
+      const lname = document.getElementById('lastName').value.trim();
+      const curpVal = document.getElementById('curp').value.trim();
+      const emailVal = document.getElementById('userEmail').value.trim();
+      const termsAccepted = document.getElementById('acceptTermsCheckbox').checked;
+
+      if (!fname || !lname || !curpVal || !emailVal) {
+        alert("Por favor completa los campos obligatorios (*).");
+        return;
+      }
+
+      if (curpVal.length !== 18) {
+        alert("La CURP debe tener exactamente 18 caracteres.");
+        return;
+      }
+
+      if (!termsAccepted) {
+        alert("Debes aceptar los Términos y Deslinde Legal para continuar.");
+        return;
+      }
+
+      goToStep(2);
+    }
+
+    function openTermsModal(e) {
+      if(e) e.preventDefault();
+      playBeepSound();
+      document.getElementById('termsModal').style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      playBeepSound();
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function acceptTermsFromModal() {
+      playBeepSound();
+      document.getElementById('acceptTermsCheckbox').checked = true;
+      closeModal('termsModal');
+    }
+
+    // Registro Final en Supabase
+    async function processFinalRegistration() {
+      playBeepSound();
+      const btn = document.getElementById('btnFinalRegister');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando en Supabase...`;
+
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+      const fname = document.getElementById('firstName').value.trim();
+      const lname = document.getElementById('lastName').value.trim();
+      const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
+
+      const leagueSel = document.getElementById('leagueSelect');
+      const leagueId = leagueSel.value && leagueSel.value.length > 20 ? leagueSel.value : null;
+
+      const payload = {
+        curp: curpVal,
+        nombre: fname,
+        apellidos: lname,
+        edad: parseInt(document.getElementById('age').value) || 0,
+        genero: document.getElementById('gender').value,
+        dorsal: document.getElementById('dorsalNumber').value,
+        estado_residencia: document.getElementById('stateRes').value,
+        ciudad_residencia: document.getElementById('cityRes').value,
+        telefono: document.getElementById('userPhone').value,
+        email: document.getElementById('userEmail').value,
+        id_metodo: document.querySelector('input[name="idMethod"]:checked').value,
+        liga_id: leagueId,
+        nombre_equipo: document.getElementById('teamSelect').value,
+        categoria: document.getElementById('categorySelect').value,
+        rama: document.getElementById('branchSelect').value,
+        tipo_sangre: document.getElementById('bloodType').value,
+        alergias: document.getElementById('allergiesSelect').value,
+        condiciones_medicas: document.getElementById('medicalConditions').value,
+        servicio_medico: document.getElementById('medicalService').value,
+        contacto_emergencia_nombre: document.getElementById('emergencyContactName').value,
+        contacto_emergencia_telefono: document.getElementById('emergencyPhone').value,
+        acepto_terminos: document.getElementById('acceptTermsCheckbox').checked,
+        ip_registro: userIpAddress,
+        codigo_unico_reta: uniqueCode
+      };
+
+      try {
+        const { data, error } = await _supabase
+          .from('registro_general')
+          .insert([payload])
+          .select()
+          .single();
+
+        if (error) {
+          if (error.code === '23505') {
+            throw new Error(`La CURP "${curpVal}" ya está registrada en RETA.`);
+          }
+          throw error;
+        }
+
+        // Poblar Credencial Virtual
+        document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
+        document.getElementById('credCurpCode').innerText = curpVal;
+        document.getElementById('credUniqueCode').innerText = uniqueCode;
+        document.getElementById('credDorsal').innerText = `#${payload.dorsal}`;
+        document.getElementById('credTeamName').innerText = payload.nombre_equipo;
+        document.getElementById('credCatBranch').innerText = `${payload.categoria} / ${payload.rama}`;
+        document.getElementById('credBlood').innerText = payload.tipo_sangre;
+        document.getElementById('credAllergies').innerText = payload.alergias;
+
+        // QR Code API
+        document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(curpVal)}`;
+
+        goToStep(4);
+
+      } catch (err) {
+        console.error("Error en registro:", err);
+        alert("Atención: " + (err.message || JSON.stringify(err)));
+        btn.disabled = false;
+        btn.innerHTML = `Generar Credencial Virtual <i class="fa-solid fa-qrcode"></i>`;
+      }
+    }
+  </script>
 </body>
 </html>
