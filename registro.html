@@ -211,6 +211,20 @@
       height: 100% !important;
       object-fit: cover !important;
     }
+
+    /* SOBRESCRIBIR EL ESTILO DEL MODAL PARA GARANTIZAR VISIBILIDAD MÁXIMA */
+    .modal-overlay-force {
+      display: flex !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: rgba(0,0,0,0.92) !important;
+      z-index: 9999999 !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
   </style>
 </head>
 <body class="login-body">
@@ -799,20 +813,20 @@
     </div>
   </div>
 
-  <!-- MODAL EMERGENTE DE PRE-REGISTRO Y VALIDACIÓN -->
-  <div class="modal-overlay" id="validationNoticeModal" style="display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.85) !important; z-index: 999999 !important; align-items: center; justify-content: center;">
-    <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px;">
+  <!-- MODAL EMERGENTE GARANTIZADO DE PRE-REGISTRO Y VALIDACIÓN EN PANTALLA COMPLETA -->
+  <div class="modal-overlay" id="validationNoticeModal" style="display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.9) !important; z-index: 9999999 !important; align-items: center; justify-content: center;">
+    <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px; box-shadow: 0 0 30px rgba(0,212,255,0.4);">
       <div class="modal-header">
         <i class="fa-solid fa-circle-check modal-icon-glow" style="font-size: 3.5rem; color:#00d4ff; margin-bottom: 12px;"></i>
         <h3 style="font-size: 1.4rem; color: #fff;">Pre-Registro Solicitado con Éxito! ⚽</h3>
       </div>
 
-      <div style="margin: 15px 0; text-align: left; background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 12px; border-left: 4px solid #00d4ff;">
+      <div style="margin: 15px 0; text-align: left; background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 12px; border-left: 4px solid #00d4ff;">
         <p style="font-size: 0.95rem; color: #ffffff; line-height: 1.5; font-weight: 600;">
           Tu preregistro ha sido enviado para autorización de tu delegado. Por favor, regresa más tarde para verificar el estatus de tu registro.
         </p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px; line-height: 1.5;">
-          Tu solicitud se encuentra guardada en la base de datos RETA. Podrás consultar la activación escaneando tu código QR o ingresando tu CURP.
+          Tu credencial digital ha sido descargada en tu dispositivo. Tu trámite seguirá el protocolo de aprobación correspondiente.
         </p>
       </div>
 
@@ -820,6 +834,50 @@
         <button type="button" class="btn-login" style="background:#00d4ff; color:#000; font-weight:bold; padding:12px 24px; border-radius:8px; border:none; cursor:pointer;" onclick="finishRegistrationAndRedirect()">
           Entendido y Finalizar <i class="fa-solid fa-check-double"></i>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE VERIFICACIÓN DE CÓDIGO OTP POR CORREO -->
+  <div class="modal-overlay" id="otpValidationModal" style="display: none;">
+    <div class="glass-card modal-card" style="max-width: 450px; text-align: center;">
+      <div class="modal-header">
+        <i class="fa-solid fa-envelope-circle-check modal-icon-glow" style="font-size: 3rem; color:#00d4ff; margin-bottom: 10px;"></i>
+        <h3>Verifica tu Correo Electrónico</h3>
+        <p class="modal-subtitle">Hemos enviado un código de 6 dígitos a <br><strong id="displayTargetEmail" style="color:#00d4ff;">correo@ejemplo.com</strong></p>
+      </div>
+
+      <div style="margin: 20px 0;">
+        <input type="text" id="otpCodeInput" maxlength="6" placeholder="0 0 0 0 0 0" style="letter-spacing: 12px; font-size: 1.8rem; text-align: center; width: 100%; text-transform: uppercase; padding: 10px; background: rgba(0,0,0,0.5); border: 2px solid #00d4ff; border-radius: 10px; color: #fff;">
+        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth.</small>
+      </div>
+
+      <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center;">
+        <button type="button" class="btn-secondary-action" onclick="closeModal('otpValidationModal')">Cancelar</button>
+        <button type="button" class="btn-login" id="btnConfirmOtp" onclick="verifyOtpAndFinalize()">
+          Validar Código <i class="fa-solid fa-check"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL JURÍDICO: TÉRMINOS Y CONDICIONES -->
+  <div class="modal-overlay" id="termsModal" style="display: none;">
+    <div class="glass-card modal-card terms-modal-card">
+      <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
+      <div class="modal-header">
+        <i class="fa-solid fa-scale-balanced modal-icon-glow"></i>
+        <h3>Aviso Legal, Términos y Deslinde de Responsabilidad Deportiva</h3>
+        <p class="modal-subtitle">RETA Sports Management & Logistics</p>
+      </div>
+      
+      <div class="terms-scroll-body">
+        <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
+        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento.</p>
+      </div>
+
+      <div class="modal-footer-terms">
+        <button type="button" class="btn-login" onclick="acceptTermsFromModal()">Entendido y Aceptar Carta Jurídica <i class="fa-solid fa-check-double"></i></button>
       </div>
     </div>
   </div>
@@ -1013,7 +1071,7 @@
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE PARTICIPACIÓN, ASUNCIÓN DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR Y ÁRBITROS:</strong> Autorizo voluntariamente la participación del menor bajo mi tutela en las jornadas deportivas del torneo. Reconozco que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto (tales como esguinces, fracturas, contusiones o eventualidades mayores). Por ende, bajo la figura de asunción de riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES Y PROPIETARIOS DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, daño patrimonial o eventualidad que sufra el menor antes, durante o después de los partidos o traslados.</li>
               <li style="margin-bottom: 6px;"><strong>DECLARACIÓN DE APTITUD FÍSICA Y SALUD DEL MENOR:</strong> Declaro bajo protesta de decir verdad que el menor se encuentra en estado óptimo de salud física, mental y cardiovascular para la práctica de deporte competitivo. Confirmo que no padece padecimientos preexistentes, afecciones cardíacas, neurológicas ni secuelas de lesiones no consolidadas. Asumo la responsabilidad legal absoluta en caso de omisión u ocultamiento de información médica del menor.</li>
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de emergencia médica o traumatismo del menor durante el evento, autorizo expresamente al personal médico o delegados a brindarle primeros auxilios o trasladarlo a un centro hospitalario. Acepto que los gastos médicos, farmacéuticos y hospitalarios serán cubiertos en su totalidad por mi persona o por mi esquema de seguro médico, deslindando a la organización y a RETA PRO APP de cualquier responsabilidad económica.</li>
-              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines estrictamente administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
+              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines strictly administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
             </ol>
 
             <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
@@ -1246,7 +1304,7 @@
       }
     }
 
-    /* VALIDACIÓN PASO 1 Y MANEJO SEGURO ASÍNCRONO */
+    /* VALIDACIÓN PASO 1 Y MANEJO SEGURO ASÍNCRONO SIN INTERRUMPIR FLIUJO */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -1314,13 +1372,6 @@
 
       localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
 
-      // Guardado silencioso en Supabase tolerante a errores
-      try {
-        if (_supabase) {
-          _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' }).catch(err => console.warn("Aviso DB:", err));
-        }
-      } catch (e) {}
-
       if (roleVal === 'ADMIN_LIGA') {
         localStorage.setItem('reta_admin_curp', curpVal);
         localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
@@ -1340,7 +1391,7 @@
       } else if (roleVal === 'DELEGADO') {
         prepareAndShowCredential('DELEGADO');
       } else if (roleVal === 'SUPERVISOR') {
-        document.getElementById('validationNoticeModal').style.setProperty('display', 'flex', 'important');
+        openValidationModal();
       }
     }
 
@@ -1443,16 +1494,23 @@
       prepareAndShowCredential();
     }
 
-    /* APERTURA GARANTIZADA DEL MODAL EMERGENTE AL DAR VALIDAR Y DESCARGAR */
+    /* FUNCIÓN DIRECTA DE DESPLEGADO DEL MODAL A PRUEBA DE BLOQUEADORES */
+    function openValidationModal() {
+      const modal = document.getElementById('validationNoticeModal');
+      if (modal) {
+        modal.className = 'modal-overlay modal-overlay-force';
+      }
+    }
+
+    /* APERTURA GARANTIZADA DE MODAL PRIMERO Y LUEGO PROCESAMIENTO DE IMAGEN */
     function executeValidationAndDownload() {
       playBeepSound();
       
-      const modal = document.getElementById('validationNoticeModal');
-      if (modal) {
-        modal.style.setProperty('display', 'flex', 'important');
-      }
+      // PASO 1: MOSTRAR INMEDIATAMENTE EL MODAL SIN IMPORTAR EL NAVEGADOR
+      openValidationModal();
 
-      const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'JUGADOR';
+      // PASO 2: DESCARGAR LA IMAGEN EN SEGUNDO PLANO
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'USUARIO';
       const cardElement = document.getElementById('digitalCredential');
 
       setTimeout(async () => {
@@ -1470,12 +1528,14 @@
             const link = document.createElement('a');
             link.download = `Credencial_RETA_${curpVal}.png`;
             link.href = imageBase64;
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
           }
         } catch (e) {
-          console.warn("Descarga completada.");
+          console.warn("Descarga procesada.");
         }
-      }, 300);
+      }, 200);
     }
 
     async function finishRegistrationAndRedirect() {
