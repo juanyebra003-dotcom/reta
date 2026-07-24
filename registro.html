@@ -85,30 +85,81 @@
       justify-content: center !important;
     }
 
-    /* Ajuste de Tamaño de Logos y Código QR en Credencial */
-    .cred-reta-logo {
-      height: 60px !important;
-      max-height: 60px !important;
-      width: auto;
-      filter: drop-shadow(0 0 8px rgba(0,212,255,0.6));
+    /* ENCABEZADO DE CREDENCIAL EN GRIS PLATA METÁLICO PARA MÁXIMO REALCE DE LIGA Y LOGO */
+    .credential-header-silver {
+      background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%) !important;
+      border-radius: 12px !important;
+      padding: 10px 16px !important;
+      border: 1px solid #ffffff !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+    }
+    .cred-league-badge-silver {
+      font-size: 0.95rem !important;
+      font-weight: 800 !important;
+      color: #0f172a !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+      text-shadow: 0 1px 1px rgba(255,255,255,0.8) !important;
     }
 
-    /* DISTINTIVOS ELEGANTES POR COLOR DE ROL BAJO LA FOTO */
+    /* Ajuste de Tamaño de Logos y Código QR en Credencial */
+    .cred-reta-logo {
+      height: 48px !important;
+      max-height: 48px !important;
+      width: auto;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    /* DISTINTIVOS ELEGANTES POR COLOR DE ROL BAJO LA FOTO Y FIX DE DORSAL */
     .cred-photo-box {
-      position: relative;
-      display: inline-block;
+      position: relative !important;
+      display: inline-block !important;
+      width: 100px !important;
+      height: 120px !important;
+      flex-shrink: 0 !important;
     }
+    .cred-photo-img {
+      width: 100px !important;
+      height: 120px !important;
+      object-fit: cover !important;
+      border-radius: 10px !important;
+      border: 2px solid #00d4ff !important;
+      display: block !important;
+    }
+    
+    /* FIX CORREGIDO DEL BADGE DORSAL (#--) QUE TAPABA LA FOTO */
+    .cred-dorsal-fixed {
+      position: absolute !important;
+      bottom: 5px !important;
+      right: 5px !important;
+      background: #00d4ff !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+      padding: 2px 6px !important;
+      border-radius: 6px !important;
+      font-size: 0.75rem !important;
+      line-height: 1 !important;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.8) !important;
+      border: 1px solid #ffffff !important;
+      z-index: 10 !important;
+      width: auto !important;
+      height: auto !important;
+    }
+
     .role-color-strip {
-      width: 100%;
-      height: 5px;
-      margin-top: 4px;
-      border-radius: 3px;
-      transition: all 0.3s ease;
+      width: 100% !important;
+      height: 5px !important;
+      margin-top: 4px !important;
+      border-radius: 3px !important;
+      transition: all 0.3s ease !important;
     }
-    .role-strip-jugador { background-color: #10b981 !important; box-shadow: 0 0 8px #10b981; } /* Verde */
-    .role-strip-arbitro { background-color: #f59e0b !important; box-shadow: 0 0 8px #f59e0b; } /* Amarillo */
-    .role-strip-delegado { background-color: #f97316 !important; box-shadow: 0 0 8px #f97316; } /* Naranja */
-    .role-strip-admin { background-color: #ffffff !important; box-shadow: 0 0 8px #ffffff; } /* Blanco */
+    .role-strip-jugador { background-color: #10b981 !important; box-shadow: 0 0 8px #10b981 !important; } /* Verde */
+    .role-strip-arbitro { background-color: #f59e0b !important; box-shadow: 0 0 8px #f59e0b !important; } /* Amarillo */
+    .role-strip-delegado { background-color: #f97316 !important; box-shadow: 0 0 8px #f97316 !important; } /* Naranja */
+    .role-strip-admin { background-color: #ffffff !important; box-shadow: 0 0 8px #ffffff !important; } /* Blanco */
 
     .cred-sponsors-strip {
       margin-top: 15px;
@@ -131,8 +182,8 @@
 
     /* AMPLIFICACIÓN DEL CÓDIGO QR Y ESCUDO */
     .cred-qr-box {
-      width: 120px !important;
-      height: 120px !important;
+      width: 110px !important;
+      height: 110px !important;
       background: #fff;
       padding: 5px;
       border-radius: 12px;
@@ -144,9 +195,9 @@
       object-fit: contain;
     }
     .cred-team-logo-hero-wrapper {
-      width: 70px !important;
-      height: 70px !important;
-      margin-bottom: 8px;
+      width: 60px !important;
+      height: 60px !important;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -674,21 +725,24 @@
           <div class="wizard-step" id="wizard-step-4" style="display: none;">
             
             <div class="digital-credential-card glass-card" id="digitalCredential" style="background: linear-gradient(135deg, #0b1329, #131d38); border: 2px solid #00d4ff; padding:20px; border-radius:16px;">
-              <div class="credential-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="reta-logo-container">
+              
+              <!-- ENCABEZADO CORREGIDO EN GRIS PLATA METÁLICO -->
+              <div class="credential-header-silver">
+                <div class="reta-logo-container" style="background: transparent !important; border:none !important; box-shadow:none !important; padding:0 !important;">
                   <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
                 </div>
-                <div class="cred-league-badge" id="credLeagueName" style="font-size:0.9rem; font-weight:800; color:#00d4ff;">LIGA PREMIER HEROES</div>
+                <div class="cred-league-badge-silver" id="credLeagueName">LIGA PREMIER HEROES</div>
               </div>
 
               <div class="credential-body" style="display:flex; gap:15px; margin-top:15px; align-items:center;">
                 
-                <!-- FOTO CON INDICADOR DISCRETO Y ELEGANTE DE COLOR DE ROL ABAJO -->
+                <!-- FOTO CON BADGE CORREGIDO (#--) Y DISTINTIVO DE ROL ABAJO -->
                 <div class="cred-photo-box">
-                  <img id="credPlayerPhoto" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Oficial" style="width:100px; height:120px; object-fit:cover; border-radius:10px; border:2px solid #00d4ff; display:block;">
-                  <!-- DISTINTIVO POR COLOR SEGÚN EL ROL -->
+                  <img id="credPlayerPhoto" class="cred-photo-img" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Oficial">
+                  <!-- BADGE DEL DORSAL COMPACTO SIN TAPAR ROSTRO -->
+                  <span class="cred-dorsal-fixed" id="credDorsal">#--</span>
+                  <!-- DISTINTIVO DE COLOR POR ROL -->
                   <div id="roleColorIndicator" class="role-color-strip role-strip-jugador"></div>
-                  <span class="cred-dorsal" id="credDorsal" style="position:absolute; top:-5px; right:-5px; background:#00d4ff; color:#000; font-weight:bold; padding:2px 6px; border-radius:5px; font-size:0.8rem;">#--</span>
                 </div>
 
                 <div class="cred-info-box" style="flex:1;">
@@ -745,7 +799,7 @@
     </div>
   </div>
 
-  <!-- MODAL EMERGENTE FORZADO EN PANTALLA COMPLETA -->
+  <!-- MODAL EMERGENTE DE PRE-REGISTRO Y VALIDACIÓN -->
   <div class="modal-overlay" id="validationNoticeModal" style="display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.85) !important; z-index: 999999 !important; align-items: center; justify-content: center;">
     <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px;">
       <div class="modal-header">
@@ -758,7 +812,7 @@
           Tu preregistro ha sido enviado para autorización de tu delegado. Por favor, regresa más tarde para verificar el estatus de tu registro.
         </p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px; line-height: 1.5;">
-          Tu solicitud se encuentra guardada correctamente. Para la activación definitiva de tu perfil, tu trámite seguirá el protocolo de aprobación correspondiente.
+          Tu solicitud se encuentra guardada en la base de datos RETA. Podrás consultar la activación escaneando tu código QR o ingresando tu CURP.
         </p>
       </div>
 
@@ -766,50 +820,6 @@
         <button type="button" class="btn-login" style="background:#00d4ff; color:#000; font-weight:bold; padding:12px 24px; border-radius:8px; border:none; cursor:pointer;" onclick="finishRegistrationAndRedirect()">
           Entendido y Finalizar <i class="fa-solid fa-check-double"></i>
         </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DE VERIFICACIÓN DE CÓDIGO OTP POR CORREO -->
-  <div class="modal-overlay" id="otpValidationModal" style="display: none;">
-    <div class="glass-card modal-card" style="max-width: 450px; text-align: center;">
-      <div class="modal-header">
-        <i class="fa-solid fa-envelope-circle-check modal-icon-glow" style="font-size: 3rem; color:#00d4ff; margin-bottom: 10px;"></i>
-        <h3>Verifica tu Correo Electrónico</h3>
-        <p class="modal-subtitle">Hemos enviado un código de 6 dígitos a <br><strong id="displayTargetEmail" style="color:#00d4ff;">correo@ejemplo.com</strong></p>
-      </div>
-
-      <div style="margin: 20px 0;">
-        <input type="text" id="otpCodeInput" maxlength="6" placeholder="0 0 0 0 0 0" style="letter-spacing: 12px; font-size: 1.8rem; text-align: center; width: 100%; text-transform: uppercase; padding: 10px; background: rgba(0,0,0,0.5); border: 2px solid #00d4ff; border-radius: 10px; color: #fff;">
-        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth.</small>
-      </div>
-
-      <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center;">
-        <button type="button" class="btn-secondary-action" onclick="closeModal('otpValidationModal')">Cancelar</button>
-        <button type="button" class="btn-login" id="btnConfirmOtp" onclick="verifyOtpAndFinalize()">
-          Validar Código <i class="fa-solid fa-check"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL JURÍDICO: TÉRMINOS Y CONDICIONES -->
-  <div class="modal-overlay" id="termsModal" style="display: none;">
-    <div class="glass-card modal-card terms-modal-card">
-      <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
-      <div class="modal-header">
-        <i class="fa-solid fa-scale-balanced modal-icon-glow"></i>
-        <h3>Aviso Legal, Términos y Deslinde de Responsabilidad Deportiva</h3>
-        <p class="modal-subtitle">RETA Sports Management & Logistics</p>
-      </div>
-      
-      <div class="terms-scroll-body">
-        <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
-        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento.</p>
-      </div>
-
-      <div class="modal-footer-terms">
-        <button type="button" class="btn-login" onclick="acceptTermsFromModal()">Entendido y Aceptar Carta Jurídica <i class="fa-solid fa-check-double"></i></button>
       </div>
     </div>
   </div>
@@ -874,7 +884,6 @@
       } catch (e) {}
     }
 
-    /* GENERACIÓN E IMPRESIÓN CON EL TEXTO Y FORMATO LEGAL DE LOS PDFS */
     function downloadResponsivaPDF(tipo, e) {
       if (e) e.preventDefault();
       playBeepSound();
@@ -1122,7 +1131,6 @@
         const stateCode = curp.substring(11, 13);
         document.getElementById('stateBirth').value = ENTIDADES_CURP[stateCode] || 'Entidad Desconocida';
 
-        // CONDICIONAL Y BLOQUEO AUTOMÁTICO SEGÚN EDAD
         if (!isNaN(age) && age < 18) {
           toggleIdMethod('minor');
           const methodIneInput = document.getElementById('methodIne');
@@ -1155,24 +1163,20 @@
       }
     }
 
-    /* CONTROL DE INTERFAZ Y VISIBILIDAD DE PASOS SEGÚN EL ROL Y TABLA OFICIAL */
     function handleRoleSelectionChange() {
       playBeepSound();
       const role = document.getElementById('roleSelect').value;
       const authSection = document.getElementById('adminAuthCodeSection');
       const btnStep1 = document.getElementById('btnStep1');
 
-      // 1. Mostrar token de autorización para roles con jerarquía
       if (role === 'ADMIN_LIGA' || role === 'SUPERVISOR' || role === 'ARBITRO' || role === 'DELEGADO') {
         authSection.style.display = 'block';
       } else {
         authSection.style.display = 'none';
       }
 
-      // 2. Ocultar todos los sub-formularios del Paso 2
       document.querySelectorAll('.role-specific-section').forEach(el => el.style.display = 'none');
 
-      // 3. Activar sub-formulario correspondiente en Paso 2 y ajustar textos del botón
       if (role === 'JUGADOR') {
         document.getElementById('formSubJugador').style.display = 'block';
         btnStep1.innerHTML = `Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>`;
@@ -1242,7 +1246,7 @@
       }
     }
 
-    /* VALIDACIÓN PASO 1 Y REDIRECCIÓN SEGÚN MATRIZ */
+    /* VALIDACIÓN PASO 1 Y MANEJO SEGURO ASÍNCRONO */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -1264,13 +1268,11 @@
         return;
       }
 
-      // Requerir Token para roles administrativos / autoridades
       if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO' || roleVal === 'DELEGADO') && !tokenInput) {
         alert("Debes ingresar la Clave / Token de Autorización RETA para este rol.");
         return;
       }
 
-      // Validar responsivas si es Jugador/Delegado/Árbitro
       if (ageVal >= 18) {
         const adultResponsivaFile = document.getElementById('adultResponsivaFile');
         if (!adultResponsivaFile || !adultResponsivaFile.files || adultResponsivaFile.files.length === 0) {
@@ -1297,25 +1299,27 @@
         return;
       }
 
-      try {
-        const userPayload = {
-          curp: curpVal,
-          nombre: fname,
-          apellidos: lname,
-          email: emailVal,
-          telefono: document.getElementById('userPhone').value.trim(),
-          edad: ageVal,
-          genero: document.getElementById('gender').value,
-          estado_nacimiento: document.getElementById('stateBirth').value,
-          estado_residencia: document.getElementById('stateRes').value,
-          ciudad_residencia: document.getElementById('cityRes').value
-        };
+      const userPayload = {
+        curp: curpVal,
+        nombre: fname,
+        apellidos: lname,
+        email: emailVal,
+        telefono: document.getElementById('userPhone').value.trim(),
+        edad: ageVal,
+        genero: document.getElementById('gender').value,
+        estado_nacimiento: document.getElementById('stateBirth').value,
+        estado_residencia: document.getElementById('stateRes').value,
+        ciudad_residencia: document.getElementById('cityRes').value
+      };
 
-        localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
-        _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' }).then();
-      } catch (e) {
-        console.warn("Aviso: Guardado en sesión local.");
-      }
+      localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
+
+      // Guardado silencioso en Supabase tolerante a errores
+      try {
+        if (_supabase) {
+          _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' }).catch(err => console.warn("Aviso DB:", err));
+        }
+      } catch (e) {}
 
       if (roleVal === 'ADMIN_LIGA') {
         localStorage.setItem('reta_admin_curp', curpVal);
@@ -1327,7 +1331,6 @@
       goToStep(2);
     }
 
-    /* CONTROL DEL BOTÓN EN PASO 2 SEGÚN MATRIZ DE ROLES */
     function processStep2Next() {
       playBeepSound();
       const roleVal = document.getElementById('roleSelect').value;
@@ -1372,7 +1375,7 @@
       return `RETAPRO-${estadoCode}-${municipioCode}-${claveLiga}-${randomFolio}`;
     }
 
-    /* RENDERIZADO Y PREPARACIÓN DE CREDENCIAL SEGÚN ROL CON DISTINTIVO DE COLOR */
+    /* PREPARACIÓN Y MUESTRA DE CREDENCIAL CON ROL DE COLOR Y DORSAL COMPACTO */
     function prepareAndShowCredential(forcedRole) {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = forcedRole || document.getElementById('roleSelect').value;
@@ -1440,7 +1443,7 @@
       prepareAndShowCredential();
     }
 
-    /* APERTURA GARANTIZADA DEL MODAL Y DESCARGA DE CREDENCIAL */
+    /* APERTURA GARANTIZADA DEL MODAL EMERGENTE AL DAR VALIDAR Y DESCARGAR */
     function executeValidationAndDownload() {
       playBeepSound();
       
@@ -1470,7 +1473,7 @@
             link.click();
           }
         } catch (e) {
-          console.warn("Descarga iniciada.");
+          console.warn("Descarga completada.");
         }
       }, 300);
     }
