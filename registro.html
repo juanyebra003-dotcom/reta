@@ -11,7 +11,7 @@
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- HTML2Canvas CDN (Librería para la descarga automática de la credencial en PNG) -->
+  <!-- HTML2Canvas CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
@@ -99,8 +99,8 @@
 
     /* AMPLIFICACIÓN DEL CÓDIGO QR Y ESCUDO */
     .cred-qr-box {
-      width: 110px !important;
-      height: 110px !important;
+      width: 120px !important;
+      height: 120px !important;
       background: #fff;
       padding: 5px;
       border-radius: 12px;
@@ -391,10 +391,10 @@
                 <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
                 <select id="leagueSelect" required onchange="onLeagueSelectChange()">
                   <option value="" disabled selected>Cargando Ligas de Supabase...</option>
-                  <option value="LIGA-PREMIER-GTO" data-state="GTO" data-tournament="001">Liga Premier RETA (Guanajuato)</option>
-                  <option value="COPA-BAJIO-GTO" data-state="GTO" data-tournament="002">Copa Internacional Bajío (Guanajuato)</option>
-                  <option value="NOCTURNA-MICH" data-state="MIC" data-tournament="003">Liga Nocturna F7 (Michoacán)</option>
-                  <option value="FEMENIL-GTO" data-state="GTO" data-tournament="004">Torneo Femenil RETA (Guanajuato)</option>
+                  <option value="LIGA PREMIER RETA" data-state="GTO" data-tournament="001">Liga Premier RETA (Guanajuato)</option>
+                  <option value="COPA INTERNACIONAL BAJÍO" data-state="GTO" data-tournament="002">Copa Internacional Bajío (Guanajuato)</option>
+                  <option value="LIGA NOCTURNA F7" data-state="MIC" data-tournament="003">Liga Nocturna F7 (Michoacán)</option>
+                  <option value="TORNEO FEMENIL RETA" data-state="GTO" data-tournament="004">Torneo Femenil RETA (Guanajuato)</option>
                 </select>
               </div>
               <div class="input-group">
@@ -551,7 +551,6 @@
 
                 <div class="cred-badge-qr-container" style="display:flex; flex-direction:column; align-items:center;">
                   <div class="cred-team-logo-hero-wrapper">
-                    <!-- Escudo del equipo corregido -->
                     <img id="credTeamLogo" src="img/logo_reta.png" class="cred-team-logo-hero" alt="Escudo Equipo">
                   </div>
                   <div class="cred-qr-box">
@@ -587,29 +586,32 @@
     </div>
   </div>
 
-  <!-- MODAL EMERGENTE DE CONFIRMACIÓN DE PRE-REGISTRO -->
-  <div class="modal-overlay" id="validationNoticeModal" style="display: none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
-    <div class="glass-card modal-card" style="max-width: 500px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px;">
+  <!-- MODAL EMERGENTE CON EL TEXTO EXACTO SOLICITADO -->
+  <div class="modal-overlay" id="validationNoticeModal" style="display: none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center;">
+    <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px;">
       <div class="modal-header">
         <i class="fa-solid fa-circle-check modal-icon-glow" style="font-size: 3.5rem; color:#00d4ff; margin-bottom: 12px;"></i>
-        <h3 style="font-size: 1.4rem; color: #fff;">¡Pre-Registro Enviado con Éxito!</h3>
+        <h3 style="font-size: 1.4rem; color: #fff;">¡Pre-Registro Solicitado con Éxito! ⚽</h3>
       </div>
 
       <div style="margin: 15px 0; text-align: left; background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 12px; border-left: 4px solid #00d4ff;">
         <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.5;">
-          Gracias por completar tu expediente oficial en <strong>RETA Pro App</strong>. Se ha descargado automáticamente una copia de tu credencial virtual.
+          Gracias por completar tu expediente oficial en <strong>RETA Pro App</strong>.
         </p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px; line-height: 1.5;">
-          Tu solicitud de registro ha sido recibida y se encuentra en estado <strong style="color:#00d4ff;">PENDIENTE DE EVALUACIÓN</strong>. Tu expediente seguirá el siguiente protocolo de aprobación:
+          Tu solicitud ha sido registrada correctamente y se encuentra en estado de <strong>Revisión</strong>. Para la activación definitiva de tu Credencial Virtual Única, tu trámite seguirá el siguiente protocolo de aprobación:
         </p>
         <ul style="font-size: 0.83rem; color: #e2e8f0; margin: 10px 0 0 20px; line-height: 1.6;">
-          <li><strong>1. Validación del Delegado:</strong> El D.T. de tu equipo confirmará tu incorporación a la plantilla.</li>
-          <li><strong>2. Autorización de la Liga:</strong> El Administrador otorgará el visto bueno final para activar tu Credencial Virtual.</li>
+          <li><strong>Evaluación de Delegado:</strong> Tu Director Técnico / Delegado validará tu inscripción dentro de la plantilla del equipo.</li>
+          <li><strong>Autorización Final:</strong> El Administrador de la Liga otorgará el visto bueno oficial y habilitará tu carnet para juego.</li>
         </ul>
+        <p style="font-size: 0.8rem; color: #00d4ff; margin-top: 12px; font-style: italic;">
+          Podrás consultar el estatus de tu expediente escaneando tu código QR o ingresando con tu CURP.
+        </p>
       </div>
 
       <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-        <button type="button" class="btn-login" style="background:#00d4ff; color:#000; font-weight:bold; padding:10px 20px; border-radius:8px; border:none; cursor:pointer;" onclick="finishRegistrationAndRedirect()">
+        <button type="button" class="btn-login" style="background:#00d4ff; color:#000; font-weight:bold; padding:12px 24px; border-radius:8px; border:none; cursor:pointer;" onclick="finishRegistrationAndRedirect()">
           Entendido y Finalizar <i class="fa-solid fa-check-double"></i>
         </button>
       </div>
@@ -757,7 +759,7 @@
         const { data: ligas } = await _supabase.from('ligas').select('id, nombre_liga, clave_liga, municipio, estado');
         if (ligas && ligas.length > 0) {
           select.innerHTML = '<option value="" disabled selected>Selecciona la Liga / Torneo</option>' + 
-            ligas.map(l => `<option value="${l.id}" data-city="${l.municipio || ''}" data-state="${l.estado || ''}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
+            ligas.map(l => `<option value="${l.nombre_liga}" data-city="${l.municipio || ''}" data-state="${l.estado || ''}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
         }
       } catch (e) {
         console.warn("Usando opciones por defecto.");
@@ -815,12 +817,19 @@
       }
     }
 
+    // VINCULACIÓN DINÁMICA DE LA LIGA SELECCIONADA
     function onLeagueSelectChange() {
       playBeepSound();
       const select = document.getElementById('leagueSelect');
       const opt = select.options[select.selectedIndex];
       if (opt.dataset.city) document.getElementById('tournamentCity').value = opt.dataset.city;
       if (opt.dataset.state) document.getElementById('tournamentState').value = opt.dataset.state;
+      
+      // Actualiza la liga en la credencial
+      const selectedLeagueName = select.value.toUpperCase();
+      if (selectedLeagueName) {
+        document.getElementById('credLeagueName').innerText = selectedLeagueName;
+      }
     }
 
     function handleRoleSelectionChange() {
@@ -897,7 +906,6 @@
       }
     }
 
-    /* CORRECCIÓN DEL ERROR SUPABASE 400 */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -944,7 +952,6 @@
         };
 
         localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
-        // Supabase Upsert corregido y empaquetado formalmente
         _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' }).then();
       } catch (e) {
         console.warn("Aviso: Guardado en sesión local.");
@@ -987,6 +994,12 @@
       const lname = document.getElementById('lastName').value.trim();
       const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
 
+      // Asignar el nombre de la liga a la tarjeta
+      const leagueName = document.getElementById('leagueSelect').value;
+      if (leagueName) {
+        document.getElementById('credLeagueName').innerText = leagueName.toUpperCase();
+      }
+
       // Carga la foto
       const savedPhoto = localStorage.getItem('temp_player_photo');
       if (savedPhoto) {
@@ -1005,7 +1018,6 @@
       document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'N/A';
       document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
 
-      // Garantiza la imagen del equipo o el logo de RETA si falla
       const teamSelectObj = document.getElementById('teamSelect');
       const opt = teamSelectObj.options[teamSelectObj.selectedIndex];
       if (opt && opt.dataset && opt.dataset.logo) {
@@ -1014,23 +1026,27 @@
         document.getElementById('credTeamLogo').src = 'img/logo_reta.png';
       }
 
-      // QR Code amplificado (250x250)
-      document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(curpVal)}`;
+      // ENLACE PÚBLICO EN SUPABASE DONDE SE ALMACENARÁ LA CREDENCIAL
+      const publicCredentialUrl = `${SUPABASE_URL}/storage/v1/object/public/credenciales/${curpVal}_credencial.png`;
+
+      // CÓDIGO QR QUE REDIRIGE A LA IMAGEN DE LA CREDENCIAL AL ESCANEARSE
+      document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(publicCredentialUrl)}`;
 
       goToStep(4);
     }
 
-    /* EJECUCIÓN CONJUNTA: DESCARGA AUTOMÁTICA EN PNG + MODAL DE AVISO */
+    /* EJECUCIÓN: DESCARGA + SUBIDA A STORAGE + EMERGENTE GARANTIZADO */
     async function executeValidationAndDownload() {
       playBeepSound();
       const btn = document.getElementById('btnValidateAndDownload');
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generando imagen y enviando...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando expedición...`;
 
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'JUGADOR';
       const cardElement = document.getElementById('digitalCredential');
 
       try {
-        // Renderiza la credencial a un canvas y fuerza la descarga
+        // 1. Generar la imagen visual de la credencial
         const canvas = await html2canvas(cardElement, {
           scale: 2,
           useCORS: true,
@@ -1038,19 +1054,30 @@
           backgroundColor: null
         });
 
-        const image = canvas.toDataURL("image/png");
+        const imageBase64 = canvas.toDataURL("image/png");
+
+        // 2. Descarga local automática
         const link = document.createElement('a');
-        const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'JUGADOR';
         link.download = `Credencial_RETA_${curpVal}.png`;
-        link.href = image;
+        link.href = imageBase64;
         link.click();
 
+        // 3. Subir al Bucket 'credenciales' de Supabase
+        const blob = await (await fetch(imageBase64)).blob();
+        await _supabase.storage
+          .from('credenciales')
+          .upload(`${curpVal}_credencial.png`, blob, {
+            contentType: 'image/png',
+            upsert: true
+          });
+
       } catch (e) {
-        console.warn("Descarga automática omitida por navegador:", e);
+        console.warn("Procesamiento local completado con observaciones:", e);
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-download"></i> Validar y Finalizar Pre-Registro`;
-        // Muestra la ventana emergente con el protocolo de validación
+        
+        // MOSTRAR EL MODAL EMERGENTE SIEMPRE
         document.getElementById('validationNoticeModal').style.display = 'flex';
       }
     }
