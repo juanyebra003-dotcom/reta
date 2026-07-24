@@ -212,15 +212,14 @@
       object-fit: cover !important;
     }
 
-    /* SOBRESCRIBIR EL ESTILO DEL MODAL PARA GARANTIZAR VISIBILIDAD MÁXIMA */
-    .modal-overlay-force {
-      display: flex !important;
+    /* ESTILO PANTALLA COMPLETA GARANTIZADO DEL MODAL AVISO */
+    .modal-overlay-custom {
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
       width: 100vw !important;
       height: 100vh !important;
-      background: rgba(0,0,0,0.92) !important;
+      background: rgba(0, 0, 0, 0.92) !important;
       z-index: 9999999 !important;
       align-items: center !important;
       justify-content: center !important;
@@ -334,7 +333,7 @@
               </label>
             </div>
 
-            <!-- SECCIÓN DE INE / OCR ADULTO CON GENERACIÓN FIEL DE PDF -->
+            <!-- SECCIÓN DE INE / OCR ADULTO -->
             <div id="ineOcrSection" class="ocr-dropzone-container">
               <div class="ocr-dropzone" id="ineDropzone" onclick="document.getElementById('ineFileInput').click()">
                 <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
@@ -356,7 +355,7 @@
               </div>
             </div>
 
-            <!-- SECCIÓN PARA MENORES DE EDAD CON GENERACIÓN FIEL DE PDF -->
+            <!-- SECCIÓN PARA MENORES DE EDAD -->
             <div id="minorSection" class="minor-upload-section" style="display: none; background: rgba(255, 71, 87, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed #ff4757; margin-bottom: 20px;">
               <div class="input-group" style="margin-bottom: 15px;">
                 <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Carta Responsiva Legal de Tutor y Acta de Nacimiento (*Requerido)</label>
@@ -813,9 +812,9 @@
     </div>
   </div>
 
-  <!-- MODAL EMERGENTE GARANTIZADO DE PRE-REGISTRO Y VALIDACIÓN EN PANTALLA COMPLETA -->
-  <div class="modal-overlay" id="validationNoticeModal" style="display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.9) !important; z-index: 9999999 !important; align-items: center; justify-content: center;">
-    <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px; box-shadow: 0 0 30px rgba(0,212,255,0.4);">
+  <!-- MODAL EMERGENTE GARANTIZADO EN PANTALLA COMPLETA -->
+  <div class="modal-overlay" id="validationNoticeModal" style="display: none;">
+    <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px; box-shadow: 0 0 35px rgba(0,212,255,0.5);">
       <div class="modal-header">
         <i class="fa-solid fa-circle-check modal-icon-glow" style="font-size: 3.5rem; color:#00d4ff; margin-bottom: 12px;"></i>
         <h3 style="font-size: 1.4rem; color: #fff;">Pre-Registro Solicitado con Éxito! ⚽</h3>
@@ -1071,7 +1070,7 @@
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE PARTICIPACIÓN, ASUNCIÓN DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR Y ÁRBITROS:</strong> Autorizo voluntariamente la participación del menor bajo mi tutela en las jornadas deportivas del torneo. Reconozco que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto (tales como esguinces, fracturas, contusiones o eventualidades mayores). Por ende, bajo la figura de asunción de riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES Y PROPIETARIOS DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, daño patrimonial o eventualidad que sufra el menor antes, durante o después de los partidos o traslados.</li>
               <li style="margin-bottom: 6px;"><strong>DECLARACIÓN DE APTITUD FÍSICA Y SALUD DEL MENOR:</strong> Declaro bajo protesta de decir verdad que el menor se encuentra en estado óptimo de salud física, mental y cardiovascular para la práctica de deporte competitivo. Confirmo que no padece padecimientos preexistentes, afecciones cardíacas, neurológicas ni secuelas de lesiones no consolidadas. Asumo la responsabilidad legal absoluta en caso de omisión u ocultamiento de información médica del menor.</li>
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de emergencia médica o traumatismo del menor durante el evento, autorizo expresamente al personal médico o delegados a brindarle primeros auxilios o trasladarlo a un centro hospitalario. Acepto que los gastos médicos, farmacéuticos y hospitalarios serán cubiertos en su totalidad por mi persona o por mi esquema de seguro médico, deslindando a la organización y a RETA PRO APP de cualquier responsabilidad económica.</li>
-              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines strictly administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
+              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines estrictamente administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
             </ol>
 
             <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
@@ -1304,7 +1303,6 @@
       }
     }
 
-    /* VALIDACIÓN PASO 1 Y MANEJO SEGURO ASÍNCRONO SIN INTERRUMPIR FLIUJO */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -1404,7 +1402,9 @@
     function closeModal(id) {
       playBeepSound();
       const el = document.getElementById(id);
-      if (el) el.style.setProperty('display', 'none', 'important');
+      if (el) {
+        el.style.setProperty('display', 'none', 'important');
+      }
     }
 
     function acceptTermsFromModal() {
@@ -1426,7 +1426,6 @@
       return `RETAPRO-${estadoCode}-${municipioCode}-${claveLiga}-${randomFolio}`;
     }
 
-    /* PREPARACIÓN Y MUESTRA DE CREDENCIAL CON ROL DE COLOR Y DORSAL COMPACTO */
     function prepareAndShowCredential(forcedRole) {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = forcedRole || document.getElementById('roleSelect').value;
@@ -1443,18 +1442,17 @@
         if (previewSrc) document.getElementById('credPlayerPhoto').src = previewSrc;
       }
 
-      /* APLICACIÓN DEL COLOR SEGÚN ROL */
       const roleIndicator = document.getElementById('roleColorIndicator');
-      roleIndicator.className = 'role-color-strip'; // Reset
+      roleIndicator.className = 'role-color-strip';
 
       if (roleName === 'JUGADOR') {
-        roleIndicator.classList.add('role-strip-jugador'); // Verde
+        roleIndicator.classList.add('role-strip-jugador');
       } else if (roleName === 'ARBITRO') {
-        roleIndicator.classList.add('role-strip-arbitro'); // Amarillo
+        roleIndicator.classList.add('role-strip-arbitro');
       } else if (roleName === 'DELEGADO') {
-        roleIndicator.classList.add('role-strip-delegado'); // Naranja
+        roleIndicator.classList.add('role-strip-delegado');
       } else {
-        roleIndicator.classList.add('role-strip-admin'); // Blanco
+        roleIndicator.classList.add('role-strip-admin');
       }
 
       document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
@@ -1494,22 +1492,23 @@
       prepareAndShowCredential();
     }
 
-    /* FUNCIÓN DIRECTA DE DESPLEGADO DEL MODAL A PRUEBA DE BLOQUEADORES */
+    /* DESPLEGADO DIRECTO DEL MODAL SOBREESCRIBIENDO CUALQUIER ESTILO BLOQUEANTE */
     function openValidationModal() {
       const modal = document.getElementById('validationNoticeModal');
       if (modal) {
-        modal.className = 'modal-overlay modal-overlay-force';
+        modal.className = 'modal-overlay modal-overlay-custom';
+        modal.style.setProperty('display', 'flex', 'important');
       }
     }
 
-    /* APERTURA GARANTIZADA DE MODAL PRIMERO Y LUEGO PROCESAMIENTO DE IMAGEN */
+    /* APERTURA GARANTIZADA DEL MODAL Y POSTERIOR PROCESO DE DESCARGA */
     function executeValidationAndDownload() {
       playBeepSound();
       
-      // PASO 1: MOSTRAR INMEDIATAMENTE EL MODAL SIN IMPORTAR EL NAVEGADOR
+      // PASO 1: ABRIR EL MODAL DE INMEDIATO
       openValidationModal();
 
-      // PASO 2: DESCARGAR LA IMAGEN EN SEGUNDO PLANO
+      // PASO 2: DISPARAR DESCARGA EN SEGUNDO PLANO
       const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'USUARIO';
       const cardElement = document.getElementById('digitalCredential');
 
@@ -1533,9 +1532,9 @@
             document.body.removeChild(link);
           }
         } catch (e) {
-          console.warn("Descarga procesada.");
+          console.warn("Proceso completado.");
         }
-      }, 200);
+      }, 250);
     }
 
     async function finishRegistrationAndRedirect() {
