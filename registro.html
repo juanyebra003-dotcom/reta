@@ -237,7 +237,7 @@
               </label>
             </div>
 
-            <!-- SECCIÓN DE INE / OCR ADULTO -->
+            <!-- SECCIÓN DE INE / OCR ADULTO CON PDF VINCULADO -->
             <div id="ineOcrSection" class="ocr-dropzone-container">
               <div class="ocr-dropzone" id="ineDropzone" onclick="document.getElementById('ineFileInput').click()">
                 <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
@@ -247,25 +247,25 @@
               </div>
               <div id="ocrStatus" class="ocr-status-message"></div>
               
-              <!-- SECCIÓN DE CARTA RESPONSIVA PARA MAYOR DE EDAD (ADULTO) -->
+              <!-- DESCARGA DE PDF RESPONSIVA DE ADULTO -->
               <div class="adult-responsiva-box" style="margin-top: 15px; background: rgba(0, 212, 255, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed #00d4ff;">
                 <div class="input-group">
-                  <label for="adultResponsivaFile"><i class="fa-solid fa-file-word"></i> Carta Deslinde de Responsabilidad de Adulto (*Requerido)</label>
-                  <input type="file" id="adultResponsivaFile" accept="image/*,.pdf,.doc,.docx" onchange="playBeepSound()">
+                  <label for="adultResponsivaFile"><i class="fa-solid fa-file-pdf"></i> Carta Deslinde de Responsabilidad de Adulto (*Requerido)</label>
+                  <input type="file" id="adultResponsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
                   <small class="help-text" style="display:block; margin-top:6px;">
-                    Si aún no has firmado tu formato de deslinde, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaWord('adulto', event)">descarga la Carta Responsiva de Adulto en .doc aquí</a>.
+                    Si aún no has firmado tu formato de deslinde, <a href="carta_responsiva_adulto_reta_pro.pdf" download="carta_responsiva_adulto_reta_pro.pdf" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="playBeepSound()">descarga la Carta Responsiva de Adulto (PDF) aquí</a>.
                   </small>
                 </div>
               </div>
             </div>
 
-            <!-- SECCIÓN PARA MENORES DE EDAD -->
+            <!-- SECCIÓN PARA MENORES DE EDAD CON PDF VINCULADO -->
             <div id="minorSection" class="minor-upload-section" style="display: none; background: rgba(255, 71, 87, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed #ff4757; margin-bottom: 20px;">
               <div class="input-group" style="margin-bottom: 15px;">
-                <label for="responsivaFile"><i class="fa-solid fa-file-word"></i> Carta Responsiva Legal de Tutor y Acta de Nacimiento (*Requerido)</label>
-                <input type="file" id="responsivaFile" accept="image/*,.pdf,.doc,.docx" onchange="playBeepSound()">
+                <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Carta Responsiva Legal de Tutor y Acta de Nacimiento (*Requerido)</label>
+                <input type="file" id="responsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
                 <small class="help-text" style="display:block; margin-top:6px;">
-                  Si no cuentas con el formato oficial, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaWord('menor', event)">descarga la Carta Responsiva RETA Menor de Edad en .doc aquí</a>.
+                  Si no cuentas con el formato oficial, <a href="carta_responsiva_menor_reta_pro.pdf" download="carta_responsiva_menor_reta_pro.pdf" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="playBeepSound()">descarga la Carta Responsiva RETA Menor de Edad (PDF) aquí</a>.
                 </small>
               </div>
 
@@ -743,74 +743,6 @@
       } catch (e) {}
     }
 
-    /* GENERADOR DE CARTA RESPONSIVA OFICIAL EN FORMATO DE DOCUMENTO WORD (.DOC) */
-    function downloadResponsivaWord(tipo, e) {
-      if (e) e.preventDefault();
-      playBeepSound();
-
-      const fname = document.getElementById('firstName').value.trim() || '___________________';
-      const lname = document.getElementById('lastName').value.trim() || '___________________';
-      const curpVal = document.getElementById('curp').value.trim().toUpperCase() || '___________________';
-
-      let docTitle = "";
-      let docBody = "";
-
-      if (tipo === 'adulto') {
-        docTitle = "CARTA_RESPONSIVA_DESLINDE_ADULTO_RETA";
-        docBody = `
-          <h2 style="text-align:center; color:#0b1329;">CARTA DESLINDE DE RESPONSABILIDAD LEGAL Y MÉDICA PARA ADULTOS</h2>
-          <h4 style="text-align:center; color:#0055ff;">PLATAFORMA RETA PRO APP - TEMPORADA 2026</h4>
-          <hr/>
-          <p><strong>Yo, C. ${fname} ${lname}</strong>, mayor de edad, con clave única de registro de población <strong>CURP: ${curpVal}</strong>, manifestando pleno uso de mis facultades mentales y físicas, por medio del presente documento expedido para la plataforma <strong>RETA Sports Logistics</strong>:</p>
-          
-          <ol>
-            <li><strong>DECLARACIÓN DE APTITUD FÍSICA:</strong> Bajo protesta de decir verdad, declaro que me encuentro en estado óptimo de salud física, mental y cardiovascular para participar libremente en las actividades deportivas de alto rendimiento.</li>
-            <li><strong>DESLINDE DE RESPONSABILIDAD:</strong> Libero de toda responsabilidad civil, penal, administrativa o médica a la plataforma RETA Pro App, a los comités organizadores, árbitros y dueños de las instalaciones por cualquier lesión corporal, daño patrimonial o eventualidad médica surgida antes, durante o después de los partidos.</li>
-            <li><strong>AUTORIZACIÓN DE AUXILIO MÉDICO:</strong> Autorizo al personal paramédico o médico asignado para brindarme los primeros auxilios o trasladarme a una institución hospitalaria en caso de ser necesario.</li>
-          </ol>
-
-          <br/><br/><br/>
-          <p style="text-align:center;">_____________________________________________<br/><strong>FIRMA Y CONFORMIDAD DEL JUGADOR</strong><br/>CURP: ${curpVal}</p>
-        `;
-      } else {
-        docTitle = "CARTA_RESPONSIVA_TUTOR_MENOR_RETA";
-        docBody = `
-          <h2 style="text-align:center; color:#0b1329;">CARTA RESPONSIVA Y AUTORIZACIÓN LEGAL DE TUTOR PARA MENOR DE EDAD</h2>
-          <h4 style="text-align:center; color:#0055ff;">PLATAFORMA RETA PRO APP - TEMPORADA 2026</h4>
-          <hr/>
-          <p>Yo, C. __________________________________________________, manifestando ser Padre / Madre / Tutor Legal del menor de edad <strong>${fname} ${lname}</strong> con CURP: <strong>${curpVal}</strong>:</p>
-          
-          <ol>
-            <li><strong>AUTORIZACIÓN EXPRESA:</strong> Concedo mi total autorización para que el menor participe en los torneos y torneos organizados en la plataforma RETA.</li>
-            <li><strong>SALUD Y CAPACIDAD FÍSICA:</strong> Certifico que el menor no cuenta con padecimientos médicos o afecciones que pongan en riesgo su integridad física en la competencia.</li>
-            <li><strong>DESLINDE JURÍDICO:</strong> Deslindo formalmente a la administración de RETA Pro App, ligas afiliadas y directivas de cualquier tipo de responsabilidad civil o legal derivada de accidentes o eventualidades deportivas.</li>
-            <li><strong>DOCUMENTACIÓN ADJUNTA:</strong> Anexo copia fotostática vigente de mi Identificación Oficial (INE/Pasaporte) para darle validez jurídica.</li>
-          </ol>
-
-          <br/><br/><br/>
-          <p style="text-align:center;">_____________________________________________<br/><strong>FIRMA DEL PADRE / TUTOR LEGAL RESPONSIBLE</strong><br/>Nombre Completo del Tutor: _____________________________________<br/>Teléfono de Contacto: _____________________________________</p>
-        `;
-      }
-
-      const htmlContent = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-        <head><title>Carta Responsiva RETA</title><style>body { font-family: Arial, sans-serif; margin: 40px; line-height:1.6; }</style></head>
-        <body>${docBody}</body></html>
-      `;
-
-      const blob = new Blob(['\ufeff', htmlContent], {
-        type: 'application/msword'
-      });
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${docTitle}_${fname}_${lname}.doc`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
     function onStateChange(selectedState) {
       playBeepSound();
       const citySelect = document.getElementById('cityRes');
@@ -904,7 +836,7 @@
           const methodIneInput = document.getElementById('methodIne');
           if (methodIneInput) methodIneInput.disabled = true;
 
-          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nNo es posible completar el registro mediante el escaneo de INE. Se ha activado automáticamente la modalidad "Menor de Edad", por lo que deberás descargar en Word (.doc) y adjuntar la Carta Responsiva de Tutor y la INE del Padre o Tutor.`);
+          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nNo es posible completar el registro mediante el escaneo de INE. Se ha activado automáticamente la modalidad "Menor de Edad", por lo que deberás descargar y adjuntar la Carta Responsiva oficial en PDF de Tutor y la INE del Padre o Tutor.`);
         } else {
           const methodIneInput = document.getElementById('methodIne');
           if (methodIneInput) methodIneInput.disabled = false;
