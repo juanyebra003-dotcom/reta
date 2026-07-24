@@ -237,7 +237,7 @@
               </label>
             </div>
 
-            <!-- SECCIÓN DE INE / OCR ADULTO CON GENERACIÓN DINÁMICA DE PDF -->
+            <!-- SECCIÓN DE INE / OCR ADULTO CON GENERACIÓN FIEL DE PDF -->
             <div id="ineOcrSection" class="ocr-dropzone-container">
               <div class="ocr-dropzone" id="ineDropzone" onclick="document.getElementById('ineFileInput').click()">
                 <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
@@ -253,19 +253,19 @@
                   <label for="adultResponsivaFile"><i class="fa-solid fa-file-pdf"></i> Carta Deslinde de Responsabilidad de Adulto (*Requerido)</label>
                   <input type="file" id="adultResponsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
                   <small class="help-text" style="display:block; margin-top:6px;">
-                    Si aún no has firmado tu formato de deslinde, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaPDF('adulto', event)">descarga la Carta Responsiva de Adulto (PDF) aquí</a>.
+                    Si aún no has firmado tu formato de deslinde, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaPDF('adulto', event)">descarga la Carta Responsiva Oficial de Adulto (PDF) aquí</a>.
                   </small>
                 </div>
               </div>
             </div>
 
-            <!-- SECCIÓN PARA MENORES DE EDAD CON GENERACIÓN DINÁMICA DE PDF -->
+            <!-- SECCIÓN PARA MENORES DE EDAD CON GENERACIÓN FIEL DE PDF -->
             <div id="minorSection" class="minor-upload-section" style="display: none; background: rgba(255, 71, 87, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed #ff4757; margin-bottom: 20px;">
               <div class="input-group" style="margin-bottom: 15px;">
                 <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Carta Responsiva Legal de Tutor y Acta de Nacimiento (*Requerido)</label>
                 <input type="file" id="responsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
                 <small class="help-text" style="display:block; margin-top:6px;">
-                  Si no cuentas con el formato oficial, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaPDF('menor', event)">descarga la Carta Responsiva RETA Menor de Edad (PDF) aquí</a>.
+                  Si no cuentas con el formato oficial, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaPDF('menor', event)">descarga la Carta Responsiva Oficial RETA Menor de Edad (PDF) aquí</a>.
                 </small>
               </div>
 
@@ -743,65 +743,165 @@
       } catch (e) {}
     }
 
-    /* FUNCIÓN AUTÓNOMA DE GENERACIÓN Y DESCARGA DIRECTA A PDF EN CLIENTE */
+    /* GENERACIÓN E IMPRESIÓN CON EL TEXTO Y FORMATO LEGAL DE LOS PDFS */
     function downloadResponsivaPDF(tipo, e) {
       if (e) e.preventDefault();
       playBeepSound();
 
-      const fname = document.getElementById('firstName').value.trim() || '___________________';
-      const lname = document.getElementById('lastName').value.trim() || '___________________';
-      const curpVal = document.getElementById('curp').value.trim().toUpperCase() || '___________________';
+      const fname = document.getElementById('firstName').value.trim() || '_______________________';
+      const lname = document.getElementById('lastName').value.trim() || '_______________________';
+      const fullName = `${fname} ${lname}`.trim();
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase() || '_______________________';
+      const userPhone = document.getElementById('userPhone').value.trim() || '_______________________';
+      const userEmail = document.getElementById('userEmail').value.trim() || '_______________________';
+      const userAge = document.getElementById('age').value || '____';
+
+      const leagueSelect = document.getElementById('leagueSelect');
+      const selectedLeague = leagueSelect.options[leagueSelect.selectedIndex] ? leagueSelect.options[leagueSelect.selectedIndex].text : '_______________________';
+      
+      const teamSelect = document.getElementById('teamSelect');
+      const selectedTeam = teamSelect.options[teamSelect.selectedIndex] ? teamSelect.options[teamSelect.selectedIndex].value : '_______________________';
+
+      const emergencyContact = document.getElementById('emergencyContactName').value.trim() || '_______________________';
+      const emergencyPhone = document.getElementById('emergencyPhone').value.trim() || '_______________________';
 
       let title = "";
       let bodyContent = "";
 
       if (tipo === 'adulto') {
-        title = "CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD - CATEGORÍA ADULTOS";
+        title = "CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD - ADULTOS";
         bodyContent = `
-          <div style="font-family: Arial, sans-serif; padding: 30px; color: #000; line-height: 1.5; font-size: 12px;">
-            <h3 style="text-align: center; margin-bottom: 5px;">CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD LEGAL, MÉDICA Y OPERATIVA</h3>
-            <p style="text-align: center; font-weight: bold; margin-top: 0; color: #0055ff;">CATEGORÍA ADULTOS | PLATAFORMA DIGITAL RETA PRO APP</p>
-            <hr/>
-            <p><strong>NOMBRE JUGADOR:</strong> ${fname} ${lname} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>CURP:</strong> ${curpVal}</p>
-            <p>Conste por el presente documento que, en pleno uso de mis facultades mentales y capacidad legal para obligarme, emito la presente CARTA RESPONSIVA, DECLARACIÓN DE APTITUD Y DESLINDE TOTAL DE RESPONSABILIDAD conforme a la legislación aplicable bajo las siguientes cláusulas:</p>
-            <ol style="margin-left: 20px; padding-left: 0;">
-              <li style="margin-bottom: 8px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE DE RETA PRO APP:</strong> Declaro que RETA PRO APP actúa ÚNICA Y EXCLUSIVAMENTE COMO PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE GESTIÓN DEPORTIVA. RETA PRO APP es ajena a la organización física, médica y logística de los partidos.</li>
-              <li style="margin-bottom: 8px;"><strong>ASUNCIÓN VOLUNTARIA DE RIESGO:</strong> Reconozco que la práctica del fútbol conlleva riesgos inherentes. Libero de toda responsabilidad legal al Comité Organizador, Directiva de la Liga, Cuerpo Arbitral y Propietarios de las instalaciones.</li>
-              <li style="margin-bottom: 8px;"><strong>DECLARACIÓN DE APTITUD FÍSICA:</strong> Declaro bajo protesta de decir verdad que me encuentro en estado óptimo de salud física, mental y cardiovascular.</li>
-              <li style="margin-bottom: 8px;"><strong>ATENCIÓN MÉDICA:</strong> Autorizo la atención médica de emergencia o traslado hospitalario, asumiendo los costos médicos derivados.</li>
+          <div style="font-family: Arial, sans-serif; padding: 25px; color: #000; line-height: 1.4; font-size: 11px;">
+            <h3 style="text-align: center; font-size: 14px; margin-bottom: 3px; font-weight: bold;">CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD LEGAL, MÉDICA Y OPERATIVA</h3>
+            <p style="text-align: center; font-weight: bold; margin-top: 0; color: #0055ff; font-size: 11px;">CATEGORÍA ADULTOS | PLATAFORMA DIGITAL RETA PRO APP & CONVOCATORIA DE EVENTOS DEPORTIVOS</p>
+            <hr style="border: 0.5px solid #aaa; margin-bottom: 12px;"/>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 11px;">
+              <tr>
+                <td style="padding: 3px;"><strong>NOMBRE JUGADOR:</strong> ${fullName}</td>
+                <td style="padding: 3px;"><strong>CURP:</strong> ${curpVal}</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px;"><strong>TELÉFONO:</strong> ${userPhone}</td>
+                <td style="padding: 3px;"><strong>CORREO:</strong> ${userEmail}</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px;"><strong>EQUIPO/CLUB:</strong> ${selectedTeam}</td>
+                <td style="padding: 3px;"><strong>TORNEO/LIGA:</strong> ${selectedLeague}</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px;"><strong>CONTACTO EMERGENCIA:</strong> ${emergencyContact}</td>
+                <td style="padding: 3px;"><strong>TEL. EMERGENCIA:</strong> ${emergencyPhone}</td>
+              </tr>
+            </table>
+
+            <p style="text-align: justify; margin-bottom: 10px;">
+              Conste por el presente documento que, en pleno uso de mis facultades mentales y capacidad legal para obligarme, manifestando mi voluntad libre de cualquier coacción, error, dolo, mala fe o violencia, emito la presente CARTA RESPONSIVA, DECLARACIÓN DE APTITUD Y DESLINDE TOTAL DE RESPONSABILIDAD conforme a la legislación civil y deportiva aplicable en los Estados Unidos Mexicanos, bajo las siguientes cláusulas:
+            </p>
+
+            <ol style="margin-left: 15px; padding-left: 0; text-align: justify;">
+              <li style="margin-bottom: 6px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE EXPRESO DE RETA PRO APP / RETA SPORTS LOGISTICS:</strong> Declaro y reconozco de manera expresa, tácita e irrevocable que la aplicación informática, marca y/o plataforma denominada RETA PRO APP (así como sus desarrolladores, operadores, administradores, directivos, empleados y empresas filiales o marcas comerciales como RETA Sports Logistics) actúa ÚNICA Y EXCLUSIVAMENTE COMO UN PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE ADMINISTRACIÓN Y GESTIÓN DE INFORMACIÓN DEPORTIVA (tales como registro de cédulas, consulta de horarios, resultados y estadísticas). Por consiguiente, manifiesto que RETA PRO APP es una entidad absolutamente ajena e independiente a la organización física, logística, médica, de seguridad y operativa del torneo o evento deportivo en el cual me inscribo. RETA PRO APP no ejerce ningún tipo de supervisión, patronaje, control de instalaciones, vigilancia ni decisión operativa sobre los partidos, por lo que deslindo de manera total, categórica y definitiva a RETA PRO APP de cualquier responsabilidad de carácter civil, penal, laboral, administrativa, médica o patrimonial que pudiera suscitarse con motivo del torneo.</li>
+              <li style="margin-bottom: 6px;"><strong>ASUNCIÓN VOLUNTARIA DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR, ÁRBITROS Y DELEGADOS:</strong> Reconozco expresamente que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto, tales como esguinces, fracturas, contusiones, incapacidades temporales o permanentes, e inclusive eventos catastróficos o el fallecimiento. Por ende, bajo la figura de asunción voluntaria del riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES DEL PARTIDO Y PROPIETARIOS O ADMINISTRADORES DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, enfermedad, daño patrimonial o eventualidad que pudiera sufrir antes, durante o después de las jornadas deportivas o traslados relacionados.</li>
+              <li style="margin-bottom: 6px;"><strong>DECLARACIÓN BAJO PROTESTA DE APTITUD FÍSICA Y SALUD:</strong> Declaro bajo protesta de decir verdad que me encuentro en estado óptimo de salud física, mental y cardiovascular para participar libremente en las actividades deportivas de alto rendimiento. Confirmo no padecer enfermedades infectocontagiosas, cardiovasculares, neurológicas ni secuelas de lesiones que pongan en riesgo mi integridad o la de los demás competidores. Asumo la responsabilidad total por la omisión u ocultamiento de información sobre padecimientos preexistentes.</li>
+              <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de sufrir algún accidente, traumatismo o emergencia médica durante el desarrollo del evento, autorizo expresamente al personal paramédico, médico o delegados asignados a brindarme los primeros auxilios o disponer mi traslado inmediato a una institución hospitalaria. Acepto que todos los costos médicos, hospitalarios, farmacéuticos y de traslado derivados de dicha atención serán cubiertos íntegramente por mi persona o, en su caso, por mi esquema de seguro de gastos médicos personal, deslindando a la organización y a RETA PRO APP de cualquier reclamación económica por dicho concepto.</li>
+              <li style="margin-bottom: 6px;"><strong>ACEPTACIÓN DE REGLAMENTOS, FAIR PLAY Y DISCIPLINA:</strong> Me comprometo a respetar acatadamente los reglamentos internos del torneo, el juego limpio (Fair Play), así como las decisiones y autoridad conferida al Cuerpo Arbitral y a los Delegados de Campo. Reconozco que conductas antideportivas, agresiones físicas o verbales podrán ser sancionadas disciplinaria y legalmente.</li>
+              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo que mis datos proporcionados sean tratados exclusivamente para fines de administración deportiva en la plataforma RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso informativo y promocional no lucrativo de mi imagen en fotografías o transmisiones digitales del evento.</li>
             </ol>
-            <br/><br/><br/>
-            <p style="text-align: center;">_________________________________________________<br/><strong>FIRMA Y CONFORMIDAD DEL JUGADOR ADULTO</strong><br/>CURP: ${curpVal}</p>
+
+            <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
+              <strong>DECLARACIÓN EXPRESA Y FIRMA DE CONFORMIDAD:</strong> He leído detenidamente, comprendido y aceptado en su totalidad el contenido y alcance legal de la presente Carta Responsiva y Deslinde de Responsabilidad. Entiendo que al firmar este documento renuncio expresamente a cualquier acción legal de reclamación contra el Comité Organizador, Árbitros, Delegados y la plataforma RETA PRO APP.
+            </p>
+
+            <br/>
+            <p style="text-align: center; margin-top: 20px;">
+              ____________________________________________________<br/>
+              <strong>FIRMA Y CONFORMIDAD DEL JUGADOR ADULTO</strong><br/>
+              Nombre: ${fullName}<br/>
+              CURP: ${curpVal}
+            </p>
+            <p style="text-align: center; font-size: 8px; color: #666; margin-top: 15px;">
+              Documento generado y administrado digitalmente a través de RETA PRO APP Sistema de Gestión Deportiva Digital.
+            </p>
           </div>
         `;
       } else {
         title = "CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD - MENORES DE EDAD";
         bodyContent = `
-          <div style="font-family: Arial, sans-serif; padding: 30px; color: #000; line-height: 1.5; font-size: 12px;">
-            <h3 style="text-align: center; margin-bottom: 5px;">CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD LEGAL Y MÉDICA</h3>
-            <p style="text-align: center; font-weight: bold; margin-top: 0; color: #0055ff;">AUTORIZACIÓN DE PADRE/MADRE/TUTOR LEGAL PARA MENORES DE EDAD | RETA PRO APP</p>
-            <hr/>
-            <p><strong>NOMBRE DEL MENOR:</strong> ${fname} ${lname} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>CURP DEL MENOR:</strong> ${curpVal}</p>
-            <p>Conste por el presente documento que yo, en mi calidad de Padre, Madre o Tutor Legal con patria potestad sobre el menor antes mencionado, otorgo AUTORIZACIÓN EXPRESA Y DESLINDE TOTAL DE RESPONSABILIDAD bajo las siguientes cláusulas:</p>
-            <ol style="margin-left: 20px; padding-left: 0;">
-              <li style="margin-bottom: 8px;"><strong>DESLINDE RETA PRO APP:</strong> Reconozco que RETA PRO APP opera únicamente como plataforma tecnológica de administración deportiva.</li>
-              <li style="margin-bottom: 8px;"><strong>AUTORIZACIÓN DE PARTICIPACIÓN Y ASUNCIÓN DE RIESGO:</strong> Autorizo la participación del menor asumiendo los riesgos inherentes a la práctica deportiva, liberando de responsabilidad al Comité Organizador, Árbitros y Liga.</li>
-              <li style="margin-bottom: 8px;"><strong>DECLARACIÓN DE SALUD:</strong> Confirmo que el menor se encuentra en perfecto estado de salud física y cardiovascular.</li>
-              <li style="margin-bottom: 8px;"><strong>DOCUMENTACIÓN:</strong> Adiciono copia fotostática de mi Identificación Oficial (INE) vigente para constancia legal.</li>
+          <div style="font-family: Arial, sans-serif; padding: 25px; color: #000; line-height: 1.4; font-size: 11px;">
+            <h3 style="text-align: center; font-size: 14px; margin-bottom: 3px; font-weight: bold;">CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD LEGAL, MÉDICA Y OPERATIVA</h3>
+            <p style="text-align: center; font-weight: bold; margin-top: 0; color: #0055ff; font-size: 11px;">AUTORIZACIÓN DE PADRE/MADRE/TUTOR LEGAL PARA MENORES DE EDAD | PLATAFORMA RETA PRO APP</p>
+            <hr style="border: 0.5px solid #aaa; margin-bottom: 12px;"/>
+
+            <h4 style="margin: 5px 0; font-size: 11px; background: #eee; padding: 3px;">1. DATOS DEL PADRE, MADRE O TUTOR LEGAL (QUIEN AUTORIZA Y DESLINDA)</h4>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 11px;">
+              <tr>
+                <td style="padding: 3px;"><strong>NOMBRE DEL TUTOR:</strong> ___________________________________</td>
+                <td style="padding: 3px;"><strong>PARENTESCO / CALIDAD:</strong> __________________</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px;"><strong>TELÉFONO CONTACTO:</strong> ___________________________________</td>
+                <td style="padding: 3px;"><strong>CURP:</strong> ___________________________________</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px;"><strong>INE/ID:</strong> ___________________________________</td>
+                <td style="padding: 3px;"><strong>CORREO:</strong> ___________________________________</td>
+              </tr>
+            </table>
+
+            <h4 style="margin: 5px 0; font-size: 11px; background: #eee; padding: 3px;">2. DATOS DEL JUGADOR MENOR DE EDAD (PARTICIPANTE)</h4>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 11px;">
+              <tr>
+                <td style="padding: 3px;"><strong>NOMBRE DEL MENOR:</strong> ${fullName}</td>
+                <td style="padding: 3px;"><strong>CURP:</strong> ${curpVal}</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px;"><strong>FECHA NACIMIENTO:</strong> __________________</td>
+                <td style="padding: 3px;"><strong>EDAD:</strong> ${userAge} años</td>
+              </tr>
+              <tr>
+                <td style="padding: 3px;"><strong>TORNEO / LIGA:</strong> ${selectedLeague}</td>
+                <td style="padding: 3px;"><strong>EQUIPO / CLUB:</strong> ${selectedTeam}</td>
+              </tr>
+            </table>
+
+            <p style="text-align: justify; margin-bottom: 10px;">
+              Conste por el presente documento que, yo, C. __________________________________________________, manifestando bajo protesta de decir verdad ser padre, madre o tutor legal con patria potestad y representación jurídica sobre el menor arriba mencionado, en pleno uso de mis facultades mentales y legales, otorgo AUTORIZACIÓN EXPRESA, DECLARACIÓN DE APTITUD Y DESLINDE TOTAL DE RESPONSABILIDAD conforme a la legislación civil y de protección de la niñez aplicable en los Estados Unidos Mexicanos, bajo las siguientes cláusulas:
+            </p>
+
+            <ol style="margin-left: 15px; padding-left: 0; text-align: justify;">
+              <li style="margin-bottom: 6px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE EXPRESO DE RETA PRO APP / RETA SPORTS LOGISTICS:</strong> Declaro y reconozco de manera expresa e irrevocable que la plataforma digital y/o aplicación informática denominada RETA PRO APP (así como sus desarrolladores, operadores, administradores, directivos, empleados y empresas filiales o marcas comerciales como RETA Sports Logistics) actúa ÚNICA Y EXCLUSIVAMENTE COMO UN PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE ADMINISTRACIÓN Y GESTIÓN DE INFORMACIÓN DEPORTIVA (tales como registro de cédulas, consulta de horarios, resultados y estadísticas). Por lo tanto, manifiesto que RETA PRO APP es una entidad absolutamente ajena e independiente a la organización física, logística, médica, de seguridad y operativa del torneo o evento deportivo en el cual inscribo al menor. RETA PRO APP no ejerce supervisión, patronaje, control de instalaciones ni decisión operativa sobre los partidos, por lo que deslindo de manera total, categórica y definitiva a RETA PRO APP de cualquier responsabilidad civil, penal, administrativa, médica o patrimonial que pudiera suscitarse.</li>
+              <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE PARTICIPACIÓN, ASUNCIÓN DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR Y ÁRBITROS:</strong> Autorizo voluntariamente la participación del menor bajo mi tutela en las jornadas deportivas del torneo. Reconozco que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto (tales como esguinces, fracturas, contusiones o eventualidades mayores). Por ende, bajo la figura de asunción de riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES Y PROPIETARIOS DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, daño patrimonial o eventualidad que sufra el menor antes, durante o después de los partidos o traslados.</li>
+              <li style="margin-bottom: 6px;"><strong>DECLARACIÓN DE APTITUD FÍSICA Y SALUD DEL MENOR:</strong> Declaro bajo protesta de decir verdad que el menor se encuentra en estado óptimo de salud física, mental y cardiovascular para la práctica de deporte competitivo. Confirmo que no padece padecimientos preexistentes, afecciones cardíacas, neurológicas ni secuelas de lesiones no consolidadas. Asumo la responsabilidad legal absoluta en caso de omisión u ocultamiento de información médica del menor.</li>
+              <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de emergencia médica o traumatismo del menor durante el evento, autorizo expresamente al personal médico o delegados a brindarle primeros auxilios o trasladarlo a un centro hospitalario. Acepto que los gastos médicos, farmacéuticos y hospitalarios serán cubiertos en su totalidad por mi persona o por mi esquema de seguro médico, deslindando a la organización y a RETA PRO APP de cualquier responsabilidad económica.</li>
+              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines estrictamente administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
             </ol>
-            <br/><br/><br/>
-            <p style="text-align: center;">_________________________________________________<br/><strong>FIRMA DE CONFORMIDAD DEL PADRE, MADRE O TUTOR LEGAL</strong><br/>Nombre del Tutor: _________________________________________<br/>CURP del Tutor: _________________________________________</p>
+
+            <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
+              <strong>DECLARACIÓN EXPRESA Y FIRMA DE CONFORMIDAD DEL TUTOR LEGAL:</strong> He leído, comprendido y aceptado íntegramente la presente Carta Responsiva para Menores de Edad. Entiendo que al firmar renuncio a toda acción legal de reclamación contra el Comité Organizador, Árbitros, Delegados y la plataforma RETA PRO APP por incidentes derivados de la actividad deportiva del menor.
+            </p>
+
+            <br/>
+            <p style="text-align: center; margin-top: 20px;">
+              ____________________________________________________<br/>
+              <strong>FIRMA DE CONFORMIDAD DEL PADRE, MADRE O TUTOR LEGAL</strong><br/>
+              Nombre Completo Tutor: ___________________________________<br/>
+              CURP del Tutor: ___________________________________<br/>
+              Nombre del Menor Representado: ${fullName}
+            </p>
+            <p style="text-align: center; font-size: 8px; color: #666; margin-top: 15px;">
+              Documento generado y administrado digitalmente a través de RETA PRO APP - Sistema de Gestión Deportiva Digital
+            </p>
           </div>
         `;
       }
 
       const printWindow = window.open('', '_blank');
-      printWindow.document.write(`<html><head><title>${title}</title></head><body>${bodyContent}</body></html>`);
+      printWindow.document.write(`<html><head><title>${title}</title></head><body style="margin:0; padding:0;">${bodyContent}</body></html>`);
       printWindow.document.close();
       printWindow.focus();
       setTimeout(() => {
         printWindow.print();
-      }, 250);
+      }, 300);
     }
 
     function onStateChange(selectedState) {
@@ -897,7 +997,7 @@
           const methodIneInput = document.getElementById('methodIne');
           if (methodIneInput) methodIneInput.disabled = true;
 
-          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nNo es posible completar el registro mediante el escaneo de INE. Se ha activado automáticamente la modalidad "Menor de Edad", por lo que deberás descargar y adjuntar la Carta Responsiva oficial en PDF de Tutor y la INE del Padre o Tutor.`);
+          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nNo es posible completar el registro mediante el escaneo de INE. Se ha activado automáticamente la modalidad "Menor de Edad", por lo que deberás descargar y adjuntar la Carta Responsiva oficial de Tutor y la INE del Padre o Tutor.`);
         } else {
           const methodIneInput = document.getElementById('methodIne');
           if (methodIneInput) methodIneInput.disabled = false;
