@@ -237,7 +237,7 @@
               </label>
             </div>
 
-            <!-- SECCIÓN DE INE / OCR ADULTO CON PDF VINCULADO -->
+            <!-- SECCIÓN DE INE / OCR ADULTO CON GENERACIÓN DINÁMICA DE PDF -->
             <div id="ineOcrSection" class="ocr-dropzone-container">
               <div class="ocr-dropzone" id="ineDropzone" onclick="document.getElementById('ineFileInput').click()">
                 <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
@@ -253,19 +253,19 @@
                   <label for="adultResponsivaFile"><i class="fa-solid fa-file-pdf"></i> Carta Deslinde de Responsabilidad de Adulto (*Requerido)</label>
                   <input type="file" id="adultResponsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
                   <small class="help-text" style="display:block; margin-top:6px;">
-                    Si aún no has firmado tu formato de deslinde, <a href="carta_responsiva_adulto_reta_pro.pdf" download="carta_responsiva_adulto_reta_pro.pdf" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="playBeepSound()">descarga la Carta Responsiva de Adulto (PDF) aquí</a>.
+                    Si aún no has firmado tu formato de deslinde, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaPDF('adulto', event)">descarga la Carta Responsiva de Adulto (PDF) aquí</a>.
                   </small>
                 </div>
               </div>
             </div>
 
-            <!-- SECCIÓN PARA MENORES DE EDAD CON PDF VINCULADO -->
+            <!-- SECCIÓN PARA MENORES DE EDAD CON GENERACIÓN DINÁMICA DE PDF -->
             <div id="minorSection" class="minor-upload-section" style="display: none; background: rgba(255, 71, 87, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed #ff4757; margin-bottom: 20px;">
               <div class="input-group" style="margin-bottom: 15px;">
                 <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Carta Responsiva Legal de Tutor y Acta de Nacimiento (*Requerido)</label>
                 <input type="file" id="responsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
                 <small class="help-text" style="display:block; margin-top:6px;">
-                  Si no cuentas con el formato oficial, <a href="carta_responsiva_menor_reta_pro.pdf" download="carta_responsiva_menor_reta_pro.pdf" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="playBeepSound()">descarga la Carta Responsiva RETA Menor de Edad (PDF) aquí</a>.
+                  Si no cuentas con el formato oficial, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaPDF('menor', event)">descarga la Carta Responsiva RETA Menor de Edad (PDF) aquí</a>.
                 </small>
               </div>
 
@@ -741,6 +741,67 @@
           ipContainer.style.display = 'block';
         }
       } catch (e) {}
+    }
+
+    /* FUNCIÓN AUTÓNOMA DE GENERACIÓN Y DESCARGA DIRECTA A PDF EN CLIENTE */
+    function downloadResponsivaPDF(tipo, e) {
+      if (e) e.preventDefault();
+      playBeepSound();
+
+      const fname = document.getElementById('firstName').value.trim() || '___________________';
+      const lname = document.getElementById('lastName').value.trim() || '___________________';
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase() || '___________________';
+
+      let title = "";
+      let bodyContent = "";
+
+      if (tipo === 'adulto') {
+        title = "CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD - CATEGORÍA ADULTOS";
+        bodyContent = `
+          <div style="font-family: Arial, sans-serif; padding: 30px; color: #000; line-height: 1.5; font-size: 12px;">
+            <h3 style="text-align: center; margin-bottom: 5px;">CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD LEGAL, MÉDICA Y OPERATIVA</h3>
+            <p style="text-align: center; font-weight: bold; margin-top: 0; color: #0055ff;">CATEGORÍA ADULTOS | PLATAFORMA DIGITAL RETA PRO APP</p>
+            <hr/>
+            <p><strong>NOMBRE JUGADOR:</strong> ${fname} ${lname} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>CURP:</strong> ${curpVal}</p>
+            <p>Conste por el presente documento que, en pleno uso de mis facultades mentales y capacidad legal para obligarme, emito la presente CARTA RESPONSIVA, DECLARACIÓN DE APTITUD Y DESLINDE TOTAL DE RESPONSABILIDAD conforme a la legislación aplicable bajo las siguientes cláusulas:</p>
+            <ol style="margin-left: 20px; padding-left: 0;">
+              <li style="margin-bottom: 8px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE DE RETA PRO APP:</strong> Declaro que RETA PRO APP actúa ÚNICA Y EXCLUSIVAMENTE COMO PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE GESTIÓN DEPORTIVA. RETA PRO APP es ajena a la organización física, médica y logística de los partidos.</li>
+              <li style="margin-bottom: 8px;"><strong>ASUNCIÓN VOLUNTARIA DE RIESGO:</strong> Reconozco que la práctica del fútbol conlleva riesgos inherentes. Libero de toda responsabilidad legal al Comité Organizador, Directiva de la Liga, Cuerpo Arbitral y Propietarios de las instalaciones.</li>
+              <li style="margin-bottom: 8px;"><strong>DECLARACIÓN DE APTITUD FÍSICA:</strong> Declaro bajo protesta de decir verdad que me encuentro en estado óptimo de salud física, mental y cardiovascular.</li>
+              <li style="margin-bottom: 8px;"><strong>ATENCIÓN MÉDICA:</strong> Autorizo la atención médica de emergencia o traslado hospitalario, asumiendo los costos médicos derivados.</li>
+            </ol>
+            <br/><br/><br/>
+            <p style="text-align: center;">_________________________________________________<br/><strong>FIRMA Y CONFORMIDAD DEL JUGADOR ADULTO</strong><br/>CURP: ${curpVal}</p>
+          </div>
+        `;
+      } else {
+        title = "CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD - MENORES DE EDAD";
+        bodyContent = `
+          <div style="font-family: Arial, sans-serif; padding: 30px; color: #000; line-height: 1.5; font-size: 12px;">
+            <h3 style="text-align: center; margin-bottom: 5px;">CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD LEGAL Y MÉDICA</h3>
+            <p style="text-align: center; font-weight: bold; margin-top: 0; color: #0055ff;">AUTORIZACIÓN DE PADRE/MADRE/TUTOR LEGAL PARA MENORES DE EDAD | RETA PRO APP</p>
+            <hr/>
+            <p><strong>NOMBRE DEL MENOR:</strong> ${fname} ${lname} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>CURP DEL MENOR:</strong> ${curpVal}</p>
+            <p>Conste por el presente documento que yo, en mi calidad de Padre, Madre o Tutor Legal con patria potestad sobre el menor antes mencionado, otorgo AUTORIZACIÓN EXPRESA Y DESLINDE TOTAL DE RESPONSABILIDAD bajo las siguientes cláusulas:</p>
+            <ol style="margin-left: 20px; padding-left: 0;">
+              <li style="margin-bottom: 8px;"><strong>DESLINDE RETA PRO APP:</strong> Reconozco que RETA PRO APP opera únicamente como plataforma tecnológica de administración deportiva.</li>
+              <li style="margin-bottom: 8px;"><strong>AUTORIZACIÓN DE PARTICIPACIÓN Y ASUNCIÓN DE RIESGO:</strong> Autorizo la participación del menor asumiendo los riesgos inherentes a la práctica deportiva, liberando de responsabilidad al Comité Organizador, Árbitros y Liga.</li>
+              <li style="margin-bottom: 8px;"><strong>DECLARACIÓN DE SALUD:</strong> Confirmo que el menor se encuentra en perfecto estado de salud física y cardiovascular.</li>
+              <li style="margin-bottom: 8px;"><strong>DOCUMENTACIÓN:</strong> Adiciono copia fotostática de mi Identificación Oficial (INE) vigente para constancia legal.</li>
+            </ol>
+            <br/><br/><br/>
+            <p style="text-align: center;">_________________________________________________<br/><strong>FIRMA DE CONFORMIDAD DEL PADRE, MADRE O TUTOR LEGAL</strong><br/>Nombre del Tutor: _________________________________________<br/>CURP del Tutor: _________________________________________</p>
+          </div>
+        `;
+      }
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`<html><head><title>${title}</title></head><body>${bodyContent}</body></html>`);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
     }
 
     function onStateChange(selectedState) {
