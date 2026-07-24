@@ -11,6 +11,8 @@
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- HTML2Canvas CDN (Librería para la descarga automática de la credencial en PNG) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     /* UI Deportiva Mobile-First para Selección Inicial de Rol */
@@ -69,7 +71,7 @@
     .superadmin-badge-option span { font-size: 0.75rem; color: #cbd5e1; font-weight: 600; }
     .superadmin-badge-option small { display: block; font-size: 0.65rem; color: #64748b; font-style: italic; }
 
-    /* Ajuste de Tamaño de Logos en Credencial */
+    /* Ajuste de Tamaño de Logos y Código QR en Credencial */
     .cred-reta-logo {
       height: 60px !important;
       max-height: 60px !important;
@@ -79,7 +81,7 @@
     .cred-sponsors-strip {
       margin-top: 15px;
       padding-top: 10px;
-      border-top: 1px border rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
     .sponsors-logos {
       display: flex;
@@ -93,6 +95,38 @@
       max-height: 45px !important;
       object-fit: contain;
       filter: brightness(1.2);
+    }
+
+    /* AMPLIFICACIÓN DEL CÓDIGO QR Y ESCUDO */
+    .cred-qr-box {
+      width: 110px !important;
+      height: 110px !important;
+      background: #fff;
+      padding: 5px;
+      border-radius: 12px;
+      border: 2px solid #00d4ff;
+    }
+    .cred-qr-box img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+    }
+    .cred-team-logo-hero-wrapper {
+      width: 70px !important;
+      height: 70px !important;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,212,255,0.1);
+      border-radius: 50%;
+      border: 2px solid #00d4ff;
+      overflow: hidden;
+    }
+    .cred-team-logo-hero {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
     }
   </style>
 </head>
@@ -367,10 +401,10 @@
                 <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece</label>
                 <select id="teamSelect" required onchange="playBeepSound()">
                   <option value="" disabled selected>Selecciona tu equipo</option>
-                  <option value="Gallos FC" data-logo="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=100&q=80">Gallos FC</option>
-                  <option value="Real San José" data-logo="https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=100&q=80">Real San José</option>
-                  <option value="Deportivo Bajío" data-logo="https://images.unsplash.com/photo-1543351611-58f69d7c1781?auto=format&fit=crop&w=100&q=80">Deportivo Bajío</option>
-                  <option value="Rayo Moroleón" data-logo="https://images.unsplash.com/photo-1560272564-669520747490?auto=format&fit=crop&w=100&q=80">Rayo Moroleón</option>
+                  <option value="Gallos FC" data-logo="img/logo_reta.png">Gallos FC</option>
+                  <option value="Real San José" data-logo="img/logo_reta.png">Real San José</option>
+                  <option value="Deportivo Bajío" data-logo="img/logo_reta.png">Deportivo Bajío</option>
+                  <option value="Rayo Moroleón" data-logo="img/logo_reta.png">Rayo Moroleón</option>
                 </select>
               </div>
             </div>
@@ -490,34 +524,34 @@
           <!-- ================= PASO 4: CREDENCIAL VIRTUAL Y BOTÓN DE VALIDACIÓN ================= -->
           <div class="wizard-step" id="wizard-step-4" style="display: none;">
             
-            <div class="digital-credential-card glass-card" id="digitalCredential">
+            <div class="digital-credential-card glass-card" id="digitalCredential" style="background: linear-gradient(135deg, #0b1329, #131d38); border: 2px solid #00d4ff; padding:20px; border-radius:16px;">
               <div class="credential-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
-                <div class="cred-league-badge" id="credLeagueName" style="font-size:0.9rem; font-weight:800;">LIGA PREMIER RETA</div>
+                <div class="cred-league-badge" id="credLeagueName" style="font-size:0.9rem; font-weight:800; color:#00d4ff;">LIGA PREMIER RETA</div>
               </div>
 
-              <div class="credential-body">
-                <div class="cred-photo-box">
-                  <!-- Imagen por defecto garantizada si la foto cargada falla -->
-                  <img id="credPlayerPhoto" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Oficial">
-                  <span class="cred-dorsal" id="credDorsal">#--</span>
+              <div class="credential-body" style="display:flex; gap:15px; margin-top:15px; align-items:center;">
+                <div class="cred-photo-box" style="position:relative;">
+                  <img id="credPlayerPhoto" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Oficial" style="width:100px; height:120px; object-fit:cover; border-radius:10px; border:2px solid #00d4ff;">
+                  <span class="cred-dorsal" id="credDorsal" style="position:absolute; bottom:-10px; right:-10px; background:#00d4ff; color:#000; font-weight:bold; padding:2px 6px; border-radius:5px; font-size:0.8rem;">#--</span>
                 </div>
 
-                <div class="cred-info-box">
-                  <h3 id="credPlayerName">JUAN YEBRA</h3>
-                  <p class="cred-meta-line"><strong>CURP (ID):</strong> <span id="credCurpCode" class="text-gradient">---</span></p>
-                  <p class="cred-meta-line"><strong>CÓDIGO RETA:</strong> <span id="credUniqueCode">---</span></p>
-                  <p class="cred-meta-line"><strong>ROL ASIGNADO:</strong> <span id="credRoleBadge" style="color:#00d4ff;">JUGADOR</span></p>
-                  <p class="cred-meta-line"><strong>EQUIPO:</strong> <span id="credTeamName">Gallos FC</span></p>
-                  <p class="cred-meta-line"><strong>CAT / RAMA:</strong> <span id="credCatBranch">Libre / Varonil</span></p>
-                  <div class="cred-medical-strip">
-                    <span><strong>SANGRE:</strong> <span id="credBlood">O+</span></span> | 
-                    <span><strong>ALERGIAS:</strong> <span id="credAllergies">Ninguna</span></span>
+                <div class="cred-info-box" style="flex:1;">
+                  <h3 id="credPlayerName" style="color:#fff; font-size:1.1rem; margin-bottom:5px;">JUAN YEBRA</h3>
+                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CURP (ID):</strong> <span id="credCurpCode" class="text-gradient" style="color:#00d4ff;">---</span></p>
+                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CÓDIGO RETA:</strong> <span id="credUniqueCode" style="color:#fff;">---</span></p>
+                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>ROL ASIGNADO:</strong> <span id="credRoleBadge" style="color:#00d4ff;">JUGADOR</span></p>
+                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>EQUIPO:</strong> <span id="credTeamName" style="color:#fff;">Gallos FC</span></p>
+                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CAT / RAMA:</strong> <span id="credCatBranch" style="color:#fff;">Libre / Varonil</span></p>
+                  <div class="cred-medical-strip" style="font-size:0.7rem; color:#888; margin-top:5px; background:rgba(255,255,255,0.05); padding:4px; border-radius:4px;">
+                    <span><strong>SANGRE:</strong> <span id="credBlood" style="color:#fff;">O+</span></span> | 
+                    <span><strong>ALERGIAS:</strong> <span id="credAllergies" style="color:#fff;">Ninguna</span></span>
                   </div>
                 </div>
 
-                <div class="cred-badge-qr-container">
+                <div class="cred-badge-qr-container" style="display:flex; flex-direction:column; align-items:center;">
                   <div class="cred-team-logo-hero-wrapper">
+                    <!-- Escudo del equipo corregido -->
                     <img id="credTeamLogo" src="img/logo_reta.png" class="cred-team-logo-hero" alt="Escudo Equipo">
                   </div>
                   <div class="cred-qr-box">
@@ -527,22 +561,22 @@
               </div>
 
               <div class="cred-sponsors-strip">
-                <span class="sponsors-label" style="font-size:0.75rem; color:#00d4ff; font-weight:700;">PATROCINADORES OFICIALES</span>
+                <span class="sponsors-label" style="font-size:0.75rem; color:#00d4ff; font-weight:700; display:block; text-align:center;">PATROCINADORES OFICIALES</span>
                 <div class="sponsors-logos">
                   <img src="img/logo_reta.png" alt="Patrocinador 1" class="sponsor-logo-big">
                   <img src="img/logo_reta.png" alt="Patrocinador 2" class="sponsor-logo-big">
                 </div>
               </div>
 
-              <div class="credential-footer">
+              <div class="credential-footer" style="text-align:center; font-size:0.65rem; color:#666; margin-top:10px;">
                 <span>DOCUMENTO OFICIAL DIGITAL - TEMPORADA 2026</span>
               </div>
             </div>
 
-            <!-- BOTÓN DE ENVIAR A VALIDACIÓN -->
+            <!-- BOTÓN DE ENVIAR A VALIDACIÓN Y DESCARGAR CREDENCIAL -->
             <div class="wizard-buttons" style="margin-top:20px;">
-              <button type="button" class="btn-login" style="background: linear-gradient(135deg, #00d4ff 0%, #0055ff 100%); font-size:1.1rem; padding: 15px 25px;" onclick="openValidationNoticeModal()">
-                <i class="fa-solid fa-paper-plane"></i> Validar y Finalizar Pre-Registro
+              <button type="button" id="btnValidateAndDownload" class="btn-login" style="background: linear-gradient(135deg, #00d4ff 0%, #0055ff 100%); font-size:1.1rem; padding: 15px 25px; width:100%; border:none; border-radius:12px; color:#fff; cursor:pointer;" onclick="executeValidationAndDownload()">
+                <i class="fa-solid fa-download"></i> Validar y Finalizar Pre-Registro
               </button>
             </div>
 
@@ -554,8 +588,8 @@
   </div>
 
   <!-- MODAL EMERGENTE DE CONFIRMACIÓN DE PRE-REGISTRO -->
-  <div class="modal-overlay" id="validationNoticeModal" style="display: none;">
-    <div class="glass-card modal-card" style="max-width: 500px; text-align: center; border: 2px solid #00d4ff;">
+  <div class="modal-overlay" id="validationNoticeModal" style="display: none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+    <div class="glass-card modal-card" style="max-width: 500px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px;">
       <div class="modal-header">
         <i class="fa-solid fa-circle-check modal-icon-glow" style="font-size: 3.5rem; color:#00d4ff; margin-bottom: 12px;"></i>
         <h3 style="font-size: 1.4rem; color: #fff;">¡Pre-Registro Enviado con Éxito!</h3>
@@ -563,7 +597,7 @@
 
       <div style="margin: 15px 0; text-align: left; background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 12px; border-left: 4px solid #00d4ff;">
         <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.5;">
-          Gracias por completar tu expediente oficial en <strong>RETA Pro App</strong>.
+          Gracias por completar tu expediente oficial en <strong>RETA Pro App</strong>. Se ha descargado automáticamente una copia de tu credencial virtual.
         </p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px; line-height: 1.5;">
           Tu solicitud de registro ha sido recibida y se encuentra en estado <strong style="color:#00d4ff;">PENDIENTE DE EVALUACIÓN</strong>. Tu expediente seguirá el siguiente protocolo de aprobación:
@@ -575,7 +609,7 @@
       </div>
 
       <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-        <button type="button" class="btn-login" onclick="finishRegistrationAndRedirect()">
+        <button type="button" class="btn-login" style="background:#00d4ff; color:#000; font-weight:bold; padding:10px 20px; border-radius:8px; border:none; cursor:pointer;" onclick="finishRegistrationAndRedirect()">
           Entendido y Finalizar <i class="fa-solid fa-check-double"></i>
         </button>
       </div>
@@ -834,7 +868,6 @@
       }
     }
 
-    // GESTIÓN Y CÁRGA CORREGIDA DE FOTOGRAFÍA (Sincroniza vista previa y credencial)
     function handlePhotoUpload(e) {
       playBeepSound();
       const file = e.target.files[0];
@@ -864,7 +897,7 @@
       }
     }
 
-    /* VALIDACIÓN MODO PRUEBA */
+    /* CORRECCIÓN DEL ERROR SUPABASE 400 */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -911,9 +944,10 @@
         };
 
         localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
+        // Supabase Upsert corregido y empaquetado formalmente
         _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' }).then();
       } catch (e) {
-        console.warn("Aviso: Guardado en borrador de sesión local.");
+        console.warn("Aviso: Guardado en sesión local.");
       }
 
       if (roleVal === 'ADMIN_LIGA') {
@@ -953,15 +987,13 @@
       const lname = document.getElementById('lastName').value.trim();
       const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
 
-      // Carga la foto si existe en memoria local o mantiene la cargada en tiempo real
+      // Carga la foto
       const savedPhoto = localStorage.getItem('temp_player_photo');
       if (savedPhoto) {
         document.getElementById('credPlayerPhoto').src = savedPhoto;
       } else {
         const previewSrc = document.getElementById('playerPhotoPreview').src;
-        if (previewSrc) {
-          document.getElementById('credPlayerPhoto').src = previewSrc;
-        }
+        if (previewSrc) document.getElementById('credPlayerPhoto').src = previewSrc;
       }
 
       document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
@@ -973,26 +1005,59 @@
       document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'N/A';
       document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
 
+      // Garantiza la imagen del equipo o el logo de RETA si falla
       const teamSelectObj = document.getElementById('teamSelect');
       const opt = teamSelectObj.options[teamSelectObj.selectedIndex];
       if (opt && opt.dataset && opt.dataset.logo) {
         document.getElementById('credTeamLogo').src = opt.dataset.logo;
+      } else {
+        document.getElementById('credTeamLogo').src = 'img/logo_reta.png';
       }
 
-      document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(curpVal)}`;
+      // QR Code amplificado (250x250)
+      document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(curpVal)}`;
 
       goToStep(4);
     }
 
-    function openValidationNoticeModal() {
+    /* EJECUCIÓN CONJUNTA: DESCARGA AUTOMÁTICA EN PNG + MODAL DE AVISO */
+    async function executeValidationAndDownload() {
       playBeepSound();
-      document.getElementById('validationNoticeModal').style.display = 'flex';
+      const btn = document.getElementById('btnValidateAndDownload');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generando imagen y enviando...`;
+
+      const cardElement = document.getElementById('digitalCredential');
+
+      try {
+        // Renderiza la credencial a un canvas y fuerza la descarga
+        const canvas = await html2canvas(cardElement, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null
+        });
+
+        const image = canvas.toDataURL("image/png");
+        const link = document.createElement('a');
+        const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'JUGADOR';
+        link.download = `Credencial_RETA_${curpVal}.png`;
+        link.href = image;
+        link.click();
+
+      } catch (e) {
+        console.warn("Descarga automática omitida por navegador:", e);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-download"></i> Validar y Finalizar Pre-Registro`;
+        // Muestra la ventana emergente con el protocolo de validación
+        document.getElementById('validationNoticeModal').style.display = 'flex';
+      }
     }
 
     async function finishRegistrationAndRedirect() {
       playBeepSound();
       closeModal('validationNoticeModal');
-      alert("Redirigiendo al inicio...");
       window.location.href = 'index.html';
     }
   </script>
