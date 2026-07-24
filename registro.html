@@ -247,12 +247,23 @@
               <div id="ocrStatus" class="ocr-status-message"></div>
             </div>
 
-            <div id="minorSection" class="minor-upload-section" style="display: none;">
-              <div class="input-group">
-                <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Adjuntar Carta Responsiva Firmada por Padres/Tutores (*Requerido)</label>
+            <!-- MODIFICACIÓN PARA MENORES DE EDAD CON DESCARGA DE FORMATO E INE DE TUTOR -->
+            <div id="minorSection" class="minor-upload-section" style="display: none; background: rgba(0, 212, 255, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed #00d4ff; margin-bottom: 20px;">
+              
+              <div class="input-group" style="margin-bottom: 15px;">
+                <label for="responsivaFile"><i class="fa-solid fa-file-pdf"></i> Adjuntar Carta Responsiva y/o Acta de Nacimiento (*Requerido)</label>
                 <input type="file" id="responsivaFile" accept="image/*,.pdf" onchange="playBeepSound()">
-                <small class="help-text">Si no cuentas con el formato, <a href="#" class="highlight-link">descarga la Carta Responsiva RETA aquí</a>.</small>
+                <small class="help-text" style="display:block; margin-top:6px;">
+                  Si no cuentas con el formato, <a href="#" class="highlight-link" style="color:#00d4ff; font-weight:bold; text-decoration:underline;" onclick="downloadResponsivaTemplate(event)">descarga la Carta Responsiva RETA aquí</a>.
+                </small>
               </div>
+
+              <div class="input-group">
+                <label for="tutorIneFile"><i class="fa-solid fa-id-card"></i> Adjuntar INE Vigente del Padre o Tutor que Firma (*Requerido)</label>
+                <input type="file" id="tutorIneFile" accept="image/*,.pdf" onchange="playBeepSound()">
+                <small style="color:#94a3b8;">Sube la fotografía o PDF del INE del adulto responsable.</small>
+              </div>
+
             </div>
 
             <!-- Fotografía -->
@@ -722,6 +733,47 @@
       } catch (e) {}
     }
 
+    /* GENERADOR Y DESCARGADOR AUTOMÁTICO DE LA CARTA RESPONSIVA */
+    function downloadResponsivaTemplate(e) {
+      if (e) e.preventDefault();
+      playBeepSound();
+
+      const fname = document.getElementById('firstName').value.trim() || '___________________';
+      const lname = document.getElementById('lastName').value.trim() || '___________________';
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase() || '___________________';
+
+      const content = `====================================================================
+CARTA RESPONSIVA Y AUTORIZACIÓN PARA JUGADOR MENOR DE EDAD
+PLATAFORMA RETA PRO APP - TEMPORADA 2026
+====================================================================
+
+Por medio de la presente, yo C. __________________________________________________,
+en mi calidad de Madre / Padre / Tutor Legal del menor:
+
+NOMBRE COMPLETO DEL MENOR: ${fname} ${lname}
+CURP DEL MENOR: ${curpVal}
+
+DECLARO BAJO PROTESTA DE DECIR VERDAD:
+1. Autorizo expresamente la inscripción y participación activa del menor antes mencionado en las ligas, torneos y competencias administradas bajo la plataforma RETA.
+2. Manifiesto que el menor cuenta con la condición física, médica y salud óptima para la práctica de disciplina deportiva de alto rendimiento.
+3. Eximo de toda responsabilidad civil, penal o médica a la organización RETA Pro App, a la administración de la Liga y a sus representantes por lesiones o eventualidades inherentes a la práctica deportiva.
+4. Adjunto copia fotostática de mi Identificación Oficial (INE/Pasaporte) vigente para constancia legal.
+
+Lugar y Fecha: ______________________, a _____ de __________________ de 2026.
+
+
+________________________________________
+FIRMA DEL PADRE / TUTOR LEGAL
+Teléfono de Contacto del Tutor: ____________________
+`;
+
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Carta_Responsiva_RETA_${fname}_${lname}.txt`;
+      link.click();
+    }
+
     function onStateChange(selectedState) {
       playBeepSound();
       const citySelect = document.getElementById('cityRes');
@@ -766,7 +818,6 @@
       }
     }
 
-    /* 1. DETECCIÓN AUTOMÁTICA Y MENSAJE EMERGENTE PARA MENORES DE EDAD */
     function processCurpAutoData(curpRaw) {
       const curp = curpRaw.toUpperCase().trim();
       const statusText = document.getElementById('curpStatusText');
@@ -810,13 +861,13 @@
         const stateCode = curp.substring(11, 13);
         document.getElementById('stateBirth').value = ENTIDADES_CURP[stateCode] || 'Entidad Desconocida';
 
-        // ================= CANDADO OBLIGATORIO Y MENSAJE EMERGENTE MENOR =================
+        // DETECCIÓN Y CAMBIO OBLIGATORIO DE MENOR DE EDAD
         if (!isNaN(age) && age < 18) {
           toggleIdMethod('minor');
           const methodIneInput = document.getElementById('methodIne');
           if (methodIneInput) methodIneInput.disabled = true;
 
-          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nNo es posible completar el registro mediante el escaneo de INE. Se ha activado automáticamente la modalidad "Menor de Edad", por lo que deberás adjuntar tu Carta Responsiva firmada por padres o tutores y tu Acta de Nacimiento para solicitar tu registro.`);
+          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nNo es posible completar el registro mediante el escaneo de INE. Se ha activado automáticamente la modalidad "Menor de Edad", por lo que deberás descargar y adjuntar tu Carta Responsiva firmada y el INE de tu Padre/Tutor.`);
         } else {
           const methodIneInput = document.getElementById('methodIne');
           if (methodIneInput) methodIneInput.disabled = false;
@@ -917,7 +968,7 @@
       }
     }
 
-    /* 2. VALIDACIÓN DEL PASO 1 CON BLOQUEO OBLIGATORIO SI ES MENOR DE EDAD */
+    /* VALIDACIÓN COMPLETA DE DOCUMENTACIÓN DE MENORES */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -939,11 +990,18 @@
         return;
       }
 
-      // BLOQUEO ESTRICTO DE DOCUMENTO PARA MENOR DE EDAD
+      // VALIDACIÓN DOBLE SI ES MENOR DE EDAD: RESPONSIVA Y INE DEL TUTOR
       if (ageVal < 18) {
-        const responsivaFileInput = document.getElementById('responsivaFile');
-        if (!responsivaFileInput || !responsivaFileInput.files || responsivaFileInput.files.length === 0) {
-          alert("🛑 REGISTRO BLOQUEADO\n\nAl ser menor de edad, es OBLIGATORIO adjuntar la Carta Responsiva y Acta de Nacimiento firmada por tus padres o tutores para poder avanzar al Paso 2.");
+        const responsivaFile = document.getElementById('responsivaFile');
+        const tutorIneFile = document.getElementById('tutorIneFile');
+
+        if (!responsivaFile || !responsivaFile.files || responsivaFile.files.length === 0) {
+          alert("🛑 REGISTRO BLOQUEADO\n\nDebes adjuntar la Carta Responsiva firmada por tus padres o tutores.");
+          return;
+        }
+
+        if (!tutorIneFile || !tutorIneFile.files || tutorIneFile.files.length === 0) {
+          alert("🛑 REGISTRO BLOQUEADO\n\nDebes adjuntar la identificación (INE) vigente del Padre o Tutor que firmó la Responsiva.");
           return;
         }
       }
@@ -1068,11 +1126,10 @@
       goToStep(4);
     }
 
-    /* 3. APERTURA GARANTIZADA DEL MODAL EN EL PASO 4 Y DESCARGA EN SEGUNDO PLANO */
+    /* APERTURA GARANTIZADA DEL MODAL Y DESCARGA */
     function executeValidationAndDownload() {
       playBeepSound();
       
-      // Muestra el modal emergente con visibilidad absoluta e ininterrumpida
       const modal = document.getElementById('validationNoticeModal');
       if (modal) {
         modal.style.setProperty('display', 'flex', 'important');
@@ -1081,7 +1138,6 @@
       const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'JUGADOR';
       const cardElement = document.getElementById('digitalCredential');
 
-      // Descarga de la credencial en segundo plano sin bloquear la interfaz
       setTimeout(async () => {
         try {
           if (window.html2canvas && cardElement) {
