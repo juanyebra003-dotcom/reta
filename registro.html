@@ -389,13 +389,12 @@
             <div class="form-row">
               <div class="input-group">
                 <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
-                <!-- Atributos data configurados según las variables oficiales -->
                 <select id="leagueSelect" required onchange="onLeagueSelectChange()">
                   <option value="" disabled selected>Selecciona una liga...</option>
-                  <option value="LIGA PREMIER RETA" data-state="GTO" data-city="GTO" data-code="LPHE">Liga Premier RETA (Guanajuato)</option>
-                  <option value="COPA INTERNACIONAL BAJÍO" data-state="GTO" data-city="MOR" data-code="CIB">Copa Internacional Bajío (Guanajuato)</option>
-                  <option value="LIGA NOCTURNA F7" data-state="MIC" data-city="MOR" data-code="LNF7">Liga Nocturna F7 (Michoacán)</option>
-                  <option value="TORNEO FEMENIL RETA" data-state="GTO" data-city="CEL" data-code="TFR">Torneo Femenil RETA (Guanajuato)</option>
+                  <option value="LIGA PREMIER HEROES" data-state="GUANAJUATO" data-city="GUA" data-code="LPHE">Liga Premier Heroes (Guanajuato)</option>
+                  <option value="COPA INTERNACIONAL BAJÍO" data-state="GUANAJUATO" data-city="MOR" data-code="CIB">Copa Internacional Bajío (Guanajuato)</option>
+                  <option value="LIGA NOCTURNA F7" data-state="MICHOACAN" data-city="MOR" data-code="LNF7">Liga Nocturna F7 (Michoacán)</option>
+                  <option value="TORNEO FEMENIL RETA" data-state="GUANAJUATO" data-city="CEL" data-code="TFR">Torneo Femenil RETA (Guanajuato)</option>
                 </select>
               </div>
               <div class="input-group">
@@ -528,7 +527,7 @@
             <div class="digital-credential-card glass-card" id="digitalCredential" style="background: linear-gradient(135deg, #0b1329, #131d38); border: 2px solid #00d4ff; padding:20px; border-radius:16px;">
               <div class="credential-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
-                <div class="cred-league-badge" id="credLeagueName" style="font-size:0.9rem; font-weight:800; color:#00d4ff;">LIGA PREMIER RETA</div>
+                <div class="cred-league-badge" id="credLeagueName" style="font-size:0.9rem; font-weight:800; color:#00d4ff;">LIGA PREMIER HEROES</div>
               </div>
 
               <div class="credential-body" style="display:flex; gap:15px; margin-top:15px; align-items:center;">
@@ -587,8 +586,8 @@
     </div>
   </div>
 
-  <!-- MODAL EMERGENTE GARANTIZADO CON EL TEXTO EXACTO -->
-  <div class="modal-overlay" id="validationNoticeModal" style="display: none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center;">
+  <!-- MODAL EMERGENTE FORZADO EN PANTALLA COMPLETA -->
+  <div class="modal-overlay" id="validationNoticeModal" style="display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.85) !important; z-index: 999999 !important; align-items: center; justify-content: center;">
     <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px;">
       <div class="modal-header">
         <i class="fa-solid fa-circle-check modal-icon-glow" style="font-size: 3.5rem; color:#00d4ff; margin-bottom: 12px;"></i>
@@ -760,7 +759,7 @@
         const { data: ligas } = await _supabase.from('ligas').select('id, nombre_liga, clave_liga, municipio, estado');
         if (ligas && ligas.length > 0) {
           select.innerHTML = '<option value="" disabled selected>Selecciona la Liga / Torneo</option>' + 
-            ligas.map(l => `<option value="${l.nombre_liga}" data-state="${l.estado || 'GTO'}" data-city="${l.municipio || 'GTO'}" data-code="${l.clave_liga || 'LIGA'}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
+            ligas.map(l => `<option value="${l.nombre_liga}" data-state="${l.estado || 'GUANAJUATO'}" data-city="${l.municipio || 'GUA'}" data-code="${l.clave_liga || 'LPHE'}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
         }
       } catch (e) {
         console.warn("Usando opciones por defecto.");
@@ -905,6 +904,7 @@
       }
     }
 
+    /* CORRECCIÓN DE UPSERT SIN COLUMNAS CONFLICTIVAS */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -946,8 +946,7 @@
           genero: document.getElementById('gender').value,
           estado_nacimiento: document.getElementById('stateBirth').value,
           estado_residencia: document.getElementById('stateRes').value,
-          ciudad_residencia: document.getElementById('cityRes').value,
-          verificado: true
+          ciudad_residencia: document.getElementById('cityRes').value
         };
 
         localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
@@ -975,7 +974,8 @@
 
     function closeModal(id) {
       playBeepSound();
-      document.getElementById(id).style.display = 'none';
+      const el = document.getElementById(id);
+      if (el) el.style.setProperty('display', 'none', 'important');
     }
 
     function acceptTermsFromModal() {
@@ -984,13 +984,13 @@
       closeModal('termsModal');
     }
 
-    /* GENERADOR DEL CÓDIGO RETA SEGÚN LA REGLA OFICIAL */
+    /* GENERADOR DE CÓDIGO RETA REGLA OFICIAL */
     function generateOfficialRetaCode() {
       const leagueSelect = document.getElementById('leagueSelect');
       const opt = leagueSelect.options[leagueSelect.selectedIndex] || {};
       
-      const estadoCode = (opt.dataset && opt.dataset.state) ? opt.dataset.state.toUpperCase() : 'GTO';
-      const municipioCode = (opt.dataset && opt.dataset.city) ? opt.dataset.city.substring(0,3).toUpperCase() : 'GTO';
+      const estadoCode = (opt.dataset && opt.dataset.state) ? opt.dataset.state.toUpperCase() : 'GUANAJUATO';
+      const municipioCode = (opt.dataset && opt.dataset.city) ? opt.dataset.city.substring(0,3).toUpperCase() : 'GUA';
       const claveLiga = (opt.dataset && opt.dataset.code) ? opt.dataset.code.toUpperCase() : 'LPHE';
       
       const randomFolio = Math.floor(100000 + Math.random() * 900000);
@@ -1006,16 +1006,13 @@
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
 
-      // CONSTRUCCIÓN CONFORME A LA REGLA OFICIAL DE RETA
       const officialRetaCode = generateOfficialRetaCode();
 
-      // Asignar el nombre de la liga a la tarjeta
       const leagueName = document.getElementById('leagueSelect').value;
       if (leagueName) {
         document.getElementById('credLeagueName').innerText = leagueName.toUpperCase();
       }
 
-      // Carga la foto
       const savedPhoto = localStorage.getItem('temp_player_photo');
       if (savedPhoto) {
         document.getElementById('credPlayerPhoto').src = savedPhoto;
@@ -1041,43 +1038,48 @@
         document.getElementById('credTeamLogo').src = 'img/logo_reta.png';
       }
 
-      // ENLACE PÚBLICO
       const publicCredentialUrl = `${SUPABASE_URL}/storage/v1/object/public/credenciales/${curpVal}_credencial.png`;
 
-      // CÓDIGO QR AMPLIFICADO QUE LLEVA DIRECTO A LA CREDENCIAL
       document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(publicCredentialUrl)}`;
 
       goToStep(4);
     }
 
-    /* EJECUCIÓN DIRECTA: ABRE EL MODAL Y EN SEGUNDO PLANO DESCARGA LA IMAGEN */
-    async function executeValidationAndDownload() {
+    /* APERTURA GARANTIZADA DEL MODAL EMERGENTE Y DESCARGA */
+    function executeValidationAndDownload() {
       playBeepSound();
       
-      // 1. Mostrar la ventana emergente al instante sin bloqueos
-      document.getElementById('validationNoticeModal').style.display = 'flex';
+      // Muestra el modal emergente con visibilidad absoluta e ininterrumpida
+      const modal = document.getElementById('validationNoticeModal');
+      if (modal) {
+        modal.style.setProperty('display', 'flex', 'important');
+      }
 
       const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'JUGADOR';
       const cardElement = document.getElementById('digitalCredential');
 
-      // 2. Intentar la captura y descarga de la imagen local de forma segura
-      try {
-        const canvas = await html2canvas(cardElement, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: null
-        });
+      // Descarga de la credencial en segundo plano silencioso
+      setTimeout(async () => {
+        try {
+          if (window.html2canvas) {
+            const canvas = await html2canvas(cardElement, {
+              scale: 2,
+              useCORS: true,
+              allowTaint: true,
+              backgroundColor: null
+            });
 
-        const imageBase64 = canvas.toDataURL("image/png");
+            const imageBase64 = canvas.toDataURL("image/png");
 
-        const link = document.createElement('a');
-        link.download = `Credencial_RETA_${curpVal}.png`;
-        link.href = imageBase64;
-        link.click();
-      } catch (e) {
-        console.warn("Descarga local de credencial realizada.");
-      }
+            const link = document.createElement('a');
+            link.download = `Credencial_RETA_${curpVal}.png`;
+            link.href = imageBase64;
+            link.click();
+          }
+        } catch (e) {
+          console.warn("Descarga iniciada.");
+        }
+      }, 300);
     }
 
     async function finishRegistrationAndRedirect() {
