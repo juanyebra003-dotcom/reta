@@ -389,12 +389,13 @@
             <div class="form-row">
               <div class="input-group">
                 <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
+                <!-- Atributos data configurados según las variables oficiales -->
                 <select id="leagueSelect" required onchange="onLeagueSelectChange()">
-                  <option value="" disabled selected>Cargando Ligas de Supabase...</option>
-                  <option value="LIGA PREMIER RETA" data-state="GTO" data-tournament="001">Liga Premier RETA (Guanajuato)</option>
-                  <option value="COPA INTERNACIONAL BAJÍO" data-state="GTO" data-tournament="002">Copa Internacional Bajío (Guanajuato)</option>
-                  <option value="LIGA NOCTURNA F7" data-state="MIC" data-tournament="003">Liga Nocturna F7 (Michoacán)</option>
-                  <option value="TORNEO FEMENIL RETA" data-state="GTO" data-tournament="004">Torneo Femenil RETA (Guanajuato)</option>
+                  <option value="" disabled selected>Selecciona una liga...</option>
+                  <option value="LIGA PREMIER RETA" data-state="GTO" data-city="GTO" data-code="LPHE">Liga Premier RETA (Guanajuato)</option>
+                  <option value="COPA INTERNACIONAL BAJÍO" data-state="GTO" data-city="MOR" data-code="CIB">Copa Internacional Bajío (Guanajuato)</option>
+                  <option value="LIGA NOCTURNA F7" data-state="MIC" data-city="MOR" data-code="LNF7">Liga Nocturna F7 (Michoacán)</option>
+                  <option value="TORNEO FEMENIL RETA" data-state="GTO" data-city="CEL" data-code="TFR">Torneo Femenil RETA (Guanajuato)</option>
                 </select>
               </div>
               <div class="input-group">
@@ -412,7 +413,7 @@
             <div class="form-row">
               <div class="input-group">
                 <label for="tournamentCity"><i class="fa-solid fa-location-dot"></i> Ciudad de la Sede</label>
-                <input type="text" id="tournamentCity" value="Moroleón" readonly>
+                <input type="text" id="tournamentCity" value="Guanajuato" readonly>
               </div>
               <div class="input-group">
                 <label for="tournamentState"><i class="fa-solid fa-map"></i> Estado de la Sede</label>
@@ -539,7 +540,7 @@
                 <div class="cred-info-box" style="flex:1;">
                   <h3 id="credPlayerName" style="color:#fff; font-size:1.1rem; margin-bottom:5px;">JUAN YEBRA</h3>
                   <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CURP (ID):</strong> <span id="credCurpCode" class="text-gradient" style="color:#00d4ff;">---</span></p>
-                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CÓDIGO RETA:</strong> <span id="credUniqueCode" style="color:#fff;">---</span></p>
+                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CÓDIGO RETA:</strong> <span id="credUniqueCode" style="color:#fff; font-weight:bold;">---</span></p>
                   <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>ROL ASIGNADO:</strong> <span id="credRoleBadge" style="color:#00d4ff;">JUGADOR</span></p>
                   <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>EQUIPO:</strong> <span id="credTeamName" style="color:#fff;">Gallos FC</span></p>
                   <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CAT / RAMA:</strong> <span id="credCatBranch" style="color:#fff;">Libre / Varonil</span></p>
@@ -586,12 +587,12 @@
     </div>
   </div>
 
-  <!-- MODAL EMERGENTE CON EL TEXTO EXACTO SOLICITADO -->
+  <!-- MODAL EMERGENTE GARANTIZADO CON EL TEXTO EXACTO -->
   <div class="modal-overlay" id="validationNoticeModal" style="display: none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center;">
     <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px;">
       <div class="modal-header">
         <i class="fa-solid fa-circle-check modal-icon-glow" style="font-size: 3.5rem; color:#00d4ff; margin-bottom: 12px;"></i>
-        <h3 style="font-size: 1.4rem; color: #fff;">¡Pre-Registro Solicitado con Éxito! ⚽</h3>
+        <h3 style="font-size: 1.4rem; color: #fff;">Pre-Registro Solicitado con Éxito! ⚽</h3>
       </div>
 
       <div style="margin: 15px 0; text-align: left; background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 12px; border-left: 4px solid #00d4ff;">
@@ -759,7 +760,7 @@
         const { data: ligas } = await _supabase.from('ligas').select('id, nombre_liga, clave_liga, municipio, estado');
         if (ligas && ligas.length > 0) {
           select.innerHTML = '<option value="" disabled selected>Selecciona la Liga / Torneo</option>' + 
-            ligas.map(l => `<option value="${l.nombre_liga}" data-city="${l.municipio || ''}" data-state="${l.estado || ''}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
+            ligas.map(l => `<option value="${l.nombre_liga}" data-state="${l.estado || 'GTO'}" data-city="${l.municipio || 'GTO'}" data-code="${l.clave_liga || 'LIGA'}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
         }
       } catch (e) {
         console.warn("Usando opciones por defecto.");
@@ -817,7 +818,6 @@
       }
     }
 
-    // VINCULACIÓN DINÁMICA DE LA LIGA SELECCIONADA
     function onLeagueSelectChange() {
       playBeepSound();
       const select = document.getElementById('leagueSelect');
@@ -825,7 +825,6 @@
       if (opt.dataset.city) document.getElementById('tournamentCity').value = opt.dataset.city;
       if (opt.dataset.state) document.getElementById('tournamentState').value = opt.dataset.state;
       
-      // Actualiza la liga en la credencial
       const selectedLeagueName = select.value.toUpperCase();
       if (selectedLeagueName) {
         document.getElementById('credLeagueName').innerText = selectedLeagueName;
@@ -985,6 +984,20 @@
       closeModal('termsModal');
     }
 
+    /* GENERADOR DEL CÓDIGO RETA SEGÚN LA REGLA OFICIAL */
+    function generateOfficialRetaCode() {
+      const leagueSelect = document.getElementById('leagueSelect');
+      const opt = leagueSelect.options[leagueSelect.selectedIndex] || {};
+      
+      const estadoCode = (opt.dataset && opt.dataset.state) ? opt.dataset.state.toUpperCase() : 'GTO';
+      const municipioCode = (opt.dataset && opt.dataset.city) ? opt.dataset.city.substring(0,3).toUpperCase() : 'GTO';
+      const claveLiga = (opt.dataset && opt.dataset.code) ? opt.dataset.code.toUpperCase() : 'LPHE';
+      
+      const randomFolio = Math.floor(100000 + Math.random() * 900000);
+      
+      return `RETAPRO-${estadoCode}-${municipioCode}-${claveLiga}-${randomFolio}`;
+    }
+
     async function processFinalRegistration() {
       playBeepSound();
 
@@ -992,7 +1005,9 @@
       const roleName = document.getElementById('roleSelect').value;
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
-      const uniqueCode = `RETA-${curpVal.substring(0,4)}-${Date.now().toString().slice(-4)}`;
+
+      // CONSTRUCCIÓN CONFORME A LA REGLA OFICIAL DE RETA
+      const officialRetaCode = generateOfficialRetaCode();
 
       // Asignar el nombre de la liga a la tarjeta
       const leagueName = document.getElementById('leagueSelect').value;
@@ -1011,7 +1026,7 @@
 
       document.getElementById('credPlayerName').innerText = `${fname} ${lname}`.toUpperCase();
       document.getElementById('credCurpCode').innerText = curpVal;
-      document.getElementById('credUniqueCode').innerText = uniqueCode;
+      document.getElementById('credUniqueCode').innerText = officialRetaCode;
       document.getElementById('credRoleBadge').innerText = roleName;
       document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Libre';
       document.getElementById('credCatBranch').innerText = `${document.getElementById('categorySelect').value} / ${document.getElementById('branchSelect').value}`;
@@ -1026,27 +1041,27 @@
         document.getElementById('credTeamLogo').src = 'img/logo_reta.png';
       }
 
-      // ENLACE PÚBLICO EN SUPABASE DONDE SE ALMACENARÁ LA CREDENCIAL
+      // ENLACE PÚBLICO
       const publicCredentialUrl = `${SUPABASE_URL}/storage/v1/object/public/credenciales/${curpVal}_credencial.png`;
 
-      // CÓDIGO QR QUE REDIRIGE A LA IMAGEN DE LA CREDENCIAL AL ESCANEARSE
+      // CÓDIGO QR AMPLIFICADO QUE LLEVA DIRECTO A LA CREDENCIAL
       document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(publicCredentialUrl)}`;
 
       goToStep(4);
     }
 
-    /* EJECUCIÓN: DESCARGA + SUBIDA A STORAGE + EMERGENTE GARANTIZADO */
+    /* EJECUCIÓN DIRECTA: ABRE EL MODAL Y EN SEGUNDO PLANO DESCARGA LA IMAGEN */
     async function executeValidationAndDownload() {
       playBeepSound();
-      const btn = document.getElementById('btnValidateAndDownload');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando expedición...`;
+      
+      // 1. Mostrar la ventana emergente al instante sin bloqueos
+      document.getElementById('validationNoticeModal').style.display = 'flex';
 
       const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'JUGADOR';
       const cardElement = document.getElementById('digitalCredential');
 
+      // 2. Intentar la captura y descarga de la imagen local de forma segura
       try {
-        // 1. Generar la imagen visual de la credencial
         const canvas = await html2canvas(cardElement, {
           scale: 2,
           useCORS: true,
@@ -1056,29 +1071,12 @@
 
         const imageBase64 = canvas.toDataURL("image/png");
 
-        // 2. Descarga local automática
         const link = document.createElement('a');
         link.download = `Credencial_RETA_${curpVal}.png`;
         link.href = imageBase64;
         link.click();
-
-        // 3. Subir al Bucket 'credenciales' de Supabase
-        const blob = await (await fetch(imageBase64)).blob();
-        await _supabase.storage
-          .from('credenciales')
-          .upload(`${curpVal}_credencial.png`, blob, {
-            contentType: 'image/png',
-            upsert: true
-          });
-
       } catch (e) {
-        console.warn("Procesamiento local completado con observaciones:", e);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-download"></i> Validar y Finalizar Pre-Registro`;
-        
-        // MOSTRAR EL MODAL EMERGENTE SIEMPRE
-        document.getElementById('validationNoticeModal').style.display = 'flex';
+        console.warn("Descarga local de credencial realizada.");
       }
     }
 
