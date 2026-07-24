@@ -812,70 +812,72 @@
       }
     }
 
-    /* MODIFICACIÓN: VALIDACIÓN DIRECTA MODO PRUEBA (BYPASS DENEGACIONES SUPABASE) */
-    async function validateStep1AndProceed() {
-      playBeepSound();
+/* MODO PRUEBA INSTANTÁNEO: BYPASS DE SUPABASE AUTH Y CORREOS */
+async function validateStep1AndProceed() {
+  playBeepSound();
 
-      const curpVal = document.getElementById('curp').value.trim().toUpperCase();
-      const fname = document.getElementById('firstName').value.trim();
-      const lname = document.getElementById('lastName').value.trim();
-      const emailVal = document.getElementById('userEmail').value.trim();
-      const roleVal = document.getElementById('roleSelect').value;
-      const tokenInput = document.getElementById('adminAuthToken').value.trim();
+  const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+  const fname = document.getElementById('firstName').value.trim();
+  const lname = document.getElementById('lastName').value.trim();
+  const emailVal = document.getElementById('userEmail').value.trim();
+  const roleVal = document.getElementById('roleSelect').value;
+  const tokenInput = document.getElementById('adminAuthToken').value.trim();
 
-      if (!fname || !lname || !curpVal || !emailVal) {
-        alert("Por favor completa los campos obligatorios.");
-        return;
-      }
+  // Validaciones básicas de campos
+  if (!fname || !lname || !curpVal || !emailVal) {
+    alert("Por favor completa los campos obligatorios.");
+    return;
+  }
 
-      if (curpVal.length !== 18) {
-        alert("La CURP debe contener 18 caracteres exactos.");
-        return;
-      }
+  if (curpVal.length !== 18) {
+    alert("La CURP debe contener 18 caracteres exactos.");
+    return;
+  }
 
-      if (!document.getElementById('acceptTermsCheckbox').checked) {
-        alert("Acepta los Términos para continuar.");
-        return;
-      }
+  if (!document.getElementById('acceptTermsCheckbox').checked) {
+    alert("Acepta los Términos para continuar.");
+    return;
+  }
 
-      if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') && !tokenInput) {
-        alert("Debes ingresar la Clave / Token de Autorización RETA.");
-        return;
-      }
+  if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') && !tokenInput) {
+    alert("Debes ingresar la Clave / Token de Autorización RETA.");
+    return;
+  }
 
-      try {
-        const userPayload = {
-          curp: curpVal,
-          nombre: fname,
-          apellidos: lname,
-          email: emailVal,
-          telefono: document.getElementById('userPhone').value.trim(),
-          edad: parseInt(document.getElementById('age').value) || 0,
-          genero: document.getElementById('gender').value,
-          estado_nacimiento: document.getElementById('stateBirth').value,
-          estado_residencia: document.getElementById('stateRes').value,
-          ciudad_residencia: document.getElementById('cityRes').value,
-          verificado: true
-        };
+  // Guardado local y secundario (sin await para que no bloquee ni genere alerta 429)
+  try {
+    const userPayload = {
+      curp: curpVal,
+      nombre: fname,
+      apellidos: lname,
+      email: emailVal,
+      telefono: document.getElementById('userPhone').value.trim(),
+      edad: parseInt(document.getElementById('age').value) || 0,
+      genero: document.getElementById('gender').value,
+      estado_nacimiento: document.getElementById('stateBirth').value,
+      estado_residencia: document.getElementById('stateRes').value,
+      ciudad_residencia: document.getElementById('cityRes').value,
+      verificado: true
+    };
 
-        localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
-        _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' }).then();
-      } catch (e) {
-        console.warn("Aviso: Guardado en borrador de sesión local.");
-      }
+    localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
+    _supabase.from('usuarios').upsert([userPayload], { onConflict: 'curp' }).then();
+  } catch (e) {
+    console.warn("Aviso: Guardado local preparado.");
+  }
 
-      if (roleVal === 'ADMIN_LIGA') {
-        localStorage.setItem('reta_admin_curp', curpVal);
-        localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
-        alert("¡Modo Prueba Administrador! Redirigiendo...");
-        window.location.href = 'liga_registrar.html';
-      } else if (roleVal === 'ARBITRO') {
-        alert("¡Modo Prueba Árbitro! Redirigiendo a Cédula Digital...");
-        window.location.href = 'cedula_arbitral.html';
-      } else {
-        goToStep(2);
-      }
-    }
+  // BIFURCACIÓN E INGRESO DIRECTO AL PASO 2
+  if (roleVal === 'ADMIN_LIGA') {
+    localStorage.setItem('reta_admin_curp', curpVal);
+    localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
+    window.location.href = 'liga_registrar.html';
+  } else if (roleVal === 'ARBITRO') {
+    window.location.href = 'cedula_arbitral.html';
+  } else {
+    // Pasa directo al Paso 2 sin alertas ni modales
+    goToStep(2);
+  }
+}
 
     async function verifyOtpAndFinalize() {
       const inputOtp = document.getElementById('otpCodeInput').value.trim();
