@@ -194,7 +194,7 @@
         <!-- Barra de Progreso Wizard -->
         <div class="wizard-progress" id="wizardProgressBar">
           <div class="step-indicator active" id="step-dot-1">1. Identificación</div>
-          <div class="step-indicator" id="step-dot-2">2. Liga & Equipo</div>
+          <div class="step-indicator" id="step-dot-2">2. Datos de Rol</div>
           <div class="step-indicator" id="step-dot-3">3. Ficha Médica</div>
           <div class="step-indicator" id="step-dot-4">4. Credencial</div>
         </div>
@@ -212,7 +212,7 @@
                   <option value="JUGADOR" selected>⚽ Jugador / Atleta</option>
                   <option value="DELEGADO">📋 Delegado / Director Técnico</option>
                   <option value="ARBITRO">🏁 Árbitro / Colegiado</option>
-                  <option value="SUPERVISOR">👁️ Supervisor de Campo</option>
+                  <option value="SUPERVISOR">👁️ Administrador Pro RETA / Supervisor</option>
                   <option value="ADMIN_LIGA">👑 Administrador / Propietario de Liga</option>
                 </select>
               </div>
@@ -220,9 +220,9 @@
 
             <div id="adminAuthCodeSection" class="form-row" style="display: none; background: rgba(0,212,255,0.08); padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
               <div class="input-group">
-                <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización Admin (*)</label>
+                <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización RETA (*)</label>
                 <input type="password" id="adminAuthToken" placeholder="Ingresa el token de invitación" onchange="playBeepSound()">
-                <small style="color:#94a3b8;">Requerido solo para otorgar privilegios administrativos.</small>
+                <small style="color:#94a3b8;">Requerido para roles de gestión y administración.</small>
               </div>
             </div>
 
@@ -403,67 +403,163 @@
             </div>
           </div>
 
-          <!-- ================= PASO 2: LIGA Y TORNEO ================= -->
+          <!-- ================= PASO 2: FORMULARIOS DINÁMICOS SEGÚN EL ROL ================= -->
           <div class="wizard-step" id="wizard-step-2" style="display: none;">
-            <h3 class="step-title"><i class="fa-solid fa-trophy"></i> Paso 2: Datos de Liga, Torneo y Equipo</h3>
+            
+            <!-- SUB-FORMULARIO A: JUGADOR (Original Funcional) -->
+            <div id="formSubJugador" class="role-specific-section">
+              <h3 class="step-title"><i class="fa-solid fa-trophy"></i> Paso 2: Datos de Liga, Torneo y Equipo</h3>
 
-            <div class="form-row">
-              <div class="input-group">
-                <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
-                <select id="leagueSelect" required onchange="onLeagueSelectChange()">
-                  <option value="" disabled selected>Selecciona una liga...</option>
-                  <option value="LIGA PREMIER HEROES" data-state="GUANAJUATO" data-city="GUA" data-code="LPHE">Liga Premier Heroes (Guanajuato)</option>
-                  <option value="COPA INTERNACIONAL BAJÍO" data-state="GUANAJUATO" data-city="MOR" data-code="CIB">Copa Internacional Bajío (Guanajuato)</option>
-                  <option value="LIGA NOCTURNA F7" data-state="MICHOACAN" data-city="MOR" data-code="LNF7">Liga Nocturna F7 (Michoacán)</option>
-                  <option value="TORNEO FEMENIL RETA" data-state="GUANAJUATO" data-city="CEL" data-code="TFR">Torneo Femenil RETA (Guanajuato)</option>
-                </select>
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
+                  <select id="leagueSelect" onchange="onLeagueSelectChange()">
+                    <option value="" disabled selected>Selecciona una liga...</option>
+                    <option value="LIGA PREMIER HEROES" data-state="GUANAJUATO" data-city="GUA" data-code="LPHE">Liga Premier Heroes (Guanajuato)</option>
+                    <option value="COPA INTERNACIONAL BAJÍO" data-state="GUANAJUATO" data-city="MOR" data-code="CIB">Copa Internacional Bajío (Guanajuato)</option>
+                    <option value="LIGA NOCTURNA F7" data-state="MICHOACAN" data-city="MOR" data-code="LNF7">Liga Nocturna F7 (Michoacán)</option>
+                    <option value="TORNEO FEMENIL RETA" data-state="GUANAJUATO" data-city="CEL" data-code="TFR">Torneo Femenil RETA (Guanajuato)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece</label>
+                  <select id="teamSelect" onchange="playBeepSound()">
+                    <option value="" disabled selected>Selecciona tu equipo</option>
+                    <option value="Gallos FC" data-logo="img/logo_reta.png">Gallos FC</option>
+                    <option value="Real San José" data-logo="img/logo_reta.png">Real San José</option>
+                    <option value="Deportivo Bajío" data-logo="img/logo_reta.png">Deportivo Bajío</option>
+                    <option value="Rayo Moroleón" data-logo="img/logo_reta.png">Rayo Moroleón</option>
+                  </select>
+                </div>
               </div>
-              <div class="input-group">
-                <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece</label>
-                <select id="teamSelect" required onchange="playBeepSound()">
-                  <option value="" disabled selected>Selecciona tu equipo</option>
-                  <option value="Gallos FC" data-logo="img/logo_reta.png">Gallos FC</option>
-                  <option value="Real San José" data-logo="img/logo_reta.png">Real San José</option>
-                  <option value="Deportivo Bajío" data-logo="img/logo_reta.png">Deportivo Bajío</option>
-                  <option value="Rayo Moroleón" data-logo="img/logo_reta.png">Rayo Moroleón</option>
-                </select>
+
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="tournamentCity"><i class="fa-solid fa-location-dot"></i> Ciudad de la Sede</label>
+                  <input type="text" id="tournamentCity" value="Guanajuato" readonly>
+                </div>
+                <div class="input-group">
+                  <label for="tournamentState"><i class="fa-solid fa-map"></i> Estado de la Sede</label>
+                  <input type="text" id="tournamentState" value="Guanajuato" readonly>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría (Sugerida por Edad)</label>
+                  <select id="categorySelect" onchange="playBeepSound()">
+                    <option value="Libre">Libre</option>
+                    <option value="Juvenil">Juvenil (Sub-18)</option>
+                    <option value="Veteranos">Veteranos (+35)</option>
+                    <option value="Infantil">Infantil</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama (Auto por CURP)</label>
+                  <select id="branchSelect" onchange="playBeepSound()">
+                    <option value="Varonil">Varonil</option>
+                    <option value="Femenil">Femenil</option>
+                    <option value="Mixto">Mixto</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            <div class="form-row">
-              <div class="input-group">
-                <label for="tournamentCity"><i class="fa-solid fa-location-dot"></i> Ciudad de la Sede</label>
-                <input type="text" id="tournamentCity" value="Guanajuato" readonly>
+            <!-- SUB-FORMULARIO B: DELEGADO -->
+            <div id="formSubDelegado" class="role-specific-section" style="display: none;">
+              <h3 class="step-title"><i class="fa-solid fa-clipboard-user"></i> Paso 2: Vinculación de Equipo y Liga (Delegado / D.T.)</h3>
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="delegadoLeague"><i class="fa-solid fa-sitemap"></i> Liga / Torneo a Vincular (*)</label>
+                  <select id="delegadoLeague" onchange="playBeepSound()">
+                    <option value="" disabled selected>Selecciona Liga</option>
+                    <option value="LIGA PREMIER HEROES">Liga Premier Heroes</option>
+                    <option value="COPA INTERNACIONAL BAJÍO">Copa Internacional Bajío</option>
+                    <option value="LIGA NOCTURNA F7">Liga Nocturna F7</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="delegadoTeam"><i class="fa-solid fa-shield"></i> Nombre del Equipo / Club que Inscribe (*)</label>
+                  <input type="text" id="delegadoTeam" placeholder="Ej. Real San José FC" onchange="playBeepSound()">
+                </div>
               </div>
-              <div class="input-group">
-                <label for="tournamentState"><i class="fa-solid fa-map"></i> Estado de la Sede</label>
-                <input type="text" id="tournamentState" value="Guanajuato" readonly>
+
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="delegadoCategory"><i class="fa-solid fa-layer-group"></i> Categoría del Equipo (*)</label>
+                  <select id="delegadoCategory" onchange="playBeepSound()">
+                    <option value="Libre">Libre</option>
+                    <option value="Juvenil">Juvenil (Sub-18)</option>
+                    <option value="Veteranos">Veteranos (+35)</option>
+                    <option value="Infantil">Infantil</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="delegadoCargo"><i class="fa-solid fa-user-tie"></i> Cargo / Puesto en el Cuerpo Técnico (*)</label>
+                  <select id="delegadoCargo" onchange="playBeepSound()">
+                    <option value="Director Técnico">Director Técnico (D.T.)</option>
+                    <option value="Auxiliar Técnico">Auxiliar Técnico</option>
+                    <option value="Delegado Oficial">Delegado / Representante Legal</option>
+                    <option value="Preparador Físico">Preparador Físico</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            <div class="form-row">
-              <div class="input-group">
-                <label for="categorySelect"><i class="fa-solid fa-layer-group"></i> Categoría (Sugerida por Edad)</label>
-                <select id="categorySelect" required onchange="playBeepSound()">
-                  <option value="Libre">Libre</option>
-                  <option value="Juvenil">Juvenil (Sub-18)</option>
-                  <option value="Veteranos">Veteranos (+35)</option>
-                  <option value="Infantil">Infantil</option>
-                </select>
+            <!-- SUB-FORMULARIO C: ÁRBITRO -->
+            <div id="formSubArbitro" class="role-specific-section" style="display: none;">
+              <h3 class="step-title"><i class="fa-solid fa-flag"></i> Paso 2: Expediente Arbitral y Colegio</h3>
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="arbitroColegio"><i class="fa-solid fa-building-columns"></i> Colegio / Asociación de Árbitros (*)</label>
+                  <input type="text" id="arbitroColegio" placeholder="Ej. Colegio de Árbitros del Bajío" onchange="playBeepSound()">
+                </div>
+                <div class="input-group">
+                  <label for="arbitroNivel"><i class="fa-solid fa-ranking-star"></i> Nivel / Categoría Arbitral (*)</label>
+                  <select id="arbitroNivel" onchange="playBeepSound()">
+                    <option value="Central Profesional">Árbitro Central - Profesional / Semi-Pro</option>
+                    <option value="Central Local">Árbitro Central - Liga Local</option>
+                    <option value="Asistente / Juez de Línea">Árbitro Asistente / Bandera</option>
+                    <option value="Oficial de Cédula">Oficial de Cédula / Mesa</option>
+                  </select>
+                </div>
               </div>
-              <div class="input-group">
-                <label for="branchSelect"><i class="fa-solid fa-people-group"></i> Rama (Auto por CURP)</label>
-                <select id="branchSelect" required onchange="playBeepSound()">
-                  <option value="Varonil">Varonil</option>
-                  <option value="Femenil">Femenil</option>
-                  <option value="Mixto">Mixto</option>
-                </select>
+
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="arbitroLicencia"><i class="fa-solid fa-id-badge"></i> Número de Licencia / Folio Colegio (*)</label>
+                  <input type="text" id="arbitroLicencia" placeholder="Ej. ARB-GTO-2026-042" onchange="playBeepSound()">
+                </div>
+                <div class="input-group">
+                  <label for="arbitroSede"><i class="fa-solid fa-location-dot"></i> Sede / Zona Arbitral Principal (*)</label>
+                  <input type="text" id="arbitroSede" placeholder="Ej. Moroleón / Bajío Sur" onchange="playBeepSound()">
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-FORMULARIO D: ADMIN PRO RETA -->
+            <div id="formSubAdminPro" class="role-specific-section" style="display: none;">
+              <h3 class="step-title"><i class="fa-solid fa-shield-halved"></i> Paso 2: Asignación de Nivel Sub-Base Pro RETA</h3>
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="adminProZona"><i class="fa-solid fa-map-marked-alt"></i> Zona / Sede Sub-Base Asignada (*)</label>
+                  <input type="text" id="adminProZona" placeholder="Ej. Zona Centro / Bajío" onchange="playBeepSound()">
+                </div>
+                <div class="input-group">
+                  <label for="adminProLevel"><i class="fa-solid fa-user-gear"></i> Nivel de Acceso y Operación (*)</label>
+                  <select id="adminProLevel" onchange="playBeepSound()">
+                    <option value="SUPERVISOR_CAMPO">Supervisor de Campo / Validador</option>
+                    <option value="ADMIN_SUBBASE">Administrador Sub-Base Regional</option>
+                  </select>
+                </div>
               </div>
             </div>
 
             <div class="wizard-buttons">
               <button type="button" class="btn-secondary-action" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-              <button type="button" class="btn-login" onclick="goToStep(3)">Siguiente: Ficha Médica <i class="fa-solid fa-arrow-right"></i></button>
+              <button type="button" id="btnNextStep2" class="btn-login" onclick="processStep2Next()">
+                Siguiente Paso <i class="fa-solid fa-arrow-right"></i>
+              </button>
             </div>
           </div>
 
@@ -562,8 +658,8 @@
                   <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CURP (ID):</strong> <span id="credCurpCode" class="text-gradient" style="color:#00d4ff;">---</span></p>
                   <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CÓDIGO RETA:</strong> <span id="credUniqueCode" style="color:#fff; font-weight:bold;">---</span></p>
                   <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>ROL ASIGNADO:</strong> <span id="credRoleBadge" style="color:#00d4ff;">JUGADOR</span></p>
-                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>EQUIPO:</strong> <span id="credTeamName" style="color:#fff;">Gallos FC</span></p>
-                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CAT / RAMA:</strong> <span id="credCatBranch" style="color:#fff;">Libre / Varonil</span></p>
+                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>EQUIPO/COLEGIO:</strong> <span id="credTeamName" style="color:#fff;">Gallos FC</span></p>
+                  <p class="cred-meta-line" style="font-size:0.75rem; color:#aaa; margin:2px 0;"><strong>CAT / NIVEL:</strong> <span id="credCatBranch" style="color:#fff;">Libre / Varonil</span></p>
                   <div class="cred-medical-strip" style="font-size:0.7rem; color:#888; margin-top:5px; background:rgba(255,255,255,0.05); padding:4px; border-radius:4px;">
                     <span><strong>SANGRE:</strong> <span id="credBlood" style="color:#fff;">O+</span></span> | 
                     <span><strong>ALERGIAS:</strong> <span id="credAllergies" style="color:#fff;">Ninguna</span></span>
@@ -620,15 +716,11 @@
           Gracias por completar tu expediente oficial en <strong>RETA Pro App</strong>.
         </p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px; line-height: 1.5;">
-          Tu solicitud ha sido registrada correctamente y se encuentra en estado de <strong>Revisión</strong>. Para la activación definitiva de tu Credencial Virtual Única, tu trámite seguirá el siguiente protocolo de aprobación:
+          Tu solicitud ha sido registrada correctamente y se encuentra en estado de <strong>Revisión</strong>. Para la activación definitiva de tu perfil, tu trámite seguirá el protocolo de aprobación correspondiente.
         </p>
         <ul style="font-size: 0.83rem; color: #e2e8f0; margin: 10px 0 0 20px; line-height: 1.6;">
-          <li><strong>Evaluación de Delegado:</strong> Tu Director Técnico / Delegado validará tu inscripción dentro de la plantilla del equipo.</li>
-          <li><strong>Autorización Final:</strong> El Administrador de la Liga otorgará el visto bueno oficial y habilitará tu carnet para juego.</li>
+          <li><strong>Validación Administrativa:</strong> El Comité Organizador o Administrador de la Liga otorgará el visto bueno final.</li>
         </ul>
-        <p style="font-size: 0.8rem; color: #00d4ff; margin-top: 12px; font-style: italic;">
-          Podrás consultar el estatus de tu expediente escaneando tu código QR o ingresando con tu CURP.
-        </p>
       </div>
 
       <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
@@ -877,7 +969,7 @@
             </ol>
 
             <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
-              <strong>DECLARACIÓN EXPRESA Y FIRMA DE CONFORMIDAD DEL TUTOR LEGAL:</strong> He leído, comprendido y aceptado íntegramente la presente Carta Responsiva para Menores de Edad. Entiendo que al firmar renuncio a toda acción legal de reclamación contra el Comité Organizador, Árbitros, Delegados y la plataforma RETA PRO APP por incidentes derivados de la actividad deportiva del menor.
+              <strong>DECLARACIÓN EXPRESA Y FIRMA DE CONFORMIDAD DEL TUTOR LEGAL:</strong> He leído, comprendido y accepted íntegramente la presente Carta Responsiva para Menores de Edad. Entiendo que al firmar renuncio a toda acción legal de reclamación contra el Comité Organizador, Árbitros, Delegados y la plataforma RETA PRO APP por incidentes derivados de la actividad deportiva del menor.
             </p>
 
             <br/>
@@ -1024,25 +1116,38 @@
       }
     }
 
+    /* CONTROL DE INTERFAZ Y VISIBILIDAD DE PASOS SEGÚN EL ROL Y TABLA OFICIAL */
     function handleRoleSelectionChange() {
       playBeepSound();
       const role = document.getElementById('roleSelect').value;
       const authSection = document.getElementById('adminAuthCodeSection');
       const btnStep1 = document.getElementById('btnStep1');
-      const bar = document.getElementById('wizardProgressBar');
 
-      if (role === 'ADMIN_LIGA' || role === 'SUPERVISOR' || role === 'ARBITRO') {
+      // 1. Mostrar token de autorización para roles con jerarquía (Delegado, Árbitro, Admin Liga, Supervisor)
+      if (role === 'ADMIN_LIGA' || role === 'SUPERVISOR' || role === 'ARBITRO' || role === 'DELEGADO') {
         authSection.style.display = 'block';
-        if (bar) bar.style.display = 'none';
-        if (role === 'ADMIN_LIGA') {
-          btnStep1.innerHTML = `Validar Token y Crear Liga <i class="fa-solid fa-crown"></i>`;
-        } else {
-          btnStep1.innerHTML = `Validar Token y Acceder <i class="fa-solid fa-key"></i>`;
-        }
       } else {
         authSection.style.display = 'none';
-        if (bar) bar.style.display = 'flex';
+      }
+
+      // 2. Ocultar todos los sub-formularios del Paso 2
+      document.querySelectorAll('.role-specific-section').forEach(el => el.style.display = 'none');
+
+      // 3. Activar sub-formulario correspondiente en Paso 2 y ajustar textos del botón
+      if (role === 'JUGADOR') {
+        document.getElementById('formSubJugador').style.display = 'block';
         btnStep1.innerHTML = `Siguiente: Torneo & Equipo <i class="fa-solid fa-arrow-right"></i>`;
+      } else if (role === 'DELEGADO') {
+        document.getElementById('formSubDelegado').style.display = 'block';
+        btnStep1.innerHTML = `Siguiente: Datos de Delegado <i class="fa-solid fa-arrow-right"></i>`;
+      } else if (role === 'ARBITRO') {
+        document.getElementById('formSubArbitro').style.display = 'block';
+        btnStep1.innerHTML = `Siguiente: Expediente Árbitro <i class="fa-solid fa-arrow-right"></i>`;
+      } else if (role === 'SUPERVISOR') {
+        document.getElementById('formSubAdminPro').style.display = 'block';
+        btnStep1.innerHTML = `Siguiente: Datos Admin Pro <i class="fa-solid fa-arrow-right"></i>`;
+      } else if (role === 'ADMIN_LIGA') {
+        btnStep1.innerHTML = `Ir a Registro de Liga <i class="fa-solid fa-crown"></i>`;
       }
     }
 
@@ -1098,7 +1203,7 @@
       }
     }
 
-    /* VALIDACIÓN COMPLETA DE DOCUMENTACIÓN SEGÚN LA EDAD */
+    /* VALIDACIÓN PASO 1 Y REDIRECCIÓN SEGÚN MATRIZ */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -1120,17 +1225,20 @@
         return;
       }
 
-      // VALIDACIÓN PARA ADULTOS (MAYORES O IGUALES A 18)
+      // Requerir Token para roles administrativos / autoridades
+      if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO' || roleVal === 'DELEGADO') && !tokenInput) {
+        alert("Debes ingresar la Clave / Token de Autorización RETA para este rol.");
+        return;
+      }
+
+      // Validar responsivas si es Jugador/Delegado/Árbitro
       if (ageVal >= 18) {
         const adultResponsivaFile = document.getElementById('adultResponsivaFile');
         if (!adultResponsivaFile || !adultResponsivaFile.files || adultResponsivaFile.files.length === 0) {
           alert("🛑 REGISTRO BLOQUEADO\n\nDebes descargar, firmar y adjuntar tu Carta Deslinde de Responsabilidad para Adultos.");
           return;
         }
-      }
-
-      // VALIDACIÓN PARA MENORES DE EDAD (MENORES A 18)
-      if (ageVal < 18) {
+      } else {
         const responsivaFile = document.getElementById('responsivaFile');
         const tutorIneFile = document.getElementById('tutorIneFile');
 
@@ -1147,11 +1255,6 @@
 
       if (!document.getElementById('acceptTermsCheckbox').checked) {
         alert("Acepta los Términos para continuar.");
-        return;
-      }
-
-      if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO') && !tokenInput) {
-        alert("Debes ingresar la Clave / Token de Autorización RETA.");
         return;
       }
 
@@ -1175,14 +1278,31 @@
         console.warn("Aviso: Guardado en sesión local.");
       }
 
+      // REDIRECCIÓN DIRECTA PARA ADMIN DE LIGA SEGÚN LA TABLA
       if (roleVal === 'ADMIN_LIGA') {
         localStorage.setItem('reta_admin_curp', curpVal);
         localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
         window.location.href = 'liga_registrar.html';
-      } else if (roleVal === 'ARBITRO') {
-        window.location.href = 'cedula_arbitral.html';
-      } else {
-        goToStep(2);
+        return;
+      }
+
+      goToStep(2);
+    }
+
+    /* CONTROL DEL BOTÓN EN PASO 2 SEGÚN MATRIZ DE ROLES */
+    function processStep2Next() {
+      playBeepSound();
+      const roleVal = document.getElementById('roleSelect').value;
+
+      if (roleVal === 'JUGADOR' || roleVal === 'ARBITRO') {
+        // Jugador y Árbitro avanzan al Paso 3 (Ficha Médica)
+        goToStep(3);
+      } else if (roleVal === 'DELEGADO') {
+        // Delegado omite Paso 3 y avanza directo al Paso 4 (Credencial Delegado)
+        prepareAndShowCredential('DELEGADO');
+      } else if (roleVal === 'SUPERVISOR') {
+        // Admin Pro RETA omite Pasos 3 y 4, finaliza directo con modal
+        document.getElementById('validationNoticeModal').style.setProperty('display', 'flex', 'important');
       }
     }
 
@@ -1204,7 +1324,6 @@
       closeModal('termsModal');
     }
 
-    /* GENERADOR DE CÓDIGO RETA REGLA OFICIAL */
     function generateOfficialRetaCode() {
       const leagueSelect = document.getElementById('leagueSelect');
       const opt = leagueSelect.options[leagueSelect.selectedIndex] || {};
@@ -1218,20 +1337,14 @@
       return `RETAPRO-${estadoCode}-${municipioCode}-${claveLiga}-${randomFolio}`;
     }
 
-    async function processFinalRegistration() {
-      playBeepSound();
-
+    /* RENDERIZADO Y PREPARACIÓN DE CREDENCIAL SEGÚN ROL */
+    function prepareAndShowCredential(forcedRole) {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
-      const roleName = document.getElementById('roleSelect').value;
+      const roleName = forcedRole || document.getElementById('roleSelect').value;
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
 
       const officialRetaCode = generateOfficialRetaCode();
-
-      const leagueName = document.getElementById('leagueSelect').value;
-      if (leagueName) {
-        document.getElementById('credLeagueName').innerText = leagueName.toUpperCase();
-      }
 
       const savedPhoto = localStorage.getItem('temp_player_photo');
       if (savedPhoto) {
@@ -1245,24 +1358,37 @@
       document.getElementById('credCurpCode').innerText = curpVal;
       document.getElementById('credUniqueCode').innerText = officialRetaCode;
       document.getElementById('credRoleBadge').innerText = roleName;
-      document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Libre';
-      document.getElementById('credCatBranch').innerText = `${document.getElementById('categorySelect').value} / ${document.getElementById('branchSelect').value}`;
-      document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'N/A';
-      document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
 
-      const teamSelectObj = document.getElementById('teamSelect');
-      const opt = teamSelectObj.options[teamSelectObj.selectedIndex];
-      if (opt && opt.dataset && opt.dataset.logo) {
-        document.getElementById('credTeamLogo').src = opt.dataset.logo;
+      if (roleName === 'DELEGADO') {
+        document.getElementById('credLeagueName').innerText = (document.getElementById('delegadoLeague').value || 'LIGA PREMIER HEROES').toUpperCase();
+        document.getElementById('credTeamName').innerText = document.getElementById('delegadoTeam').value || 'Cuerpo Técnico';
+        document.getElementById('credCatBranch').innerText = `${document.getElementById('delegadoCategory').value} / ${document.getElementById('delegadoCargo').value}`;
+        document.getElementById('credBlood').innerText = 'N/A';
+        document.getElementById('credAllergies').innerText = 'Ninguna';
+      } else if (roleName === 'ARBITRO') {
+        document.getElementById('credLeagueName').innerText = 'COLEGIO DE ÁRBITROS';
+        document.getElementById('credTeamName').innerText = document.getElementById('arbitroColegio').value || 'Colegio Oficial';
+        document.getElementById('credCatBranch').innerText = `${document.getElementById('arbitroNivel').value} / Lic. ${document.getElementById('arbitroLicencia').value || 'S/N'}`;
+        document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'O+';
+        document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
       } else {
-        document.getElementById('credTeamLogo').src = 'img/logo_reta.png';
+        const leagueName = document.getElementById('leagueSelect').value;
+        if (leagueName) document.getElementById('credLeagueName').innerText = leagueName.toUpperCase();
+        document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Libre';
+        document.getElementById('credCatBranch').innerText = `${document.getElementById('categorySelect').value} / ${document.getElementById('branchSelect').value}`;
+        document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'O+';
+        document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
       }
 
       const publicCredentialUrl = `${SUPABASE_URL}/storage/v1/object/public/credenciales/${curpVal}_credencial.png`;
-
       document.getElementById('credQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(publicCredentialUrl)}`;
 
       goToStep(4);
+    }
+
+    async function processFinalRegistration() {
+      playBeepSound();
+      prepareAndShowCredential();
     }
 
     /* APERTURA GARANTIZADA DEL MODAL Y DESCARGA DE CREDENCIAL */
