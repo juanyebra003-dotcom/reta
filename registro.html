@@ -766,6 +766,7 @@
       }
     }
 
+    /* 1. DETECCIÓN AUTOMÁTICA Y MENSAJE EMERGENTE PARA MENORES DE EDAD */
     function processCurpAutoData(curpRaw) {
       const curp = curpRaw.toUpperCase().trim();
       const statusText = document.getElementById('curpStatusText');
@@ -808,6 +809,18 @@
 
         const stateCode = curp.substring(11, 13);
         document.getElementById('stateBirth').value = ENTIDADES_CURP[stateCode] || 'Entidad Desconocida';
+
+        // ================= CANDADO OBLIGATORIO Y MENSAJE EMERGENTE MENOR =================
+        if (!isNaN(age) && age < 18) {
+          toggleIdMethod('minor');
+          const methodIneInput = document.getElementById('methodIne');
+          if (methodIneInput) methodIneInput.disabled = true;
+
+          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nNo es posible completar el registro mediante el escaneo de INE. Se ha activado automáticamente la modalidad "Menor de Edad", por lo que deberás adjuntar tu Carta Responsiva firmada por padres o tutores y tu Acta de Nacimiento para solicitar tu registro.`);
+        } else {
+          const methodIneInput = document.getElementById('methodIne');
+          if (methodIneInput) methodIneInput.disabled = false;
+        }
 
       } else {
         statusText.style.display = 'none';
@@ -904,7 +917,7 @@
       }
     }
 
-    /* CORRECCIÓN DE UPSERT SIN COLUMNAS CONFLICTIVAS */
+    /* 2. VALIDACIÓN DEL PASO 1 CON BLOQUEO OBLIGATORIO SI ES MENOR DE EDAD */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -914,6 +927,7 @@
       const emailVal = document.getElementById('userEmail').value.trim();
       const roleVal = document.getElementById('roleSelect').value;
       const tokenInput = document.getElementById('adminAuthToken').value.trim();
+      const ageVal = parseInt(document.getElementById('age').value) || 0;
 
       if (!fname || !lname || !curpVal || !emailVal) {
         alert("Por favor completa los campos obligatorios.");
@@ -923,6 +937,15 @@
       if (curpVal.length !== 18) {
         alert("La CURP debe contener 18 caracteres exactos.");
         return;
+      }
+
+      // BLOQUEO ESTRICTO DE DOCUMENTO PARA MENOR DE EDAD
+      if (ageVal < 18) {
+        const responsivaFileInput = document.getElementById('responsivaFile');
+        if (!responsivaFileInput || !responsivaFileInput.files || responsivaFileInput.files.length === 0) {
+          alert("🛑 REGISTRO BLOQUEADO\n\nAl ser menor de edad, es OBLIGATORIO adjuntar la Carta Responsiva y Acta de Nacimiento firmada por tus padres o tutores para poder avanzar al Paso 2.");
+          return;
+        }
       }
 
       if (!document.getElementById('acceptTermsCheckbox').checked) {
@@ -942,7 +965,7 @@
           apellidos: lname,
           email: emailVal,
           telefono: document.getElementById('userPhone').value.trim(),
-          edad: parseInt(document.getElementById('age').value) || 0,
+          edad: ageVal,
           genero: document.getElementById('gender').value,
           estado_nacimiento: document.getElementById('stateBirth').value,
           estado_residencia: document.getElementById('stateRes').value,
@@ -1045,7 +1068,7 @@
       goToStep(4);
     }
 
-    /* APERTURA GARANTIZADA DEL MODAL EMERGENTE Y DESCARGA */
+    /* 3. APERTURA GARANTIZADA DEL MODAL EN EL PASO 4 Y DESCARGA EN SEGUNDO PLANO */
     function executeValidationAndDownload() {
       playBeepSound();
       
@@ -1058,10 +1081,10 @@
       const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'JUGADOR';
       const cardElement = document.getElementById('digitalCredential');
 
-      // Descarga de la credencial en segundo plano silencioso
+      // Descarga de la credencial en segundo plano sin bloquear la interfaz
       setTimeout(async () => {
         try {
-          if (window.html2canvas) {
+          if (window.html2canvas && cardElement) {
             const canvas = await html2canvas(cardElement, {
               scale: 2,
               useCORS: true,
