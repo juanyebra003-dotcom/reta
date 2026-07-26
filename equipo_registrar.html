@@ -2,12 +2,15 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>RETA - Registro de Equipo</title>
   <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="login-body">
 
@@ -75,10 +78,7 @@
             <div class="input-group">
               <label for="targetLeague"><i class="fa-solid fa-trophy"></i> Liga / Torneo a Inscribirse (*)</label>
               <select id="targetLeague" required>
-                <option value="" disabled selected>Selecciona Liga Destino</option>
-                <option value="LIGA-PREMIER-GTO">Liga Premier RETA (Guanajuato)</option>
-                <option value="COPA-BAJIO-GTO">Copa Internacional Bajío (Guanajuato)</option>
-                <option value="NOCTURNA-MICH">Liga Nocturna F7 (Michoacán)</option>
+                <option value="" disabled selected>Cargando Torneos Disponibles...</option>
               </select>
             </div>
             <div class="input-group">
@@ -244,7 +244,7 @@
 
         <!-- BOTÓN DE ACCIÓN FINAL -->
         <div class="wizard-buttons">
-          <button type="submit" class="btn-login">
+          <button type="submit" id="btnSubmitTeam" class="btn-login">
             <i class="fa-solid fa-shield-plus"></i> Registrar y Guardar Equipo en RETA
           </button>
         </div>
@@ -255,11 +255,51 @@
 
   <script src="js/script.js"></script>
   <script>
-    /* LÓGICA ESPECÍFICA PARA EL DISEÑADOR DE LOGOS Y MODO DE REGISTRO */
-    let currentShape = 'classic';
-    let currentPattern = 'half';
+    // INICIALIZACIÓN DE SUPABASE
+    const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentLogoMode = 'builder';
+    let uploadedLogoBase64 = null;
+
+    // CARGAR TORNEOS DINÁMICAMENTE DESDE SUPABASE AL INICIAR
+    document.addEventListener('DOMContentLoaded', loadAvailableTournaments);
+
+    async function loadAvailableTournaments() {
+      const select = document.getElementById('targetLeague');
+      
+      try {
+        // Consultar torneos vinculados con la información de su liga
+        const { data: tournaments, error } = await _supabase
+          .from('liga_torneo')
+          .select('id, nombre_torneo, categoria, rama, ligas(nombre_liga, estado, municipio)');
+
+        if (error) throw error;
+
+        if (!tournaments || tournaments.length === 0) {
+          select.innerHTML = `<option value="" disabled selected>No hay torneos registrados aún</option>`;
+          return;
+        }
+
+        // Construir opciones dinámicas
+        let optionsHtml = `<option value="" disabled selected>Selecciona Liga / Torneo Destino</option>`;
+        tournaments.forEach(t => {
+          const leagueName = t.ligas ? t.ligas.nombre_liga : 'Liga RETA';
+          const location = t.ligas ? `${t.ligas.municipio}, ${t.ligas.estado}` : '';
+          optionsHtml += `<option value="${t.id}">${leagueName} - ${t.nombre_torneo} (${t.categoria} | ${t.rama}) [${location}]</option>`;
+        });
+
+        select.innerHTML = optionsHtml;
+
+      } catch (err) {
+        console.error("Error al cargar torneos:", err);
+        select.innerHTML = `<option value="" disabled selected>Error al cargar la lista de torneos</option>`;
+      }
+    }
 
     function switchLogoMode(mode) {
+      currentLogoMode = mode;
       const btnBuilder = document.getElementById('btnModeBuilder');
       const btnUpload = document.getElementById('btnModeUpload');
       const modBuilder = document.getElementById('logoBuilderModule');
@@ -316,7 +356,6 @@
       pathShield.setAttribute('d', pathD);
       borderShield.setAttribute('d', pathD);
 
-      // Actualizar estado botones
       const btns = event.target.parentElement.querySelectorAll('.opt-btn');
       btns.forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
@@ -343,6 +382,7 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
+          uploadedLogoBase64 = e.target.result;
           const img = document.getElementById('uploadedLogoImg');
           img.src = e.target.result;
           document.getElementById('uploadedLogoPreviewContainer').style.display = 'block';
@@ -351,10 +391,57 @@
       }
     }
 
-    function handleTeamSubmit(e) {
+    function getFinalLogoData() {
+      if (currentLogoMode === 'upload' && uploadedLogoBase64) {
+        return uploadedLogoBase64;
+      }
+      const svgElement = document.getElementById('customLogoSvg');
+      const svgString = new XMLSerializer().serializeToString(svgElement);
+      return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+    }
+
+    // REGISTRO REAL EN SUPABASE
+    async function handleTeamSubmit(e) {
       e.preventDefault();
-      alert("¡Equipo registrado con éxito en la plataforma RETA!");
-      window.location.href = "index.html";
+
+      const submitBtn = document.getElementById('btnSubmitTeam');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Equipo...`;
+
+      try {
+        const selectedTournamentId = document.getElementById('targetLeague').value;
+        if (!selectedTournamentId) {
+          throw new Error("Por favor selecciona la Liga / Torneo al que deseas inscribirte.");
+        }
+
+        const teamPayload = {
+          liga_torneo_id: selectedTournamentId,
+          nombre_equipo: document.getElementById('teamName').value.trim(),
+          clave_equipo: document.getElementById('teamShortName').value.trim().toUpperCase(),
+          curp_delegado: document.getElementById('delegateCurp').value.trim().toUpperCase(),
+          anio_fundacion: parseInt(document.getElementById('foundedYear').value) || null,
+          cancha_local: document.getElementById('homeField').value.trim(),
+          horario_preferido: document.getElementById('prefSchedule').value,
+          color_local: document.getElementById('kitLocalColor').value.trim(),
+          color_visita: document.getElementById('kitVisitorColor').value.trim(),
+          escudo_url: getFinalLogoData()
+        };
+
+        const { error } = await _supabase
+          .from('equipos')
+          .insert([teamPayload]);
+
+        if (error) throw error;
+
+        alert("¡Equipo registrado con éxito en la plataforma RETA!");
+        window.location.href = "delegado_panel.html";
+
+      } catch (err) {
+        console.error("Error al registrar equipo:", err);
+        alert("Atención: " + (err.message || JSON.stringify(err)));
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-shield-plus"></i> Registrar y Guardar Equipo en RETA`;
+      }
     }
   </script>
 </body>
