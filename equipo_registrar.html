@@ -29,9 +29,15 @@
     .control-row-item { display: flex; flex-direction: column; gap: 5px; }
     .control-row-item label { font-size: 0.8rem; color: #00d4ff; font-weight: 600; display: flex; justify-content: space-between; }
     .range-slider { width: 100%; accent-color: #00d4ff; }
-    .emblem-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-    .emblem-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); font-size: 1.2rem; padding: 8px; border-radius: 6px; cursor: pointer; color: #fff; transition: all 0.2s; }
+    
+    .btn-group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 5px; }
+    .opt-btn-sm { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); font-size: 0.72rem; padding: 6px 4px; border-radius: 6px; cursor: pointer; color: #fff; text-align: center; }
+    .opt-btn-sm.active { background: #00d4ff; color: #000; font-weight: bold; border-color: #00d4ff; }
+
+    .emblem-grid-40 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-height: 140px; overflow-y: auto; padding-right: 5px; }
+    .emblem-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); font-size: 1.1rem; padding: 6px; border-radius: 6px; cursor: pointer; color: #fff; transition: all 0.2s; }
     .emblem-btn:hover, .emblem-btn.active { background: #00d4ff; color: #000; border-color: #00d4ff; }
+
     @media (max-width: 768px) { .logo-editor-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -105,7 +111,8 @@
               </select>
             </div>
             <div class="input-group">
-              <label for="foundedYear"><i class="fa-solid fa-calendar-days"></i> Año de Fundado</label>
+              <!-- MODIFICACIÓN 1: Nombre de campo actualizado -->
+              <label for="foundedYear"><i class="fa-solid fa-calendar-days"></i> Año de fundación del club</label>
               <input type="number" id="foundedYear" placeholder="Ej. 2020" min="1900" max="2026">
             </div>
           </div>
@@ -116,14 +123,20 @@
               <input type="text" id="homeField" placeholder="Ej. Unidad Deportiva Moroleón - Cancha 1">
             </div>
             
+            <!-- MODIFICACIÓN 2: Opciones de Horarios Específicos -->
             <div class="input-group">
               <label for="prefSchedule"><i class="fa-solid fa-clock"></i> Preferencia de Horario (Referencial)</label>
               <select id="prefSchedule">
                 <option value="Sin preferencia / Indiferente">Sin preferencia / Horario Rotativo Indiferente</option>
-                <option value="Preferente Sábado Tarde">Preferente Sábado Tarde (Sujeto a Rol)</option>
-                <option value="Preferente Domingo Mañana">Preferente Domingo Mañana (Sujeto a Rol)</option>
-                <option value="Preferente Domingo Tarde">Preferente Domingo Tarde (Sujeto a Rol)</option>
-                <option value="Preferente Nocturno Entre Semana">Preferente Entre Semana (Sujeto a Rol)</option>
+                <option value="Entre semana, por la mañana (07:00 a.m. - 11:00 a.m.)">Entre semana, por la mañana (07:00 a.m. - 11:00 a.m.)</option>
+                <option value="Entre semana, por la tarde (12:00 p.m. - 06:00 p.m.)">Entre semana, por la tarde (12:00 p.m. - 06:00 p.m.)</option>
+                <option value="Entre semana, por la noche (07:00 p.m. - 10:00 p.m.)">Entre semana, por la noche (07:00 p.m. - 10:00 p.m.)</option>
+                <option value="Sábado, por la mañana (07:00 a.m. - 11:00 a.m.)">Sábado, por la mañana (07:00 a.m. - 11:00 a.m.)</option>
+                <option value="Sábado, por la tarde (12:00 p.m. - 06:00 p.m.)">Sábado, por la tarde (12:00 p.m. - 06:00 p.m.)</option>
+                <option value="Sábado, por la noche (07:00 p.m. - 10:00 p.m.)">Sábado, por la noche (07:00 p.m. - 10:00 p.m.)</option>
+                <option value="Domingo, por la mañana (07:00 a.m. - 11:00 a.m.)">Domingo, por la mañana (07:00 a.m. - 11:00 a.m.)</option>
+                <option value="Domingo, por la tarde (12:00 p.m. - 06:00 p.m.)">Domingo, por la tarde (12:00 p.m. - 06:00 p.m.)</option>
+                <option value="Domingo, por la noche (07:00 p.m. - 10:00 p.m.)">Domingo, por la noche (07:00 p.m. - 10:00 p.m.)</option>
               </select>
               <span class="field-hint"><i class="fa-solid fa-triangle-exclamation"></i> Nota: Los horarios finales son variables y asignados por la administración de la liga.</span>
             </div>
@@ -186,7 +199,7 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 3: INTERFAZ CREADORA DE ESCUDO -->
+        <!-- SECCIÓN 3: INTERFAZ CREADORA DE ESCUDO (MODIFICACIÓN 3) -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-paintbrush"></i> 3. Identidad Visual: Escudo del Equipo</h3>
 
@@ -199,7 +212,6 @@
             </button>
           </div>
 
-          <!-- EDITOR DE ESCUDO -->
           <div id="logoBuilderModule" class="logo-builder-container">
             <div class="logo-editor-grid">
               
@@ -218,10 +230,10 @@
 
                   <path id="svgShieldBorder" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" fill="none" stroke="#ffffff" stroke-width="6" />
 
-                  <!-- EMBLEMA CENTRAL VECTORIAL -->
+                  <!-- EMBLEMA CENTRAL -->
                   <text id="svgCentralIcon" x="100" y="110" font-size="52" fill="#ffffff" text-anchor="middle" dominant-baseline="central">⚽</text>
 
-                  <!-- TEXTO DINÁMICO AJUSTABLE -->
+                  <!-- TEXTO DINÁMICO -->
                   <text id="svgTeamText" x="100" y="175" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" font-family="Poppins, sans-serif">
                     EQUIPO FC
                   </text>
@@ -230,24 +242,38 @@
               </div>
 
               <div class="controls-panel">
+                
+                <!-- 10 FORMAS DE ESCUDOS -->
                 <div class="control-row-item">
-                  <label><span><i class="fa-solid fa-shapes"></i> Forma del Escudo</span></label>
-                  <div class="btn-group-options">
-                    <button type="button" class="opt-btn active" onclick="setShieldShape('classic')">Clásico</button>
-                    <button type="button" class="opt-btn" onclick="setShieldShape('circle')">Circular</button>
-                    <button type="button" class="opt-btn" onclick="setShieldShape('diamond')">Diamante</button>
+                  <label><span><i class="fa-solid fa-shapes"></i> Forma del Escudo (10 Opciones)</span></label>
+                  <div class="btn-group-grid">
+                    <button type="button" class="opt-btn-sm active" onclick="setShieldShape('classic')">Clásico</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('circle')">Circular</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('diamond')">Diamante</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('french')">Francés</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('swiss')">Suizo</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('gothic')">Gótico</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('oval')">Ovalado</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('hexagon')">Hexágono</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('crest')">Cresta</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('pentagon')">Pentágono</button>
                   </div>
                 </div>
 
+                <!-- 6 ESTILOS INTERNOS -->
                 <div class="control-row-item">
-                  <label><span><i class="fa-solid fa-table-cells"></i> Estilo Interno</span></label>
-                  <div class="btn-group-options">
-                    <button type="button" class="opt-btn active" onclick="setPatternStyle('half')">Mitad</button>
-                    <button type="button" class="opt-btn" onclick="setPatternStyle('stripes')">Franjas</button>
-                    <button type="button" class="opt-btn" onclick="setPatternStyle('solid')">Sólido</button>
+                  <label><span><i class="fa-solid fa-table-cells"></i> Estilo Interno (6 Opciones)</span></label>
+                  <div class="btn-group-grid">
+                    <button type="button" class="opt-btn-sm active" onclick="setPatternStyle('half')">Mitad</button>
+                    <button type="button" class="opt-btn-sm" onclick="setPatternStyle('stripes')">Franjas V.</button>
+                    <button type="button" class="opt-btn-sm" onclick="setPatternStyle('hstripes')">Franjas H.</button>
+                    <button type="button" class="opt-btn-sm" onclick="setPatternStyle('cross')">Cruz</button>
+                    <button type="button" class="opt-btn-sm" onclick="setPatternStyle('quarters')">Cuadrantes</button>
+                    <button type="button" class="opt-btn-sm" onclick="setPatternStyle('solid')">Sólido</button>
                   </div>
                 </div>
 
+                <!-- COLORES -->
                 <div class="form-row">
                   <div>
                     <label style="font-size:0.75rem; color:#fff;">Primario</label>
@@ -263,24 +289,56 @@
                   </div>
                 </div>
 
+                <!-- 42 EMBLEMAS CENTRALES DEPORTIVOS -->
                 <div class="control-row-item">
-                  <label><span><i class="fa-solid fa-icons"></i> Emblema Central</span></label>
-                  <div class="emblem-grid">
+                  <label><span><i class="fa-solid fa-icons"></i> Emblema Central (42 Opciones)</span></label>
+                  <div class="emblem-grid-40">
                     <button type="button" class="emblem-btn active" onclick="setEmblem('⚽')">⚽</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🏆')">🏆</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🥇')">🥇</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('👑')">👑</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('⭐')">⭐</button>
-                    <button type="button" class="emblem-btn" onclick="setEmblem('⚡')">⚡</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🔥')">🔥</button>
-                    <button type="button" class="emblem-btn" onclick="setEmblem('🦅')">🦅</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('⚡')">⚡</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🦁')">🦁</button>
-                    <button type="button" class="emblem-btn" onclick="setEmblem('🏆')">🏆</button>
-                    <button type="button" class="emblem-btn" onclick="setEmblem('🛡️')">🛡️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🦅')">🦅</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🐺')">🐺</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🐯')">🐯</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🐉')">🐉</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('B')">🛡️</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🎯')">🎯</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('💎')">💎</button>
-                    <button type="button" class="emblem-btn" onclick="setEmblem('🐉')">🐉</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🚀')">🚀</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('⚔️')">⚔️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🔱')">🔱</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🥊')">🥊</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🎖️')">🎖️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🏵️')">🏵️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🌪️')">🌪️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('💥')">💥</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🚩')">🚩</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('⚜️')">⚜️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🌟')">🌟</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('✨')">✨</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🐾')">🐾</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🦈')">🦈</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('B')">🐂</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🐎')">🐎</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('👑')">🏰</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('⚓')">⚓</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🧭')">🧭</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🌋')">🌋</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('☄️')">☄️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('☀️')">☀️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🌙')">🌙</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('✝️')">✝️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('♠️')">♠️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('♣️')">♣️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('♟️')">♟️</button>
                   </div>
                 </div>
 
+                <!-- CONTROLES DE TEXTO AVANZADOS -->
                 <div class="control-row-item" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
                   <label><i class="fa-solid fa-text-height"></i> Tamaña de Letra del Nombre: <span id="lblFontSize">16px</span></label>
                   <input type="range" min="10" max="28" value="16" class="range-slider" id="sliderFontSize" oninput="adjustTextProperties()">
@@ -436,6 +494,7 @@
       event.currentTarget.classList.add('active');
     }
 
+    // 10 FORMAS DE ESCUDO SVG
     function setShieldShape(shape) {
       const pathShield = document.getElementById('svgShieldPath');
       const borderShield = document.getElementById('svgShieldBorder');
@@ -443,22 +502,33 @@
       
       if (shape === 'circle') pathD = "M 100,10 A 90,90 0 1,1 99.9,10 Z";
       else if (shape === 'diamond') pathD = "M 100,10 L 185,110 L 100,210 L 15,110 Z";
+      else if (shape === 'french') pathD = "M 20,10 H 180 V 130 C 180,180 100,210 100,210 C 100,210 20,180 20,130 Z";
+      else if (shape === 'swiss') pathD = "M 100,10 L 180,10 V 120 Q 180,200 100,210 Q 20,200 20,120 V 10 Z";
+      else if (shape === 'gothic') pathD = "M 100,10 Q 170,10 180,60 V 130 Q 100,210 100,210 Q 100,210 20,130 V 60 Q 30,10 100,10 Z";
+      else if (shape === 'oval') pathD = "M 100,10 C 160,10 185,50 185,110 C 185,170 160,210 100,210 C 40,210 15,170 15,110 C 15,50 40,10 100,10 Z";
+      else if (shape === 'hexagon') pathD = "M 100,10 L 180,55 V 155 L 100,200 L 20,155 V 55 Z";
+      else if (shape === 'crest') pathD = "M 100,10 Q 140,30 180,10 V 120 Q 180,190 100,210 Q 20,190 20,120 V 10 Q 60,30 100,10 Z";
+      else if (shape === 'pentagon') pathD = "M 100,10 L 185,70 L 150,200 H 50 L 15,70 Z";
 
       pathShield.setAttribute('d', pathD);
       borderShield.setAttribute('d', pathD);
 
-      const btns = event.target.parentElement.querySelectorAll('.opt-btn');
+      const btns = event.target.parentElement.querySelectorAll('.opt-btn-sm');
       btns.forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
     }
 
+    // 6 ESTILOS INTERNOS
     function setPatternStyle(pattern) {
       const svgPattern = document.getElementById('svgPattern');
       if (pattern === 'half') svgPattern.setAttribute('d', "M 100,0 L 200,0 L 200,220 L 100,220 Z");
-      else if (pattern === 'stripes') svgPattern.setAttribute('d', "M 40,0 H 70 V 220 H 40 Z M 130,0 H 160 V 220 H 130 Z");
+      else if (pattern === 'stripes') svgPattern.setAttribute('d', "M 30,0 H 55 V 220 H 30 Z M 85,0 H 115 V 220 H 85 Z M 145,0 H 170 V 220 H 145 Z");
+      else if (pattern === 'hstripes') svgPattern.setAttribute('d', "M 0,30 V 55 H 200 V 30 Z M 0,90 V 115 H 200 V 90 Z M 0,150 V 175 H 200 V 150 Z");
+      else if (pattern === 'cross') svgPattern.setAttribute('d', "M 85,0 H 115 V 220 H 85 Z M 0,95 V 125 H 200 V 95 Z");
+      else if (pattern === 'quarters') svgPattern.setAttribute('d', "M 100,0 H 200 V 110 H 100 Z M 0,110 H 100 V 220 H 0 Z");
       else if (pattern === 'solid') svgPattern.setAttribute('d', "");
 
-      const btns = event.target.parentElement.querySelectorAll('.opt-btn');
+      const btns = event.target.parentElement.querySelectorAll('.opt-btn-sm');
       btns.forEach(b => b.classList.remove('active'));
       event.target.classList.add('active');
     }
