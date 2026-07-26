@@ -13,61 +13,26 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    /* Estilos adicionales para uniformes y vista previa */
-    .color-picker-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .color-input-box {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      flex: 1;
-    }
-    .color-input-box label {
-      font-size: 0.75rem;
-      color: #94a3b8;
-    }
-    .color-badge-preview {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      margin-top: 5px;
-    }
-    .color-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 1px solid #fff;
-    }
-    .kit-toggle-btn {
-      background: rgba(0, 212, 255, 0.15);
-      border: 1px solid #00d4ff;
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-    .kit-photo-preview {
-      max-height: 80px;
-      border-radius: 8px;
-      border: 1px dashed #00d4ff;
-      margin-top: 8px;
-      display: none;
-    }
-    .field-hint {
-      font-size: 0.72rem;
-      color: #ffb703;
-      margin-top: 4px;
-      display: block;
-    }
+    .color-picker-row { display: flex; gap: 10px; align-items: center; }
+    .color-input-box { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .color-input-box label { font-size: 0.75rem; color: #94a3b8; }
+    .color-badge-preview { display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 5px; }
+    .color-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #fff; }
+    .kit-toggle-btn { background: rgba(0, 212, 255, 0.15); border: 1px solid #00d4ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; margin-bottom: 10px; }
+    .kit-photo-preview { max-height: 80px; border-radius: 8px; border: 1px dashed #00d4ff; margin-top: 8px; display: none; }
+    .field-hint { font-size: 0.72rem; color: #ffb703; margin-top: 4px; display: block; }
+    
+    /* INTERFAZ DEL DISEÑADOR DE ESCUDOS */
+    .logo-editor-grid { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; background: rgba(15, 23, 42, 0.6); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,212,255,0.2); }
+    .logo-preview-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
+    .controls-panel { display: flex; flex-direction: column; gap: 12px; }
+    .control-row-item { display: flex; flex-direction: column; gap: 5px; }
+    .control-row-item label { font-size: 0.8rem; color: #00d4ff; font-weight: 600; display: flex; justify-content: space-between; }
+    .range-slider { width: 100%; accent-color: #00d4ff; }
+    .emblem-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .emblem-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); font-size: 1.2rem; padding: 8px; border-radius: 6px; cursor: pointer; color: #fff; transition: all 0.2s; }
+    .emblem-btn:hover, .emblem-btn.active { background: #00d4ff; color: #000; border-color: #00d4ff; }
+    @media (max-width: 768px) { .logo-editor-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body class="login-body">
@@ -90,7 +55,7 @@
 
       <form id="teamRegisterForm" onsubmit="handleTeamSubmit(event)">
 
-        <!-- SECCIÓN 1: DATOS AUTOMÁTICOS DEL DELEGADO / SUPERVISOR -->
+        <!-- SECCIÓN 1: DATOS AUTOMÁTICOS DEL DELEGADO -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-user-shield"></i> 1. Datos del Delegado Responsable</h3>
           
@@ -117,7 +82,7 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 2: DATOS DEL EQUIPO Y LIGA -->
+        <!-- SECCIÓN 2: INFORMACIÓN DEL CLUB Y UNIFORMES -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-shield-halved"></i> 2. Información General del Club</h3>
 
@@ -151,7 +116,6 @@
               <input type="text" id="homeField" placeholder="Ej. Unidad Deportiva Moroleón - Cancha 1">
             </div>
             
-            <!-- MODIFICACIÓN 1: Horario Preferido Flexible -->
             <div class="input-group">
               <label for="prefSchedule"><i class="fa-solid fa-clock"></i> Preferencia de Horario (Referencial)</label>
               <select id="prefSchedule">
@@ -165,17 +129,14 @@
             </div>
           </div>
 
-          <!-- MODIFICACIÓN 2: UNIFORMES Y PALETA DE COLORES -->
+          <!-- UNIFORMES Y COLORES -->
           <div class="form-row" style="margin-top: 15px;">
-            
-            <!-- UNIFORME LOCAL (Opción de Paleta o Fotografía) -->
             <div class="input-group" style="width: 100%;">
               <label><i class="fa-solid fa-shirt" style="color: #00d4ff;"></i> Uniforme Local (Principal) (*)</label>
               <button type="button" class="kit-toggle-btn" onclick="toggleLocalKitMode()">
                 <i class="fa-solid fa-repeat"></i> Cambiar entre Paleta / Subir Foto
               </button>
 
-              <!-- Opción A: Paleta Camiseta + Short -->
               <div id="localKitPaletteBox">
                 <div class="color-picker-row">
                   <div class="color-input-box">
@@ -196,14 +157,12 @@
                 </div>
               </div>
 
-              <!-- Opción B: Foto del Uniforme -->
               <div id="localKitPhotoBox" style="display: none; margin-top: 8px;">
                 <input type="file" id="localKitPhotoInput" accept="image/*" onchange="previewKitPhoto(event)">
                 <img id="localKitPhotoImg" class="kit-photo-preview" alt="Vista previa del uniforme local">
               </div>
             </div>
 
-            <!-- UNIFORME VISITANTE (Paleta obligatoria 2 colores) -->
             <div class="input-group" style="width: 100%;">
               <label><i class="fa-solid fa-shirt" style="color: #ff4d4d;"></i> Uniforme Visitante (Secundario)</label>
               <div class="color-picker-row">
@@ -224,63 +183,55 @@
                 <span style="font-size: 0.7rem;">Short</span>
               </div>
             </div>
-
           </div>
         </div>
 
-        <!-- SECCIÓN 3: INTERFAZ INTERNA CREADORA DE LOGO / ESCUDO -->
+        <!-- SECCIÓN 3: INTERFAZ CREADORA DE ESCUDO -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-paintbrush"></i> 3. Identidad Visual: Escudo del Equipo</h3>
 
-          <!-- Selector de Modo de Escudo -->
           <div class="logo-mode-selector">
             <button type="button" class="btn-mode active" id="btnModeBuilder" onclick="switchLogoMode('builder')">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Diseñar Escudo Automático
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Diseñar Escudo Interactivo
             </button>
             <button type="button" class="btn-mode" id="btnModeUpload" onclick="switchLogoMode('upload')">
               <i class="fa-solid fa-upload"></i> Subir Imagen Propia
             </button>
           </div>
 
-          <!-- MÓDULO A: GENERADOR AUTOMÁTICO DE ESCUDO (LOGO BUILDER) -->
+          <!-- EDITOR DE ESCUDO -->
           <div id="logoBuilderModule" class="logo-builder-container">
-            <div class="builder-layout">
+            <div class="logo-editor-grid">
               
-              <!-- Vista Previa SVG Dinámica -->
-              <div class="logo-preview-card">
-                <div class="logo-svg-wrapper" id="logoSvgContainer">
-                  <svg id="customLogoSvg" viewBox="0 0 200 220" width="160" height="176">
-                    <defs>
-                      <clipPath id="shieldClip">
-                        <path id="svgShieldPath" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" />
-                      </clipPath>
-                    </defs>
+              <div class="logo-preview-box">
+                <svg id="customLogoSvg" viewBox="0 0 200 220" width="180" height="198">
+                  <defs>
+                    <clipPath id="shieldClip">
+                      <path id="svgShieldPath" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" />
+                    </clipPath>
+                  </defs>
 
-                    <g clip-path="url(#shieldClip)">
-                      <rect id="svgBgPrimary" x="0" y="0" width="200" height="220" fill="#00d4ff" />
-                      <path id="svgPattern" d="M 100,0 L 200,0 L 200,220 Z" fill="#0a0f1d" />
-                    </g>
+                  <g clip-path="url(#shieldClip)">
+                    <rect id="svgBgPrimary" x="0" y="0" width="200" height="220" fill="#00d4ff" />
+                    <path id="svgPattern" d="M 100,0 L 200,0 L 200,220 Z" fill="#0a0f1d" />
+                  </g>
 
-                    <path id="svgShieldBorder" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" fill="none" stroke="#ffffff" stroke-width="6" />
+                  <path id="svgShieldBorder" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" fill="none" stroke="#ffffff" stroke-width="6" />
 
-                    <text id="svgCentralIcon" x="100" y="115" font-family="FontAwesome" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central">&#xf1e3;</text>
+                  <!-- EMBLEMA CENTRAL VECTORIAL -->
+                  <text id="svgCentralIcon" x="100" y="110" font-size="52" fill="#ffffff" text-anchor="middle" dominant-baseline="central">⚽</text>
 
-                    <path id="textArcPath" d="M 40,150 Q 100,195 160,150" fill="none" />
-                    <text font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">
-                      <textPath href="#textArcPath" startOffset="50%" id="svgTeamText">
-                        EQUIPO FC
-                      </textPath>
-                    </text>
-                  </svg>
-                </div>
-                <span class="preview-label">Vista Previa Oficial</span>
+                  <!-- TEXTO DINÁMICO AJUSTABLE -->
+                  <text id="svgTeamText" x="100" y="175" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" font-family="Poppins, sans-serif">
+                    EQUIPO FC
+                  </text>
+                </svg>
+                <span class="preview-label" style="margin-top: 10px; font-size: 0.75rem; color: #94a3b8;">Vista Previa Oficial</span>
               </div>
 
-              <!-- Panel de Controles del Diseñador -->
-              <div class="builder-controls">
-                
-                <div class="control-group">
-                  <label><i class="fa-solid fa-shapes"></i> Forma del Escudo</label>
+              <div class="controls-panel">
+                <div class="control-row-item">
+                  <label><span><i class="fa-solid fa-shapes"></i> Forma del Escudo</span></label>
                   <div class="btn-group-options">
                     <button type="button" class="opt-btn active" onclick="setShieldShape('classic')">Clásico</button>
                     <button type="button" class="opt-btn" onclick="setShieldShape('circle')">Circular</button>
@@ -288,8 +239,8 @@
                   </div>
                 </div>
 
-                <div class="control-group">
-                  <label><i class="fa-solid fa-table-cells"></i> Estilo Interno</label>
+                <div class="control-row-item">
+                  <label><span><i class="fa-solid fa-table-cells"></i> Estilo Interno</span></label>
                   <div class="btn-group-options">
                     <button type="button" class="opt-btn active" onclick="setPatternStyle('half')">Mitad</button>
                     <button type="button" class="opt-btn" onclick="setPatternStyle('stripes')">Franjas</button>
@@ -297,39 +248,60 @@
                   </div>
                 </div>
 
-                <div class="control-group form-row">
+                <div class="form-row">
                   <div>
-                    <label><i class="fa-solid fa-palette"></i> Primario</label>
-                    <input type="color" id="primaryColorInput" value="#00d4ff" onchange="updateColors()">
+                    <label style="font-size:0.75rem; color:#fff;">Primario</label>
+                    <input type="color" id="primaryColorInput" value="#00d4ff" onchange="updateColors()" style="width:100%;">
                   </div>
                   <div>
-                    <label><i class="fa-solid fa-palette"></i> Secundario</label>
-                    <input type="color" id="secondaryColorInput" value="#0a0f1d" onchange="updateColors()">
+                    <label style="font-size:0.75rem; color:#fff;">Secundario</label>
+                    <input type="color" id="secondaryColorInput" value="#0a0f1d" onchange="updateColors()" style="width:100%;">
                   </div>
                   <div>
-                    <label><i class="fa-solid fa-border-top-left"></i> Borde</label>
-                    <input type="color" id="borderColorInput" value="#ffffff" onchange="updateColors()">
+                    <label style="font-size:0.75rem; color:#fff;">Borde</label>
+                    <input type="color" id="borderColorInput" value="#ffffff" onchange="updateColors()" style="width:100%;">
                   </div>
                 </div>
 
-                <div class="control-group">
-                  <label><i class="fa-solid fa-icons"></i> Emblema Central</label>
-                  <div class="icon-selector-grid">
-                    <button type="button" class="icon-btn active" onclick="setIcon('&#xf1e3;')"><i class="fa-solid fa-futbol"></i></button>
-                    <button type="button" class="icon-btn" onclick="setIcon('&#xf6de;')"><i class="fa-solid fa-crown"></i></button>
-                    <button type="button" class="icon-btn" onclick="setIcon('&#xf005;')"><i class="fa-solid fa-star"></i></button>
-                    <button type="button" class="icon-btn" onclick="setIcon('&#xf0e7;')"><i class="fa-solid fa-bolt"></i></button>
-                    <button type="button" class="icon-btn" onclick="setIcon('&#xf6d9;')"><i class="fa-solid fa-dragon"></i></button>
-                    <button type="button" class="icon-btn" onclick="setIcon('&#xf521;')"><i class="fa-solid fa-chess-king"></i></button>
+                <div class="control-row-item">
+                  <label><span><i class="fa-solid fa-icons"></i> Emblema Central</span></label>
+                  <div class="emblem-grid">
+                    <button type="button" class="emblem-btn active" onclick="setEmblem('⚽')">⚽</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('👑')">👑</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('⭐')">⭐</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('⚡')">⚡</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🔥')">🔥</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🦅')">🦅</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🦁')">🦁</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🏆')">🏆</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🛡️')">🛡️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🎯')">🎯</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('💎')">💎</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🐉')">🐉</button>
                   </div>
                 </div>
 
+                <div class="control-row-item" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                  <label><i class="fa-solid fa-text-height"></i> Tamaña de Letra del Nombre: <span id="lblFontSize">16px</span></label>
+                  <input type="range" min="10" max="28" value="16" class="range-slider" id="sliderFontSize" oninput="adjustTextProperties()">
+                </div>
+
+                <div class="control-row-item">
+                  <label><i class="fa-solid fa-arrows-up-down"></i> Posición Vertical Texto (Eje Y): <span id="lblPosY">175px</span></label>
+                  <input type="range" min="40" max="200" value="175" class="range-slider" id="sliderPosY" oninput="adjustTextProperties()">
+                </div>
+
+                <div class="control-row-item">
+                  <label><i class="fa-solid fa-arrows-left-right"></i> Posición Horizontal Texto (Eje X): <span id="lblPosX">100px</span></label>
+                  <input type="range" min="30" max="170" value="100" class="range-slider" id="sliderPosX" oninput="adjustTextProperties()">
+                </div>
               </div>
+
             </div>
           </div>
 
-          <!-- MÓDULO B: SUBIR ARCHIVO PROPIO -->
-          <div id="logoUploadModule" class="minor-upload-section" style="display: none;">
+          <!-- MÓDULO SUBIR ARCHIVO -->
+          <div id="logoUploadModule" class="minor-upload-section" style="display: none; margin-top: 15px;">
             <div class="ocr-dropzone">
               <i class="fa-solid fa-cloud-arrow-up ocr-icon"></i>
               <p>Arrastra el archivo de tu escudo o <strong>haz clic aquí</strong></p>
@@ -337,13 +309,12 @@
               <input type="file" id="customTeamLogoInput" accept="image/*" onchange="previewUploadedLogo(event)">
             </div>
             <div id="uploadedLogoPreviewContainer" style="display:none; text-align:center; margin-top:15px;">
-              <img id="uploadedLogoImg" src="" alt="Escudo Subido" style="max-height: 120px; border-radius: 10px; border: 2px solid var(--cyan-neon);">
+              <img id="uploadedLogoImg" src="" alt="Escudo Subido" style="max-height: 140px; border-radius: 10px; border: 2px solid var(--cyan-neon);">
             </div>
           </div>
 
         </div>
 
-        <!-- BOTÓN DE ACCIÓN FINAL -->
         <div class="wizard-buttons">
           <button type="submit" id="btnSubmitTeam" class="btn-login">
             <i class="fa-solid fa-shield-plus"></i> Registrar y Guardar Equipo en RETA
@@ -398,7 +369,6 @@
       }
     }
 
-    // MANEJO DE UNIFORMES Y COLORES
     function toggleLocalKitMode() {
       isLocalKitPhoto = !isLocalKitPhoto;
       document.getElementById('localKitPaletteBox').style.display = isLocalKitPhoto ? 'none' : 'block';
@@ -439,15 +409,30 @@
       document.getElementById('svgTeamText').textContent = name.length > 0 ? name.toUpperCase() : 'EQUIPO FC';
     }
 
+    function adjustTextProperties() {
+      const size = document.getElementById('sliderFontSize').value;
+      const posY = document.getElementById('sliderPosY').value;
+      const posX = document.getElementById('sliderPosX').value;
+
+      document.getElementById('lblFontSize').innerText = size + 'px';
+      document.getElementById('lblPosY').innerText = posY + 'px';
+      document.getElementById('lblPosX').innerText = posX + 'px';
+
+      const txt = document.getElementById('svgTeamText');
+      txt.setAttribute('font-size', size);
+      txt.setAttribute('y', posY);
+      txt.setAttribute('x', posX);
+    }
+
     function updateColors() {
       document.getElementById('svgBgPrimary').setAttribute('fill', document.getElementById('primaryColorInput').value);
       document.getElementById('svgPattern').setAttribute('fill', document.getElementById('secondaryColorInput').value);
       document.getElementById('svgShieldBorder').setAttribute('stroke', document.getElementById('borderColorInput').value);
     }
 
-    function setIcon(iconCode) {
-      document.getElementById('svgCentralIcon').innerHTML = iconCode;
-      document.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+    function setEmblem(char) {
+      document.getElementById('svgCentralIcon').textContent = char;
+      document.querySelectorAll('.emblem-btn').forEach(btn => btn.classList.remove('active'));
       event.currentTarget.classList.add('active');
     }
 
@@ -512,7 +497,6 @@
           throw new Error("Por favor selecciona la Liga / Torneo al que deseas inscribirte.");
         }
 
-        // Construir información de uniformes
         let localKitVal = isLocalKitPhoto ? localKitPhotoBase64 : `Playera: ${document.getElementById('localShirtColor').value} | Short: ${document.getElementById('localShortColor').value}`;
         let visitorKitVal = `Playera: ${document.getElementById('visitorShirtColor').value} | Short: ${document.getElementById('visitorShortColor').value}`;
 
