@@ -195,14 +195,11 @@
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-sitemap"></i> 2. Información General de la Liga</h3>
 
+          <!-- CAMBIO OPCIÓN 2: El nombre toma el 100% del ancho sin requerir la clave manual -->
           <div class="form-row">
-            <div class="input-group">
+            <div class="input-group" style="width: 100%;">
               <label for="leagueName"><i class="fa-solid fa-trophy"></i> Nombre Oficial de la Liga (*)</label>
               <input type="text" id="leagueName" placeholder="Ej. Liga Premier de Fútbol Moroleón" required onchange="playBeepSound()">
-            </div>
-            <div class="input-group">
-              <label for="leagueKey"><i class="fa-solid fa-key"></i> Clave Corta (3-4 Letras) (*)</label>
-              <input type="text" id="leagueKey" placeholder="Ej. LPM" maxlength="4" style="text-transform: uppercase;" required onchange="playBeepSound()">
             </div>
           </div>
 
@@ -425,6 +422,23 @@
     let customCategoryResult = null;
     let selectedLogoBase64 = null;
 
+    // OPCIÓN 2: FUNCIÓN GENERADORA DE CLAVE ÚNICA DE LIGA
+    function generateUniqueLeagueKey(leagueName, state, city) {
+      const statePrefix = (state || 'GEN').substring(0, 3).toUpperCase();
+      const cityPrefix = (city || 'SED').substring(0, 3).toUpperCase();
+      
+      const words = leagueName.trim().split(/\s+/).filter(w => w.length > 2);
+      let nameInitials = '';
+      if (words.length >= 2) {
+        nameInitials = words.map(w => w[0]).join('').substring(0, 4).toUpperCase();
+      } else {
+        nameInitials = leagueName.replace(/[^a-zA-Z]/g, '').substring(0, 4).toUpperCase();
+      }
+
+      const randomNum = Math.floor(100 + Math.random() * 900);
+      return `${statePrefix}-${cityPrefix}-${nameInitials || 'LIGA'}-${randomNum}`;
+    }
+
     function previewLeagueLogo(event) {
       playBeepSound();
       const file = event.target.files[0];
@@ -582,8 +596,13 @@
       submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando Liga y creando Administrador...`;
 
       try {
-        const rawKey = document.getElementById('leagueKey').value.trim().toUpperCase();
+        const leagueNameVal = document.getElementById('leagueName').value.trim();
         const stateVal = document.getElementById('leagueState').value;
+        const cityVal = document.getElementById('leagueCity').value.trim();
+        
+        // OPCIÓN 2: Generación automática de la clave de liga única
+        const generatedKey = generateUniqueLeagueKey(leagueNameVal, stateVal, cityVal);
+
         const adminCurpVal = document.getElementById('adminCurp').value.trim().toUpperCase();
         const adminNameVal = document.getElementById('adminFirstName').value.trim();
         const adminLastNameVal = document.getElementById('adminLastName').value.trim();
@@ -604,12 +623,12 @@
 
         if (userErr) throw new Error("Error al registrar el perfil del Administrador: " + userErr.message);
 
-        // PASO 2: Inserción de la Liga vinculada a la CURP
+        // PASO 2: Inserción de la Liga vinculada a la CURP con Clave Autogenerada
         const leaguePayload = {
-          nombre_liga: document.getElementById('leagueName').value.trim(),
-          clave_liga: rawKey,
+          nombre_liga: leagueNameVal,
+          clave_liga: generatedKey,
           estado: stateVal,
-          municipio: document.getElementById('leagueCity').value.trim(),
+          municipio: cityVal,
           complejo_deportivo: document.getElementById('leagueAddress').value.trim(),
           disciplina: document.getElementById('sportType').value,
           telefono: document.getElementById('leaguePhone').value.trim(),
@@ -625,12 +644,7 @@
           .select()
           .single();
 
-        if (leagueErr) {
-          if (leagueErr.code === '23505') {
-            throw new Error(`La Clave de Liga "${rawKey}" ya está en uso por otra liga. Por favor cambia la clave corta.`);
-          }
-          throw leagueErr;
-        }
+        if (leagueErr) throw leagueErr;
 
         // PASO 3: Registrar Estructura de Torneos para esta Liga
         const tournamentsPayload = tournamentsList.map((t, index) => ({
@@ -649,7 +663,7 @@
 
         if (tournamentsErr) throw tournamentsErr;
 
-        alert("¡Liga, Administrador y Torneos registrados con éxito en RETA!");
+        alert(`¡Liga, Administrador y Torneos registrados con éxito en RETA!\nClave asignada a tu Liga: ${generatedKey}`);
         window.location.href = "equipo_registrar.html"; // Redirección automática al PASO 2: Crear Equipo
 
       } catch (err) {
