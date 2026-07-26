@@ -30,13 +30,16 @@
     .control-row-item label { font-size: 0.8rem; color: #00d4ff; font-weight: 600; display: flex; justify-content: space-between; }
     .range-slider { width: 100%; accent-color: #00d4ff; }
     
-    .btn-group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 5px; }
+    .btn-group-grid-20 { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 5px; max-height: 150px; overflow-y: auto; padding-right: 4px; }
     .opt-btn-sm { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); font-size: 0.72rem; padding: 6px 4px; border-radius: 6px; cursor: pointer; color: #fff; text-align: center; }
     .opt-btn-sm.active { background: #00d4ff; color: #000; font-weight: bold; border-color: #00d4ff; }
 
-    .emblem-grid-40 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-height: 140px; overflow-y: auto; padding-right: 5px; }
+    .emblem-grid-40 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-height: 130px; overflow-y: auto; padding-right: 5px; }
     .emblem-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); font-size: 1.1rem; padding: 6px; border-radius: 6px; cursor: pointer; color: #fff; transition: all 0.2s; }
     .emblem-btn:hover, .emblem-btn.active { background: #00d4ff; color: #000; border-color: #00d4ff; }
+
+    .custom-emblem-box { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 8px; border: 1px dashed rgba(0,212,255,0.4); margin-top: 5px; }
+    .btn-upload-emblem { background: #00d4ff; color: #000; border: none; padding: 5px 10px; font-weight: bold; font-size: 0.75rem; border-radius: 5px; cursor: pointer; }
 
     @media (max-width: 768px) { .logo-editor-grid { grid-template-columns: 1fr; } }
   </style>
@@ -61,7 +64,7 @@
 
       <form id="teamRegisterForm" onsubmit="handleTeamSubmit(event)">
 
-        <!-- SECCIÓN 1: DATOS AUTOMÁTICOS DEL DELEGADO -->
+        <!-- SECCIÓN 1: DATOS DELEGADO -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-user-shield"></i> 1. Datos del Delegado Responsable</h3>
           
@@ -88,7 +91,7 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 2: INFORMACIÓN DEL CLUB Y UNIFORMES -->
+        <!-- SECCIÓN 2: INFORMACIÓN DEL CLUB -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-shield-halved"></i> 2. Información General del Club</h3>
 
@@ -111,7 +114,6 @@
               </select>
             </div>
             <div class="input-group">
-              <!-- MODIFICACIÓN 1: Nombre de campo actualizado -->
               <label for="foundedYear"><i class="fa-solid fa-calendar-days"></i> Año de fundación del club</label>
               <input type="number" id="foundedYear" placeholder="Ej. 2020" min="1900" max="2026">
             </div>
@@ -123,7 +125,6 @@
               <input type="text" id="homeField" placeholder="Ej. Unidad Deportiva Moroleón - Cancha 1">
             </div>
             
-            <!-- MODIFICACIÓN 2: Opciones de Horarios Específicos -->
             <div class="input-group">
               <label for="prefSchedule"><i class="fa-solid fa-clock"></i> Preferencia de Horario (Referencial)</label>
               <select id="prefSchedule">
@@ -199,7 +200,7 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 3: INTERFAZ CREADORA DE ESCUDO (MODIFICACIÓN 3) -->
+        <!-- SECCIÓN 3: INTERFAZ CREADORA DE ESCUDO -->
         <div class="form-section-block">
           <h3 class="step-title"><i class="fa-solid fa-paintbrush"></i> 3. Identidad Visual: Escudo del Equipo</h3>
 
@@ -230,8 +231,11 @@
 
                   <path id="svgShieldBorder" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" fill="none" stroke="#ffffff" stroke-width="6" />
 
-                  <!-- EMBLEMA CENTRAL -->
+                  <!-- EMBLEMA CENTRAL (TEXTO / ICONO) -->
                   <text id="svgCentralIcon" x="100" y="110" font-size="52" fill="#ffffff" text-anchor="middle" dominant-baseline="central">⚽</text>
+
+                  <!-- CONTENEDOR DE IMAGEN EMBLEMA PERSONALIZADO (SI SE SUBE PNG/JPG) -->
+                  <image id="svgCustomEmblemImage" x="60" y="70" width="80" height="80" preserveAspectRatio="xMidYMid meet" style="display:none;"></image>
 
                   <!-- TEXTO DINÁMICO -->
                   <text id="svgTeamText" x="100" y="175" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" font-family="Poppins, sans-serif">
@@ -243,10 +247,10 @@
 
               <div class="controls-panel">
                 
-                <!-- 10 FORMAS DE ESCUDOS -->
+                <!-- 20 FORMAS DE ESCUDOS -->
                 <div class="control-row-item">
-                  <label><span><i class="fa-solid fa-shapes"></i> Forma del Escudo (10 Opciones)</span></label>
-                  <div class="btn-group-grid">
+                  <label><span><i class="fa-solid fa-shapes"></i> Forma del Escudo (20 Opciones)</span></label>
+                  <div class="btn-group-grid-20">
                     <button type="button" class="opt-btn-sm active" onclick="setShieldShape('classic')">Clásico</button>
                     <button type="button" class="opt-btn-sm" onclick="setShieldShape('circle')">Circular</button>
                     <button type="button" class="opt-btn-sm" onclick="setShieldShape('diamond')">Diamante</button>
@@ -257,13 +261,23 @@
                     <button type="button" class="opt-btn-sm" onclick="setShieldShape('hexagon')">Hexágono</button>
                     <button type="button" class="opt-btn-sm" onclick="setShieldShape('crest')">Cresta</button>
                     <button type="button" class="opt-btn-sm" onclick="setShieldShape('pentagon')">Pentágono</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('crown')">Corona</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('tallGothic')">Gótico Alto</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('skull')">Calavera</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('royal')">Real</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('ballShape')">Balón</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('starShape')">Estrella</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('viking')">Vikingo</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('heart')">Corazón</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('ring')">Anillo</button>
+                    <button type="button" class="opt-btn-sm" onclick="setShieldShape('tactical')">Táctico</button>
                   </div>
                 </div>
 
                 <!-- 6 ESTILOS INTERNOS -->
                 <div class="control-row-item">
-                  <label><span><i class="fa-solid fa-table-cells"></i> Estilo Interno (6 Opciones)</span></label>
-                  <div class="btn-group-grid">
+                  <label><span><i class="fa-solid fa-table-cells"></i> Estilo Interno</span></label>
+                  <div class="btn-group-grid-20" style="max-height: inline;">
                     <button type="button" class="opt-btn-sm active" onclick="setPatternStyle('half')">Mitad</button>
                     <button type="button" class="opt-btn-sm" onclick="setPatternStyle('stripes')">Franjas V.</button>
                     <button type="button" class="opt-btn-sm" onclick="setPatternStyle('hstripes')">Franjas H.</button>
@@ -289,9 +303,19 @@
                   </div>
                 </div>
 
-                <!-- 42 EMBLEMAS CENTRALES DEPORTIVOS -->
+                <!-- EMBLEMA CENTRAL (CATÁLOGO + SUBIR PROPIO) -->
                 <div class="control-row-item">
-                  <label><span><i class="fa-solid fa-icons"></i> Emblema Central (42 Opciones)</span></label>
+                  <label><span><i class="fa-solid fa-icons"></i> Emblema Central</span></label>
+                  
+                  <!-- SUBIR EMBLEMA PROPIO PNG/JPG -->
+                  <div class="custom-emblem-box">
+                    <span style="font-size: 0.72rem; color: #fff;"><i class="fa-solid fa-upload"></i> Subir Emblema Propio (PNG sin fondo)</span>
+                    <button type="button" class="btn-upload-emblem" onclick="document.getElementById('centerEmblemInput').click()">Adjuntar Imagen</button>
+                    <input type="file" id="centerEmblemInput" accept="image/png, image/jpeg" style="display:none;" onchange="uploadCenterEmblem(event)">
+                  </div>
+
+                  <span style="font-size: 0.7rem; color: #94a3b8; margin-top:4px;">O selecciona del catálogo:</span>
+
                   <div class="emblem-grid-40">
                     <button type="button" class="emblem-btn active" onclick="setEmblem('⚽')">⚽</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🏆')">🏆</button>
@@ -305,7 +329,7 @@
                     <button type="button" class="emblem-btn" onclick="setEmblem('🐺')">🐺</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🐯')">🐯</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🐉')">🐉</button>
-                    <button type="button" class="emblem-btn" onclick="setEmblem('B')">🛡️</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🛡️')">🛡️</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🎯')">🎯</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('💎')">💎</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🚀')">🚀</button>
@@ -322,9 +346,9 @@
                     <button type="button" class="emblem-btn" onclick="setEmblem('✨')">✨</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🐾')">🐾</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🦈')">🦈</button>
-                    <button type="button" class="emblem-btn" onclick="setEmblem('B')">🐂</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🐂')">🐂</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🐎')">🐎</button>
-                    <button type="button" class="emblem-btn" onclick="setEmblem('👑')">🏰</button>
+                    <button type="button" class="emblem-btn" onclick="setEmblem('🏰')">🏰</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('⚓')">⚓</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🧭')">🧭</button>
                     <button type="button" class="emblem-btn" onclick="setEmblem('🌋')">🌋</button>
@@ -340,7 +364,7 @@
 
                 <!-- CONTROLES DE TEXTO AVANZADOS -->
                 <div class="control-row-item" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                  <label><i class="fa-solid fa-text-height"></i> Tamaña de Letra del Nombre: <span id="lblFontSize">16px</span></label>
+                  <label><i class="fa-solid fa-text-height"></i> Tamaño de Letra del Nombre: <span id="lblFontSize">16px</span></label>
                   <input type="range" min="10" max="28" value="16" class="range-slider" id="sliderFontSize" oninput="adjustTextProperties()">
                 </div>
 
@@ -489,12 +513,33 @@
     }
 
     function setEmblem(char) {
+      document.getElementById('svgCentralIcon').style.display = 'block';
+      document.getElementById('svgCustomEmblemImage').style.display = 'none';
       document.getElementById('svgCentralIcon').textContent = char;
       document.querySelectorAll('.emblem-btn').forEach(btn => btn.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+      if (event && event.currentTarget) event.currentTarget.classList.add('active');
     }
 
-    // 10 FORMAS DE ESCUDO SVG
+    function uploadCenterEmblem(event) {
+      const file = event.target.files[0];
+      if (file) {
+        if (!file.type.includes('png') && !file.type.includes('jpeg')) {
+          alert('Por favor selecciona una imagen PNG o JPG transparente.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imgElem = document.getElementById('svgCustomEmblemImage');
+          imgElem.setAttribute('href', e.target.result);
+          imgElem.style.display = 'block';
+          document.getElementById('svgCentralIcon').style.display = 'none';
+          document.querySelectorAll('.emblem-btn').forEach(btn => btn.classList.remove('active'));
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // 20 FORMAS DE ESCUDOS SVG
     function setShieldShape(shape) {
       const pathShield = document.getElementById('svgShieldPath');
       const borderShield = document.getElementById('svgShieldBorder');
@@ -509,6 +554,16 @@
       else if (shape === 'hexagon') pathD = "M 100,10 L 180,55 V 155 L 100,200 L 20,155 V 55 Z";
       else if (shape === 'crest') pathD = "M 100,10 Q 140,30 180,10 V 120 Q 180,190 100,210 Q 20,190 20,120 V 10 Q 60,30 100,10 Z";
       else if (shape === 'pentagon') pathD = "M 100,10 L 185,70 L 150,200 H 50 L 15,70 Z";
+      else if (shape === 'crown') pathD = "M 20,30 L 60,10 L 100,35 L 140,10 L 180,30 L 170,145 Q 100,210 100,210 Q 100,210 30,145 Z";
+      else if (shape === 'tallGothic') pathD = "M 100,5 L 185,40 V 150 Q 100,215 100,215 Q 100,215 15,150 V 40 Z";
+      else if (shape === 'skull') pathD = "M 100,10 L 175,50 L 160,120 L 130,200 L 70,200 L 40,120 L 25,50 Z";
+      else if (shape === 'royal') pathD = "M 100,10 Q 150,0 185,30 V 120 Q 185,185 100,210 Q 15,185 15,120 V 30 Q 50,0 100,10 Z";
+      else if (shape === 'ballShape') pathD = "M 100,10 C 170,10 190,60 190,110 C 190,170 160,200 100,210 C 40,200 10,170 10,110 C 10,60 30,10 100,10 Z";
+      else if (shape === 'starShape') pathD = "M 100,10 L 125,75 L 190,80 L 140,125 L 155,190 L 100,155 L 45,190 L 60,125 L 10,80 L 75,75 Z";
+      else if (shape === 'viking') pathD = "M 30,10 L 170,10 L 185,90 Q 185,170 100,210 Q 15,170 15,90 Z";
+      else if (shape === 'heart') pathD = "M 100,45 Q 130,10 165,10 Q 190,10 190,50 Q 190,120 100,205 Q 10,120 10,50 Q 10,10 35,10 Q 70,10 100,45 Z";
+      else if (shape === 'ring') pathD = "M 100,15 A 85,85 0 1,1 99.9,15 Z";
+      else if (shape === 'tactical') pathD = "M 100,10 L 180,40 L 180,120 L 100,200 L 20,120 L 20,40 Z";
 
       pathShield.setAttribute('d', pathD);
       borderShield.setAttribute('d', pathD);
