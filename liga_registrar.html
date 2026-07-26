@@ -116,6 +116,24 @@
       color: #000;
       box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
     }
+
+    /* Estilo para la vista previa del logotipo */
+    .logo-preview-box {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .logo-preview-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      border: 2px dashed #00d4ff;
+      object-fit: cover;
+      background: rgba(0, 0, 0, 0.3);
+      display: none;
+    }
   </style>
 </head>
 <body class="login-body">
@@ -264,6 +282,18 @@
               <input type="email" id="leagueEmail" placeholder="contacto@ligapremier.com" required onchange="playBeepSound()">
             </div>
           </div>
+
+          <!-- CAMPO AÑADIDO: LOGOTIPO DE LA LIGA -->
+          <div class="form-row" style="margin-top: 15px;">
+            <div class="input-group" style="width: 100%;">
+              <label for="leagueLogoInput"><i class="fa-solid fa-image"></i> Logotipo / Emblema Oficial de la Liga</label>
+              <input type="file" id="leagueLogoInput" accept="image/*" onchange="previewLeagueLogo(event)">
+              <div class="logo-preview-box">
+                <img id="logoPreviewImg" class="logo-preview-img" alt="Vista previa del logo">
+                <span id="logoPreviewText" style="font-size: 0.8rem; color: #94a3b8;">Selecciona una imagen (PNG, JPG) para el perfil de tu liga.</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- SECCIÓN 3: ESTRUCTURA DE TORNEOS Y CAPACIDAD -->
@@ -404,6 +434,32 @@
 
     let tournamentsList = [];
     let customCategoryResult = null;
+    let selectedLogoBase64 = null;
+
+    // Función para previsualizar el logotipo
+    function previewLeagueLogo(event) {
+      playBeepSound();
+      const file = event.target.files[0];
+      const previewImg = document.getElementById('logoPreviewImg');
+      const previewText = document.getElementById('logoPreviewText');
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selectedLogoBase64 = e.target.result;
+          previewImg.src = e.target.result;
+          previewImg.style.display = 'block';
+          previewText.textContent = `Archivo seleccionado: ${file.name}`;
+          previewText.style.color = '#00d4ff';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        selectedLogoBase64 = null;
+        previewImg.style.display = 'none';
+        previewText.textContent = 'Selecciona una imagen (PNG, JPG) para el perfil de tu liga.';
+        previewText.style.color = '#94a3b8';
+      }
+    }
 
     // Disparar ventana emergente cuando eligen "Otro"
     function checkCategoryOption(value) {
@@ -545,80 +601,81 @@
     }
 
     // INSERCIÓN EN SUPABASE
-   async function handleLeagueSubmit(e) {
-  e.preventDefault();
-  playBeepSound();
+    async function handleLeagueSubmit(e) {
+      e.preventDefault();
+      playBeepSound();
 
-  if (tournamentsList.length === 0) {
-    alert("Debes agregar al menos 1 torneo para registrar la liga.");
-    return;
-  }
-
-  const submitBtn = document.getElementById('btnSubmitLeague');
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Liga en Supabase...`;
-
-  try {
-    const rawKey = document.getElementById('leagueKey').value.trim().toUpperCase();
-    const stateVal = document.getElementById('leagueState').value;
-
-    const leaguePayload = {
-      nombre_liga: document.getElementById('leagueName').value.trim(),
-      clave_liga: rawKey,
-      estado: stateVal,
-      municipio: document.getElementById('leagueCity').value.trim(),
-      direccion_complejo: document.getElementById('leagueAddress').value.trim(),
-      disciplina: document.getElementById('sportType').value,
-      telefono_liga: document.getElementById('leaguePhone').value.trim(),
-      email_liga: document.getElementById('leagueEmail').value.trim(),
-      nombre_admin: document.getElementById('adminFirstName').value.trim() + ' ' + document.getElementById('adminLastName').value.trim(),
-      curp_admin: document.getElementById('adminCurp').value.trim().toUpperCase(),
-      telefono_admin: document.getElementById('adminPhone').value.trim(),
-      email_admin: document.getElementById('adminEmail').value.trim(),
-      redes_sociales: document.getElementById('leagueSocial').value.trim()
-    };
-
-    // 1. Insertar Liga (si se duplica la clave, alerta clara al usuario)
-    const { data: insertedLeague, error: leagueErr } = await _supabase
-      .from('ligas')
-      .insert([leaguePayload])
-      .select()
-      .single();
-
-    if (leagueErr) {
-      if (leagueErr.code === '23505') {
-        throw new Error(`La Clave de Liga "${rawKey}" ya está en uso por otra liga. Por favor cambia la clave corta en la Sección 2.`);
+      if (tournamentsList.length === 0) {
+        alert("Debes agregar al menos 1 torneo para registrar la liga.");
+        return;
       }
-      throw leagueErr;
+
+      const submitBtn = document.getElementById('btnSubmitLeague');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando Liga en Supabase...`;
+
+      try {
+        const rawKey = document.getElementById('leagueKey').value.trim().toUpperCase();
+        const stateVal = document.getElementById('leagueState').value;
+
+        const leaguePayload = {
+          nombre_liga: document.getElementById('leagueName').value.trim(),
+          clave_liga: rawKey,
+          estado: stateVal,
+          municipio: document.getElementById('leagueCity').value.trim(),
+          direccion_complejo: document.getElementById('leagueAddress').value.trim(),
+          disciplina: document.getElementById('sportType').value,
+          telefono_liga: document.getElementById('leaguePhone').value.trim(),
+          email_liga: document.getElementById('leagueEmail').value.trim(),
+          nombre_admin: document.getElementById('adminFirstName').value.trim() + ' ' + document.getElementById('adminLastName').value.trim(),
+          curp_admin: document.getElementById('adminCurp').value.trim().toUpperCase(),
+          telefono_admin: document.getElementById('adminPhone').value.trim(),
+          email_admin: document.getElementById('adminEmail').value.trim(),
+          redes_sociales: document.getElementById('leagueSocial').value.trim(),
+          logo_url: selectedLogoBase64 || null
+        };
+
+        // 1. Insertar Liga
+        const { data: insertedLeague, error: leagueErr } = await _supabase
+          .from('ligas')
+          .insert([leaguePayload])
+          .select()
+          .single();
+
+        if (leagueErr) {
+          if (leagueErr.code === '23505') {
+            throw new Error(`La Clave de Liga "${rawKey}" ya está en uso por otra liga. Por favor cambia la clave corta en la Sección 2.`);
+          }
+          throw leagueErr;
+        }
+
+        // 2. Insertar Torneos vinculando todos los campos requeridos
+        const tournamentsPayload = tournamentsList.map((t, index) => ({
+          liga_id: insertedLeague.id,
+          clave_torneo: `${insertedLeague.clave_liga}-T${index + 1}`,
+          clave_estado: stateVal ? stateVal.substring(0, 3).toUpperCase() : 'GEN',
+          nombre_torneo: t.nombre_torneo,
+          categoria: t.categoria,
+          rama: t.rama,
+          equipos_proyectados: t.equipos_proyectados
+        }));
+
+        const { error: tournamentsErr } = await _supabase
+          .from('liga_torneo')
+          .insert(tournamentsPayload);
+
+        if (tournamentsErr) throw tournamentsErr;
+
+        alert("¡Liga y Torneos guardados con éxito en Supabase!");
+        window.location.href = "panel_administrador.html";
+
+      } catch (err) {
+        console.error("Error al registrar liga:", err);
+        alert("Atención: " + (err.message || JSON.stringify(err)));
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Registrar Liga Oficialmente en RETA`;
+      }
     }
-
-    // 2. Insertar Torneos vinculando todos los campos requeridos
-    const tournamentsPayload = tournamentsList.map((t, index) => ({
-      liga_id: insertedLeague.id,
-      clave_torneo: `${insertedLeague.clave_liga}-T${index + 1}`,
-      clave_estado: stateVal ? stateVal.substring(0, 3).toUpperCase() : 'GEN',
-      nombre_torneo: t.nombre_torneo,
-      categoria: t.categoria,
-      rama: t.rama,
-      equipos_proyectados: t.equipos_proyectados
-    }));
-
-    const { error: tournamentsErr } = await _supabase
-      .from('liga_torneo')
-      .insert(tournamentsPayload);
-
-    if (tournamentsErr) throw tournamentsErr;
-
-    alert("¡Liga y Torneos guardados con éxito en Supabase!");
-    window.location.href = "panel_administrador.html";
-
-  } catch (err) {
-    console.error("Error al registrar liga:", err);
-    alert("Atención: " + (err.message || JSON.stringify(err)));
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Registrar Liga Oficialmente en RETA`;
-  }
-}
   </script>
 </body>
 </html>
