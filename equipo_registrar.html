@@ -11,6 +11,64 @@
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* Estilos adicionales para uniformes y vista previa */
+    .color-picker-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .color-input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .color-input-box label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .color-badge-preview {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 5px;
+    }
+    .color-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+    }
+    .kit-toggle-btn {
+      background: rgba(0, 212, 255, 0.15);
+      border: 1px solid #00d4ff;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .kit-photo-preview {
+      max-height: 80px;
+      border-radius: 8px;
+      border: 1px dashed #00d4ff;
+      margin-top: 8px;
+      display: none;
+    }
+    .field-hint {
+      font-size: 0.72rem;
+      color: #ffb703;
+      margin-top: 4px;
+      display: block;
+    }
+  </style>
 </head>
 <body class="login-body">
 
@@ -92,27 +150,81 @@
               <label for="homeField"><i class="fa-solid fa-stadium"></i> Cancha Sede / Localía Preferida</label>
               <input type="text" id="homeField" placeholder="Ej. Unidad Deportiva Moroleón - Cancha 1">
             </div>
+            
+            <!-- MODIFICACIÓN 1: Horario Preferido Flexible -->
             <div class="input-group">
-              <label for="prefSchedule"><i class="fa-solid fa-clock"></i> Horario Preferido de Juego</label>
+              <label for="prefSchedule"><i class="fa-solid fa-clock"></i> Preferencia de Horario (Referencial)</label>
               <select id="prefSchedule">
-                <option value="Sábado Tarde (16:00 - 18:00)">Sábado Tarde (16:00 - 18:00)</option>
-                <option value="Domingo Mañana (09:00 - 12:00)">Domingo Mañana (09:00 - 12:00)</option>
-                <option value="Domingo Tarde (14:00 - 17:00)">Domingo Tarde (14:00 - 17:00)</option>
-                <option value="Nocturno Entre Semana (20:00 - 22:00)">Nocturno Entre Semana (20:00 - 22:00)</option>
+                <option value="Sin preferencia / Indiferente">Sin preferencia / Horario Rotativo Indiferente</option>
+                <option value="Preferente Sábado Tarde">Preferente Sábado Tarde (Sujeto a Rol)</option>
+                <option value="Preferente Domingo Mañana">Preferente Domingo Mañana (Sujeto a Rol)</option>
+                <option value="Preferente Domingo Tarde">Preferente Domingo Tarde (Sujeto a Rol)</option>
+                <option value="Preferente Nocturno Entre Semana">Preferente Entre Semana (Sujeto a Rol)</option>
               </select>
+              <span class="field-hint"><i class="fa-solid fa-triangle-exclamation"></i> Nota: Los horarios finales son variables y asignados por la administración de la liga.</span>
             </div>
           </div>
 
-          <!-- Uniformes -->
-          <div class="form-row">
-            <div class="input-group">
-              <label for="kitLocalColor"><i class="fa-solid fa-shirt"></i> Color Principal (Uniforme Local)</label>
-              <input type="text" id="kitLocalColor" placeholder="Ej. Azul Marino / Blanco">
+          <!-- MODIFICACIÓN 2: UNIFORMES Y PALETA DE COLORES -->
+          <div class="form-row" style="margin-top: 15px;">
+            
+            <!-- UNIFORME LOCAL (Opción de Paleta o Fotografía) -->
+            <div class="input-group" style="width: 100%;">
+              <label><i class="fa-solid fa-shirt" style="color: #00d4ff;"></i> Uniforme Local (Principal) (*)</label>
+              <button type="button" class="kit-toggle-btn" onclick="toggleLocalKitMode()">
+                <i class="fa-solid fa-repeat"></i> Cambiar entre Paleta / Subir Foto
+              </button>
+
+              <!-- Opción A: Paleta Camiseta + Short -->
+              <div id="localKitPaletteBox">
+                <div class="color-picker-row">
+                  <div class="color-input-box">
+                    <label>Camiseta / Playera</label>
+                    <input type="color" id="localShirtColor" value="#ffffff" onchange="updateKitPreviews()">
+                  </div>
+                  <div class="color-input-box">
+                    <label>Short / Pantaloncillo</label>
+                    <input type="color" id="localShortColor" value="#00d4ff" onchange="updateKitPreviews()">
+                  </div>
+                </div>
+                <div class="color-badge-preview">
+                  <span style="font-size: 0.75rem;">Vista previa:</span>
+                  <div class="color-dot" id="dotLocalShirt" style="background: #ffffff;"></div>
+                  <span style="font-size: 0.7rem;">Playera</span> |
+                  <div class="color-dot" id="dotLocalShort" style="background: #00d4ff;"></div>
+                  <span style="font-size: 0.7rem;">Short</span>
+                </div>
+              </div>
+
+              <!-- Opción B: Foto del Uniforme -->
+              <div id="localKitPhotoBox" style="display: none; margin-top: 8px;">
+                <input type="file" id="localKitPhotoInput" accept="image/*" onchange="previewKitPhoto(event)">
+                <img id="localKitPhotoImg" class="kit-photo-preview" alt="Vista previa del uniforme local">
+              </div>
             </div>
-            <div class="input-group">
-              <label for="kitVisitorColor"><i class="fa-solid fa-shirt"></i> Color Secundario (Uniforme Visitante)</label>
-              <input type="text" id="kitVisitorColor" placeholder="Ej. Rojo / Negro">
+
+            <!-- UNIFORME VISITANTE (Paleta obligatoria 2 colores) -->
+            <div class="input-group" style="width: 100%;">
+              <label><i class="fa-solid fa-shirt" style="color: #ff4d4d;"></i> Uniforme Visitante (Secundario)</label>
+              <div class="color-picker-row">
+                <div class="color-input-box">
+                  <label>Camiseta / Playera</label>
+                  <input type="color" id="visitorShirtColor" value="#0a0f1d" onchange="updateKitPreviews()">
+                </div>
+                <div class="color-input-box">
+                  <label>Short / Pantaloncillo</label>
+                  <input type="color" id="visitorShortColor" value="#ffffff" onchange="updateKitPreviews()">
+                </div>
+              </div>
+              <div class="color-badge-preview">
+                <span style="font-size: 0.75rem;">Vista previa:</span>
+                <div class="color-dot" id="dotVisitorShirt" style="background: #0a0f1d;"></div>
+                <span style="font-size: 0.7rem;">Playera</span> |
+                <div class="color-dot" id="dotVisitorShort" style="background: #ffffff;"></div>
+                <span style="font-size: 0.7rem;">Short</span>
+              </div>
             </div>
+
           </div>
         </div>
 
@@ -139,27 +251,20 @@
                 <div class="logo-svg-wrapper" id="logoSvgContainer">
                   <svg id="customLogoSvg" viewBox="0 0 200 220" width="160" height="176">
                     <defs>
-                      <!-- Clip Path para la forma del escudo -->
                       <clipPath id="shieldClip">
                         <path id="svgShieldPath" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" />
                       </clipPath>
                     </defs>
 
-                    <!-- Base de fondo con Clip -->
                     <g clip-path="url(#shieldClip)">
-                      <!-- Color Primario -->
                       <rect id="svgBgPrimary" x="0" y="0" width="200" height="220" fill="#00d4ff" />
-                      <!-- Color Secundario (Patrón) -->
                       <path id="svgPattern" d="M 100,0 L 200,0 L 200,220 Z" fill="#0a0f1d" />
                     </g>
 
-                    <!-- Borde del Escudo -->
                     <path id="svgShieldBorder" d="M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z" fill="none" stroke="#ffffff" stroke-width="6" />
 
-                    <!-- Icono Central -->
                     <text id="svgCentralIcon" x="100" y="115" font-family="FontAwesome" font-size="45" fill="#ffffff" text-anchor="middle" dominant-baseline="central">&#xf1e3;</text>
 
-                    <!-- Texto Inferior del Nombre -->
                     <path id="textArcPath" d="M 40,150 Q 100,195 160,150" fill="none" />
                     <text font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">
                       <textPath href="#textArcPath" startOffset="50%" id="svgTeamText">
@@ -174,7 +279,6 @@
               <!-- Panel de Controles del Diseñador -->
               <div class="builder-controls">
                 
-                <!-- Forma del Escudo -->
                 <div class="control-group">
                   <label><i class="fa-solid fa-shapes"></i> Forma del Escudo</label>
                   <div class="btn-group-options">
@@ -184,7 +288,6 @@
                   </div>
                 </div>
 
-                <!-- Estilo de Patrón -->
                 <div class="control-group">
                   <label><i class="fa-solid fa-table-cells"></i> Estilo Interno</label>
                   <div class="btn-group-options">
@@ -194,7 +297,6 @@
                   </div>
                 </div>
 
-                <!-- Selección de Colores -->
                 <div class="control-group form-row">
                   <div>
                     <label><i class="fa-solid fa-palette"></i> Primario</label>
@@ -210,7 +312,6 @@
                   </div>
                 </div>
 
-                <!-- Icono Emblema Central -->
                 <div class="control-group">
                   <label><i class="fa-solid fa-icons"></i> Emblema Central</label>
                   <div class="icon-selector-grid">
@@ -255,22 +356,23 @@
 
   <script src="js/script.js"></script>
   <script>
-    // INICIALIZACIÓN DE SUPABASE
     const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentLogoMode = 'builder';
     let uploadedLogoBase64 = null;
+    let isLocalKitPhoto = false;
+    let localKitPhotoBase64 = null;
 
-    // CARGAR TORNEOS DINÁMICAMENTE DESDE SUPABASE AL INICIAR
-    document.addEventListener('DOMContentLoaded', loadAvailableTournaments);
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAvailableTournaments();
+      updateKitPreviews();
+    });
 
     async function loadAvailableTournaments() {
       const select = document.getElementById('targetLeague');
-      
       try {
-        // Consultar torneos vinculados con la información de su liga
         const { data: tournaments, error } = await _supabase
           .from('liga_torneo')
           .select('id, nombre_torneo, categoria, rama, ligas(nombre_liga, estado, municipio)');
@@ -282,7 +384,6 @@
           return;
         }
 
-        // Construir opciones dinámicas
         let optionsHtml = `<option value="" disabled selected>Selecciona Liga / Torneo Destino</option>`;
         tournaments.forEach(t => {
           const leagueName = t.ligas ? t.ligas.nombre_liga : 'Liga RETA';
@@ -291,47 +392,57 @@
         });
 
         select.innerHTML = optionsHtml;
-
       } catch (err) {
         console.error("Error al cargar torneos:", err);
         select.innerHTML = `<option value="" disabled selected>Error al cargar la lista de torneos</option>`;
       }
     }
 
+    // MANEJO DE UNIFORMES Y COLORES
+    function toggleLocalKitMode() {
+      isLocalKitPhoto = !isLocalKitPhoto;
+      document.getElementById('localKitPaletteBox').style.display = isLocalKitPhoto ? 'none' : 'block';
+      document.getElementById('localKitPhotoBox').style.display = isLocalKitPhoto ? 'block' : 'none';
+    }
+
+    function updateKitPreviews() {
+      document.getElementById('dotLocalShirt').style.background = document.getElementById('localShirtColor').value;
+      document.getElementById('dotLocalShort').style.background = document.getElementById('localShortColor').value;
+      document.getElementById('dotVisitorShirt').style.background = document.getElementById('visitorShirtColor').value;
+      document.getElementById('dotVisitorShort').style.background = document.getElementById('visitorShortColor').value;
+    }
+
+    function previewKitPhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          localKitPhotoBase64 = e.target.result;
+          const img = document.getElementById('localKitPhotoImg');
+          img.src = e.target.result;
+          img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
     function switchLogoMode(mode) {
       currentLogoMode = mode;
-      const btnBuilder = document.getElementById('btnModeBuilder');
-      const btnUpload = document.getElementById('btnModeUpload');
-      const modBuilder = document.getElementById('logoBuilderModule');
-      const modUpload = document.getElementById('logoUploadModule');
-
-      if (mode === 'builder') {
-        btnBuilder.classList.add('active');
-        btnUpload.classList.remove('active');
-        modBuilder.style.display = 'block';
-        modUpload.style.display = 'none';
-      } else {
-        btnUpload.classList.add('active');
-        btnBuilder.classList.remove('active');
-        modUpload.style.display = 'block';
-        modBuilder.style.display = 'none';
-      }
+      document.getElementById('btnModeBuilder').classList.toggle('active', mode === 'builder');
+      document.getElementById('btnModeUpload').classList.toggle('active', mode === 'upload');
+      document.getElementById('logoBuilderModule').style.display = mode === 'builder' ? 'block' : 'none';
+      document.getElementById('logoUploadModule').style.display = mode === 'upload' ? 'block' : 'none';
     }
 
     function updateLogoText() {
       const name = document.getElementById('teamName').value.trim();
-      const svgText = document.getElementById('svgTeamText');
-      svgText.textContent = name.length > 0 ? name.toUpperCase() : 'EQUIPO FC';
+      document.getElementById('svgTeamText').textContent = name.length > 0 ? name.toUpperCase() : 'EQUIPO FC';
     }
 
     function updateColors() {
-      const pColor = document.getElementById('primaryColorInput').value;
-      const sColor = document.getElementById('secondaryColorInput').value;
-      const bColor = document.getElementById('borderColorInput').value;
-
-      document.getElementById('svgBgPrimary').setAttribute('fill', pColor);
-      document.getElementById('svgPattern').setAttribute('fill', sColor);
-      document.getElementById('svgShieldBorder').setAttribute('stroke', bColor);
+      document.getElementById('svgBgPrimary').setAttribute('fill', document.getElementById('primaryColorInput').value);
+      document.getElementById('svgPattern').setAttribute('fill', document.getElementById('secondaryColorInput').value);
+      document.getElementById('svgShieldBorder').setAttribute('stroke', document.getElementById('borderColorInput').value);
     }
 
     function setIcon(iconCode) {
@@ -343,15 +454,10 @@
     function setShieldShape(shape) {
       const pathShield = document.getElementById('svgShieldPath');
       const borderShield = document.getElementById('svgShieldBorder');
+      let pathD = "M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z";
       
-      let pathD = '';
-      if (shape === 'classic') {
-        pathD = "M 100,10 L 180,30 L 170,140 Q 100,210 100,210 Q 100,210 30,140 L 20,30 Z";
-      } else if (shape === 'circle') {
-        pathD = "M 100,10 A 90,90 0 1,1 99.9,10 Z";
-      } else if (shape === 'diamond') {
-        pathD = "M 100,10 L 185,110 L 100,210 L 15,110 Z";
-      }
+      if (shape === 'circle') pathD = "M 100,10 A 90,90 0 1,1 99.9,10 Z";
+      else if (shape === 'diamond') pathD = "M 100,10 L 185,110 L 100,210 L 15,110 Z";
 
       pathShield.setAttribute('d', pathD);
       borderShield.setAttribute('d', pathD);
@@ -363,14 +469,9 @@
 
     function setPatternStyle(pattern) {
       const svgPattern = document.getElementById('svgPattern');
-      
-      if (pattern === 'half') {
-        svgPattern.setAttribute('d', "M 100,0 L 200,0 L 200,220 L 100,220 Z");
-      } else if (pattern === 'stripes') {
-        svgPattern.setAttribute('d', "M 40,0 H 70 V 220 H 40 Z M 130,0 H 160 V 220 H 130 Z");
-      } else if (pattern === 'solid') {
-        svgPattern.setAttribute('d', "");
-      }
+      if (pattern === 'half') svgPattern.setAttribute('d', "M 100,0 L 200,0 L 200,220 L 100,220 Z");
+      else if (pattern === 'stripes') svgPattern.setAttribute('d', "M 40,0 H 70 V 220 H 40 Z M 130,0 H 160 V 220 H 130 Z");
+      else if (pattern === 'solid') svgPattern.setAttribute('d', "");
 
       const btns = event.target.parentElement.querySelectorAll('.opt-btn');
       btns.forEach(b => b.classList.remove('active'));
@@ -383,8 +484,7 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           uploadedLogoBase64 = e.target.result;
-          const img = document.getElementById('uploadedLogoImg');
-          img.src = e.target.result;
+          document.getElementById('uploadedLogoImg').src = e.target.result;
           document.getElementById('uploadedLogoPreviewContainer').style.display = 'block';
         };
         reader.readAsDataURL(file);
@@ -392,15 +492,13 @@
     }
 
     function getFinalLogoData() {
-      if (currentLogoMode === 'upload' && uploadedLogoBase64) {
-        return uploadedLogoBase64;
-      }
+      if (currentLogoMode === 'upload' && uploadedLogoBase64) return uploadedLogoBase64;
       const svgElement = document.getElementById('customLogoSvg');
       const svgString = new XMLSerializer().serializeToString(svgElement);
       return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
     }
 
-    // REGISTRO REAL EN SUPABASE
+    // REGISTRO DE EQUIPO EN SUPABASE
     async function handleTeamSubmit(e) {
       e.preventDefault();
 
@@ -414,6 +512,10 @@
           throw new Error("Por favor selecciona la Liga / Torneo al que deseas inscribirte.");
         }
 
+        // Construir información de uniformes
+        let localKitVal = isLocalKitPhoto ? localKitPhotoBase64 : `Playera: ${document.getElementById('localShirtColor').value} | Short: ${document.getElementById('localShortColor').value}`;
+        let visitorKitVal = `Playera: ${document.getElementById('visitorShirtColor').value} | Short: ${document.getElementById('visitorShortColor').value}`;
+
         const teamPayload = {
           liga_torneo_id: selectedTournamentId,
           nombre_equipo: document.getElementById('teamName').value.trim(),
@@ -422,8 +524,8 @@
           anio_fundacion: parseInt(document.getElementById('foundedYear').value) || null,
           cancha_local: document.getElementById('homeField').value.trim(),
           horario_preferido: document.getElementById('prefSchedule').value,
-          color_local: document.getElementById('kitLocalColor').value.trim(),
-          color_visita: document.getElementById('kitVisitorColor').value.trim(),
+          color_local: localKitVal,
+          color_visita: visitorKitVal,
           escudo_url: getFinalLogoData()
         };
 
