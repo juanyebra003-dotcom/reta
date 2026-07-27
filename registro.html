@@ -311,7 +311,7 @@
           <div class="wizard-step active" id="wizard-step-1">
             <h3 class="step-title"><i class="fa-solid fa-id-card"></i> Paso 1: Identificación y Datos Personales</h3>
             
-            <!-- CAMPO DE SELECCIÓN DE ROL OCULTO (SE DEFINE EN EL PASO INICIAL AUTOMÁTICAMENTE) -->
+            <!-- CAMPO DE SELECCIÓN DE ROL OCULTO -->
             <select id="roleSelect" required onchange="handleRoleSelectionChange()" style="display: none;">
               <option value="JUGADOR" selected>⚽ Jugador / Atleta</option>
               <option value="DELEGADO">📋 Delegado / Director Técnico</option>
@@ -874,50 +874,6 @@
     </div>
   </div>
 
-  <!-- MODAL DE VERIFICACIÓN DE CÓDIGO OTP -->
-  <div class="modal-overlay" id="otpValidationModal" style="display: none;">
-    <div class="glass-card modal-card" style="max-width: 450px; text-align: center;">
-      <div class="modal-header">
-        <i class="fa-solid fa-envelope-circle-check modal-icon-glow" style="font-size: 3rem; color:#00d4ff; margin-bottom: 10px;"></i>
-        <h3>Verifica tu Correo Electrónico</h3>
-        <p class="modal-subtitle">Hemos enviado un código de 6 dígitos a <br><strong id="displayTargetEmail" style="color:#00d4ff;">correo@ejemplo.com</strong></p>
-      </div>
-
-      <div style="margin: 20px 0;">
-        <input type="text" id="otpCodeInput" maxlength="6" placeholder="0 0 0 0 0 0" style="letter-spacing: 12px; font-size: 1.8rem; text-align: center; width: 100%; text-transform: uppercase; padding: 10px; background: rgba(0,0,0,0.5); border: 2px solid #00d4ff; border-radius: 10px; color: #fff;">
-        <small style="color:#888; display:block; margin-top:8px;">Ingresa el código enviado por Supabase Auth.</small>
-      </div>
-
-      <div class="modal-footer-terms" style="display: flex; gap: 10px; justify-content: center;">
-        <button type="button" class="btn-secondary-action" onclick="closeModal('otpValidationModal')">Cancelar</button>
-        <button type="button" class="btn-login" id="btnConfirmOtp" onclick="verifyOtpAndFinalize()">
-          Validar Código <i class="fa-solid fa-check"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL JURÍDICO -->
-  <div class="modal-overlay" id="termsModal" style="display: none;">
-    <div class="glass-card modal-card terms-modal-card">
-      <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
-      <div class="modal-header">
-        <i class="fa-solid fa-scale-balanced modal-icon-glow"></i>
-        <h3>Aviso Legal, Términos y Deslinde de Responsabilidad Deportiva</h3>
-        <p class="modal-subtitle">RETA Sports Management & Logistics</p>
-      </div>
-      
-      <div class="terms-scroll-body">
-        <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
-        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento.</p>
-      </div>
-
-      <div class="modal-footer-terms">
-        <button type="button" class="btn-login" onclick="acceptTermsFromModal()">Entendido y Aceptar Carta Jurídica <i class="fa-solid fa-check-double"></i></button>
-      </div>
-    </div>
-  </div>
-
   <script src="js/script.js"></script>
   <script>
     function playBeepSound() {
@@ -1047,17 +1003,9 @@
             </p>
 
             <ol style="margin-left: 15px; padding-left: 0; text-align: justify;">
-              <li style="margin-bottom: 6px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE EXPRESO DE RETA PRO APP / RETA SPORTS LOGISTICS:</strong> Declaro y reconozco de manera expresa, tácita e irrevocable que la aplicación informática, marca y/o plataforma denominada RETA PRO APP (así como sus desarrolladores, operadores, administradores, directivos, empleados y empresas filiales o marcas comerciales como RETA Sports Logistics) actúa ÚNICA Y EXCLUSIVAMENTE COMO UN PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE ADMINISTRACIÓN Y GESTIÓN DE INFORMACIÓN DEPORTIVA (tales como registro de cédulas, consulta de horarios, resultados y estadísticas). Por consiguiente, manifiesto que RETA PRO APP es una entidad absolutamente ajena e independiente a la organización física, logística, médica, de seguridad y operativa del torneo o evento deportivo en el cual me inscribo. RETA PRO APP no ejerce ningún tipo de supervisión, patronaje, control de instalaciones, vigilancia ni decisión operativa sobre los partidos, por lo que deslindo de manera total, categórica y definitiva a RETA PRO APP de cualquier responsabilidad de carácter civil, penal, laboral, administrativa, médica o patrimonial que pudiera suscitarse con motivo del torneo.</li>
-              <li style="margin-bottom: 6px;"><strong>ASUNCIÓN VOLUNTARIA DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR, ÁRBITROS Y DELEGADOS:</strong> Reconozco expresamente que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto, tales como esguinces, fracturas, contusiones, incapacidades temporales o permanentes, e inclusive eventos catastróficos o el fallecimiento. Por ende, bajo la figura de asunción voluntaria del riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES DEL PARTIDO Y PROPIETARIOS O ADMINISTRADORES DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, enfermedad, daño patrimonial o eventualidad que pudiera sufrir antes, durante o después de las jornadas deportivas o traslados relacionados.</li>
-              <li style="margin-bottom: 6px;"><strong>DECLARACIÓN BAJO PROTESTA DE APTITUD FÍSICA Y SALUD:</strong> Declaro bajo protesta de decir verdad que me encuentro en estado óptimo de salud física, mental y cardiovascular para participar libremente en las actividades deportivas de alto rendimiento. Confirmo no padecer enfermedades infectocontagiosas, cardiovasculares, neurológicas ni secuelas de lesiones que pongan en riesgo mi integridad o la de los demás competidores. Asumo la responsabilidad total por la omisión u ocultamiento de información sobre padecimientos preexistentes.</li>
-              <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de sufrir algún accidente, traumatismo o emergencia médica durante el desarrollo del evento, autorizo expresamente al personal paramédico, médico o delegados asignados a brindarme los primeros auxilios o disponer mi traslado inmediato a una institución hospitalaria. Acepto que todos los costos médicos, hospitalarios, farmacéuticos y de traslado derivados de dicha atención serán cubiertos íntegramente por mi persona o, en su caso, por mi esquema de seguro de gastos médicos personal, deslindando a la organización y a RETA PRO APP de cualquier reclamación económica por dicho concepto.</li>
-              <li style="margin-bottom: 6px;"><strong>ACEPTACIÓN DE REGLAMENTOS, FAIR PLAY Y DISCIPLINA:</strong> Me comprometo a respetar acatadamente los reglamentos internos del torneo, el juego limpio (Fair Play), así como las decisiones y autoridad conferida al Cuerpo Arbitral y a los Delegados de Campo. Reconozco que conductas antideportivas, agresiones físicas o verbales podrán ser sancionadas disciplinaria y legalmente.</li>
-              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo que mis datos proporcionados sean tratados exclusivamente para fines de administración deportiva en la plataforma RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso informativo y promocional no lucrativo de mi imagen en fotografías o transmisiones digitales del evento.</li>
+              <li style="margin-bottom: 6px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE EXPRESO DE RETA PRO APP / RETA SPORTS LOGISTICS:</strong> Declaro y reconozco de manera expresa, tácita e irrevocable que la aplicación informática, marca y/o plataforma denominada RETA PRO APP (así como sus desarrolladores, operadores, administradores, directivos, empleados y empresas filiales o marcas comerciales como RETA Sports Logistics) actúa ÚNICA Y EXCLUSIVAMENTE COMO UN PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE ADMINISTRACIÓN Y GESTIÓN DE INFORMACIÓN DEPORTIVA. RETA PRO APP es una entidad absolutamente ajena e independiente a la organización física, logística, médica, de seguridad y operativa del torneo.</li>
+              <li style="margin-bottom: 6px;"><strong>ASUNCIÓN VOLUNTARIA DE RIESGO:</strong> Reconozco expresamente que la práctica deportiva conlleva riesgos inherentes. LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR, DIRECTIVA, ÁRBITROS Y DELEGADOS por cualquier accidente o eventualidad.</li>
             </ol>
-
-            <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
-              <strong>DECLARACIÓN EXPRESA Y FIRMA DE CONFORMIDAD:</strong> He leído detenidamente, comprendido y aceptado en su totalidad el contenido y alcance legal de la presente Carta Responsiva y Deslinde de Responsabilidad. Entiendo que al firmar este documento renuncio expresamente a cualquier acción legal de reclamación contra el Comité Organizador, Árbitros, Delegados y la plataforma RETA PRO APP.
-            </p>
 
             <br/>
             <p style="text-align: center; margin-top: 20px;">
@@ -1066,77 +1014,21 @@
               Nombre: ${fullName}<br/>
               CURP: ${curpVal}
             </p>
-            <p style="text-align: center; font-size: 8px; color: #666; margin-top: 15px;">
-              Documento generado y administrado digitalmente a través de RETA PRO APP Sistema de Gestión Deportiva Digital.
-            </p>
           </div>
         `;
       } else {
         title = "CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD - MENORES DE EDAD";
         bodyContent = `
           <div style="font-family: Arial, sans-serif; padding: 25px; color: #000; line-height: 1.4; font-size: 11px;">
-            <h3 style="text-align: center; font-size: 14px; margin-bottom: 3px; font-weight: bold;">CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD LEGAL, MÉDICA Y OPERATIVA</h3>
-            <p style="text-align: center; font-weight: bold; margin-top: 0; color: #0055ff; font-size: 11px;">AUTORIZACIÓN DE PADRE/MADRE/TUTOR LEGAL PARA MENORES DE EDAD | PLATAFORMA RETA PRO APP</p>
+            <h3 style="text-align: center; font-size: 14px; margin-bottom: 3px; font-weight: bold;">CARTA RESPONSIVA Y DESLINDE DE RESPONSABILIDAD</h3>
+            <p style="text-align: center; font-weight: bold; margin-top: 0; color: #0055ff; font-size: 11px;">AUTORIZACIÓN DE PADRE/MADRE/TUTOR LEGAL PARA MENORES DE EDAD</p>
             <hr style="border: 0.5px solid #aaa; margin-bottom: 12px;"/>
-
-            <h4 style="margin: 5px 0; font-size: 11px; background: #eee; padding: 3px;">1. DATOS DEL PADRE, MADRE O TUTOR LEGAL (QUIEN AUTORIZA Y DESLINDA)</h4>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 11px;">
-              <tr>
-                <td style="padding: 3px;"><strong>NOMBRE DEL TUTOR:</strong> ___________________________________</td>
-                <td style="padding: 3px;"><strong>PARENTESCO / CALIDAD:</strong> __________________</td>
-              </tr>
-              <tr>
-                <td style="padding: 3px;"><strong>TELÉFONO CONTACTO:</strong> ___________________________________</td>
-                <td style="padding: 3px;"><strong>CURP:</strong> ___________________________________</td>
-              </tr>
-              <tr>
-                <td style="padding: 3px;"><strong>INE/ID:</strong> ___________________________________</td>
-                <td style="padding: 3px;"><strong>CORREO:</strong> ___________________________________</td>
-              </tr>
-            </table>
-
-            <h4 style="margin: 5px 0; font-size: 11px; background: #eee; padding: 3px;">2. DATOS DEL JUGADOR MENOR DE EDAD (PARTICIPANTE)</h4>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 11px;">
-              <tr>
-                <td style="padding: 3px;"><strong>NOMBRE DEL MENOR:</strong> ${fullName}</td>
-                <td style="padding: 3px;"><strong>CURP:</strong> ${curpVal}</td>
-              </tr>
-              <tr>
-                <td style="padding: 3px;"><strong>FECHA NACIMIENTO:</strong> __________________</td>
-                <td style="padding: 3px;"><strong>EDAD:</strong> ${userAge} años</td>
-              </tr>
-              <tr>
-                <td style="padding: 3px;"><strong>TORNEO / LIGA:</strong> ${selectedLeague}</td>
-                <td style="padding: 3px;"><strong>EQUIPO / CLUB:</strong> ${selectedTeam}</td>
-              </tr>
-            </table>
-
-            <p style="text-align: justify; margin-bottom: 10px;">
-              Conste por el presente documento que, yo, C. __________________________________________________, manifestando bajo protesta de decir verdad ser padre, madre o tutor legal con patria potestad y representación jurídica sobre el menor arriba mencionado, en pleno uso de mis facultades mentales y legales, otorgo AUTORIZACIÓN EXPRESA, DECLARACIÓN DE APTITUD Y DESLINDE TOTAL DE RESPONSABILIDAD conforme a la legislación civil y de protección de la niñez aplicable en los Estados Unidos Mexicanos, bajo las siguientes cláusulas:
-            </p>
-
-            <ol style="margin-left: 15px; padding-left: 0; text-align: justify;">
-              <li style="margin-bottom: 6px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE EXPRESO DE RETA PRO APP / RETA SPORTS LOGISTICS:</strong> Declaro y reconozco de manera expresa e irrevocable que la plataforma digital y/o aplicación informática denominada RETA PRO APP (así como sus desarrolladores, operadores, administradores, directivos, empleados y empresas filiales o marcas comerciales como RETA Sports Logistics) actúa ÚNICA Y EXCLUSIVAMENTE COMO UN PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE ADMINISTRACIÓN Y GESTIÓN DE INFORMACIÓN DEPORTIVA (tales como registro de cédulas, consulta de horarios, resultados y estadísticas). Por lo tanto, manifiesto que RETA PRO APP es una entidad absolutamente ajena e independiente a la organización física, logística, médica, de seguridad y operativa del torneo o evento deportivo en el cual inscribo al menor. RETA PRO APP no ejerce supervisión, patronaje, control de instalaciones ni decisión operativa sobre los partidos, por lo que deslindo de manera total, categórica y definitiva a RETA PRO APP de cualquier responsabilidad civil, penal, administrativa, médica o patrimonial que pudiera suscitarse.</li>
-              <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE PARTICIPACIÓN, ASUNCIÓN DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR Y ÁRBITROS:</strong> Autorizo voluntariamente la participación del menor bajo mi tutela en las jornadas deportivas del torneo. Reconozco que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto (tales como esguinces, fracturas, contusiones o eventualidades mayores). Por ende, bajo la figura de asunción de riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES Y PROPIETARIOS DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, daño patrimonial o eventualidad que sufra el menor antes, durante o después de los partidos o traslados.</li>
-              <li style="margin-bottom: 6px;"><strong>DECLARACIÓN DE APTITUD FÍSICA Y SALUD DEL MENOR:</strong> Declaro bajo protesta de decir verdad que el menor se encuentra en estado óptimo de salud física, mental y cardiovascular para la práctica de deporte competitivo. Confirmo que no padece padecimientos preexistentes, afecciones cardíacas, neurológicas ni secuelas de lesiones no consolidadas. Asumo la responsabilidad legal absoluta en caso de omisión u ocultamiento de información médica del menor.</li>
-              <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de emergencia médica o traumatismo del menor durante el evento, autorizo expresamente al personal médico o delegados a brindarle primeros auxilios o trasladarlo a un centro hospitalario. Acepto que los gastos médicos, farmacéuticos y hospitalarios serán cubiertos en su totalidad por mi persona o por mi esquema de seguro médico, deslindando a la organización y a RETA PRO APP de cualquier responsabilidad económica.</li>
-              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines estrictamente administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
-            </ol>
-
-            <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
-              <strong>DECLARACIÓN EXPRESA Y FIRMA DE CONFORMIDAD DEL TUTOR LEGAL:</strong> He leído, comprendido y aceptado íntegramente la presente Carta Responsiva para Menores de Edad. Entiendo que al firmar renuncio a toda acción legal de reclamación contra el Comité Organizador, Árbitros, Delegados y la plataforma RETA PRO APP por incidentes derivados de la actividad deportiva del menor.
-            </p>
-
+            <p><strong>NOMBRE DEL MENOR:</strong> ${fullName} | <strong>CURP:</strong> ${curpVal}</p>
             <br/>
             <p style="text-align: center; margin-top: 20px;">
               ____________________________________________________<br/>
               <strong>FIRMA DE CONFORMIDAD DEL PADRE, MADRE O TUTOR LEGAL</strong><br/>
-              Nombre Completo Tutor: ___________________________________<br/>
-              CURP del Tutor: ___________________________________<br/>
               Nombre del Menor Representado: ${fullName}
-            </p>
-            <p style="text-align: center; font-size: 8px; color: #666; margin-top: 15px;">
-              Documento generado y administrado digitalmente a través de RETA PRO APP - Sistema de Gestión Deportiva Digital
             </p>
           </div>
         `;
@@ -1166,13 +1058,11 @@
       playBeepSound();
       pendingTargetRole = roleValue;
 
-      // SI ES JUGADOR: ACCESO ABIERTO DIRECTO
       if (roleValue === 'JUGADOR') {
         openRegistrationForm('JUGADOR', '', null);
         return;
       }
 
-      // SI ES CUALQUIER ROL RESTRINGIDO: LANZAR MODAL PREVIO DE AUTENTICACIÓN
       openGatekeeperModal(roleValue);
     }
 
@@ -1210,7 +1100,6 @@
         tokenLabel.innerText = "Clave Máster Supervisor (*)";
       }
 
-      // Desbloqueo forzado de estilos CSS
       modal.classList.add('active');
       modal.style.setProperty('display', 'flex', 'important');
       modal.style.setProperty('opacity', '1', 'important');
@@ -1250,7 +1139,6 @@
       btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Verificando...`;
 
       try {
-        // 1. ADMIN 1 TITULAR O SUPERVISOR CON TOKENS MÁSTER DIRECTOS
         if (pendingTargetRole === 'ADMIN_LIGA' && tokenVal === MASTER_ADMIN_TOKEN) {
           closeGatekeeperModal();
           window.location.href = 'liga_registrar.html';
@@ -1263,12 +1151,10 @@
           return;
         }
 
-        // 2. REQUISITO DE CURP DE ADMIN 1 PARA OTROS ROLES Y CO-ADMINS
         if (!adminCurpVal || adminCurpVal.length !== 18) {
           throw new Error("Ingresa los 18 caracteres de la CURP del Administrador Titular (Admin 1).");
         }
 
-        // 3. CONSULTA DE TOKEN Y LIGA EN SUPABASE
         const { data: invite, error: inviteErr } = await _supabase
           .from('invitaciones_sistema')
           .select('id, liga_id, token_codigo, rol_permitido, usado')
@@ -1287,7 +1173,6 @@
           throw new Error("Este Token de invitación ya fue utilizado previamente.");
         }
 
-        // 4. CONSULTAR DATOS DE LA LIGA VINCULADA A PARTIR DEL LIGA_ID DEL TOKEN
         const { data: ligaObj, error: ligaErr } = await _supabase
           .from('ligas')
           .select('id, nombre_liga, clave_liga, municipio, estado')
@@ -1298,7 +1183,6 @@
           throw new Error("No se encontró la liga asociada a este Token de Invitación.");
         }
 
-        // 5. VERIFICAR QUE EL ADMIN 1 SEA PROPIETARIO REAL DE LA LIGA
         const { data: ligaAdmin, error: adminErr } = await _supabase
           .from('liga_administradores')
           .select('id')
@@ -1311,19 +1195,6 @@
           throw new Error("La CURP ingresada no coincide con el Administrador Titular registrado para esta liga.");
         }
 
-        // 6. SI ES CO-ADMINISTRADOR (ADMIN 2 / 3), VERIFICAR LÍMITE TOPE DE 3
-        if (pendingTargetRole === 'ADMIN_LIGA') {
-          const { data: adminCount } = await _supabase
-            .from('liga_administradores')
-            .select('id', { count: 'exact' })
-            .eq('liga_id', invite.liga_id);
-
-          if (adminCount && adminCount.length >= 3) {
-            throw new Error("Límite alcanzado: Esta liga ya cuenta con sus 3 administradores oficiales registrados.");
-          }
-        }
-
-        // GUARDAR CONTEXTO RECUPERADO
         verifiedContext = {
           adminCurp: adminCurpVal,
           leagueId: ligaObj.id,
@@ -1332,7 +1203,6 @@
           targetRole: pendingTargetRole
         };
 
-        // ¡ACCESO AUTORIZADO! DESBLOQUEAR FORMULARIO PRINCIPAL
         alert(`✓ Autorización Validada Correctamente.\n\nLiga Asignada: ${verifiedContext.leagueName}\nAdmin Titular CURP: ${verifiedContext.adminCurp}`);
         closeGatekeeperModal();
         openRegistrationForm(pendingTargetRole, tokenVal, verifiedContext);
@@ -1346,7 +1216,6 @@
       }
     }
 
-    /* APERTURA Y CONFIGURACIÓN DEL FORMULARIO CON BANNERS E INYECCIÓN DE LIGA */
     function openRegistrationForm(roleValue, verifiedToken, context) {
       document.getElementById('roleSelectionStep').style.display = 'none';
       document.getElementById('formContainer').style.display = 'block';
@@ -1357,16 +1226,11 @@
       const tokenField = document.getElementById('adminAuthToken');
       if (tokenField) tokenField.value = verifiedToken || '';
 
-      // INYECTAR O ACTUALIZAR LA MICROVENTANA / BANNER SUPERIOR DE VINCULACIÓN
       renderBindingContextBanner(context || verifiedContext);
-
-      // VINCULAR Y BLOQUEAR LA LIGA CORRESPONDIENTE EN EL PASO 2
       applyLeagueBindingToForm(context || verifiedContext);
-
       handleRoleSelectionChange();
     }
 
-    /* RENDERIZADO DE LA MICROVENTANA / BANNER FLOTANTE SUPERIOR */
     function renderBindingContextBanner(context) {
       let banner = document.getElementById('bindingContextBanner');
       
@@ -1411,20 +1275,17 @@
       }
     }
 
-    /* APLICAR LA LIGA VALIDADA AL SELECTOR DEL PASO 2 Y DESHABILITAR OTROS */
     function applyLeagueBindingToForm(context) {
       if (!context || !context.leagueId) return;
 
-      // Actualizar selector de Liga para Delegado
       const delegadoSelect = document.getElementById('delegadoLeague');
       if (delegadoSelect) {
         delegadoSelect.innerHTML = `<option value="${context.leagueId}" selected>${context.leagueName}</option>`;
-        delegadoSelect.disabled = true; // Previene cambio erróneo
+        delegadoSelect.disabled = true;
         delegadoSelect.style.background = 'rgba(0, 212, 255, 0.1)';
         delegadoSelect.style.color = '#00d4ff';
       }
 
-      // Actualizar selector de Liga general / Jugador
       const generalLeagueSelect = document.getElementById('leagueSelect');
       if (generalLeagueSelect) {
         generalLeagueSelect.innerHTML = `<option value="${context.leagueId}" selected>${context.leagueName}</option>`;
@@ -1501,7 +1362,7 @@
           const methodIneInput = document.getElementById('methodIne');
           if (methodIneInput) methodIneInput.disabled = true;
 
-          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nNo es posible completar el registro mediante el escaneo de INE. Se ha activado automáticamente la modalidad "Menor de Edad", por lo que deberás descargar y adjuntar la Carta Responsiva oficial de Tutor y la INE del Padre o Tutor.`);
+          alert(`⚠️ REGISTRO DE MENOR DE EDAD DETECTADO (${age} años)\n\nEl sistema ha identificado que eres menor de 18 años.\n\nSe ha activado automáticamente la modalidad "Menor de Edad".`);
         } else {
           const methodIneInput = document.getElementById('methodIne');
           if (methodIneInput) methodIneInput.disabled = false;
@@ -1791,9 +1652,119 @@
       }
     }
 
+    /* INSERCIÓN REAL Y GUARDADO DE REGISTRO EN LA BASE DE DATOS SUPABASE */
+    async function submitFullRegistrationToSupabase() {
+      const curpVal = document.getElementById('curp').value.trim().toUpperCase();
+      const roleName = document.getElementById('roleSelect').value;
+      const fname = document.getElementById('firstName').value.trim();
+      const lname = document.getElementById('lastName').value.trim();
+      const emailVal = document.getElementById('userEmail').value.trim();
+      const phoneVal = document.getElementById('userPhone').value.trim();
+      const ageVal = parseInt(document.getElementById('age').value) || 0;
+      const genderVal = document.getElementById('gender').value;
+      const stateBirthVal = document.getElementById('stateBirth').value;
+      const stateResVal = document.getElementById('stateRes').value;
+      const cityResVal = document.getElementById('cityRes').value;
+      const photoUrl = localStorage.getItem('temp_player_photo') || '';
+
+      try {
+        // 1. GUARDAR / ACTUALIZAR USUARIO
+        const { data: userSaved, error: uErr } = await _supabase
+          .from('usuarios')
+          .upsert([{
+            curp: curpVal,
+            nombre: fname,
+            apellidos: lname,
+            email: emailVal,
+            telefono: phoneVal,
+            edad: ageVal,
+            genero: genderVal,
+            estado_nacimiento: stateBirthVal,
+            estado_residencia: stateResVal,
+            ciudad_residencia: cityResVal,
+            foto_url: photoUrl,
+            rol_actual: roleName
+          }], { onConflict: 'curp' })
+          .select()
+          .single();
+
+        if (uErr) console.warn("Aviso guardando usuario:", uErr.message);
+
+        // 2. GUARDAR FICHA MÉDICA
+        if (roleName === 'JUGADOR' || roleName === 'ARBITRO') {
+          await _supabase
+            .from('fichas_medicas')
+            .upsert([{
+              curp_jugador: curpVal,
+              tipo_sangre: document.getElementById('bloodType').value || 'O+',
+              alergias: document.getElementById('allergiesSelect').value,
+              padecimientos: document.getElementById('medicalConditions').value,
+              servicio_medico: document.getElementById('medicalService').value,
+              contacto_emergencia: document.getElementById('emergencyContactName').value,
+              telefono_emergencia: document.getElementById('emergencyPhone').value
+            }], { onConflict: 'curp_jugador' });
+        }
+
+        // 3. SI REGISTRA UN DELEGADO: CREAR EL EQUIPO EN LA TABLA "equipos"
+        let targetTeamId = null;
+        if (roleName === 'DELEGADO') {
+          const teamNameInput = document.getElementById('delegadoTeam').value.trim() || 'Equipo Nuevo FC';
+          const categoryInput = document.getElementById('delegadoCategory').value || 'Libre';
+          const activeLeagueId = verifiedContext.leagueId || null;
+
+          const { data: newTeam } = await _supabase
+            .from('equipos')
+            .insert([{
+              nombre_equipo: teamNameInput,
+              categoria: categoryInput,
+              liga_id: activeLeagueId,
+              curp_delegado: curpVal
+            }])
+            .select()
+            .single();
+
+          if (newTeam) targetTeamId = newTeam.id;
+        }
+
+        // 4. GUARDAR VINCULACIÓN EN LA TABLA "equipo_jugadores"
+        const leagueSel = document.getElementById('leagueSelect');
+        const selectedLeagueVal = verifiedContext.leagueId || (leagueSel ? leagueSel.value : null);
+        const officialCode = document.getElementById('credUniqueCode').innerText || generateOfficialRetaCode();
+
+        await _supabase
+          .from('equipo_jugadores')
+          .insert([{
+            curp_jugador: curpVal,
+            nombre_jugador: fname,
+            apellidos_jugador: lname,
+            equipo_id: targetTeamId,
+            liga_id: selectedLeagueVal,
+            codigo_reta: officialCode,
+            estatus_delegado: 'PENDIENTE',
+            estatus: 'PENDIENTE'
+          }]);
+
+        // SI USÓ TOKEN DE INVITACIÓN, MARCARLO COMO USADO
+        if (verifiedContext.tokenCode) {
+          await _supabase
+            .from('invitaciones_sistema')
+            .update({ usado: true })
+            .eq('token_codigo', verifiedContext.tokenCode);
+        }
+
+        console.log("✓ Datos guardados exitosamente en Supabase.");
+
+      } catch (e) {
+        console.error("Error guardando en Supabase:", e);
+      }
+    }
+
     function executeValidationAndDownload() {
       playBeepSound();
       
+      // Ejecutar la inserción en la base de datos
+      submitFullRegistrationToSupabase();
+
       openValidationModal();
 
       const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'USUARIO';
