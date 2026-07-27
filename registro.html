@@ -518,20 +518,12 @@
                   <label for="leagueSelect"><i class="fa-solid fa-sitemap"></i> Selecciona la Liga / Torneo</label>
                   <select id="leagueSelect" onchange="onLeagueSelectChange()">
                     <option value="" disabled selected>Selecciona una liga...</option>
-                    <option value="LIGA PREMIER HEROES" data-state="GUANAJUATO" data-city="GUA" data-code="LPHE">Liga Premier Heroes (Guanajuato)</option>
-                    <option value="COPA INTERNACIONAL BAJÍO" data-state="GUANAJUATO" data-city="MOR" data-code="CIB">Copa Internacional Bajío (Guanajuato)</option>
-                    <option value="LIGA NOCTURNA F7" data-state="MICHOACAN" data-city="MOR" data-code="LNF7">Liga Nocturna F7 (Michoacán)</option>
-                    <option value="TORNEO FEMENIL RETA" data-state="GUANAJUATO" data-city="CEL" data-code="TFR">Torneo Femenil RETA (Guanajuato)</option>
                   </select>
                 </div>
                 <div class="input-group">
                   <label for="teamSelect"><i class="fa-solid fa-shield-halved"></i> Equipo al que Pertenece</label>
                   <select id="teamSelect" onchange="playBeepSound()">
                     <option value="" disabled selected>Selecciona tu equipo</option>
-                    <option value="Gallos FC" data-logo="img/logo_reta.png">Gallos FC</option>
-                    <option value="Real San José" data-logo="img/logo_reta.png">Real San José</option>
-                    <option value="Deportivo Bajío" data-logo="img/logo_reta.png">Deportivo Bajío</option>
-                    <option value="Rayo Moroleón" data-logo="img/logo_reta.png">Rayo Moroleón</option>
                   </select>
                 </div>
               </div>
@@ -576,9 +568,6 @@
                   <label for="delegadoLeague"><i class="fa-solid fa-sitemap"></i> Liga / Torneo a Vincular (*)</label>
                   <select id="delegadoLeague" onchange="playBeepSound()">
                     <option value="" disabled selected>Selecciona Liga</option>
-                    <option value="LIGA PREMIER HEROES">Liga Premier Heroes</option>
-                    <option value="COPA INTERNACIONAL BAJÍO">Copa Internacional Bajío</option>
-                    <option value="LIGA NOCTURNA F7">Liga Nocturna F7</option>
                   </select>
                 </div>
                 <div class="input-group">
@@ -1301,13 +1290,18 @@
       document.getElementById('formContainer').style.display = 'none';
     }
 
+    // CORRECCIÓN 1: Cargar ligas reales desde Supabase y usar su UUID como "value"
     async function loadLigasFromSupabase() {
       const select = document.getElementById('leagueSelect');
+      const delegadoSel = document.getElementById('delegadoLeague');
       try {
         const { data: ligas } = await _supabase.from('ligas').select('id, nombre_liga, clave_liga, municipio, estado');
         if (ligas && ligas.length > 0) {
-          select.innerHTML = '<option value="" disabled selected>Selecciona la Liga / Torneo</option>' + 
+          const optionsHtml = '<option value="" disabled selected>Selecciona la Liga / Torneo</option>' + 
             ligas.map(l => `<option value="${l.id}" data-state="${l.estado || 'GUANAJUATO'}" data-city="${l.municipio || 'GUA'}" data-code="${l.clave_liga || 'LPHE'}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
+          
+          if (select) select.innerHTML = optionsHtml;
+          if (delegadoSel) delegadoSel.innerHTML = optionsHtml;
         }
       } catch (e) {
         console.warn("Usando opciones por defecto.");
@@ -1652,7 +1646,7 @@
       }
     }
 
-    /* INSERCIÓN REAL Y GUARDADO DE REGISTRO EN LA BASE DE DATOS SUPABASE */
+    // CORRECCIÓN 2: Función de guardado real y síncrono a Supabase limpiando UUIDs
     async function submitFullRegistrationToSupabase() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = document.getElementById('roleSelect').value;
@@ -1669,7 +1663,7 @@
 
       try {
         // 1. GUARDAR / ACTUALIZAR USUARIO
-        const { data: userSaved, error: uErr } = await _supabase
+        const { error: uErr } = await _supabase
           .from('usuarios')
           .upsert([{
             curp: curpVal,
@@ -1684,9 +1678,7 @@
             ciudad_residencia: cityResVal,
             foto_url: photoUrl,
             rol_actual: roleName
-          }], { onConflict: 'curp' })
-          .select()
-          .single();
+          }], { onConflict: 'curp' });
 
         if (uErr) console.warn("Aviso guardando usuario:", uErr.message);
 
@@ -1705,44 +1697,52 @@
             }], { onConflict: 'curp_jugador' });
         }
 
+        // Determinar ID de Liga en formato UUID válido
+        let activeLeagueUuid = verifiedContext.leagueId || null;
+        if (!activeLeagueUuid) {
+          const lSel = document.getElementById('leagueSelect');
+          if (lSel && lSel.value && lSel.value.length > 30) { // Un UUID tiene 36 caracteres
+            activeLeagueUuid = lSel.value;
+          }
+        }
+
         // 3. SI REGISTRA UN DELEGADO: CREAR EL EQUIPO EN LA TABLA "equipos"
         let targetTeamId = null;
         if (roleName === 'DELEGADO') {
           const teamNameInput = document.getElementById('delegadoTeam').value.trim() || 'Equipo Nuevo FC';
           const categoryInput = document.getElementById('delegadoCategory').value || 'Libre';
-          const activeLeagueId = verifiedContext.leagueId || null;
 
           const { data: newTeam } = await _supabase
             .from('equipos')
             .insert([{
               nombre_equipo: teamNameInput,
               categoria: categoryInput,
-              liga_id: activeLeagueId,
+              liga_id: activeLeagueUuid,
               curp_delegado: curpVal
             }])
-            .select()
+            .select('id')
             .single();
 
           if (newTeam) targetTeamId = newTeam.id;
         }
 
         // 4. GUARDAR VINCULACIÓN EN LA TABLA "equipo_jugadores"
-        const leagueSel = document.getElementById('leagueSelect');
-        const selectedLeagueVal = verifiedContext.leagueId || (leagueSel ? leagueSel.value : null);
         const officialCode = document.getElementById('credUniqueCode').innerText || generateOfficialRetaCode();
 
-        await _supabase
+        const { error: eqErr } = await _supabase
           .from('equipo_jugadores')
           .insert([{
             curp_jugador: curpVal,
             nombre_jugador: fname,
             apellidos_jugador: lname,
             equipo_id: targetTeamId,
-            liga_id: selectedLeagueVal,
+            liga_id: activeLeagueUuid,
             codigo_reta: officialCode,
             estatus_delegado: 'PENDIENTE',
             estatus: 'PENDIENTE'
           }]);
+
+        if (eqErr) console.error("Error insertando en equipo_jugadores:", eqErr.message);
 
         // SI USÓ TOKEN DE INVITACIÓN, MARCARLO COMO USADO
         if (verifiedContext.tokenCode) {
@@ -1759,11 +1759,19 @@
       }
     }
 
-    function executeValidationAndDownload() {
+    // CORRECCIÓN 3: Esperar sincrónicamente la inserción antes de abrir ventana o redirigir
+    async function executeValidationAndDownload() {
       playBeepSound();
       
-      // Ejecutar la inserción en la base de datos
-      submitFullRegistrationToSupabase();
+      const btn = document.getElementById('btnValidateAndDownload');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando registro en Supabase...`;
+
+      // Se ejecuta el guardado y se espera la respuesta HTTP real de la base de datos
+      await submitFullRegistrationToSupabase();
+
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-download"></i> Validar y Finalizar Pre-Registro`;
 
       openValidationModal();
 
@@ -1790,7 +1798,7 @@
             document.body.removeChild(link);
           }
         } catch (e) {
-          console.warn("Proceso completado.");
+          console.warn("Proceso de canvas completado.");
         }
       }, 250);
     }
