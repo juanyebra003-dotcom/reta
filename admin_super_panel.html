@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RETA - Super Panel de Administración Central</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    .admin-header-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 29, 0.98));
+      border: 1px solid rgba(255, 71, 87, 0.4);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    .badge-superadmin {
+      background: linear-gradient(135deg, #ff4757, #ff6b81);
+      color: #fff; font-weight: 800; font-size: 0.72rem; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+    .metric-card i { font-size: 1.8rem; color: #00d4ff; margin-bottom: 8px; }
+    .metric-card h4 { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+    .metric-card span { font-size: 1.5rem; font-weight: 800; color: #fff; }
+    .tokens-table {
+      width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem;
+    }
+    .tokens-table th, .tokens-table td {
+      padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .tokens-table th { color: #00d4ff; font-weight: 600; background: rgba(0, 212, 255, 0.05); }
+    .status-pill { padding: 3px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 700; }
+    .status-active { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+    .status-used { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+    .btn-sm-action {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
+      padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;
+    }
+    .btn-sm-action:hover { background: #00d4ff; color: #000; }
+    .search-filter-box {
+      display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;
+    }
+    .search-filter-box input {
+      flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 8px; color: #fff; font-size: 0.9rem; min-width: 240px; text-transform: uppercase;
+    }
+  </style>
+</head>
+<body class="login-body">
+
+  <a href="index.html" class="btn-back">
+    <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+  </a>
+
+  <div class="login-container full-register-container" style="max-width: 1050px; margin: 30px auto;">
+    
+    <!-- ENCABEZADO -->
+    <div class="login-header">
+      <div class="reta-logo-container">
+        <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
+      </div>
+      <h2>Super Panel Central <span class="text-gradient">RETA Pro App</span></h2>
+      <p id="panelSubHeader">Control Maestro de Infraestructura Global y Auditoría</p>
+    </div>
+
+    <!-- TARJETA 1: IDENTIFICACIÓN Y AUTENTICACIÓN SUPERADMIN -->
+    <div class="admin-header-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <span class="badge-superadmin"><i class="fa-solid fa-shield-halved"></i> Super Administrador Global</span>
+          <h3 style="color: #fff; font-size: 1.2rem; margin-top: 5px;">Panel Máster Autorizado</h3>
+        </div>
+        <div style="text-align: right;">
+          <small style="color: #94a3b8; display: block; font-size: 0.75rem;">Nivel de Seguridad:</small>
+          <strong style="color: #ff4757; font-family: monospace; font-size: 0.95rem;">ACCESO TOTAL ROOT</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN DE MÉTRICAS Y ESTADÍSTICAS DEL SISTEMA -->
+    <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
+      <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 15px;">
+        <i class="fa-solid fa-chart-pie" style="color: #00d4ff;"></i> Métricas y Estadísticas Globales del Sistema
+      </h3>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <i class="fa-solid fa-users"></i>
+          <h4>Total Usuarios</h4>
+          <span id="metricTotalUsers">--</span>
+        </div>
+        <div class="metric-card">
+          <i class="fa-solid fa-trophy"></i>
+          <h4>Ligas Registradas</h4>
+          <span id="metricTotalLeagues">--</span>
+        </div>
+        <div class="metric-card">
+          <i class="fa-solid fa-city"></i>
+          <h4>Ciudades / Sedes</h4>
+          <span id="metricTotalCities">--</span>
+        </div>
+        <div class="metric-card">
+          <i class="fa-solid fa-map-location-dot"></i>
+          <h4>Estados Activos</h4>
+          <span id="metricTotalStates">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA 2: GENERADOR DE TOKENS PARA ADMIN 1 (TITULAR DE LIGA) -->
+    <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
+      <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
+        <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens para Administradores Titulares (Admin 1)
+      </h3>
+      <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 18px;">
+        Emite fichas de invitación directas para permitir que nuevos directivos den de alta sus ligas en el sistema.
+      </p>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 2; min-width: 240px;">
+          <label style="color: #00d4ff; font-size: 0.78rem; display: block; margin-bottom: 6px; font-weight: 600;">
+            Rol de Destino Autorizado:
+          </label>
+          <select id="tokenRoleSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+            <option value="ADMIN_LIGA" selected>👑 Administrador Titular de Liga (Admin 1 - Alta de Liga)</option>
+          </select>
+        </div>
+
+        <button type="button" onclick="generateSuperToken()" style="background: linear-gradient(135deg, #00d4ff, #0055ff); color: #fff; font-weight: bold; padding: 11px 22px; border-radius: 8px; border: none; cursor: pointer; flex: 1; min-width: 180px;">
+          <i class="fa-solid fa-plus-circle"></i> Generar Token Máster
+        </button>
+      </div>
+
+      <!-- MUESTRA DEL TOKEN GENERADO -->
+      <div id="generatedTokenBox" style="display: none; margin-top: 20px; background: rgba(0, 212, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px dashed #00d4ff;">
+        <span style="color: #aaa; font-size: 0.75rem; display: block;">✓ Token Máster Creado Exitosamente:</span>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
+          <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.4rem; letter-spacing: 2px; font-family: monospace;">---</strong>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" onclick="copyTokenToClipboard()" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold;">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+            <button type="button" onclick="shareTokenWhatsApp()" class="btn-sm-action" style="background: #25D366; color: #fff; font-weight: bold;">
+              <i class="fa-brands fa-whatsapp"></i> WhatsApp
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA 3: VISOR GLOBAL DE USUARIOS Y FILTRO POR CURP -->
+    <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="color: #fff; font-size: 1.1rem;">
+          <i class="fa-solid fa-address-book" style="color: #00d4ff;"></i> Directorio General de Usuarios Registrados
+        </h3>
+        <button type="button" onclick="loadGlobalUsersDirectory()" class="btn-sm-action">
+          <i class="fa-solid fa-rotate-right"></i> Refrescar Directorio
+        </button>
+      </div>
+
+      <!-- Barra de Filtrado por CURP -->
+      <div class="search-filter-box">
+        <input type="text" id="filterCurpInput" placeholder="🔍 Filtrar usuario por CURP (18 caracteres)..." oninput="filterUsersByCurp()">
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="tokens-table">
+          <thead>
+            <tr>
+              <th>CURP (ID)</th>
+              <th>Nombre Completo</th>
+              <th>Correo Electrónico</th>
+              <th>Teléfono</th>
+              <th>Edad / Género</th>
+              <th>Residencia</th>
+            </tr>
+          </thead>
+          <tbody id="usersDirectoryTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">
+                Cargando base de datos de usuarios...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TARJETA 4: HISTORIAL DE TOKENS EMITIDOS -->
+    <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="color: #fff; font-size: 1.05rem;">
+          <i class="fa-solid fa-list-check" style="color: #00d4ff;"></i> Historial de Tokens Máster Emitidos
+        </h3>
+        <button type="button" onclick="loadActiveTokensHistory()" class="btn-sm-action">
+          <i class="fa-solid fa-rotate-right"></i> Actualizar
+        </button>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="tokens-table">
+          <thead>
+            <tr>
+              <th>Código Token</th>
+              <th>Rol Autorizado</th>
+              <th>Estatus</th>
+              <th>Fecha Emisión</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tokensTableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">
+                Cargando tokens emitidos...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let globalUsersCache = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSystemMetrics();
+      loadGlobalUsersDirectory();
+      loadActiveTokensHistory();
+    });
+
+    // 1. CARGAR MÉTRICAS Y ESTADÍSTICAS DEL SISTEMA
+    async function loadSystemMetrics() {
+      try {
+        // Total de usuarios
+        const { count: usersCount, error: uErr } = await _supabase.from('usuarios').select('*', { count: 'exact', head: true });
+        if (!uErr) document.getElementById('metricTotalUsers').innerText = usersCount || 0;
+
+        // Total de ligas y ciudades/estados
+        const { data: ligasData, error: lErr } = await _supabase.from('ligas').select('municipio, estado');
+        if (!lErr && ligasData) {
+          document.getElementById('metricTotalLeagues').innerText = ligasData.length;
+
+          const cities = new Set();
+          const states = new Set();
+          ligasData.forEach(l => {
+            if (l.municipio) cities.add(l.municipio.trim().toUpperCase());
+            if (l.estado) states.add(l.estado.trim().toUpperCase());
+          });
+
+          document.getElementById('metricTotalCities').innerText = cities.size;
+          document.getElementById('metricTotalStates').innerText = states.size;
+        }
+      } catch (err) {
+        console.warn("Error cargando métricas:", err.message);
+      }
+    }
+
+    // 2. DIRECTORIO GLOBAL DE USUARIOS Y FILTRADO POR CURP
+    async function loadGlobalUsersDirectory() {
+      const tbody = document.getElementById('usersDirectoryTableBody');
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando usuarios...</td></tr>`;
+
+      try {
+        const { data: usuarios, error } = await _supabase.from('usuarios').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        globalUsersCache = usuarios || [];
+        renderUsersTable(globalUsersCache);
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Error al cargar usuarios: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderUsersTable(usersList) {
+      const tbody = document.getElementById('usersDirectoryTableBody');
+      if (!usersList || usersList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">No se encontraron usuarios registrados.</td></tr>`;
+        return;
+      }
+
+      let html = '';
+      usersList.forEach(u => {
+        const residencia = `${u.ciudad_residencia || 'S/C'}, ${u.estado_residencia || 'S/E'}`;
+        html += `
+          <tr>
+            <td style="font-family: monospace; font-weight: bold; color: #00d4ff;">${u.curp || '---'}</td>
+            <td style="color: #fff; font-weight: 600;">${u.nombre || ''} ${u.apellidos || ''}</td>
+            <td style="color: #94a3b8;">${u.email || '---'}</td>
+            <td style="color: #94a3b8;">${u.telefono || '---'}</td>
+            <td>${u.edad || '--'} años (${u.genero || 'N/A'})</td>
+            <td style="color: #94a3b8; font-size: 0.8rem;">${residencia}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function filterUsersByCurp() {
+      const query = document.getElementById('filterCurpInput').value.trim().toUpperCase();
+      if (!query) {
+        renderUsersTable(globalUsersCache);
+        return;
+      }
+      const filtered = globalUsersCache.filter(u => u.curp && u.curp.toUpperCase().includes(query));
+      renderUsersTable(filtered);
+    }
+
+    // 3. GENERAR TOKEN MÁSTER DESDE SUPERADMIN
+    async function generateSuperToken() {
+      const btn = document.querySelector('button[onclick="generateSuperToken()"]');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generando...`;
+
+      const randomNum = Math.floor(100000 + Math.random() * 900000);
+      const generatedToken = `RETA-ADM1-${randomNum}`;
+
+      try {
+        const { error } = await _supabase
+          .from('invitaciones_sistema')
+          .insert([{
+            liga_id: null, // Sin liga asignada previamente, el Admin 1 la vincula al registrarse
+            token_codigo: generatedToken,
+            rol_permitido: 'ADMIN_LIGA',
+            usado: false
+          }]);
+
+        if (error) throw error;
+
+        document.getElementById('displayTokenValue').innerText = generatedToken;
+        document.getElementById('generatedTokenBox').style.display = 'block';
+
+        loadActiveTokensHistory();
+
+      } catch (err) {
+        alert("Error al generar token máster: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Generar Token Máster`;
+      }
+    }
+
+    // 4. HISTORIAL DE TOKENS
+    async function loadActiveTokensHistory() {
+      const tbody = document.getElementById('tokensTableBody');
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Consultando tokens...</td></tr>`;
+
+      try {
+        const { data: tokens, error } = await _supabase
+          .from('invitaciones_sistema')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!tokens || tokens.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">No hay tokens emitidos.</td></tr>`;
+          return;
+        }
+
+        let html = '';
+        tokens.forEach(t => {
+          const statusClass = t.usado ? 'status-used' : 'status-active';
+          const statusText = t.usado ? 'UTILIZADO' : 'ACTIVO';
+          const dateStr = new Date(t.created_at).toLocaleDateString() + ' ' + new Date(t.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+          html += `
+            <tr>
+              <td style="font-family: monospace; font-weight: bold; color: #fff;">${t.token_codigo}</td>
+              <td><strong style="color:#00d4ff;">ADMIN_TITULAR_LIGA</strong></td>
+              <td><span class="status-pill ${statusClass}">${statusText}</span></td>
+              <td style="color:#94a3b8; font-size:0.75rem;">${dateStr}</td>
+              <td>
+                ${!t.usado ? `
+                  <button type="button" onclick="copySpecificToken('${t.token_codigo}')" class="btn-sm-action" title="Copiar Token"><i class="fa-solid fa-copy"></i></button>
+                  <button type="button" onclick="shareSpecificTokenWhatsApp('${t.token_codigo}')" class="btn-sm-action" style="color:#25D366;" title="Enviar por WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+                ` : '<span style="color:#64748b; font-size:0.7rem;">Canjeado</span>'}
+              </td>
+            </tr>
+          `;
+        });
+
+        tbody.innerHTML = html;
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error al cargar tokens: ${err.message}</td></tr>`;
+      }
+    }
+
+    function copyTokenToClipboard() {
+      const token = document.getElementById('displayTokenValue').innerText;
+      navigator.clipboard.writeText(token);
+      alert("¡Token copiado al portapapeles!");
+    }
+
+    function copySpecificToken(token) {
+      navigator.clipboard.writeText(token);
+      alert(`¡Token ${token} copiado!`);
+    }
+
+    function shareTokenWhatsApp() {
+      const token = document.getElementById('displayTokenValue').innerText;
+      shareSpecificTokenWhatsApp(token);
+    }
+
+    function shareSpecificTokenWhatsApp(token) {
+      const msg = encodeURIComponent(
+        `⚽ *INVITACIÓN SUPERADMIN RETA PRO*\n\n` +
+        `Has sido autorizado para registrar una *Nueva Liga* como Administrador Titular.\n\n` +
+        `📌 Token de Registro: *${token}*\n\n` +
+        `Ingresa a la plataforma para dar de alta tu torneo.`
+      );
+      window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+    }
+  </script>
+</body>
+</html>
