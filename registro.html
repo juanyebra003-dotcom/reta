@@ -212,7 +212,8 @@
       object-fit: cover !important;
     }
 
-    /* ESTILO PANTALLA COMPLETA GARANTIZADO DEL MODAL AVISO Y GATEKEEPER */
+    /* FORZADO DE VISIBILIDAD PARA EL MODAL GATEKEEPER Y AVISOS */
+    .modal-overlay,
     .modal-overlay-custom {
       position: fixed !important;
       top: 0 !important;
@@ -220,9 +221,18 @@
       width: 100vw !important;
       height: 100vh !important;
       background: rgba(0, 0, 0, 0.92) !important;
-      z-index: 9999999 !important;
+      z-index: 99999999 !important;
+      display: none;
       align-items: center !important;
       justify-content: center !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+
+    .modal-overlay.active,
+    .modal-overlay-custom.active {
+      display: flex !important;
     }
   </style>
 </head>
@@ -1032,7 +1042,7 @@
             </p>
 
             <ol style="margin-left: 15px; padding-left: 0; text-align: justify;">
-              <li style="margin-bottom: 6px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE EXPRESO DE RETA PRO APP / RETA SPORTS LOGISTICS:</strong> Declaro y reconozco de manera expresa, tácita e irrevocable que la aplicación informática, marca y/o plataforma denominada RETA PRO APP (así como sus desarrolladores, operadores, administradores, directivos, empleados y empresas filiales o marcas comerciales como RETA Sports Logistics) actúa ÚNICA Y EXCLUSIVAMENTE COMO UN PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE ADMINISTRACIÓN Y GESTIÓN DE INFORMACIÓN DEPORTIVA (tales como registro de cédulas, consulta de horarios, resultados y estadísticas). Por consiguiente, manifiesto que RETA PRO APP es una entidad absolutamente ajena e independent a la organización física, logística, médica, de seguridad y operativa del torneo o evento deportivo en el cual me inscribo. RETA PRO APP no ejerce ningún tipo de supervisión, patronaje, control de instalaciones, vigilancia ni decisión operativa sobre los partidos, por lo que deslindo de manera total, categórica y definitiva a RETA PRO APP de cualquier responsabilidad de carácter civil, penal, laboral, administrativa, médica o patrimonial que pudiera suscitarse con motivo del torneo.</li>
+              <li style="margin-bottom: 6px;"><strong>NATURALEZA TECNOLÓGICA Y DESLINDE EXPRESO DE RETA PRO APP / RETA SPORTS LOGISTICS:</strong> Declaro y reconozco de manera expresa, tácita e irrevocable que la aplicación informática, marca y/o plataforma denominada RETA PRO APP (así como sus desarrolladores, operadores, administradores, directivos, empleados y empresas filiales o marcas comerciales como RETA Sports Logistics) actúa ÚNICA Y EXCLUSIVAMENTE COMO UN PROVEEDOR DE SOFTWARE Y PLATAFORMA DIGITAL DE ADMINISTRACIÓN Y GESTIÓN DE INFORMACIÓN DEPORTIVA (tales como registro de cédulas, consulta de horarios, resultados y estadísticas). Por consiguiente, manifiesto que RETA PRO APP es una entidad absolutamente ajena e independiente a la organización física, logística, médica, de seguridad y operativa del torneo o evento deportivo en el cual me inscribo. RETA PRO APP no ejerce ningún tipo de supervisión, patronaje, control de instalaciones, vigilancia ni decisión operativa sobre los partidos, por lo que deslindo de manera total, categórica y definitiva a RETA PRO APP de cualquier responsabilidad de carácter civil, penal, laboral, administrativa, médica o patrimonial que pudiera suscitarse con motivo del torneo.</li>
               <li style="margin-bottom: 6px;"><strong>ASUNCIÓN VOLUNTARIA DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR, ÁRBITROS Y DELEGADOS:</strong> Reconozco expresamente que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto, tales como esguinces, fracturas, contusiones, incapacidades temporales o permanentes, e inclusive eventos catastróficos o el fallecimiento. Por ende, bajo la figura de asunción voluntaria del riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES DEL PARTIDO Y PROPIETARIOS O ADMINISTRADORES DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, enfermedad, daño patrimonial o eventualidad que pudiera sufrir antes, durante o después de las jornadas deportivas o traslados relacionados.</li>
               <li style="margin-bottom: 6px;"><strong>DECLARACIÓN BAJO PROTESTA DE APTITUD FÍSICA Y SALUD:</strong> Declaro bajo protesta de decir verdad que me encuentro en estado óptimo de salud física, mental y cardiovascular para participar libremente en las actividades deportivas de alto rendimiento. Confirmo no padecer enfermedades infectocontagiosas, cardiovasculares, neurológicas ni secuelas de lesiones que pongan en riesgo mi integridad o la de los demás competidores. Asumo la responsabilidad total por la omisión u ocultamiento de información sobre padecimientos preexistentes.</li>
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de sufrir algún accidente, traumatismo o emergencia médica durante el desarrollo del evento, autorizo expresamente al personal paramédico, médico o delegados asignados a brindarme los primeros auxilios o disponer mi traslado inmediato a una institución hospitalaria. Acepto que todos los costos médicos, hospitalarios, farmacéuticos y de traslado derivados de dicha atención serán cubiertos íntegramente por mi persona o, en su caso, por mi esquema de seguro de gastos médicos personal, deslindando a la organización y a RETA PRO APP de cualquier reclamación económica por dicho concepto.</li>
@@ -1175,7 +1185,7 @@
 
       if (roleValue === 'ADMIN_LIGA') {
         title.innerText = "Acceso Administrador de Liga";
-        subtitle.innerText = "Para Admin 1 Titular (Alta): ingresa la Clave RETA Pro. Para Co-Admin (Admin 2/3): ingresa CURP del Admin 1 y tu Token de Invitación.";
+        subtitle.innerText = "Para Admin 1 Titular: ingresa la Clave RETA Pro. Para Co-Admin (Admin 2/3): ingresa CURP del Admin 1 y tu Token de Invitación.";
         curpBox.style.display = 'block';
         tokenLabel.innerText = "Clave Máster RETA o Token Co-Admin (*)";
       } else if (roleValue === 'DELEGADO') {
@@ -1195,14 +1205,24 @@
         tokenLabel.innerText = "Clave Máster Supervisor (*)";
       }
 
-      modal.className = 'modal-overlay modal-overlay-custom';
+      // Desbloqueo forzado de estilos CSS
+      modal.classList.add('active');
       modal.style.setProperty('display', 'flex', 'important');
+      modal.style.setProperty('opacity', '1', 'important');
+      modal.style.setProperty('visibility', 'visible', 'important');
+      modal.style.setProperty('pointer-events', 'auto', 'important');
     }
 
     function closeGatekeeperModal() {
       playBeepSound();
       const modal = document.getElementById('gatekeeperModal');
-      if (modal) modal.style.setProperty('display', 'none', 'important');
+      if (modal) {
+        modal.classList.remove('active');
+        modal.style.setProperty('display', 'none', 'important');
+        modal.style.setProperty('opacity', '0', 'important');
+        modal.style.setProperty('visibility', 'hidden', 'important');
+        modal.style.setProperty('pointer-events', 'none', 'important');
+      }
     }
 
     /* LÓGICA DE VERIFICACIÓN EN TIEMPO REAL DEL GATEKEEPER CONTRA SUPABASE */
