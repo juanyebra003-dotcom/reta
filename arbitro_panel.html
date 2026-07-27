@@ -43,6 +43,21 @@
       border-radius: 6px; font-family: monospace; font-weight: bold; color: #00d4ff; font-size: 0.8rem; justify-self: end;
     }
 
+    /* BARRA DE NAVEGACIÓN / SUBMENÚS DEL ÁRBITRO */
+    .arbitro-nav-tabs {
+      display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0,212,255,0.2); padding-bottom: 10px; flex-wrap: wrap;
+    }
+    .nav-tab-btn {
+      background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: #00d4ff;
+      padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; transition: 0.3s;
+    }
+    .nav-tab-btn.active, .nav-tab-btn:hover {
+      background: #00d4ff; color: #000;
+    }
+
+    .panel-seccion { display: none; }
+    .panel-seccion.active { display: block; }
+
     .table-excel {
       width: 100%; border-collapse: collapse; margin-bottom: 15px; background: rgba(0,0,0,0.4);
     }
@@ -107,7 +122,7 @@
         </div>
       </div>
       <div>
-        <h1>Acta de Juego Oficial (Cédula Virtual)</h1>
+        <h1>Panel del Árbitro / Cédula Virtual</h1>
         <span>Control Total Árbitro y Sincronización Triple Firma</span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
@@ -116,219 +131,329 @@
       </div>
     </div>
 
-    <!-- CRONÓMETRO ÁRBITRO EN VIVO (HÍBRIDO / CONFIGURABLE 2 O 4 TIEMPOS) -->
-    <div class="cronometro-box">
-      <div style="text-align: left;">
-        <span style="font-size: 0.7rem; color: #94a3b8; display: block;" id="lblFaseCronometro">CRONÓMETRO — 1.er TIEMPO</span>
-        <div class="cronometro-display" id="cronometroTime">00:00</div>
-      </div>
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <button type="button" onclick="avanzarFaseCronometro()" id="btnCronometroControl" style="background:#10b981; color:#fff; border:none; padding:8px 14px; border-radius:5px; font-weight:bold; cursor:pointer;"><i class="fa-solid fa-play"></i> Iniciar 1.er Tiempo</button>
-        <button type="button" onclick="resetCronometro()" style="background:#ef4444; color:#fff; border:none; padding:8px 12px; border-radius:5px; font-weight:bold; cursor:pointer;"><i class="fa-solid fa-rotate-right"></i> Reiniciar</button>
-      </div>
+    <!-- SUBMENÚS DEL PANEL DE ÁRBITRO -->
+    <div class="arbitro-nav-tabs">
+      <button type="button" class="nav-tab-btn active" onclick="cambiarSeccion('cedula', this)"><i class="fa-solid fa-file-lines"></i> Cédula Arbitral Activa</button>
+      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('jugadores', this)"><i class="fa-solid fa-users-viewfinder"></i> Estatus de Jugadores (Activos / Inactivos / Suspendidos)</button>
+      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('designaciones', this)"><i class="fa-solid fa-calendar-check"></i> Mis Designaciones</button>
+      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('ranking', this)"><i class="fa-solid fa-star"></i> Ranking y Evaluaciones</button>
     </div>
 
-    <!-- SELECTOR DE MODALIDAD Y REGLAS -->
-    <div class="config-modalidad-box">
-      <div>
-        <label style="color: #00d4ff; font-weight: 600; font-size: 0.8rem; margin-right: 8px;">Modalidad de Fútbol:</label>
-        <select id="modalidadSelect" onchange="actualizarReglasModalidad()" style="background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: bold;">
-          <option value="5">Fútbol 5 / Sala (5 Tit. / 12 Sup. | Mín 4)</option>
-          <option value="6">Fútbol 6 / Rápido - 4 Tiempos (6 Tit. / 10 Sup. | Mín 5)</option>
-          <option value="7" selected>Fútbol 7 (7 Tit. / 12 Sup. | Mín 5)</option>
-          <option value="9">Fútbol 9 (9 Tit. / 12 Sup. | Mín 7)</option>
-          <option value="11">Fútbol 11 / Soccer (11 Tit. / 15 Sup. | Mín 8 | Máx 5 Cambios)</option>
-        </select>
-      </div>
-      <div id="alertaReglas" style="color: #2ecc71; font-size: 0.78rem; font-weight: 600;">
-        ℹ️ Fútbol 7 configurado.
-      </div>
-    </div>
+    <!-- SECCIÓN 1: CÉDULA ARBITRAL (CONTENEDOR PRINCIPAL) -->
+    <div id="seccion-cedula" class="panel-seccion active">
 
-    <!-- MARCADOR POR PERIODOS -->
-    <div class="grid-equipo-header">
-      <div class="team-title-box">LOCAL (Credenciales Validadas)</div>
-      <div class="team-title-box">VISITANTE (Credenciales Validadas)</div>
-    </div>
-
-    <table class="table-excel">
-      <tr>
-        <th colspan="7">MARCADOR - LOCAL</th>
-        <th colspan="7">MARCADOR - VISITANTE</th>
-      </tr>
-      <tr>
-        <td colspan="2">1er Medio</td>
-        <td colspan="2">2do Medio</td>
-        <td colspan="3" style="background: rgba(0,212,255,0.2); color:#00d4ff; font-weight:bold;">Final</td>
-        <td colspan="2">1er Medio</td>
-        <td colspan="2">2do Medio</td>
-        <td colspan="3" style="background: rgba(255,71,87,0.2); color:#ff4757; font-weight:bold;">Final</td>
-      </tr>
-      <tr>
-        <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
-        <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
-        <td colspan="3"><input type="number" class="input-excel" value="0" style="font-weight:bold; color:#00d4ff;"></td>
-        <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
-        <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
-        <td colspan="3"><input type="number" class="input-excel" value="0" style="font-weight:bold; color:#ff4757;"></td>
-      </tr>
-    </table>
-
-    <!-- ALINEACIONES -->
-    <div class="grid-equipo-header" style="margin-top: 15px;">
-      <div>
-        <table class="table-excel" id="tablaLocalRoster">
-          <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (Local)</th></tr>
-        </table>
+      <!-- CRONÓMETRO ÁRBITRO EN VIVO CON BOTÓN DE PAUSA INDEPENDIENTE -->
+      <div class="cronometro-box">
+        <div style="text-align: left;">
+          <span style="font-size: 0.7rem; color: #94a3b8; display: block;" id="lblFaseCronometro">CRONÓMETRO — 1.er TIEMPO</span>
+          <div class="cronometro-display" id="cronometroTime">00:00</div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button type="button" onclick="avanzarFaseCronometro()" id="btnCronometroControl" style="background:#10b981; color:#fff; border:none; padding:8px 14px; border-radius:5px; font-weight:bold; cursor:pointer;"><i class="fa-solid fa-play"></i> Iniciar 1.er Tiempo</button>
+          <button type="button" onclick="togglePausaCronometro()" id="btnPausaCronometro" style="background:#f59e0b; color:#fff; border:none; padding:8px 14px; border-radius:5px; font-weight:bold; cursor:pointer; display:none;"><i class="fa-solid fa-pause"></i> Pausa</button>
+          <button type="button" onclick="resetCronometro()" style="background:#ef4444; color:#fff; border:none; padding:8px 12px; border-radius:5px; font-weight:bold; cursor:pointer;"><i class="fa-solid fa-rotate-right"></i> Reiniciar</button>
+        </div>
       </div>
-      <div>
-        <table class="table-excel" id="tablaVisitorRoster">
-          <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (Visitante)</th></tr>
-        </table>
-      </div>
-    </div>
 
-    <!-- SECCIÓN DE CAMBIOS / SUSTITUCIONES -->
-    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;"><i class="fa-solid fa-right-left"></i> Control de Cambios / Sustituciones (<span id="lblMaxCambios">10 Plazas</span>)</div>
-    <div class="grid-equipo-header">
+      <!-- SELECTOR DE MODALIDAD Y REGLAS -->
+      <div class="config-modalidad-box">
+        <div>
+          <label style="color: #00d4ff; font-weight: 600; font-size: 0.8rem; margin-right: 8px;">Modalidad de Fútbol:</label>
+          <select id="modalidadSelect" onchange="actualizarReglasModalidad()" style="background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: bold;">
+            <option value="5">Fútbol 5 / Sala (5 Tit. / 12 Sup. | Mín 4)</option>
+            <option value="6">Fútbol 6 / Rápido - 4 Tiempos (6 Tit. / 10 Sup. | Mín 5)</option>
+            <option value="7" selected>Fútbol 7 (7 Tit. / 12 Sup. | Mín 5)</option>
+            <option value="9">Fútbol 9 (9 Tit. / 12 Sup. | Mín 7)</option>
+            <option value="11">Fútbol 11 / Soccer (11 Tit. / 15 Sup. | Mín 8 | Máx 5 Cambios)</option>
+          </select>
+        </div>
+        <div id="alertaReglas" style="color: #2ecc71; font-size: 0.78rem; font-weight: 600;">
+          ℹ️ Fútbol 7 configurado.
+        </div>
+      </div>
+
+      <!-- MARCADOR POR PERIODOS -->
+      <div class="grid-equipo-header">
+        <div class="team-title-box">LOCAL (Credenciales Validadas)</div>
+        <div class="team-title-box">VISITANTE (Credenciales Validadas)</div>
+      </div>
+
       <table class="table-excel">
-        <thead><tr><th># Cambio</th><th>Sale (Dorsal)</th><th>Entra (Dorsal)</th><th>Minuto</th></tr></thead>
-        <tbody id="cambiosLocalBody"></tbody>
+        <tr>
+          <th colspan="7">MARCADOR - LOCAL</th>
+          <th colspan="7">MARCADOR - VISITANTE</th>
+        </tr>
+        <tr>
+          <td colspan="2">1er Medio</td>
+          <td colspan="2">2do Medio</td>
+          <td colspan="3" style="background: rgba(0,212,255,0.2); color:#00d4ff; font-weight:bold;">Final</td>
+          <td colspan="2">1er Medio</td>
+          <td colspan="2">2do Medio</td>
+          <td colspan="3" style="background: rgba(255,71,87,0.2); color:#ff4757; font-weight:bold;">Final</td>
+        </tr>
+        <tr>
+          <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
+          <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
+          <td colspan="3"><input type="number" class="input-excel" value="0" style="font-weight:bold; color:#00d4ff;"></td>
+          <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
+          <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
+          <td colspan="3"><input type="number" class="input-excel" value="0" style="font-weight:bold; color:#ff4757;"></td>
+        </tr>
       </table>
+
+      <!-- ALINEACIONES -->
+      <div class="grid-equipo-header" style="margin-top: 15px;">
+        <div>
+          <table class="table-excel" id="tablaLocalRoster">
+            <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (Local)</th></tr>
+          </table>
+        </div>
+        <div>
+          <table class="table-excel" id="tablaVisitorRoster">
+            <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (Visitante)</th></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE CAMBIOS / SUSTITUCIONES -->
+      <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;"><i class="fa-solid fa-right-left"></i> Control de Cambios / Sustituciones (<span id="lblMaxCambios">10 Plazas</span>)</div>
+      <div class="grid-equipo-header">
+        <table class="table-excel">
+          <thead><tr><th># Cambio</th><th>Sale (Dorsal)</th><th>Entra (Dorsal)</th><th>Minuto</th></tr></thead>
+          <tbody id="cambiosLocalBody"></tbody>
+        </table>
+        <table class="table-excel">
+          <thead><tr><th># Cambio</th><th>Sale (Dorsal)</th><th>Entra (Dorsal)</th><th>Minuto</th></tr></thead>
+          <tbody id="cambiosVisitorBody"></tbody>
+        </table>
+      </div>
+
+      <!-- GOLES (EXTENDIDO HASTA 25) -->
+      <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">GOLES (Minuto a Minuto del 1 al 25)</div>
+      <div class="horizontal-scroll-container">
+        <table class="table-excel" style="min-width: 1100px;">
+          <tr><th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Goles</th><th>Gol</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
+          <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
+          <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
+        </table>
+      </div>
+
+      <div class="horizontal-scroll-container">
+        <table class="table-excel" style="min-width: 1100px;">
+          <tr><th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Goles</th><th>Gol</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
+          <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
+          <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
+        </table>
+      </div>
+
+      <!-- FALTAS ACUMULATIVAS (EXTENDIDO HASTA 25) -->
+      <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">FALTAS ACUMULATIVAS (Del 1 al 25)</div>
+      <div class="horizontal-scroll-container">
+        <table class="table-excel" style="min-width: 1100px;">
+          <tr><th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Faltas</th><th>Falta</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
+          <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
+          <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
+        </table>
+      </div>
+
+      <div class="horizontal-scroll-container">
+        <table class="table-excel" style="min-width: 1100px;">
+          <tr><th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Faltas</th><th>Falta</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
+          <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
+          <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
+        </table>
+      </div>
+
+      <!-- CONTROL DE TARJETAS -->
+      <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">CONTROL DE TARJETAS (7 Amarillas / 4 Rojas por Tiempo)</div>
+      <div class="grid-equipo-header">
+        <div class="horizontal-scroll-container" style="margin-bottom:0;">
+          <table class="table-excel" style="min-width: 600px;">
+            <tr>
+              <th rowspan="2" style="vertical-align: middle; width: 80px;">LOCAL</th>
+              <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">1.er T (7 Amarillas)</th>
+              <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">2.do T (7 Amarillas)</th>
+            </tr>
+            <tr><script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script></tr>
+            <tr><td>N° Dorsal</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
+            <tr><td>Min.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script></tr>
+            <tr><th colspan="15" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T)</th></tr>
+            <tr><td>N° Dorsal</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
+            <tr><td>Min.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
+          </table>
+        </div>
+
+        <div class="horizontal-scroll-container" style="margin-bottom:0;">
+          <table class="table-excel" style="min-width: 600px;">
+            <tr>
+              <th rowspan="2" style="vertical-align: middle; width: 80px; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE</th>
+              <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">1.er T (7 Amarillas)</th>
+              <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">2.do T (7 Amarillas)</th>
+            </tr>
+            <tr><script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script></tr>
+            <tr><td>N° Dorsal</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
+            <tr><td>Min.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script></tr>
+            <tr><th colspan="15" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T)</th></tr>
+            <tr><td>N° Dorsal</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
+            <tr><td>Min.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- OBSERVACIONES Y VALIDACIÓN DE DELEGADOS -->
+      <div style="font-weight: bold; color: #00d4ff; margin: 20px 0 5px 0; text-transform: uppercase;">OBSERVACIONES Y VALIDACIÓN DE DELEGADOS</div>
+      <div class="grid-equipo-header">
+        <div>
+          <div style="font-size: 0.75rem; color:#00d4ff; margin-bottom: 3px;">LOCAL</div>
+          <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Reportes equipo local..."></textarea>
+        </div>
+        <div>
+          <div style="font-size: 0.75rem; color:#ff4757; margin-bottom: 3px;">VISITANTE</div>
+          <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Reportes equipo visitante..."></textarea>
+        </div>
+      </div>
+
+      <div class="grid-equipo-header" style="margin-top: 15px; background: rgba(0,212,255,0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2);">
+        <div style="text-align: center;">
+          <span style="font-size: 0.75rem; color: #00d4ff; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado Equipo A (Local)</span>
+          <button type="button" onclick="validarFirma('Local')" id="btnDelegadoLocal" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+            <i class="fa-solid fa-file-signature"></i> Validar Cédula (Delegado Local)
+          </button>
+          <div id="statusDelegadoLocal" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
+        </div>
+        <div style="text-align: center;">
+          <span style="font-size: 0.75rem; color: #ff4757; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado Equipo B (Visitante)</span>
+          <button type="button" onclick="validarFirma('Visitante')" id="btnDelegadoVisitor" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+            <i class="fa-solid fa-file-signature"></i> Validar Cédula (Delegado Visitante)
+          </button>
+          <div id="statusDelegadoVisitor" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE OBSERVACIONES Y VALIDACIÓN OFICIAL DEL ÁRBITRO (ANCHO COMPLETO) -->
+      <div style="margin-top: 20px; background: rgba(241, 196, 15, 0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(241, 196, 15, 0.3);">
+        <div style="font-weight: bold; color: #f1c40f; margin-bottom: 5px; text-transform: uppercase;">
+          <i class="fa-solid fa-whistle"></i> Observaciones, Comentarios y Reporte Oficial del Árbitro
+        </div>
+        <textarea class="input-excel" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:10px; height:70px; text-align:left; margin-bottom: 12px;" placeholder="Ingrese incidencias arbitrales, comportamiento de banca o motivos de expulsión..."></textarea>
+        
+        <div style="text-align: center;">
+          <button type="button" onclick="validarFirma('Arbitro')" id="btnArbitro" style="background: #f1c40f; color: #000; font-weight: bold; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+            <i class="fa-solid fa-gavel"></i> Validar y Firmar Cédula (Árbitro Central)
+          </button>
+          <div id="statusArbitro" style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">Pendiente de validación arbitral</div>
+        </div>
+      </div>
+
+      <!-- BOTÓN DE SINCRONIZACIÓN DEFINITIVA (CONDICIONADO A TRIPLE FIRMA) -->
+      <button type="button" onclick="sincronizarCedulaDefinitiva()" id="btnSincronizar" class="btn-action-cedula">
+        <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Cédula Arbitral Definitiva (Triple Firma Requerida)
+      </button>
+
+    </div> <!-- FIN SECCIÓN CÉDULA -->
+
+
+    <!-- SECCIÓN 2: ESTATUS DE JUGADORES (ACTIVOS / INACTIVOS / SUSPENDIDOS) -->
+    <div id="seccion-jugadores" class="panel-seccion">
+      <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-shield-halved"></i> Consulta de Estatus de Jugadores (Ligas Registradas)</h3>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px;">Verifique en tiempo real si un jugador cuenta con habilitación vigente, está dado de baja del torneo o se encuentra suspendido por acumulación de tarjetas / expulsión directa.</p>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+          <input type="text" id="filtroJugador" placeholder="Buscar por Nombre, CURP o Dorsal..." style="background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; color: #fff; padding: 6px 12px; border-radius: 6px; flex: 1; min-width: 220px; font-size: 0.78rem;" onkeyup="filtrarTablaJugadores()">
+          <select id="filtroEstatus" onchange="filtrarTablaJugadores()" style="background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.78rem;">
+            <option value="todos">Todos los Estatus</option>
+            <option value="activo">Activos</option>
+            <option value="suspendido">Suspendidos (Expulsión)</option>
+            <option value="baja">Dados de Baja</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="horizontal-scroll-container">
+        <table class="table-excel" id="tablaEstatusJugadores">
+          <thead>
+            <tr>
+              <th>Liga / Torneo</th>
+              <th>Equipo</th>
+              <th>N° Dorsal</th>
+              <th>Nombre del Jugador</th>
+              <th>Estatus Oficial</th>
+              <th>Motivo / Sanción (Si aplica)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Liga Municipal Moroleón</td>
+              <td>Deportivo Atlas</td>
+              <td><b>#10</b></td>
+              <td>Carlos Alberto Gómez</td>
+              <td><span style="color: #10b981; font-weight: bold;">✅ ACTIVO</span></td>
+              <td>Ninguna</td>
+            </tr>
+            <tr>
+              <td>Liga Municipal Moroleón</td>
+              <td>Real Madrid FC</td>
+              <td><b>#7</b></td>
+              <td>Miguel Ángel Yebra</td>
+              <td><span style="color: #ef4444; font-weight: bold;">⛔ SUSPENDIDO</span></td>
+              <td>Tarjeta Roja Directa (Jornada Anterior) - 1 Partido</td>
+            </tr>
+            <tr>
+              <td>Liga Sabatina Reta Pro</td>
+              <td>Inter de Milán</td>
+              <td><b>#14</b></td>
+              <td>Roberto Carlos Pérez</td>
+              <td><span style="color: #f59e0b; font-weight: bold;">⚠️ BAJA DE TORNEO</span></td>
+              <td>Baja voluntaria / Solicitud de Delegado</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- SECCIÓN 3: MIS DESIGNACIONES -->
+    <div id="seccion-designaciones" class="panel-seccion">
+      <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-clipboard-list"></i> Calendario de Designaciones Arbitrales</h3>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin: 0;">Partidos asignados por el Administrador de Liga para su arbitraje central o de banda.</p>
+      </div>
       <table class="table-excel">
-        <thead><tr><th># Cambio</th><th>Sale (Dorsal)</th><th>Entra (Dorsal)</th><th>Minuto</th></tr></thead>
-        <tbody id="cambiosVisitorBody"></tbody>
-      </table>
-    </div>
-
-    <!-- GOLES (EXTENDIDO HASTA 25) -->
-    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">GOLES (Minuto a Minuto del 1 al 25)</div>
-    <div class="horizontal-scroll-container">
-      <table class="table-excel" style="min-width: 1100px;">
-        <tr><th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Goles</th><th>Gol</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-        <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
-        <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
-      </table>
-    </div>
-
-    <div class="horizontal-scroll-container">
-      <table class="table-excel" style="min-width: 1100px;">
-        <tr><th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Goles</th><th>Gol</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-        <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
-        <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
-      </table>
-    </div>
-
-    <!-- FALTAS ACUMULATIVAS (EXTENDIDO HASTA 25) -->
-    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">FALTAS ACUMULATIVAS (Del 1 al 25)</div>
-    <div class="horizontal-scroll-container">
-      <table class="table-excel" style="min-width: 1100px;">
-        <tr><th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Faltas</th><th>Falta</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-        <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
-        <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
-      </table>
-    </div>
-
-    <div class="horizontal-scroll-container">
-      <table class="table-excel" style="min-width: 1100px;">
-        <tr><th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Faltas</th><th>Falta</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-        <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
-        <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
-      </table>
-    </div>
-
-    <!-- CONTROL DE TARJETAS -->
-    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">CONTROL DE TARJETAS (7 Amarillas / 4 Rojas por Tiempo)</div>
-    <div class="grid-equipo-header">
-      <div class="horizontal-scroll-container" style="margin-bottom:0;">
-        <table class="table-excel" style="min-width: 600px;">
+        <thead>
+          <tr><th>Fecha / Hora</th><th>Liga / Cancha</th><th>Encuentro (Local vs Visitante)</th><th>Modalidad</th><th>Estatus</th></tr>
+        </thead>
+        <tbody>
           <tr>
-            <th rowspan="2" style="vertical-align: middle; width: 80px;">LOCAL</th>
-            <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">1.er T (7 Amarillas)</th>
-            <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">2.do T (7 Amarillas)</th>
+            <td>Sábado 01 Ago, 16:00 hrs</td>
+            <td>Cancha Sintética #1</td>
+            <td><b>Deportivo Atlas vs Real Madrid FC</b></td>
+            <td>Fútbol 7</td>
+            <td><span style="color: #10b981; font-weight: bold;">Asignado (Activo)</span></td>
           </tr>
-          <tr><script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script></tr>
-          <tr><td>N° Dorsal</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
-          <tr><td>Min.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script></tr>
-          <tr><th colspan="15" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T)</th></tr>
-          <tr><td>N° Dorsal</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
-          <tr><td>Min.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
-        </table>
-      </div>
-
-      <div class="horizontal-scroll-container" style="margin-bottom:0;">
-        <table class="table-excel" style="min-width: 600px;">
-          <tr>
-            <th rowspan="2" style="vertical-align: middle; width: 80px; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE</th>
-            <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">1.er T (7 Amarillas)</th>
-            <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">2.do T (7 Amarillas)</th>
-          </tr>
-          <tr><script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script></tr>
-          <tr><td>N° Dorsal</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
-          <tr><td>Min.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script></tr>
-          <tr><th colspan="15" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T)</th></tr>
-          <tr><td>N° Dorsal</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
-          <tr><td>Min.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
 
-    <!-- OBSERVACIONES Y VALIDACIÓN DE DELEGADOS -->
-    <div style="font-weight: bold; color: #00d4ff; margin: 20px 0 5px 0; text-transform: uppercase;">OBSERVACIONES Y VALIDACIÓN DE DELEGADOS</div>
-    <div class="grid-equipo-header">
-      <div>
-        <div style="font-size: 0.75rem; color:#00d4ff; margin-bottom: 3px;">LOCAL</div>
-        <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Reportes equipo local..."></textarea>
+
+    <!-- SECCIÓN 4: RANKING Y EVALUACIONES -->
+    <div id="seccion-ranking" class="panel-seccion">
+      <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-award"></i> Mi Ranking y Calificación Arbitral</h3>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin: 0;">Evaluación promedio otorgada por los delegados de los equipos y auditada por la administración de la liga.</p>
       </div>
-      <div>
-        <div style="font-size: 0.75rem; color:#ff4757; margin-bottom: 3px;">VISITANTE</div>
-        <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Reportes equipo visitante..."></textarea>
+      <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(0,212,255,0.2);">
+        <div style="font-size: 2.5rem; font-weight: bold; color: #f1c40f;">4.8 / 5.0 ⭐</div>
+        <div style="font-size: 0.8rem; color: #fff; margin-top: 5px;">Calificación General Excelente (Basado en 24 partidos dirigidos)</div>
       </div>
     </div>
-
-    <div class="grid-equipo-header" style="margin-top: 15px; background: rgba(0,212,255,0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2);">
-      <div style="text-align: center;">
-        <span style="font-size: 0.75rem; color: #00d4ff; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado Equipo A (Local)</span>
-        <button type="button" onclick="validarFirma('Local')" id="btnDelegadoLocal" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-          <i class="fa-solid fa-file-signature"></i> Validar Cédula (Delegado Local)
-        </button>
-        <div id="statusDelegadoLocal" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
-      </div>
-      <div style="text-align: center;">
-        <span style="font-size: 0.75rem; color: #ff4757; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado Equipo B (Visitante)</span>
-        <button type="button" onclick="validarFirma('Visitante')" id="btnDelegadoVisitor" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-          <i class="fa-solid fa-file-signature"></i> Validar Cédula (Delegado Visitante)
-        </button>
-        <div id="statusDelegadoVisitor" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
-      </div>
-    </div>
-
-    <!-- SECCIÓN DE OBSERVACIONES Y VALIDACIÓN OFICIAL DEL ÁRBITRO (ANCHO COMPLETO) -->
-    <div style="margin-top: 20px; background: rgba(241, 196, 15, 0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(241, 196, 15, 0.3);">
-      <div style="font-weight: bold; color: #f1c40f; margin-bottom: 5px; text-transform: uppercase;">
-        <i class="fa-solid fa-whistle"></i> Observaciones, Comentarios y Reporte Oficial del Árbitro
-      </div>
-      <textarea class="input-excel" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:10px; height:70px; text-align:left; margin-bottom: 12px;" placeholder="Ingrese incidencias arbitrales, comportamiento de banca o motivos de expulsión..."></textarea>
-      
-      <div style="text-align: center;">
-        <button type="button" onclick="validarFirma('Arbitro')" id="btnArbitro" style="background: #f1c40f; color: #000; font-weight: bold; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
-          <i class="fa-solid fa-gavel"></i> Validar y Firmar Cédula (Árbitro Central)
-        </button>
-        <div id="statusArbitro" style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">Pendiente de validación arbitral</div>
-      </div>
-    </div>
-
-    <!-- BOTÓN DE SINCRONIZACIÓN DEFINITIVA (CONDICIONADO A TRIPLE FIRMA) -->
-    <button type="button" onclick="sincronizarCedulaDefinitiva()" id="btnSincronizar" class="btn-action-cedula">
-      <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Cédula Arbitral Definitiva (Triple Firma Requerida)
-    </button>
 
   </div>
 
   <script>
     let firmasValidadas = { Local: false, Visitante: false, Arbitro: false };
     let segundos = 0, cronoInterval = null, estadoCronometro = 0; 
-    // 0: Detenido, 1: 1er Tiempo, 2: Pausa/Medio Tiempo, 3: 2do Tiempo, 4: Pausa 3T, 5: 3er Tiempo, 6: Pausa 4T, 7: 4to Tiempo, 8: Finalizado
+    let enPausaIncidente = false;
 
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('lblFolioConsecutivo').innerText = `FOLIO: RETA-2027-${Math.floor(100 + Math.random() * 900)}`;
@@ -336,60 +461,124 @@
       restaurarBorradorOffline();
     });
 
-    // Lógica del Cronómetro Híbrido Configurable (2 o 4 Tiempos)
+    // Control de Submenús del Árbitro
+    function cambiarSeccion(seccionId, btnElement) {
+      document.querySelectorAll('.panel-seccion').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(`seccion-${seccionId}`).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
+    // Filtro para la tabla de jugadores activos/inactivos
+    function filtrarTablaJugadores() {
+      const input = document.getElementById('filtroJugador').value.toLowerCase();
+      const select = document.getElementById('filtroEstatus').value;
+      const filas = document.querySelectorAll('#tablaEstatusJugadores tbody tr');
+
+      filas.forEach(fila => {
+        const textoFila = fila.innerText.toLowerCase();
+        const estatusTexto = fila.querySelector('span').innerText.toLowerCase();
+        
+        let coincideTexto = textoFila.includes(input);
+        let coincideEstatus = (select === 'todos') || 
+                              (select === 'activo' && estatusTexto.includes('activo')) ||
+                              (select === 'suspendido' && estatusTexto.includes('suspendido')) ||
+                              (select === 'baja' && estatusTexto.includes('baja'));
+
+        if (coincideTexto && coincideEstatus) {
+          fila.style.display = '';
+        } else {
+          fila.style.display = 'none';
+        }
+      });
+    }
+
+    // Lógica del Cronómetro con Botón de Pausa Independiente
     function avanzarFaseCronometro() {
       const modalidad = document.getElementById('modalidadSelect').value;
-      const esCuatroTiempos = (modalidad === '6'); // Fútbol 6 (Rápido) tiene 4 tiempos
+      const esCuatroTiempos = (modalidad === '6');
       const btn = document.getElementById('btnCronometroControl');
+      const btnPausa = document.getElementById('btnPausaCronometro');
       const lblFase = document.getElementById('lblFaseCronometro');
 
       if (estadoCronometro === 0 || estadoCronometro === 2 || estadoCronometro === 4 || estadoCronometro === 6) {
-        // Iniciar o Reanudar Tiempo
         estadoCronometro++;
-        btn.innerHTML = `<i class="fa-solid fa-pause"></i> Pausar Tiempo`;
-        btn.style.background = '#f59e0b';
+        enPausaIncidente = false;
+        btn.innerHTML = `<i class="fa-solid fa-stop"></i> Terminar Período`;
+        btn.style.background = '#ef4444';
+        btnPausa.style.display = 'inline-block';
+        btnPausa.innerHTML = `<i class="fa-solid fa-pause"></i> Pausa`;
+        btnPausa.style.background = '#f59e0b';
         
-        cronoInterval = setInterval(() => {
-          segundos++;
-          let min = Math.floor(segundos / 60);
-          let sec = segundos % 60;
-          document.getElementById('cronometroTime').innerText = 
-            (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
-        }, 1000);
+        iniciarIntervaloReloj();
 
         let periodoActual = Math.ceil(estadoCronometro / 2);
         lblFase.innerText = `CRONÓMETRO — ${periodoActual}° TIEMPO (EN VIVO)`;
 
-      } else if (estadoCronometro === 1 || estadoCronometro === 3 || estadoCronometro === 5 || estadoCronometro === 7) {
-        // Pausar Tiempo / Terminar Período
+      } else {
         clearInterval(cronoInterval);
         estadoCronometro++;
+        btnPausa.style.display = 'none';
         
         let maxPeriodos = esCuatroTiempos ? 4 : 2;
-        let periodoActual = estadoCronometro / 2;
+        let periodoActualCompletado = Math.floor(estadoCronometro / 2);
 
-        if (periodoActual >= maxPeriodos) {
-          btn.innerHTML = `<i class="fa-solid</i> Cédula Finalizada`;
+        if (periodoActualCompletado >= maxPeriodos) {
+          btn.innerHTML = `<i class="fa-solid fa-check"></i> Partido Finalizado`;
           btn.style.background = '#64748b';
           btn.disabled = true;
           lblFase.innerText = `CRONÓMETRO — PARTIDO FINALIZADO`;
         } else {
-          btn.innerHTML = `<i class="fa-solid fa-play"></i> Iniciar ${periodoActual + 1}° Tiempo`;
+          btn.innerHTML = `<i class="fa-solid fa-play"></i> Iniciar ${periodoActualCompletado + 1}° Tiempo`;
           btn.style.background = '#10b981';
           lblFase.innerText = `CRONÓMETRO — PAUSA (MEDIO / ENTRE TIEMPO)`;
         }
       }
     }
 
+    function togglePausaCronometro() {
+      const btnPausa = document.getElementById('btnPausaCronometro');
+      const lblFase = document.getElementById('lblFaseCronometro');
+
+      if (!enPausaIncidente) {
+        clearInterval(cronoInterval);
+        enPausaIncidente = true;
+        btnPausa.innerHTML = `<i class="fa-solid fa-play"></i> Reanudar`;
+        btnPausa.style.background = '#10b981';
+        lblFase.innerText = `CRONÓMETRO — EN PAUSA (INCIDENCIA)`;
+      } else {
+        enPausaIncidente = false;
+        btnPausa.innerHTML = `<i class="fa-solid fa-pause"></i> Pausa`;
+        btnPausa.style.background = '#f59e0b';
+        iniciarIntervaloReloj();
+        let periodoActual = Math.ceil(estadoCronometro / 2);
+        lblFase.innerText = `CRONÓMETRO — ${periodoActual}° TIEMPO (EN VIVO)`;
+      }
+    }
+
+    function iniciarIntervaloReloj() {
+      clearInterval(cronoInterval);
+      cronoInterval = setInterval(() => {
+        segundos++;
+        let min = Math.floor(segundos / 60);
+        let sec = segundos % 60;
+        document.getElementById('cronometroTime').innerText = 
+          (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
+      }, 1000);
+    }
+
     function resetCronometro() {
       clearInterval(cronoInterval);
       estadoCronometro = 0;
       segundos = 0;
+      enPausaIncidente = false;
       document.getElementById('cronometroTime').innerText = "00:00";
       const btn = document.getElementById('btnCronometroControl');
       btn.innerHTML = `<i class="fa-solid fa-play"></i> Iniciar 1.er Tiempo`;
       btn.style.background = '#10b981';
       btn.disabled = false;
+      document.getElementById('btnPausaCronometro').style.display = 'none';
       document.getElementById('lblFaseCronometro').innerText = `CRONÓMETRO — 1.er TIEMPO`;
     }
 
@@ -400,12 +589,12 @@
       let titulares = 7, suplentesCount = 12, minTitulares = 5, maxCambios = 10;
 
       if (modalidad === '5') { titulares = 5; suplentesCount = 12; minTitulares = 4; maxCambios = 10; }
-      else if (modalidad === '6') { titulares = 6; suplentesCount = 10; minTitulares = 5; maxCambios = 10; } // Fútbol 6 Rápido
+      else if (modalidad === '6') { titulares = 6; suplentesCount = 10; minTitulares = 5; maxCambios = 10; }
       else if (modalidad === '7') { titulares = 7; suplentesCount = 12; minTitulares = 5; maxCambios = 10; }
       else if (modalidad === '9') { titulares = 9; suplentesCount = 12; minTitulares = 7; maxCambios = 10; }
-      else if (modalidad === '11') { titulares = 11; suplentesCount = 15; minTitulares = 8; maxCambios = 5; } // Fútbol Soccer
+      else if (modalidad === '11') { titulares = 11; suplentesCount = 15; minTitulares = 8; maxCambios = 5; }
 
-      alerta.innerHTML = `ℹ️ <b>Fútbol ${modalidad}:</b> Titulares (${titulares}), Suplentes (${supCount = suplentesCount} plazas), Cambios (${maxCambios}).`;
+      alerta.innerHTML = `ℹ️ <b>Fútbol ${modalidad}:</b> Titulares (${titulares}), Suplentes (${suplentesCount} plazas), Cambios (${maxCambios}).`;
 
       renderRosterTabla('tablaLocalRoster', titulares, suplentesCount, 'Local');
       renderRosterTabla('tablaVisitorRoster', titulares, suplentesCount, 'Visitante');
@@ -481,14 +670,14 @@
     function sincronizarCedulaDefinitiva() {
       if (firmasValidadas.Local && firmasValidadas.Visitante && firmasValidadas.Arbitro) {
         alert("✓ Cédula arbitral oficial sincronizada con éxito en Supabase (Modo Híbrido Offline/Online).");
-        localStorage.clear(); // Limpiar borrador temporal al sincronizar con éxito
+        localStorage.clear();
         window.location.href = "admin_super_panel.html";
       } else {
         alert("⚠️ Faltan firmas por validar para habilitar la sincronización.");
       }
     }
 
-    // Sistema Híbrido: Persistencia Local Automática (Blindaje contra caída de red)
+    // Persistencia Local Automática (Offline-First)
     document.addEventListener('input', (e) => {
       if (e.target.classList.contains('input-excel') || e.target.tagName === 'TEXTAREA') {
         const key = e.target.id || e.target.placeholder + Math.random();
