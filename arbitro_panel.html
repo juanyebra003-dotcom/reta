@@ -33,6 +33,11 @@
     .cedula-header h1 { font-size: 1.1rem; font-weight: 800; color: #fff; text-transform: uppercase; margin: 0; }
     .cedula-header span { font-size: 0.75rem; color: #00d4ff; display: block; }
     
+    .logo-reta-img {
+      max-height: 48px;
+      filter: drop-shadow(0 0 8px rgba(0,212,255,0.6));
+    }
+
     .folio-box {
       background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; padding: 6px 10px;
       border-radius: 6px; font-family: monospace; font-weight: bold; color: #00d4ff; font-size: 0.8rem; justify-self: end;
@@ -68,7 +73,6 @@
     }
 
     .status-liberada { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 6px; font-weight: bold; }
-    .status-bloqueada { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 6px; font-weight: bold; }
 
     .btn-action-cedula {
       background: linear-gradient(135deg, #00d4ff, #0055ff); color: #000; font-weight: bold;
@@ -86,34 +90,38 @@
 
   <div class="cedula-sheet">
     
-    <!-- ENCABEZADO OFICIAL -->
+    <!-- ENCABEZADO OFICIAL CON LOGOTIPO GITHUB (logo_reta.png) -->
     <div class="cedula-header">
-      <div style="text-align: left; font-weight: bold; color: #00d4ff; font-size: 0.75rem;">
-        [ RETA PRO APP ]<br>Coordinación General
+      <div style="text-align: left; display: flex; align-items: center; gap: 10px;">
+        <img src="logo_reta.png" alt="Reta Pro Logo" class="logo-reta-img" onerror="this.src='img/logo_reta.png'">
+        <div>
+          <strong style="color: #00d4ff; font-size: 0.75rem;">RETA PRO APP</strong><br>
+          <span style="font-size: 0.65rem; color: #94a3b8;">Sistema Oficial</span>
+        </div>
       </div>
       <div>
         <h1>Acta de Juego Oficial (Cédula Virtual)</h1>
-        <span>Alimentada por Credenciales Validadas (Delegado & Admin Liga)</span>
+        <span>Estructura Matricial Validadas por Credenciales</span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-        <div class="folio-box">FOLIO: 0000</div>
+        <div class="folio-box" id="lblFolioConsecutivo">FOLIO: RETA-2027-001</div>
         <div><span id="lblEstatusCedula" class="status-liberada">CÉDULA LIBERADA</span></div>
       </div>
     </div>
 
-    <!-- SELECTOR DE MODALIDAD Y REGLAS DE CONVOCATORIA -->
+    <!-- SELECTOR DE MODALIDAD Y REGLAS -->
     <div class="config-modalidad-box">
       <div>
         <label style="color: #00d4ff; font-weight: 600; font-size: 0.8rem; margin-right: 8px;">Modalidad de Fútbol:</label>
         <select id="modalidadSelect" onchange="actualizarReglasModalidad()" style="background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: bold;">
-          <option value="5">Fútbol 5 (Máx 5 Tit. / 10 Sup. | Mín 4)</option>
-          <option value="7" selected>Fútbol 7 (Máx 7 Tit. / 10 Sup. | Mín 5)</option>
-          <option value="9">Fútbol 9 (Máx 9 Tit. / 10 Sup. | Mín 7)</option>
-          <option value="11">Fútbol 11 / Soccer (Máx 11 Tit. / 15 Sup. | Mín 8)</option>
+          <option value="5">Fútbol 5 / Sala (5 Tit. / 12 Sup. | Mín 4)</option>
+          <option value="7" selected>Fútbol 7 (7 Tit. / 12 Sup. | Mín 5)</option>
+          <option value="9">Fútbol 9 (9 Tit. / 12 Sup. | Mín 7)</option>
+          <option value="11">Fútbol 11 / Soccer (11 Tit. / 15 Sup. | Mín 8 | Máx 5 Cambios)</option>
         </select>
       </div>
       <div id="alertaReglas" style="color: #2ecc71; font-size: 0.78rem; font-weight: 600;">
-        ℹ️ Fútbol 7: Titulares (7), Suplentes (10), Mínimo para iniciar (5).
+        ℹ️ Fútbol 7 configurado.
       </div>
     </div>
 
@@ -146,30 +154,30 @@
       </tr>
     </table>
 
-    <!-- ALINEACIONES DINÁMICAS BASADAS EN MODALIDAD -->
+    <!-- ALINEACIONES: [N° CONSECUTIVO] [INICA] [DORSAL] [NOMBRE JUGADOR] -->
     <div class="grid-equipo-header" style="margin-top: 15px;">
       <div>
         <table class="table-excel" id="tablaLocalRoster">
-          <tr><th style="width: 50px;">Inicia</th><th style="width: 50px;">Dorsal</th><th>Jugador Validado (Local)</th></tr>
+          <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (Local)</th></tr>
         </table>
       </div>
       <div>
         <table class="table-excel" id="tablaVisitorRoster">
-          <tr><th style="width: 50px;">Inicia</th><th style="width: 50px;">Dorsal</th><th>Jugador Validado (Visitante)</th></tr>
+          <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (Visitante)</th></tr>
         </table>
       </div>
     </div>
 
-    <!-- SECCIÓN DE CAMBIOS Y RECAMBIOS -->
-    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;"><i class="fa-solid fa-right-left"></i> Control de Cambios / Sustituciones</div>
+    <!-- SECCIÓN DE CAMBIOS / SUSTITUCIONES DINÁMICA -->
+    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;"><i class="fa-solid fa-right-left"></i> Control de Cambios / Sustituciones (<span id="lblMaxCambios">10 Plazas</span>)</div>
     <div class="grid-equipo-header">
       <table class="table-excel">
-        <tr><th># Cambio</th><th>Sale (Dorsal)</th><th>Entra (Dorsal)</th><th>Minuto</th></tr>
-        <script>for(let c=1; c<=4; c++) document.write(`<tr><td><b>C${c}</b></td><td><input type="text" class="input-excel" placeholder="# Sale"></td><td><input type="text" class="input-excel" placeholder="# Entra"></td><td><input type="text" class="input-excel" placeholder="Min"></td></tr>`);</script>
+        <thead><tr><th># Cambio</th><th>Sale (Dorsal)</th><th>Entra (Dorsal)</th><th>Minuto</th></tr></thead>
+        <tbody id="cambiosLocalBody"></tbody>
       </table>
       <table class="table-excel">
-        <tr><th># Cambio</th><th>Sale (Dorsal)</th><th>Entra (Dorsal)</th><th>Minuto</th></tr>
-        <script>for(let c=1; c<=4; c++) document.write(`<tr><td><b>C${c}</b></td><td><input type="text" class="input-excel" placeholder="# Sale"></td><td><input type="text" class="input-excel" placeholder="# Entra"></td><td><input type="text" class="input-excel" placeholder="Min"></td></tr>`);</script>
+        <thead><tr><th># Cambio</th><th>Sale (Dorsal)</th><th>Entra (Dorsal)</th><th>Minuto</th></tr></thead>
+        <tbody id="cambiosVisitorBody"></tbody>
       </table>
     </div>
 
@@ -178,7 +186,7 @@
     <div class="horizontal-scroll-container">
       <table class="table-excel" style="min-width: 1100px;">
         <tr><th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Goles</th><th>Gol</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-        <tr><td>N° Jugador</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
+        <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
         <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
       </table>
     </div>
@@ -186,7 +194,7 @@
     <div class="horizontal-scroll-container">
       <table class="table-excel" style="min-width: 1100px;">
         <tr><th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Goles</th><th>Gol</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-        <tr><td>N° Jugador</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
+        <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
         <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
       </table>
     </div>
@@ -196,7 +204,7 @@
     <div class="horizontal-scroll-container">
       <table class="table-excel" style="min-width: 1100px;">
         <tr><th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Faltas</th><th>Falta</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-        <tr><td>N° Jugador</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
+        <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
         <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
       </table>
     </div>
@@ -204,12 +212,12 @@
     <div class="horizontal-scroll-container">
       <table class="table-excel" style="min-width: 1100px;">
         <tr><th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Faltas</th><th>Falta</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-        <tr><td>N° Jugador</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
+        <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
         <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
       </table>
     </div>
 
-    <!-- CONTROL DE TARJETAS (7 AMARILLAS Y 4 ROJAS POR TIEMPO) -->
+    <!-- CONTROL DE TARJETAS (7 AMARILLAS / 4 ROJAS POR TIEMPO) -->
     <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">CONTROL DE TARJETAS (7 Amarillas / 4 Rojas por Tiempo)</div>
     <div class="grid-equipo-header">
       <div class="horizontal-scroll-container" style="margin-bottom:0;">
@@ -219,13 +227,11 @@
             <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">1.er T (7 Amarillas)</th>
             <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">2.do T (7 Amarillas)</th>
           </tr>
-          <tr>
-            <script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script>
-          </tr>
-          <tr><td>N° Jug.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
+          <tr><script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script></tr>
+          <tr><td>N° Dorsal</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
           <tr><td>Min.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script></tr>
           <tr><th colspan="15" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T)</th></tr>
-          <tr><td>N° Jug.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
+          <tr><td>N° Dorsal</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
           <tr><td>Min.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
         </table>
       </div>
@@ -237,13 +243,11 @@
             <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">1.er T (7 Amarillas)</th>
             <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">2.do T (7 Amarillas)</th>
           </tr>
-          <tr>
-            <script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script>
-          </tr>
-          <tr><td>N° Jug.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
+          <tr><script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script></tr>
+          <tr><td>N° Dorsal</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
           <tr><td>Min.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script></tr>
           <tr><th colspan="15" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T)</th></tr>
-          <tr><td>N° Jug.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
+          <tr><td>N° Dorsal</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
           <tr><td>Min.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
         </table>
       </div>
@@ -279,7 +283,7 @@
       </div>
     </div>
 
-    <button type="button" onclick="alert('✓ Cédula oficial completa sincronizada con control total del Árbitro y validada por la infraestructura Reta Pro.')" class="btn-action-cedula">
+    <button type="button" onclick="alert('✓ Cédula oficial sincronizada con éxito en Reta Pro.')" class="btn-action-cedula">
       <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Cédula Arbitral Definitiva
     </button>
 
@@ -287,6 +291,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('lblFolioConsecutivo').innerText = `FOLIO: RETA-2027-${Math.floor(100 + Math.random() * 900)}`;
       actualizarReglasModalidad();
     });
 
@@ -295,45 +300,68 @@
       const alerta = document.getElementById('alertaReglas');
       
       let titulares = 7;
-      let suplentes = 10;
-      let minimo = 5;
+      let suplentesCount = 12;
+      let minTitulares = 5;
+      let maxCambios = 10;
 
-      if (modalidad === '5') { titulares = 5; suplentes = 10; minimo = 4; }
-      else if (modalidad === '7') { titulares = 7; suplentes = 10; minimo = 5; }
-      else if (modalidad === '9') { titulares = 9; suplentes = 10; minimo = 7; }
-      else if (modalidad === '11') { titulares = 11; suplentes = 15; minimo = 8; }
+      if (modalidad === '5') { titulares = 5; suplentesCount = 12; minTitulares = 4; maxCambios = 10; }
+      else if (modalidad === '7') { titulares = 7; suplentesCount = 12; minTitulares = 5; maxCambios = 10; }
+      else if (modalidad === '9') { titulares = 9; suplentesCount = 12; minTitulares = 7; maxCambios = 10; }
+      else if (modalidad === '11') { titulares = 11; suplentesCount = 15; minTitulares = 8; maxCambios = 5; }
 
-      alerta.innerHTML = `ℹ️ <b>Fútbol ${modalidad}:</b> Titulares (${titulares}), Suplentes máx (${suplentes}), Mínimo para iniciar (${minimo}). Credenciales validadas requeridas.`;
+      alerta.innerHTML = `ℹ️ <b>Fútbol ${modalidad}:</b> Titulares (${titulares}), Suplentes (${suplentesCount} plazas), Cambios (${maxCambios} filas).`;
 
-      // Renderizar plantillas dinámicas basadas en credenciales validadas
-      renderRosterTabla('tablaLocalRoster', titulares, suplentes, 'Local');
-      renderRosterTabla('tablaVisitorRoster', titulares, suplentes, 'Visitante');
+      renderRosterTabla('tablaLocalRoster', titulares, suplentesCount, 'Local');
+      renderRosterTabla('tablaVisitorRoster', titulares, suplentesCount, 'Visitante');
+      renderTablaCambios(maxCambios);
     }
 
     function renderRosterTabla(tablaId, titCount, supCount, equipo) {
       const tabla = document.getElementById(tablaId);
-      let html = `<tr><th style="width: 50px;">Inicia</th><th style="width: 50px;">Dorsal</th><th>Jugador Validado (${equipo})</th></tr>`;
+      let html = `<tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (${equipo})</th></tr>`;
       
-      html += `<tr><td colspan="3" style="background: rgba(0,212,255,0.1); font-weight:bold; color:#00d4ff;">TITULARES (Mínimo requerido)</td></tr>`;
+      // Titulares
+      html += `<tr><td colspan="4" style="background: rgba(0,212,255,0.1); font-weight:bold; color:#00d4ff; text-align:left; padding-left:10px;">TITULARES (Mínimo requerido: ${titCount})</td></tr>`;
       for (let i = 1; i <= titCount; i++) {
+        const dorsalReal = (i * 3) % 99 + 1; // Dorsal simulado de credencial (no consecutivo)
         html += `<tr>
+          <td style="font-weight: bold; color: #00d4ff;">${i}</td>
           <td><input type="checkbox" checked></td>
-          <td><b>#${i}</b></td>
-          <td><input type="text" class="input-excel" value="Jugador Valido ${equipo} ${i} (Dorsal #${i})" style="text-align:left; color:#10b981; font-weight:600;"></td>
+          <td><input type="text" class="input-excel" value="${dorsalReal}" style="color:#f1c40f; font-weight:bold;" maxlength="3"></td>
+          <td><input type="text" class="input-excel" value="Jugador Credencial ${equipo} ${i}" style="text-align:left; color:#10b981; font-weight:600;"></td>
         </tr>`;
       }
 
-      html += `<tr><td colspan="3" style="background: rgba(255,255,255,0.05); font-weight:bold; color:#94a3b8;">SUPLENTES (Máximo ${supCount})</td></tr>`;
-      for (let j = 1; j <= Math.min(supCount, 5); j++) {
-        const dorsal = titCount + j;
+      // Suplentes (Plazas Fijas abiertas)
+      html += `<tr><td colspan="4" style="background: rgba(255,255,255,0.05); font-weight:bold; color:#94a3b8; text-align:left; padding-left:10px;">SUPLENTES (Plazas Disponibles: ${supCount})</td></tr>`;
+      for (let j = 1; j <= supCount; j++) {
+        const numConsecutivo = titCount + j;
+        const dorsalSuplente = j <= 3 ? (50 + j) : '';
+        const nombreSuplente = j <= 3 ? `Suplente Validado ${equipo} ${j}` : '';
         html += `<tr>
+          <td style="font-weight: bold; color: #94a3b8;">${numConsecutivo}</td>
           <td><input type="checkbox"></td>
-          <td><b>#${dorsal}</b></td>
-          <td><input type="text" class="input-excel" value="Suplente Valido ${equipo} ${j} (Dorsal #${dorsal})" style="text-align:left; color:#94a3b8;"></td>
+          <td><input type="text" class="input-excel" value="${dorsalSuplente}" placeholder="#" maxlength="3"></td>
+          <td><input type="text" class="input-excel" value="${nombreSuplente}" placeholder="Plaza vacante suplente #${numConsecutivo}" style="text-align:left; color:#94a3b8;"></td>
         </tr>`;
       }
 
       tabla.innerHTML = html;
+    }
+
+    function renderTablaCambios(maxCambios) {
+      document.getElementById('lblMaxCambios').innerText = `${maxCambios} Plazas`;
+      
+      let htmlLocal = '';
+      let htmlVisitor = '';
+
+      for (let c = 1; c <= maxCambios; c++) {
+        htmlLocal += `<tr><td><b>C${c}</b></td><td><input type="text" class="input-excel" placeholder="# Salida"></td><td><input type="text" class="input-excel" placeholder="# Entrada"></td><td><input type="text" class="input-excel" placeholder="Min"></td></tr>`;
+        htmlVisitor += `<tr><td><b>C${c}</b></td><td><input type="text" class="input-excel" placeholder="# Salida"></td><td><input type="text" class="input-excel" placeholder="# Entrada"></td><td><input type="text" class="input-excel" placeholder="Min"></td></tr>`;
+      }
+
+      document.getElementById('cambiosLocalBody').innerHTML = htmlLocal;
+      document.getElementById('cambiosVisitorBody').innerHTML = htmlVisitor;
     }
 
     function validarDelegado(equipo) {
@@ -341,7 +369,7 @@
       statusDiv.innerHTML = `✅ Validado y Firmado por Delegado ${equipo}`;
       statusDiv.style.color = '#10b981';
       statusDiv.style.fontWeight = 'bold';
-      alert(`✓ El delegado del equipo ${equipo} ha validado su conformidad con la alineación y cédula.`);
+      alert(`✓ El delegado del equipo ${equipo} ha validado su conformidad con la alineación.`);
     }
   </script>
 </body>
