@@ -1648,7 +1648,7 @@
       }
     }
 
-    /* INSERCIÓN SÍNCRONA LIMPIA (SIN LA COLUMNA SEDE INEXISTENTE) */
+    /* INSERCIÓN SÍNCRONA CORREGIDA CON LOS NOMBRES EXACTOS DE LAS COLUMNAS DE SUPABASE */
     async function submitFullRegistrationToSupabase() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = document.getElementById('roleSelect').value;
@@ -1700,14 +1700,16 @@
           if (medErr) console.error("Aviso guardando ficha médica:", medErr.message);
         }
 
-        // 3. SI ES ÁRBITRO: GUARDAR EN TABLA "expedientes_arbitros" (Removido campo 'sede' que no existe en tu tabla)
+        // 3. SI ES ÁRBITRO: GUARDAR EN TABLA "expedientes_arbitros" (Usando numero_licencia y sede_principal)
         if (roleName === 'ARBITRO') {
           const { error: arbErr } = await _supabase
             .from('expedientes_arbitros')
             .insert([{
               curp_arbitro: curpVal,
               colegio: document.getElementById('arbitroColegio').value.trim(),
-              nivel_categoria: document.getElementById('arbitroNivel').value
+              nivel_categoria: document.getElementById('arbitroNivel').value,
+              numero_licencia: document.getElementById('arbitroLicencia').value.trim(),
+              sede_principal: document.getElementById('arbitroSede').value.trim()
             }]);
 
           if (arbErr) console.error("Error guardando expediente de árbitro:", arbErr.message);
