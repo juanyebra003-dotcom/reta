@@ -1,97 +1,503 @@
-<!-- MÓDULO DE GENERACIÓN DE TOKENS E INVITACIONES -->
-<div class="glass-card" style="padding: 20px; border: 1px solid #00d4ff; border-radius: 12px; margin-bottom: 25px;">
-  <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 10px;">
-    <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens de Invitación Oficiales
-  </h3>
-  <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 15px;">
-    Emite claves únicas para autorizar el registro de Co-Administradores, Delegados o Árbitros en tu liga.
-  </p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RETA - Panel de Administración Central</title>
+  <!-- Google Fonts & FontAwesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
 
-  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
-    <div style="flex: 1; min-width: 200px;">
-      <label style="color: #00d4ff; font-size: 0.75rem; display: block; margin-bottom: 5px;">Tipo de Rol a Invitar</label>
-      <select id="tokenRoleSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
-        <option value="ADMIN_LIGA">👑 Co-Administrador de Liga (Admin 2 / 3)</option>
-        <option value="DELEGADO">📋 Delegado / Director Técnico</option>
-        <option value="ARBITRO">🏁 Árbitro / Colegiado</option>
-      </select>
-    </div>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <button type="button" onclick="generateSystemToken()" style="background: #00d4ff; color: #000; font-weight: bold; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer;">
-      <i class="fa-solid fa-plus-circle"></i> Generar Nuevo Token
-    </button>
-  </div>
-
-  <!-- RESULTADO DEL TOKEN GENERADO -->
-  <div id="generatedTokenBox" style="display: none; margin-top: 15px; background: rgba(0, 212, 255, 0.1); padding: 12px; border-radius: 8px; border: 1px dashed #00d4ff;">
-    <span style="color: #aaa; font-size: 0.75rem; display: block;">Token Generado con Éxito:</span>
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
-      <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.2rem; letter-spacing: 2px;">---</strong>
-      <button type="button" onclick="copyTokenToClipboard()" style="background: transparent; border: 1px solid #00d4ff; color: #fff; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.75rem;">
-        <i class="fa-solid fa-copy"></i> Copiar Token
-      </button>
-    </div>
-    <small style="color: #94a3b8; font-size: 0.7rem; display: block; margin-top: 8px;">
-      Proporciona este Token junto con tu CURP al usuario destinatario para que pueda validar su registro.
-    </small>
-  </div>
-</div>
-
-<script>
-  // FUNCIONALIDAD PARA GENERAR TOKENS EN SUPABASE
-  async function generateSystemToken() {
-    const rolTarget = document.getElementById('tokenRoleSelect').value;
-    
-    // Recuperar el ID de la Liga actual guardado en sesión
-    const currentLigaId = localStorage.getItem('reta_admin_liga_id'); 
-    
-    if (!currentLigaId) {
-      alert("No se detectó una liga activa seleccionada.");
-      return;
+  <style>
+    .admin-header-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 29, 0.98));
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
+    .badge-superadmin {
+      background: linear-gradient(135deg, #ff4757, #ff6b81);
+      color: #fff; font-weight: 800; font-size: 0.72rem; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
+    }
+    .badge-league-admin {
+      background: linear-gradient(135deg, #00d4ff, #0055ff);
+      color: #000; font-weight: 800; font-size: 0.72rem; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
+    }
+    .tokens-table {
+      width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem;
+    }
+    .tokens-table th, .tokens-table td {
+      padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .tokens-table th { color: #00d4ff; font-weight: 600; background: rgba(0, 212, 255, 0.05); }
+    .status-pill { padding: 3px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 700; }
+    .status-active { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+    .status-used { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+    .btn-sm-action {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
+      padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;
+    }
+    .btn-sm-action:hover { background: #00d4ff; color: #000; }
+  </style>
+</head>
+<body class="login-body">
 
-    // Si es Co-Admin, verificar que no rebase los 3 administradores
-    if (rolTarget === 'ADMIN_LIGA') {
-      const { data: currentAdmins } = await _supabase
-        .from('liga_administradores')
-        .select('id')
-        .eq('liga_id', currentLigaId);
+  <a href="index.html" class="btn-back">
+    <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+  </a>
 
-      if (currentAdmins && currentAdmins.length >= 3) {
-        alert("🛑 LÍMITE ALCANZADO: Tu liga ya cuenta con los 3 Administradores máximos permitidos.");
-        return;
+  <div class="login-container full-register-container" style="max-width: 900px; margin: 30px auto;">
+    
+    <!-- ENCABEZADO -->
+    <div class="login-header">
+      <div class="reta-logo-container">
+        <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
+      </div>
+      <h2>Panel de Control <span class="text-gradient">Gestión de Tokens</span></h2>
+      <p id="panelSubHeader">Cargando privilegios de acceso...</p>
+    </div>
+
+    <!-- TARJETA 1: AUTENTICACIÓN Y PERFIL -->
+    <div class="admin-header-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+        <div>
+          <span id="displayRoleBadge" class="badge-league-admin"><i class="fa-solid fa-user-shield"></i> Verificando Perfil</span>
+          <h3 id="displayAdminName" style="color: #fff; font-size: 1.2rem; margin-top: 5px;">Cargando...</h3>
+        </div>
+        <div style="text-align: right;">
+          <small style="color: #94a3b8; display: block; font-size: 0.75rem;">CURP Identificador:</small>
+          <strong id="displayAdminCurp" style="color: #00d4ff; font-family: monospace; font-size: 0.95rem;">---</strong>
+        </div>
+      </div>
+
+      <!-- BARRA DE BÚSQUEDA POR CURP (SI NO HAY SESIÓN ACTIVA) -->
+      <div id="curpAuthBar" style="background: rgba(0, 212, 255, 0.08); padding: 12px; border-radius: 10px; border: 1px solid #00d4ff; margin-bottom: 15px;">
+        <label style="color: #00d4ff; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 6px;">
+          <i class="fa-solid fa-key"></i> Autenticación de Administrador
+        </label>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <input type="text" id="manualCurpInput" placeholder="Ingresa los 18 caracteres de tu CURP o Clave SuperAdmin" style="flex: 1; text-transform: uppercase; padding: 8px 12px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff; min-width: 220px;">
+          <button type="button" onclick="loginAndLoadAdminProfile()" style="background: #00d4ff; color: #000; font-weight: bold; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;">
+            Ingresar al Panel <i class="fa-solid fa-right-to-bracket"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- SELECTOR DINÁMICO DE LIGAS (SOLO PARA ADMIN DE LIGA) -->
+      <div id="leagueSelectorContainer" class="input-group" style="display: none;">
+        <label for="adminLeagueSelect" style="color: #00d4ff; font-weight: 600; font-size: 0.85rem;">
+          <i class="fa-solid fa-trophy"></i> Selecciona la Liga a Administrar (*):
+        </label>
+        <select id="adminLeagueSelect" onchange="onSelectedLeagueChange()" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; border-radius: 10px; color: #fff; font-size: 0.95rem;">
+          <option value="" disabled selected>Cargando tus ligas...</option>
+        </select>
+        <small id="leagueAdminsCountLabel" style="color: #94a3b8; margin-top: 6px; display: block; font-size: 0.75rem;"></small>
+      </div>
+    </div>
+
+    <!-- TARJETA 2: GENERADOR DE TOKENS -->
+    <div id="tokenGeneratorSection" class="glass-card" style="display: none; padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
+      <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
+        <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens de Invitación
+      </h3>
+      <p id="tokenGeneratorDescription" style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 18px;">
+        Selecciona el rol que deseas autorizar para emitir una clave de registro única.
+      </p>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 2; min-width: 240px;">
+          <label style="color: #00d4ff; font-size: 0.78rem; display: block; margin-bottom: 6px; font-weight: 600;">
+            Tipo de Rol a Autorizar:
+          </label>
+          <select id="tokenRoleSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+            <!-- LAS OPCIONES SE LLENAN DINÁMICAMENTE POR JS SEGÚN EL NIVEL DE ACCESO -->
+          </select>
+        </div>
+
+        <button type="button" id="btnGenerateToken" onclick="generateSystemToken()" style="background: linear-gradient(135deg, #00d4ff, #0055ff); color: #fff; font-weight: bold; padding: 11px 22px; border-radius: 8px; border: none; cursor: pointer; flex: 1; min-width: 180px;">
+          <i class="fa-solid fa-plus-circle"></i> Generar Nuevo Token
+        </button>
+      </div>
+
+      <!-- MUESTRA DEL TOKEN GENERADO -->
+      <div id="generatedTokenBox" style="display: none; margin-top: 20px; background: rgba(0, 212, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px dashed #00d4ff;">
+        <span style="color: #aaa; font-size: 0.75rem; display: block;">✓ Token Creado Exitosamente:</span>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
+          <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.4rem; letter-spacing: 2px; font-family: monospace;">---</strong>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" onclick="copyTokenToClipboard()" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold;">
+              <i class="fa-solid fa-copy"></i> Copiar Token
+            </button>
+            <button type="button" onclick="shareTokenWhatsApp()" class="btn-sm-action" style="background: #25D366; color: #fff; font-weight: bold;">
+              <i class="fa-brands fa-whatsapp"></i> Compartir
+            </button>
+          </div>
+        </div>
+        <small id="tokenInstructionsLabel" style="color: #94a3b8; font-size: 0.72rem; display: block; margin-top: 10px; line-height: 1.3;"></small>
+      </div>
+    </div>
+
+    <!-- TARJETA 3: HISTORIAL DE TOKENS EMITIDOS -->
+    <div id="tokensHistorySection" class="glass-card" style="display: none; padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="color: #fff; font-size: 1.05rem;">
+          <i class="fa-solid fa-list-check" style="color: #00d4ff;"></i> Historial de Tokens Emitidos
+        </h3>
+        <button type="button" onclick="loadActiveTokensHistory()" class="btn-sm-action">
+          <i class="fa-solid fa-rotate-right"></i> Actualizar Lista
+        </button>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="tokens-table">
+          <thead>
+            <tr>
+              <th>Código Token</th>
+              <th>Rol Autorizado</th>
+              <th>Estatus</th>
+              <th>Fecha Emisión</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tokensTableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">
+                Ingresa tu perfil para consultar tokens.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const MASTER_SUPERADMIN_KEY = 'RETA-SUPERVISOR-2026';
+
+    let isSuperAdmin = false;
+    let currentAdminCurp = null;
+    let currentAdminName = null;
+    let userLeagues = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initSessionCheck();
+    });
+
+    function initSessionCheck() {
+      const savedCurp = localStorage.getItem('reta_admin_curp');
+      if (savedCurp) {
+        document.getElementById('manualCurpInput').value = savedCurp;
+        loginAndLoadAdminProfile();
+      } else {
+        document.getElementById('curpAuthBar').style.display = 'block';
       }
     }
 
-    // Crear código aleatorio según el rol
-    const prefix = rolTarget === 'ADMIN_LIGA' ? 'ADM' : (rolTarget === 'DELEGADO' ? 'DEL' : 'ARB');
-    const randomNum = Math.floor(1000 + Math.random() * 9000);
-    const generatedToken = `RETA-${prefix}-${randomNum}`;
+    // AUTENTICACIÓN DINÁMICA DE USUARIO
+    async function loginAndLoadAdminProfile() {
+      const inputVal = document.getElementById('manualCurpInput').value.trim().toUpperCase();
 
-    try {
-      const { error } = await _supabase
-        .from('invitaciones_sistema')
-        .insert([{
-          liga_id: currentLigaId,
-          token_codigo: generatedToken,
-          rol_permitido: rolTarget,
-          usado: false
-        }]);
+      if (!inputVal) {
+        alert("Por favor ingresa tu CURP o Clave Master.");
+        return;
+      }
 
-      if (error) throw error;
+      // 1. ¿ES SUPERADMIN PRO RETA?
+      if (inputVal === MASTER_SUPERADMIN_KEY) {
+        isSuperAdmin = true;
+        currentAdminCurp = "SUPERADMIN_PRO";
+        currentAdminName = "Administrador Master RETA Pro";
+        
+        setupSuperAdminInterface();
+        return;
+      }
 
-      // Mostrar Token en Pantalla
-      document.getElementById('displayTokenValue').innerText = generatedToken;
-      document.getElementById('generatedTokenBox').style.display = 'block';
+      // 2. ES ADMINISTRADOR DE LIGA (VERIFICAR CURP DE 18 CARACTERES EN SUPABASE)
+      if (inputVal.length !== 18) {
+        alert("La CURP debe tener 18 caracteres exactos.");
+        return;
+      }
 
-    } catch (err) {
-      alert("Error al generar el token: " + err.message);
+      isSuperAdmin = false;
+      currentAdminCurp = inputVal;
+      localStorage.setItem('reta_admin_curp', currentAdminCurp);
+
+      await loadLeagueAdminProfile();
     }
-  }
 
-  function copyTokenToClipboard() {
-    const token = document.getElementById('displayTokenValue').innerText;
-    navigator.clipboard.writeText(token);
-    alert("¡Token copiado al portapapeles!");
-  }
-</script>
+    // INTERFAZ SUPERADMIN PRO RETA
+    function setupSuperAdminInterface() {
+      document.getElementById('displayRoleBadge').className = "badge-superadmin";
+      document.getElementById('displayRoleBadge').innerHTML = `<i class="fa-solid fa-crown"></i> SuperAdmin RETA Pro App`;
+      document.getElementById('displayAdminName').innerText = currentAdminName;
+      document.getElementById('displayAdminCurp').innerText = "GLOBAL_MASTER";
+      document.getElementById('panelSubHeader').innerText = "Acceso de Infraestructura: Generación de Tokens para Administradores Titulares (Admin 1)";
+
+      document.getElementById('leagueSelectorContainer').style.display = 'none';
+      document.getElementById('tokenGeneratorSection').style.display = 'block';
+      document.getElementById('tokensHistorySection').style.display = 'block';
+
+      // OPCIÓN DE ROL RESTRINGIDA EXCLUSIVAMENTE A ADMIN TITULAR
+      const roleSelect = document.getElementById('tokenRoleSelect');
+      roleSelect.innerHTML = `<option value="ADMIN_TITULAR">👑 Administrador Titular de Liga (Admin 1 - Alta de Liga)</option>`;
+      document.getElementById('tokenGeneratorDescription').innerText = "Genera un Token de autorización para permitir que un usuario registre una Liga Nueva en RETA Pro.";
+
+      loadActiveTokensHistory();
+    }
+
+    // INTERFAZ ADMINISTRADOR DE LIGA
+    async function loadLeagueAdminProfile() {
+      document.getElementById('displayRoleBadge').className = "badge-league-admin";
+      document.getElementById('displayRoleBadge').innerHTML = `<i class="fa-solid fa-trophy"></i> Administrador de Liga`;
+      document.getElementById('displayAdminCurp').innerText = currentAdminCurp;
+      document.getElementById('panelSubHeader').innerText = "Gestión de Accesos e Invitaciones para tus Ligas registradas";
+
+      // Cargar Ligas de la CURP desde Supabase
+      try {
+        const { data: adminRelations, error } = await _supabase
+          .from('liga_administradores')
+          .select('liga_id, nivel_admin, nombre_admin, ligas(id, nombre_liga, clave_liga, municipio, estado)')
+          .eq('curp_admin', currentAdminCurp);
+
+        if (error) throw error;
+
+        if (!adminRelations || adminRelations.length === 0) {
+          alert(`⚠️ No se encontraron ligas registradas para la CURP: ${currentAdminCurp}`);
+          document.getElementById('displayAdminName').innerText = "Sin Ligas Asignadas";
+          document.getElementById('leagueSelectorContainer').style.display = 'none';
+          document.getElementById('tokenGeneratorSection').style.display = 'none';
+          document.getElementById('tokensHistorySection').style.display = 'none';
+          return;
+        }
+
+        userLeagues = adminRelations;
+        currentAdminName = userLeagues[0].nombre_admin || 'Admin de Liga';
+        document.getElementById('displayAdminName').innerText = currentAdminName;
+        localStorage.setItem('reta_admin_name', currentAdminName);
+
+        const select = document.getElementById('adminLeagueSelect');
+        let optionsHtml = `<option value="" disabled selected>Selecciona la Liga a administrar (${userLeagues.length} disponible(s))</option>`;
+
+        userLeagues.forEach(rel => {
+          if (rel.ligas) {
+            const l = rel.ligas;
+            const nivelStr = rel.nivel_admin === 1 ? 'Admin Titular' : `Co-Admin ${rel.nivel_admin}`;
+            optionsHtml += `<option value="${l.id}">${l.nombre_liga} (${l.clave_liga}) [${l.municipio}, ${l.estado}] - Rol: ${nivelStr}</option>`;
+          }
+        });
+
+        select.innerHTML = optionsHtml;
+        document.getElementById('leagueSelectorContainer').style.display = 'block';
+
+        // Auto-seleccionar primera liga
+        if (userLeagues.length > 0 && userLeagues[0].ligas) {
+          select.value = userLeagues[0].ligas.id;
+          onSelectedLeagueChange();
+        }
+
+      } catch (err) {
+        alert("Error al cargar ligas: " + err.message);
+      }
+    }
+
+    // CAMBIO DE LIGA EN ADMINISTRADOR
+    async function onSelectedLeagueChange() {
+      const selectedLigaId = document.getElementById('adminLeagueSelect').value;
+      if (!selectedLigaId) return;
+
+      localStorage.setItem('reta_admin_liga_id', selectedLigaId);
+
+      // OPCIONES EXCLUSIVAS DE LIGA (Oculta Admin Titular)
+      const roleSelect = document.getElementById('tokenRoleSelect');
+      roleSelect.innerHTML = `
+        <option value="ADMIN_LIGA">👥 Co-Administrador de Liga (Admin 2 / Admin 3)</option>
+        <option value="DELEGADO">📋 Delegado / Director Técnico de Equipo</option>
+        <option value="ARBITRO">🏁 Árbitro / Colegiado Oficial</option>
+      `;
+
+      document.getElementById('tokenGeneratorDescription').innerText = "Emite claves únicas vinculadas a tu liga para autorizar Co-Admins, Delegados o Árbitros.";
+
+      document.getElementById('tokenGeneratorSection').style.display = 'block';
+      document.getElementById('tokensHistorySection').style.display = 'block';
+
+      // Verificar Administradores
+      const { data: adminList } = await _supabase
+        .from('liga_administradores')
+        .select('id')
+        .eq('liga_id', selectedLigaId);
+
+      const count = adminList ? adminList.length : 0;
+      document.getElementById('leagueAdminsCountLabel').innerText = `📊 Esta liga cuenta con ${count} de 3 Administradores permitidos registrados.`;
+
+      loadActiveTokensHistory();
+    }
+
+    // GENERAR TOKEN
+    async function generateSystemToken() {
+      const rolTarget = document.getElementById('tokenRoleSelect').value;
+      let selectedLigaId = null;
+
+      if (!isSuperAdmin) {
+        selectedLigaId = document.getElementById('adminLeagueSelect').value;
+        if (!selectedLigaId) {
+          alert("Selecciona una liga activa en el desplegable.");
+          return;
+        }
+
+        // Si intenta invitar Co-Admin, revisar tope de 3
+        if (rolTarget === 'ADMIN_LIGA') {
+          const { data: currentAdmins } = await _supabase
+            .from('liga_administradores')
+            .select('id')
+            .eq('liga_id', selectedLigaId);
+
+          if (currentAdmins && currentAdmins.length >= 3) {
+            alert("🛑 LÍMITE ALCANZADO: Tu liga ya cuenta con los 3 Administradores máximos permitidos.");
+            return;
+          }
+        }
+      }
+
+      const btn = document.getElementById('btnGenerateToken');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generando...`;
+
+      const prefix = rolTarget === 'ADMIN_TITULAR' ? 'ADM1' : (rolTarget === 'ADMIN_LIGA' ? 'ADM' : (rolTarget === 'DELEGADO' ? 'DEL' : 'ARB'));
+      const randomNum = Math.floor(100000 + Math.random() * 900000);
+      const generatedToken = `RETA-${prefix}-${randomNum}`;
+
+      try {
+        const { error } = await _supabase
+          .from('invitaciones_sistema')
+          .insert([{
+            liga_id: selectedLigaId,
+            token_codigo: generatedToken,
+            rol_permitido: rolTarget === 'ADMIN_TITULAR' ? 'ADMIN_LIGA' : rolTarget,
+            usado: false
+          }]);
+
+        if (error) throw error;
+
+        document.getElementById('displayTokenValue').innerText = generatedToken;
+        
+        if (isSuperAdmin) {
+          document.getElementById('tokenInstructionsLabel').innerHTML = `📌 Envía este Token al nuevo <strong>Admin Titular</strong> para que lo ingrese al crear su liga.`;
+        } else {
+          document.getElementById('tokenInstructionsLabel').innerHTML = `📌 Envía a la persona tu CURP (<strong>${currentAdminCurp}</strong>) y este Token para que valide su registro.`;
+        }
+
+        document.getElementById('generatedTokenBox').style.display = 'block';
+
+        loadActiveTokensHistory();
+
+      } catch (err) {
+        alert("Error al generar el token: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Generar Nuevo Token`;
+      }
+    }
+
+    // CARGAR HISTORIAL DE TOKENS
+    async function loadActiveTokensHistory() {
+      const tbody = document.getElementById('tokensTableBody');
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Consultando registros...</td></tr>`;
+
+      try {
+        let query = _supabase.from('invitaciones_sistema').select('*').order('created_at', { ascending: false });
+
+        if (!isSuperAdmin) {
+          const selectedLigaId = document.getElementById('adminLeagueSelect').value;
+          query = query.eq('liga_id', selectedLigaId);
+        }
+
+        const { data: tokens, error } = await query;
+
+        if (error) throw error;
+
+        if (!tokens || tokens.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">No hay tokens emitidos.</td></tr>`;
+          return;
+        }
+
+        let html = '';
+        tokens.forEach(t => {
+          const statusClass = t.usado ? 'status-used' : 'status-active';
+          const statusText = t.usado ? 'UTILIZADO' : 'ACTIVO';
+          const dateStr = new Date(t.created_at).toLocaleDateString() + ' ' + new Date(t.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+          html += `
+            <tr>
+              <td style="font-family: monospace; font-weight: bold; color: #fff;">${t.token_codigo}</td>
+              <td><strong style="color:#00d4ff;">${t.rol_permitido}</strong></td>
+              <td><span class="status-pill ${statusClass}">${statusText}</span></td>
+              <td style="color:#94a3b8; font-size:0.75rem;">${dateStr}</td>
+              <td>
+                ${!t.usado ? `
+                  <button type="button" onclick="copySpecificToken('${t.token_codigo}')" class="btn-sm-action" title="Copiar Token"><i class="fa-solid fa-copy"></i></button>
+                  <button type="button" onclick="shareSpecificTokenWhatsApp('${t.token_codigo}', '${t.rol_permitido}')" class="btn-sm-action" style="color:#25D366;" title="Enviar por WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+                ` : '<span style="color:#64748b; font-size:0.7rem;">Canjeado</span>'}
+              </td>
+            </tr>
+          `;
+        });
+
+        tbody.innerHTML = html;
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error al cargar tokens: ${err.message}</td></tr>`;
+      }
+    }
+
+    function copyTokenToClipboard() {
+      const token = document.getElementById('displayTokenValue').innerText;
+      navigator.clipboard.writeText(token);
+      alert("¡Token copiado!");
+    }
+
+    function copySpecificToken(token) {
+      navigator.clipboard.writeText(token);
+      alert(`¡Token ${token} copiado!`);
+    }
+
+    function shareTokenWhatsApp() {
+      const token = document.getElementById('displayTokenValue').innerText;
+      const rol = document.getElementById('tokenRoleSelect').value;
+      shareSpecificTokenWhatsApp(token, rol);
+    }
+
+    function shareSpecificTokenWhatsApp(token, rol) {
+      let msg = "";
+      if (isSuperAdmin) {
+        msg = encodeURIComponent(
+          `⚽ *INVITACIÓN SUPERADMIN RETA PRO*\n\n` +
+          `Has sido autorizado para dar de alta una *Nueva Liga* como Admin Titular.\n\n` +
+          `📌 Token de Registro: *${token}*\n\n` +
+          `Ingresa a la plataforma y completa el registro de tu Liga.`
+        );
+      } else {
+        msg = encodeURIComponent(
+          `⚽ *INVITACIÓN OFICIAL PLATAFORMA RETA PRO*\n\n` +
+          `Has sido invitado a registrarte como *${rol}* en nuestra Liga.\n\n` +
+          `📌 *Datos de Registro:*\n` +
+          `1. CURP Admin Titular: *${currentAdminCurp}*\n` +
+          `2. Token de Invitación: *${token}*\n\n` +
+          `Ingresa al sistema de registro y valida tu acceso.`
+        );
+      }
+      window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+    }
+  </script>
+</body>
+</html>
