@@ -40,15 +40,32 @@
       border-radius: 6px; font-family: monospace; font-weight: bold; color: #00d4ff; font-size: 0.8rem; justify-self: end;
     }
 
-    /* BARRA DE NAVEGACIÓN / SUBMENÚS DEL ÁRBITRO */
-    .arbitro-nav-tabs {
-      display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid rgba(0,212,255,0.2); padding-bottom: 10px; flex-wrap: wrap;
+    /* BARRA DE NAVEGACIÓN / SUBMENÚS PRINCIPAL FUERA DE LA CÉDULA */
+    .arbitro-main-nav {
+      max-width: 1400px;
+      margin: 20px auto 10px auto;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .nav-tab-btn {
-      background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: #00d4ff;
-      padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; transition: 0.3s;
+      background: rgba(0, 212, 255, 0.12);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      color: #00d4ff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
-    .nav-tab-btn.active, .nav-tab-btn:hover { background: #00d4ff; color: #000; }
+    .nav-tab-btn.active, .nav-tab-btn:hover {
+      background: #00d4ff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0,212,255,0.6);
+    }
 
     .panel-seccion { display: none; }
     .panel-seccion.active { display: block; }
@@ -101,65 +118,64 @@
 </head>
 <body class="login-body">
 
-  <a href="admin_super_panel.html" class="btn-back">
+  <a href="admin_super_panel.html" class="btn-back" style="margin: 15px; display: inline-block;">
     <i class="fa-solid fa-arrow-left"></i> Volver al Panel
   </a>
 
-  <div class="cedula-sheet">
-    
-    <!-- ENCABEZADO OFICIAL -->
-    <div class="cedula-header">
-      <div style="text-align: left; display: flex; align-items: center; gap: 10px;">
-        <img src="logo_reta.png" alt="Reta Pro Logo" class="logo-reta-img" onerror="this.src='img/logo_reta.png'">
+  <!-- SUBMENÚS / ENCABEZADO PRINCIPAL FUERA DE LA CÉDULA -->
+  <div class="arbitro-main-nav">
+    <button type="button" class="nav-tab-btn active" onclick="cambiarSeccion('cedula', this)"><i class="fa-solid fa-file-lines"></i> Cédula Arbitral Activa</button>
+    <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('jugadores', this)"><i class="fa-solid fa-users-viewfinder"></i> Estatus de Jugadores</button>
+    <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('designaciones', this)"><i class="fa-solid fa-calendar-check"></i> Mis Designaciones</button>
+    <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('ranking', this)"><i class="fa-solid fa-star"></i> Ranking y Evaluaciones</button>
+  </div>
+
+  <!-- SECCIÓN 1: CÉDULA ARBITRAL (CONTENEDOR PRINCIPAL) -->
+  <div id="seccion-cedula" class="panel-seccion active">
+    <div class="cedula-sheet">
+      
+      <!-- ENCABEZADO OFICIAL -->
+      <div class="cedula-header">
+        <div style="text-align: left; display: flex; align-items: center; gap: 10px;">
+          <img src="logo_reta.png" alt="Reta Pro Logo" class="logo-reta-img" onerror="this.src='img/logo_reta.png'">
+          <div>
+            <strong style="color: #00d4ff; font-size: 0.75rem;" id="lblLigaNombre">COORDINACIÓN LIGA MUNICIPAL</strong><br>
+            <span style="font-size: 0.65rem; color: #94a3b8;">Sistema Oficial Reta Pro</span>
+          </div>
+        </div>
         <div>
-          <strong style="color: #00d4ff; font-size: 0.75rem;" id="lblLigaNombre">COORDINACIÓN LIGA MUNICIPAL</strong><br>
-          <span style="font-size: 0.65rem; color: #94a3b8;">Sistema Oficial Reta Pro</span>
+          <h1>Acta de Juego Oficial</h1>
+          <span>Control Total Árbitro y Validación (Delegado / Capitán)</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+          <div class="folio-box" id="lblFolioConsecutivo">FOLIO: RETA-2027-001</div>
+          <div><span id="lblEstatusCedula" class="status-liberada">CÉDULA LIBERADA</span></div>
         </div>
       </div>
-      <div>
-        <h1>Acta de Juego Oficial</h1>
-        <span>Control Total Árbitro y Validación (Delegado / Capitán)</span>
-      </div>
-      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
-        <div class="folio-box" id="lblFolioConsecutivo">FOLIO: RETA-2027-001</div>
-        <div><span id="lblEstatusCedula" class="status-liberada">CÉDULA LIBERADA</span></div>
-      </div>
-    </div>
 
-    <!-- DATOS GENERALES DE LA CÉDULA (SEDE, CANCHA, HORA, FECHA, RAMA, CATEGORÍA, JORNADA) -->
-    <table class="table-excel" style="margin-bottom: 15px;">
-      <tr>
-        <th>Ciudad</th>
-        <th>Instalación / Sede</th>
-        <th>Cancha</th>
-        <th>Hora</th>
-        <th>Fecha</th>
-        <th>Rama</th>
-        <th>Categoría</th>
-        <th>Jornada</th>
-      </tr>
-      <tr>
-        <td><input type="text" class="input-excel" id="metaCiudad" value="Moroleón, Gto."></td>
-        <td><input type="text" class="input-excel" id="metaSede" value="Unidad Deportiva Municipal"></td>
-        <td><input type="text" class="input-excel" id="metaCancha" value="Cancha Sintética #1"></td>
-        <td><input type="text" class="input-excel" id="metaHora" value="16:00 hrs"></td>
-        <td><input type="text" class="input-excel" id="metaFecha" value="10/01/2027"></td>
-        <td><input type="text" class="input-excel" id="metaRama" value="Varonil"></td>
-        <td><input type="text" class="input-excel" id="metaCategoria" value="Libre Pro"></td>
-        <td><input type="text" class="input-excel" id="metaJornada" value="Jornada 1"></td>
-      </tr>
-    </table>
-
-    <!-- SUBMENÚS DEL PANEL DE ÁRBITRO -->
-    <div class="arbitro-nav-tabs">
-      <button type="button" class="nav-tab-btn active" onclick="cambiarSeccion('cedula', this)"><i class="fa-solid fa-file-lines"></i> Cédula Arbitral Activa</button>
-      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('jugadores', this)"><i class="fa-solid fa-users-viewfinder"></i> Estatus de Jugadores</button>
-      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('designaciones', this)"><i class="fa-solid fa-calendar-check"></i> Mis Designaciones</button>
-      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('ranking', this)"><i class="fa-solid fa-star"></i> Ranking y Evaluaciones</button>
-    </div>
-
-    <!-- SECCIÓN 1: CÉDULA ARBITRAL -->
-    <div id="seccion-cedula" class="panel-seccion active">
+      <!-- DATOS GENERALES DE LA CÉDULA -->
+      <table class="table-excel" style="margin-bottom: 15px;">
+        <tr>
+          <th>Ciudad</th>
+          <th>Instalación / Sede</th>
+          <th>Cancha</th>
+          <th>Hora</th>
+          <th>Fecha</th>
+          <th>Rama</th>
+          <th>Categoría</th>
+          <th>Jornada</th>
+        </tr>
+        <tr>
+          <td><input type="text" class="input-excel" id="metaCiudad" value="Moroleón, Gto."></td>
+          <td><input type="text" class="input-excel" id="metaSede" value="Unidad Deportiva Municipal"></td>
+          <td><input type="text" class="input-excel" id="metaCancha" value="Cancha Sintética #1"></td>
+          <td><input type="text" class="input-excel" id="metaHora" value="16:00 hrs"></td>
+          <td><input type="text" class="input-excel" id="metaFecha" value="10/01/2027"></td>
+          <td><input type="text" class="input-excel" id="metaRama" value="Varonil"></td>
+          <td><input type="text" class="input-excel" id="metaCategoria" value="Libre Pro"></td>
+          <td><input type="text" class="input-excel" id="metaJornada" value="Jornada 1"></td>
+        </tr>
+      </table>
 
       <!-- CRONÓMETRO ÁRBITRO EN VIVO CON BOTÓN DE PAUSA INDEPENDIENTE -->
       <div class="cronometro-box">
@@ -191,7 +207,7 @@
         </div>
       </div>
 
-      <!-- MARCADOR POR PERIODOS (EQUIPOS DINÁMICOS) -->
+      <!-- MARCADOR POR PERIODOS -->
       <div class="grid-equipo-header">
         <div class="team-title-box"><input type="text" id="nombreEquipoLocal" class="input-excel" value="DEPORTIVO ATLAS" style="font-weight:bold; color:#00d4ff;"></div>
         <div class="team-title-box"><input type="text" id="nombreEquipoVisitor" class="input-excel" value="REAL MADRID FC" style="font-weight:bold; color:#ff4757;"></div>
@@ -397,11 +413,13 @@
         <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Cédula Arbitral Definitiva (Triple Validación Requerida)
       </button>
 
-    </div> <!-- FIN SECCIÓN CÉDULA -->
+    </div>
+  </div> <!-- FIN SECCIÓN CÉDULA -->
 
 
-    <!-- SECCIÓN 2: ESTATUS DE JUGADORES -->
-    <div id="seccion-jugadores" class="panel-seccion">
+  <!-- SECCIÓN 2: ESTATUS DE JUGADORES -->
+  <div id="seccion-jugadores" class="panel-seccion">
+    <div class="cedula-sheet">
       <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
         <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-shield-halved"></i> Consulta de Estatus de Jugadores (Ligas Registradas)</h3>
         <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px;">Verifique en tiempo real si un jugador cuenta con habilitación vigente, está dado de baja del torneo o se encuentra suspendido.</p>
@@ -435,11 +453,13 @@
         </table>
       </div>
     </div>
+  </div>
 
-    <!-- SECCIÓN 3: DESIGNACIONES -->
-    <div id="seccion-designaciones" class="panel-seccion">
+  <!-- SECCIÓN 3: DESIGNACIONES -->
+  <div id="seccion-designaciones" class="panel-seccion">
+    <div class="cedula-sheet">
       <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-        <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-clipboard-list"></i> Calendario de Designaciones Arbitrales</h3>
+        <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-calendar-check"></i> Calendario de Designaciones Arbitrales</h3>
       </div>
       <table class="table-excel">
         <thead><tr><th>Fecha / Hora</th><th>Liga / Cancha</th><th>Encuentro</th><th>Modalidad</th><th>Estatus</th></tr></thead>
@@ -448,15 +468,16 @@
         </tbody>
       </table>
     </div>
+  </div>
 
-    <!-- SECCIÓN 4: RANKING -->
-    <div id="seccion-ranking" class="panel-seccion">
-      <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(0,212,255,0.2);">
+  <!-- SECCIÓN 4: RANKING -->
+  <div id="seccion-ranking" class="panel-seccion">
+    <div class="cedula-sheet">
+      <div style="text-align: center; padding: 30px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(0,212,255,0.2);">
         <div style="font-size: 2.5rem; font-weight: bold; color: #f1c40f;">4.8 / 5.0 ⭐</div>
-        <div style="font-size: 0.8rem; color: #fff; margin-top: 5px;">Calificación General Excelente (Basado en 24 partidos dirigidos)</div>
+        <div style="font-size: 0.85rem; color: #fff; margin-top: 5px;">Calificación General Excelente (Basado en 24 partidos dirigidos)</div>
       </div>
     </div>
-
   </div>
 
   <script>
@@ -494,7 +515,6 @@
       });
     }
 
-    // Extracción automática del nombre del Capitán seleccionado en la tabla
     function obtenerNombreCapitan(equipo) {
       const radios = document.querySelectorAll(`input[name="capitan_${equipo}"]`);
       let nombreCapitan = `Capitán ${equipo}`;
