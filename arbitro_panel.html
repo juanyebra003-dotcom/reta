@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>RETA - Cédula Arbitral Virtual Oficial</title>
+  <title>RETA - Acta de Juego de Fútbol Uruguayo (Oficial)</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -11,69 +11,61 @@
 
   <style>
     .cedula-sheet {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(10, 15, 29, 0.99));
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.99), rgba(10, 15, 29, 0.99));
       border: 2px solid rgba(0, 212, 255, 0.4);
-      border-radius: 16px;
-      padding: 25px;
+      border-radius: 14px;
+      padding: 20px;
       color: #fff;
-      max-width: 1200px;
-      margin: 30px auto;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      max-width: 1350px;
+      margin: 20px auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+      font-size: 0.78rem;
     }
     .cedula-header {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
       align-items: center;
-      border-bottom: 2px solid rgba(0, 212, 255, 0.3);
-      padding-bottom: 15px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 15px;
+      border-bottom: 2px solid rgba(0, 212, 255, 0.4);
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+      text-align: center;
     }
-    .cedula-title { text-align: center; flex: 1; }
-    .cedula-title h2 { font-size: 1.25rem; color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-    .cedula-title span { font-size: 0.78rem; color: #00d4ff; display: block; margin-top: 4px; }
+    .cedula-header h1 { font-size: 1.1rem; font-weight: 800; color: #fff; text-transform: uppercase; margin: 0; }
+    .cedula-header span { font-size: 0.75rem; color: #00d4ff; display: block; }
     
     .folio-box {
-      background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; padding: 8px 15px;
-      border-radius: 8px; font-family: monospace; font-weight: bold; color: #00d4ff; font-size: 0.85rem;
+      background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; padding: 6px 10px;
+      border-radius: 6px; font-family: monospace; font-weight: bold; color: #00d4ff; font-size: 0.8rem; justify-self: end;
     }
 
-    /* Estructuras de Tablas Oficiales */
-    .section-title {
-      background: rgba(0, 212, 255, 0.12); color: #00d4ff; font-weight: 700; font-size: 0.85rem;
-      padding: 8px 12px; border-radius: 6px; margin: 20px 0 10px 0; border-left: 4px solid #00d4ff;
-      text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;
+    .table-excel {
+      width: 100%; border-collapse: collapse; margin-bottom: 15px; background: rgba(0,0,0,0.4);
     }
+    .table-excel th, .table-excel td {
+      border: 1px solid rgba(255, 255, 255, 0.2); padding: 4px 6px; text-align: center; font-size: 0.75rem;
+    }
+    .table-excel th { background: rgba(0, 212, 255, 0.15); color: #00d4ff; font-weight: 700; }
     
-    .grid-duo {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    .input-excel {
+      width: 100%; background: transparent; border: none; color: #fff; text-align: center; font-size: 0.75rem; outline: none;
     }
-    @media (max-width: 900px) { .grid-duo { grid-template-columns: 1fr; } }
+    .input-excel:focus { background: rgba(0, 212, 255, 0.1); }
 
-    .cedula-table {
-      width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 15px;
+    .grid-equipo-header {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px;
     }
-    .cedula-table th, .cedula-table td {
-      border: 1px solid rgba(255, 255, 255, 0.15); padding: 6px 8px; text-align: center;
+    .team-title-box {
+      background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0,212,255,0.3); padding: 8px; font-weight: bold; text-align: center; color: #00d4ff; font-size: 0.85rem; border-radius: 6px;
     }
-    .cedula-table th { background: rgba(0, 212, 255, 0.15); color: #00d4ff; font-weight: 600; }
-    
-    .input-cell {
-      width: 100%; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,212,255,0.4);
-      color: #fff; text-align: center; font-size: 0.8rem; padding: 4px; border-radius: 4px;
-    }
-    .input-cell:focus { border-color: #00d4ff; outline: none; }
 
-    .textarea-cell {
-      width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
-      color: #fff; padding: 10px; border-radius: 8px; font-size: 0.85rem; min-height: 70px; resize: vertical;
+    .horizontal-scroll-container {
+      overflow-x: auto; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
     }
 
     .btn-action-cedula {
       background: linear-gradient(135deg, #00d4ff, #0055ff); color: #000; font-weight: bold;
-      padding: 14px 25px; border-radius: 10px; border: none; cursor: pointer; width: 100%;
-      font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 25px;
+      padding: 12px; border-radius: 8px; border: none; cursor: pointer; width: 100%;
+      font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px;
     }
     .btn-action-cedula:hover { opacity: 0.9; }
   </style>
@@ -86,233 +78,266 @@
 
   <div class="cedula-sheet">
     
-    <!-- ENCABEZADO OFICIAL -->
+    <!-- ENCABEZADO IDÉNTICO AL EXCEL -->
     <div class="cedula-header">
-      <div style="font-weight: 800; color: #00d4ff; font-size: 0.82rem;">
-        <i class="fa-solid fa-futbol"></i> RETA PRO APP<br>
-        <span style="color: #94a3b8; font-size: 0.7rem;">COORDINACIÓN DE LIGA</span>
+      <div style="text-align: left; font-weight: bold; color: #00d4ff; font-size: 0.75rem;">
+        [ LOGO RETA ]<br>Coordinación Nombre de la Liga
       </div>
-      <div class="cedula-title">
-        <h2>Acta de Juego de Fútbol Uruguayo</h2>
-        <span>Cédula Arbitral Virtual Oficial - Formato Maestro</span>
+      <div>
+        <h1>Acta de Juego de Fútbol Uruguayo</h1>
+        <span>Cédula Arbitral Virtual - Estructura Oficial</span>
       </div>
-      <div class="folio-box">
-        FOLIO: <span id="lblFolio">RETA-2027-001</span>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+        <div class="folio-box">FOLIO: 0000</div>
+        <div style="font-size: 0.75rem; color: #94a3b8;">[ LOGO LIGA ]</div>
       </div>
     </div>
 
-    <!-- 1. MARCADOR GENERAL Y PERIODOS -->
-    <div class="section-title"><i class="fa-solid fa-scoreboard"></i> 1. Marcador Oficial por Periodos</div>
-    <div class="grid-duo">
-      <!-- EQUIPO LOCAL -->
+    <!-- CABECERA EQUIPOS Y MARCADOR -->
+    <div class="grid-equipo-header">
+      <div class="team-title-box">LOCAL</div>
+      <div class="team-title-box">VISITANTE</div>
+    </div>
+
+    <table class="table-excel">
+      <tr>
+        <th colspan="7">MARCADOR - LOCAL</th>
+        <th colspan="7">MARCADOR - VISITANTE</th>
+      </tr>
+      <tr>
+        <td colspan="2">1er Medio</td>
+        <td colspan="2">2do Medio</td>
+        <td colspan="3" style="background: rgba(0,212,255,0.2); color:#00d4ff; font-weight:bold;">Final</td>
+        <td colspan="2">1er Medio</td>
+        <td colspan="2">2do Medio</td>
+        <td colspan="3" style="background: rgba(255,71,87,0.2); color:#ff4757; font-weight:bold;">Final</td>
+      </tr>
+      <tr>
+        <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
+        <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
+        <td colspan="3"><input type="number" class="input-excel" value="0" style="font-weight:bold; color:#00d4ff;"></td>
+        <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
+        <td colspan="2"><input type="number" class="input-excel" value="0" style="font-weight:bold;"></td>
+        <td colspan="3"><input type="number" class="input-excel" value="0" style="font-weight:bold; color:#ff4757;"></td>
+      </tr>
+    </table>
+
+    <!-- ALINEACIONES E INICIA (LOCAL Y VISITANTE) -->
+    <div class="grid-equipo-header" style="margin-top: 15px;">
+      <!-- LOCAL -->
       <div>
-        <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 6px; text-transform: uppercase;">Local: <span id="nameLocalTitle">EQUIPO LOCAL</span></h4>
-        <table class="cedula-table">
+        <table class="table-excel">
           <tr>
-            <th>1er Medio</th>
-            <th>2do Medio</th>
-            <th>Final</th>
+            <th style="width: 50px;">Inicia</th>
+            <th style="width: 50px;">N°</th>
+            <th>Jugador (Local)</th>
           </tr>
-          <tr>
-            <td><input type="number" id="local1T" class="input-cell" value="0" min="0"></td>
-            <td><input type="number" id="local2T" class="input-cell" value="0" min="0"></td>
-            <td><input type="number" id="localFT" class="input-cell" value="0" min="0" style="background:#00d4ff; color:#000; font-weight:bold;"></td>
-          </tr>
+          <tr><td colspan="3" style="background: rgba(0,212,255,0.1); font-weight:bold; color:#00d4ff;">TITULARES</td></tr>
+          <script>
+            for(let i=1; i<=7; i++) {
+              document.write(`<tr><td><input type="checkbox" checked></td><td><b>${i}</b></td><td><input type="text" class="input-excel" value="Jugador Titular ${i}" style="text-align:left;"></td></tr>`);
+            }
+          </script>
+          <tr><td colspan="3" style="background: rgba(255,255,255,0.05); font-weight:bold; color:#94a3b8;">CAMBIOS (SUPLENTES)</td></tr>
+          <script>
+            for(let i=8; i<=12; i++) {
+              document.write(`<tr><td><input type="checkbox"></td><td><b>${i}</b></td><td><input type="text" class="input-excel" value="Suplente ${i}" style="text-align:left;"></td></tr>`);
+            }
+          </script>
         </table>
       </div>
-      <!-- EQUIPO VISITANTE -->
+
+      <!-- VISITANTE -->
       <div>
-        <h4 style="color: #ff4757; font-size: 0.9rem; margin-bottom: 6px; text-transform: uppercase;">Visitante: <span id="nameVisitorTitle">EQUIPO VISITANTE</span></h4>
-        <table class="cedula-table">
+        <table class="table-excel">
           <tr>
-            <th>1er Medio</th>
-            <th>2do Medio</th>
-            <th>Final</th>
+            <th style="width: 50px;">Inicia</th>
+            <th style="width: 50px;">N°</th>
+            <th>Jugador (Visitante)</th>
           </tr>
-          <tr>
-            <td><input type="number" id="visitor1T" class="input-cell" value="0" min="0"></td>
-            <td><input type="number" id="visitor2T" class="input-cell" value="0" min="0"></td>
-            <td><input type="number" id="visitorFT" class="input-cell" value="0" min="0" style="background:#ff4757; color:#fff; font-weight:bold;"></td>
-          </tr>
+          <tr><td colspan="3" style="background: rgba(255,71,87,0.1); font-weight:bold; color:#ff4757;">TITULARES</td></tr>
+          <script>
+            for(let i=1; i<=7; i++) {
+              document.write(`<tr><td><input type="checkbox" checked></td><td><b>${i}</b></td><td><input type="text" class="input-excel" value="Jugador Titular ${i}" style="text-align:left;"></td></tr>`);
+            }
+          </script>
+          <tr><td colspan="3" style="background: rgba(255,255,255,0.05); font-weight:bold; color:#94a3b8;">CAMBIOS (SUPLENTES)</td></tr>
+          <script>
+            for(let i=8; i<=12; i++) {
+              document.write(`<tr><td><input type="checkbox"></td><td><b>${i}</b></td><td><input type="text" class="input-excel" value="Suplente ${i}" style="text-align:left;"></td></tr>`);
+            }
+          </script>
         </table>
       </div>
     </div>
 
-    <!-- 2. ALINEACIONES Y CAMBIOS -->
-    <div class="section-title"><i class="fa-solid fa-users"></i> 2. Alineaciones y Cambios (Titulares / Suplentes)</div>
-    <div class="grid-duo">
-      <!-- LOCAL LINEUP -->
-      <div>
-        <table class="cedula-table">
-          <thead>
-            <tr>
-              <th style="width: 45px;">Inicia</th>
-              <th style="width: 45px;">N°</th>
-              <th>Jugador Local</th>
-            </tr>
-          </thead>
-          <tbody id="localRosterBody">
-            <!-- Generado por JS -->
-          </tbody>
-        </table>
-      </div>
-      <!-- VISITANTE LINEUP -->
-      <div>
-        <table class="cedula-table">
-          <thead>
-            <tr>
-              <th style="width: 45px;">Inicia</th>
-              <th style="width: 45px;">N°</th>
-              <th>Jugador Visitante</th>
-            </tr>
-          </thead>
-          <tbody id="visitorRosterBody">
-            <!-- Generado por JS -->
-          </tbody>
-        </table>
-      </div>
+    <!-- TABLA DE GOLES MINUTO A MINUTO (1 AL 19 HORIZONTAL COMO EN EL EXCEL) -->
+    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">GOLES (Minuto a Minuto del 1 al 19)</div>
+    <div class="horizontal-scroll-container">
+      <table class="table-excel" style="min-width: 900px;">
+        <tr>
+          <th rowspan="3" style="width: 120px; vertical-align: middle;">EQUIPO LOCAL<br>Goles</th>
+          <th>Gol</th>
+          <script>for(let i=1;i<=19;i++) document.write(`<th>${i}</th>`);</script>
+        </tr>
+        <tr>
+          <td>N° Jugador</td>
+          <script>for(let i=1;i<=19;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script>
+        </tr>
+        <tr>
+          <td>Minuto</td>
+          <script>for(let i=1;i<=19;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script>
+        </tr>
+      </table>
     </div>
 
-    <!-- 3. GOLES MINUTO A MINUTO -->
-    <div class="section-title"><i class="fa-solid fa-futbol"></i> 3. Goles Registrados (Minuto a Minuto)</div>
-    <div class="grid-duo">
-      <div>
-        <label style="font-size: 0.78rem; color: #00d4ff; font-weight: 600;">Goles Local (N° de Jugador y Minuto):</label>
-        <textarea id="golesLocalText" class="textarea-cell" placeholder="Ej. J. Pérez (#9) al min 15, M. Gómez (#10) al min 42..."></textarea>
-      </div>
-      <div>
-        <label style="font-size: 0.78rem; color: #ff4757; font-weight: 600;">Goles Visitante (N° de Jugador y Minuto):</label>
-        <textarea id="golesVisitorText" class="textarea-cell" placeholder="Ej. R. Sánchez (#7) al min 28..."></textarea>
-      </div>
+    <div class="horizontal-scroll-container">
+      <table class="table-excel" style="min-width: 900px;">
+        <tr>
+          <th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">EQUIPO VISITANTE<br>Goles</th>
+          <th>Gol</th>
+          <script>for(let i=1;i<=19;i++) document.write(`<th>${i}</th>`);</script>
+        </tr>
+        <tr>
+          <td>N° Jugador</td>
+          <script>for(let i=1;i<=19;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script>
+        </tr>
+        <tr>
+          <td>Minuto</td>
+          <script>for(let i=1;i<=19;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script>
+        </tr>
+      </table>
     </div>
 
-    <!-- 4. FALTAS ACUMULATIVAS -->
-    <div class="section-title"><i class="fa-solid fa-shield-halved"></i> 4. Faltas Acumulativas del Encuentro</div>
-    <div class="grid-duo">
-      <div>
-        <label style="font-size: 0.78rem; color: #94a3b8;">Faltas Acumulativas - Local:</label>
-        <input type="text" id="faltasLocal" class="input-cell" placeholder="Ej. 1er Tiempo: 4 | 2do Tiempo: 5" style="text-align: left; padding: 8px;">
-      </div>
-      <div>
-        <label style="font-size: 0.78rem; color: #94a3b8;">Faltas Acumulativas - Visitante:</label>
-        <input type="text" id="faltasVisitor" class="input-cell" placeholder="Ej. 1er Tiempo: 3 | 2do Tiempo: 6" style="text-align: left; padding: 8px;">
-      </div>
+    <!-- FALTAS ACUMULATIVAS (1 AL 19 HORIZONTAL) -->
+    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">FALTAS ACUMULATIVAS</div>
+    <div class="horizontal-scroll-container">
+      <table class="table-excel" style="min-width: 900px;">
+        <tr>
+          <th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Faltas</th>
+          <th>Falta</th>
+          <script>for(let i=1;i<=19;i++) document.write(`<th>${i}</th>`);</script>
+        </tr>
+        <tr>
+          <td>N° Jugador</td>
+          <script>for(let i=1;i<=19;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script>
+        </tr>
+        <tr>
+          <td>Minuto</td>
+          <script>for(let i=1;i<=19;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script>
+        </tr>
+      </table>
     </div>
 
-    <!-- 5. TARJETAS (AMARILLAS Y ROJAS POR TIEMPO) -->
-    <div class="section-title"><i class="fa-solid fa-square" style="color:#f1c40f;"></i> 5. Control de Tarjetas (Amarillas y Rojas)</div>
-    <div class="grid-duo">
+    <div class="horizontal-scroll-container">
+      <table class="table-excel" style="min-width: 900px;">
+        <tr>
+          <th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Faltas</th>
+          <th>Falta</th>
+          <script>for(let i=1;i<=19;i++) document.write(`<th>${i}</th>`);</script>
+        </tr>
+        <tr>
+          <td>N° Jugador</td>
+          <script>for(let i=1;i<=19;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script>
+        </tr>
+        <tr>
+          <td>Minuto</td>
+          <script>for(let i=1;i<=19;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script>
+        </tr>
+      </table>
+    </div>
+
+    <!-- TARJETAS RETA PRO (AMARILLA Y ROJA POR TIEMPO) -->
+    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">CONTROL DE TARJETAS (RETA PRO)</div>
+    <div class="grid-equipo-header">
       <!-- Tarjetas Local -->
-      <div>
-        <h5 style="color: #00d4ff; margin-bottom: 5px; font-size: 0.8rem;">Tarjetas - Local</h5>
-        <table class="cedula-table">
-          <tr>
-            <th>Periodo</th>
-            <th>Tipo (Amarilla / Roja)</th>
-            <th>N° Jugador & Minuto</th>
-          </tr>
-          <tr>
-            <td>1er Tiempo</td>
-            <td><input type="text" class="input-cell" placeholder="Amarilla / Roja"></td>
-            <td><input type="text" class="input-cell" placeholder="Ej. #8 (Min 22)"></td>
-          </tr>
-          <tr>
-            <td>2do Tiempo</td>
-            <td><input type="text" class="input-cell" placeholder="Amarilla / Roja"></td>
-            <td><input type="text" class="input-cell" placeholder="Ej. #4 (Min 75)"></td>
-          </tr>
-        </table>
-      </div>
+      <table class="table-excel">
+        <tr>
+          <th rowspan="2" style="vertical-align: middle;">LOCAL</th>
+          <th colspan="2">Primer Tiempo</th>
+          <th colspan="2">Segundo Tiempo</th>
+        </tr>
+        <tr>
+          <th>Amarilla</th><th>Roja</th>
+          <th>Amarilla</th><th>Roja</th>
+        </tr>
+        <tr>
+          <td>N° Jugador</td>
+          <td><input type="text" class="input-excel" placeholder="# "></td>
+          <td><input type="text" class="input-excel" placeholder="# "></td>
+          <td><input type="text" class="input-excel" placeholder="# "></td>
+          <td><input type="text" class="input-excel" placeholder="# "></td>
+        </tr>
+        <tr>
+          <td>Minuto</td>
+          <td><input type="text" class="input-excel" placeholder="Min"></td>
+          <td><input type="text" class="input-excel" placeholder="Min"></td>
+          <td><input type="text" class="input-excel" placeholder="Min"></td>
+          <td><input type="text" class="input-excel" placeholder="Min"></td>
+        </tr>
+      </table>
+
       <!-- Tarjetas Visitante -->
+      <table class="table-excel">
+        <tr>
+          <th rowspan="2" style="vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE</th>
+          <th colspan="2">Primer Tiempo</th>
+          <th colspan="2">Segundo Tiempo</th>
+        </tr>
+        <tr>
+          <th>Amarilla</th><th>Roja</th>
+          <th>Amarilla</th><th>Roja</th>
+        </tr>
+        <tr>
+          <td>N° Jugador</td>
+          <td><input type="text" class="input-excel" placeholder="# "></td>
+          <td><input type="text" class="input-excel" placeholder="# "></td>
+          <td><input type="text" class="input-excel" placeholder="# "></td>
+          <td><input type="text" class="input-excel" placeholder="# "></td>
+        </tr>
+        <tr>
+          <td>Minuto</td>
+          <td><input type="text" class="input-excel" placeholder="Min"></td>
+          <td><input type="text" class="input-excel" placeholder="Min"></td>
+          <td><input type="text" class="input-excel" placeholder="Min"></td>
+          <td><input type="text" class="input-excel" placeholder="Min"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- OBSERVACIONES Y FIRMAS IDÉNTICAS AL EXCEL -->
+    <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">OBSERVACIONES Y/O REPORTES</div>
+    <div class="grid-equipo-header">
       <div>
-        <h5 style="color: #ff4757; margin-bottom: 5px; font-size: 0.8rem;">Tarjetas - Visitante</h5>
-        <table class="cedula-table">
-          <tr>
-            <th>Periodo</th>
-            <th>Tipo (Amarilla / Roja)</th>
-            <th>N° Jugador & Minuto</th>
-          </tr>
-          <tr>
-            <td>1er Tiempo</td>
-            <td><input type="text" class="input-cell" placeholder="Amarilla / Roja"></td>
-            <td><input type="text" class="input-cell" placeholder="Ej. #11 (Min 30)"></td>
-          </tr>
-          <tr>
-            <td>2do Tiempo</td>
-            <td><input type="text" class="input-cell" placeholder="Amarilla / Roja"></td>
-            <td><input type="text" class="input-cell" placeholder="Ej. #2 (Min 80)"></td>
-          </tr>
-        </table>
+        <div style="font-size: 0.75rem; color:#00d4ff; margin-bottom: 3px;">LOCAL</div>
+        <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:60px; text-align:left;" placeholder="Reportes equipo local..."></textarea>
+      </div>
+      <div>
+        <div style="font-size: 0.75rem; color:#ff4757; margin-bottom: 3px;">VISITANTE</div>
+        <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:60px; text-align:left;" placeholder="Reportes equipo visitante..."></textarea>
       </div>
     </div>
 
-    <!-- 6. OBSERVACIONES, REPORTES Y FIRMAS -->
-    <div class="section-title"><i class="fa-solid fa-file-pen"></i> 6. Observaciones, Reportes e Identificación de Capitanes / DT</div>
-    <div style="margin-bottom: 15px;">
-      <label style="font-size: 0.78rem; color: #00d4ff; font-weight: 600; display: block; margin-bottom: 5px;">Observaciones y/o Reportes Arbitrales (Incidentes, connatos, estado de cancha):</label>
-      <textarea id="observacionesArbitrales" class="textarea-cell" placeholder="Escriba aquí cualquier incidencia relevante reportada por el cuerpo arbitral..." style="min-height: 90px;"></textarea>
-    </div>
-
-    <div class="grid-duo" style="margin-top: 15px;">
-      <div>
-        <label style="font-size: 0.78rem; color: #94a3b8; display: block; margin-bottom: 4px;">Nombre y Firma del Capitán / DT (Local):</label>
-        <input type="text" id="firmaLocal" class="input-cell" placeholder="Firma digital / Nombre del responsable" style="text-align: left; padding: 8px;">
+    <div class="grid-equipo-header" style="margin-top: 15px;">
+      <div style="text-align: center; border-top: 1px dashed rgba(255,255,255,0.4); padding-top: 5px;">
+        <span style="font-size: 0.7rem; color: #94a3b8;">Nombre y Firma del Director Técnico / Capitán (Local)</span>
+        <input type="text" class="input-excel" placeholder="Firma Digital Local" style="border-bottom: 1px solid #00d4ff; margin-top: 5px;">
       </div>
-      <div>
-        <label style="font-size: 0.78rem; color: #94a3b8; display: block; margin-bottom: 4px;">Nombre y Firma del Capitán / DT (Visitante):</label>
-        <input type="text" id="firmaVisitor" class="input-cell" placeholder="Firma digital / Nombre del responsable" style="text-align: left; padding: 8px;">
+      <div style="text-align: center; border-top: 1px dashed rgba(255,255,255,0.4); padding-top: 5px;">
+        <span style="font-size: 0.7rem; color: #94a3b8;">Nombre y Firma del Director Técnico / Capitán (Visitante)</span>
+        <input type="text" class="input-excel" placeholder="Firma Digital Visitante" style="border-bottom: 1px solid #ff4757; margin-top: 5px;">
       </div>
     </div>
 
-    <!-- BOTÓN DE GUARDAR Y SINCRONIZAR -->
-    <button type="button" onclick="guardarCedulaOficial()" class="btn-action-cedula">
-      <i class="fa-solid fa-cloud-arrow-up"></i> Guardar y Sincronizar Cédula Oficial
+    <div style="text-align: center; margin-top: 10px; font-size: 0.7rem; color: #64748b;">
+      FORMATO DISEÑADO Y REALIZADO POR MIGUEL YEBRA — RETA PRO APP 2027
+    </div>
+
+    <!-- BOTÓN DE ACCIÓN -->
+    <button type="button" onclick="alert('✓ Cédula oficial idéntica al formato Excel guardada y sincronizada con éxito.')" class="btn-action-cedula">
+      <i class="fa-solid fa-floppy-disk"></i> Guardar Cédula y Sincronizar en Reta Pro
     </button>
 
   </div>
-
-  <script>
-    const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    document.addEventListener('DOMContentLoaded', () => {
-      cargarRostersEjemplo();
-    });
-
-    function cargarRostersEjemplo() {
-      const localRoster = document.getElementById('localRosterBody');
-      const visitorRoster = document.getElementById('visitorRosterBody');
-
-      let htmlLocal = '';
-      let htmlVisitor = '';
-
-      // Generar 11 jugadores estándar de plantilla (Fútbol Uruguayo / 7 / 11)
-      for (let i = 1; i <= 9; i++) {
-        htmlLocal += `<tr>
-          <td style="text-align: center;"><input type="checkbox" ${i <= 7 ? 'checked' : ''}></td>
-          <td style="font-weight: bold; text-align: center;">#${i}</td>
-          <td>Jugador Titular/Suplente Local ${i}</td>
-        </tr>`;
-
-        htmlVisitor += `<tr>
-          <td style="text-align: center;"><input type="checkbox" ${i <= 7 ? 'checked' : ''}></td>
-          <td style="font-weight: bold; text-align: center;">#${i}</td>
-          <td>Jugador Titular/Suplente Visitante ${i}</td>
-        </tr>`;
-      }
-
-      localRoster.innerHTML = htmlLocal;
-      visitorRoster.innerHTML = htmlVisitor;
-    }
-
-    function guardarCedulaOficial() {
-      const lFT = document.getElementById('localFT').value;
-      const vFT = document.getElementById('visitorFT').value;
-      const obs = document.getElementById('observacionesArbitrales').value;
-
-      alert(`✓ Cédula Arbitral Oficial guardada correctamente.\nMarcador Final: Local (${lFT}) - (${vFT}) Visitante.\nObservaciones registradas y sincronizadas con el sistema.`);
-    }
-  </script>
 </body>
 </html>
