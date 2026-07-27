@@ -25,11 +25,55 @@
       background: linear-gradient(135deg, #ff4757, #ff6b81);
       color: #fff; font-weight: 800; font-size: 0.72rem; padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
     }
+    
+    /* Sistema de Submenús / Pestañas */
+    .super-admin-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .nav-tab-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-tab-btn:hover {
+      color: #fff;
+      background: rgba(0, 212, 255, 0.1);
+    }
+    .nav-tab-btn.active {
+      background: linear-gradient(135deg, #00d4ff, #0055ff);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+    }
+
+    .admin-section-panel {
+      display: none;
+    }
+    .admin-section-panel.active {
+      display: block;
+    }
+
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
     .metric-card {
       background: rgba(255, 255, 255, 0.03);
@@ -41,6 +85,7 @@
     .metric-card i { font-size: 1.8rem; color: #00d4ff; margin-bottom: 8px; }
     .metric-card h4 { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
     .metric-card span { font-size: 1.5rem; font-weight: 800; color: #fff; }
+    
     .tokens-table {
       width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem;
     }
@@ -63,6 +108,9 @@
       flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,212,255,0.3);
       border-radius: 8px; color: #fff; font-size: 0.9rem; min-width: 240px; text-transform: uppercase;
     }
+    .form-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;
+    }
   </style>
 </head>
 <body class="login-body">
@@ -82,7 +130,7 @@
       <p id="panelSubHeader">Control Maestro de Infraestructura Global y Auditoría</p>
     </div>
 
-    <!-- TARJETA 1: IDENTIFICACIÓN Y AUTENTICACIÓN SUPERADMIN -->
+    <!-- CREDENCIAL DE ACCESO -->
     <div class="admin-header-card">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div>
@@ -96,145 +144,212 @@
       </div>
     </div>
 
-    <!-- SECCIÓN DE MÉTRICAS Y ESTADÍSTICAS DEL SISTEMA -->
-    <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
-      <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 15px;">
-        <i class="fa-solid fa-chart-pie" style="color: #00d4ff;"></i> Métricas y Estadísticas Globales del Sistema
-      </h3>
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <i class="fa-solid fa-users"></i>
-          <h4>Total Usuarios</h4>
-          <span id="metricTotalUsers">--</span>
-        </div>
-        <div class="metric-card">
-          <i class="fa-solid fa-trophy"></i>
-          <h4>Ligas Registradas</h4>
-          <span id="metricTotalLeagues">--</span>
-        </div>
-        <div class="metric-card">
-          <i class="fa-solid fa-city"></i>
-          <h4>Ciudades / Sedes</h4>
-          <span id="metricTotalCities">--</span>
-        </div>
-        <div class="metric-card">
-          <i class="fa-solid fa-map-location-dot"></i>
-          <h4>Estados Activos</h4>
-          <span id="metricTotalStates">--</span>
-        </div>
-      </div>
+    <!-- MENÚ DE SUBMENÚS (PESTAÑAS DE NAVEGACIÓN) -->
+    <div class="super-admin-nav">
+      <button type="button" class="nav-tab-btn active" onclick="switchAdminTab('tabMetrics', this)">
+        <i class="fa-solid fa-chart-pie"></i> 1. Dashboard & Métricas
+      </button>
+      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabUsers', this)">
+        <i class="fa-solid fa-address-book"></i> 2. Visor de Usuarios
+      </button>
+      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabTokens', this)">
+        <i class="fa-solid fa-key"></i> 3. Generador de Tokens
+      </button>
+      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabCoAdmins', this)">
+        <i class="fa-solid fa-user-gear"></i> 4. Alta Co-Admins Super
+      </button>
     </div>
 
-    <!-- TARJETA 2: GENERADOR DE TOKENS PARA ADMIN 1 (TITULAR DE LIGA) -->
-    <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
-      <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
-        <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens para Administradores Titulares (Admin 1)
-      </h3>
-      <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 18px;">
-        Emite fichas de invitación directas para permitir que nuevos directivos den de alta sus ligas en el sistema.
-      </p>
-
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
-        <div style="flex: 2; min-width: 240px;">
-          <label style="color: #00d4ff; font-size: 0.78rem; display: block; margin-bottom: 6px; font-weight: 600;">
-            Rol de Destino Autorizado:
-          </label>
-          <select id="tokenRoleSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
-            <option value="ADMIN_LIGA" selected>👑 Administrador Titular de Liga (Admin 1 - Alta de Liga)</option>
-          </select>
-        </div>
-
-        <button type="button" onclick="generateSuperToken()" style="background: linear-gradient(135deg, #00d4ff, #0055ff); color: #fff; font-weight: bold; padding: 11px 22px; border-radius: 8px; border: none; cursor: pointer; flex: 1; min-width: 180px;">
-          <i class="fa-solid fa-plus-circle"></i> Generar Token Máster
-        </button>
-      </div>
-
-      <!-- MUESTRA DEL TOKEN GENERADO -->
-      <div id="generatedTokenBox" style="display: none; margin-top: 20px; background: rgba(0, 212, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px dashed #00d4ff;">
-        <span style="color: #aaa; font-size: 0.75rem; display: block;">✓ Token Máster Creado Exitosamente:</span>
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
-          <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.4rem; letter-spacing: 2px; font-family: monospace;">---</strong>
-          <div style="display: flex; gap: 8px;">
-            <button type="button" onclick="copyTokenToClipboard()" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold;">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
-            <button type="button" onclick="shareTokenWhatsApp()" class="btn-sm-action" style="background: #25D366; color: #fff; font-weight: bold;">
-              <i class="fa-brands fa-whatsapp"></i> WhatsApp
-            </button>
+    <!-- ================= SUBMENÚ 1: DASHBOARD Y MÉTRICAS ================= -->
+    <div id="tabMetrics" class="admin-section-panel active">
+      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+        <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 15px;">
+          <i class="fa-solid fa-chart-pie" style="color: #00d4ff;"></i> Estadísticas Globales del Sistema RETA
+        </h3>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <i class="fa-solid fa-users"></i>
+            <h4>Total Usuarios</h4>
+            <span id="metricTotalUsers">--</span>
+          </div>
+          <div class="metric-card">
+            <i class="fa-solid fa-trophy"></i>
+            <h4>Ligas Registradas</h4>
+            <span id="metricTotalLeagues">--</span>
+          </div>
+          <div class="metric-card">
+            <i class="fa-solid fa-city"></i>
+            <h4>Ciudades / Sedes</h4>
+            <span id="metricTotalCities">--</span>
+          </div>
+          <div class="metric-card">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <h4>Estados Activos</h4>
+            <span id="metricTotalStates">--</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TARJETA 3: VISOR GLOBAL DE USUARIOS Y FILTRO POR CURP -->
-    <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-        <h3 style="color: #fff; font-size: 1.1rem;">
-          <i class="fa-solid fa-address-book" style="color: #00d4ff;"></i> Directorio General de Usuarios Registrados
-        </h3>
-        <button type="button" onclick="loadGlobalUsersDirectory()" class="btn-sm-action">
-          <i class="fa-solid fa-rotate-right"></i> Refrescar Directorio
-        </button>
-      </div>
+    <!-- ================= SUBMENÚ 2: VISOR GLOBAL DE USUARIOS ================= -->
+    <div id="tabUsers" class="admin-section-panel">
+      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+          <h3 style="color: #fff; font-size: 1.1rem;">
+            <i class="fa-solid fa-address-book" style="color: #00d4ff;"></i> Directorio General de Usuarios Registrados
+          </h3>
+          <button type="button" onclick="loadGlobalUsersDirectory()" class="btn-sm-action">
+            <i class="fa-solid fa-rotate-right"></i> Refrescar Directorio
+          </button>
+        </div>
 
-      <!-- Barra de Filtrado por CURP -->
-      <div class="search-filter-box">
-        <input type="text" id="filterCurpInput" placeholder="🔍 Filtrar usuario por CURP (18 caracteres)..." oninput="filterUsersByCurp()">
-      </div>
+        <!-- Barra de Filtrado por CURP -->
+        <div class="search-filter-box">
+          <input type="text" id="filterCurpInput" placeholder="🔍 Filtrar usuario por CURP (18 caracteres)..." oninput="filterUsersByCurp()">
+        </div>
 
-      <div style="overflow-x: auto;">
-        <table class="tokens-table">
-          <thead>
-            <tr>
-              <th>CURP (ID)</th>
-              <th>Nombre Completo</th>
-              <th>Correo Electrónico</th>
-              <th>Teléfono</th>
-              <th>Edad / Género</th>
-              <th>Residencia</th>
-            </tr>
-          </thead>
-          <tbody id="usersDirectoryTableBody">
-            <tr>
-              <td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">
-                Cargando base de datos de usuarios...
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+          <table class="tokens-table">
+            <thead>
+              <tr>
+                <th>CURP (ID)</th>
+                <th>Nombre Completo</th>
+                <th>Correo Electrónico</th>
+                <th>Teléfono</th>
+                <th>Edad / Género</th>
+                <th>Residencia</th>
+              </tr>
+            </thead>
+            <tbody id="usersDirectoryTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">
+                  Cargando base de datos de usuarios...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- TARJETA 4: HISTORIAL DE TOKENS EMITIDOS -->
-    <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h3 style="color: #fff; font-size: 1.05rem;">
-          <i class="fa-solid fa-list-check" style="color: #00d4ff;"></i> Historial de Tokens Máster Emitidos
+    <!-- ================= SUBMENÚ 3: GENERADOR DE TOKENS ================= -->
+    <div id="tabTokens" class="admin-section-panel">
+      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
+        <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
+          <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens para Administradores Titulares (Admin 1)
         </h3>
-        <button type="button" onclick="loadActiveTokensHistory()" class="btn-sm-action">
-          <i class="fa-solid fa-rotate-right"></i> Actualizar
-        </button>
+        <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 18px;">
+          Emite fichas de invitación directas para permitir que nuevos directivos den de alta sus ligas en el sistema.
+        </p>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+          <div style="flex: 2; min-width: 240px;">
+            <label style="color: #00d4ff; font-size: 0.78rem; display: block; margin-bottom: 6px; font-weight: 600;">
+              Rol de Destino Autorizado:
+            </label>
+            <select id="tokenRoleSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+              <option value="ADMIN_LIGA" selected>👑 Administrador Titular de Liga (Admin 1 - Alta de Liga)</option>
+            </select>
+          </div>
+
+          <button type="button" onclick="generateSuperToken()" style="background: linear-gradient(135deg, #00d4ff, #0055ff); color: #fff; font-weight: bold; padding: 11px 22px; border-radius: 8px; border: none; cursor: pointer; flex: 1; min-width: 180px;">
+            <i class="fa-solid fa-plus-circle"></i> Generar Token Máster
+          </button>
+        </div>
+
+        <!-- MUESTRA DEL TOKEN GENERADO -->
+        <div id="generatedTokenBox" style="display: none; margin-top: 20px; background: rgba(0, 212, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px dashed #00d4ff;">
+          <span style="color: #aaa; font-size: 0.75rem; display: block;">✓ Token Máster Creado Exitosamente:</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
+            <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.4rem; letter-spacing: 2px; font-family: monospace;">---</strong>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" onclick="copyTokenToClipboard()" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold;">
+                <i class="fa-solid fa-copy"></i> Copiar
+              </button>
+              <button type="button" onclick="shareTokenWhatsApp()" class="btn-sm-action" style="background: #25D366; color: #fff; font-weight: bold;">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div style="overflow-x: auto;">
-        <table class="tokens-table">
-          <thead>
-            <tr>
-              <th>Código Token</th>
-              <th>Rol Autorizado</th>
-              <th>Estatus</th>
-              <th>Fecha Emisión</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tokensTableBody">
-            <tr>
-              <td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">
-                Cargando tokens emitidos...
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- HISTORIAL DE TOKENS -->
+      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="color: #fff; font-size: 1.05rem;">
+            <i class="fa-solid fa-list-check" style="color: #00d4ff;"></i> Historial de Tokens Máster Emitidos
+          </h3>
+          <button type="button" onclick="loadActiveTokensHistory()" class="btn-sm-action">
+            <i class="fa-solid fa-rotate-right"></i> Actualizar
+          </button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="tokens-table">
+            <thead>
+              <tr>
+                <th>Código Token</th>
+                <th>Rol Autorizado</th>
+                <th>Estatus</th>
+                <th>Fecha Emisión</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tokensTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">
+                  Cargando tokens emitidos...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SUBMENÚ 4: ALTA DE CO-ADMINISTRADORS SUPER ================= -->
+    <div id="tabCoAdmins" class="admin-section-panel">
+      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,71,87,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+        <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
+          <i class="fa-solid fa-user-shield" style="color: #ff4757;"></i> Registro de Nuevo Co-Administrador Super (Global)
+        </h3>
+        <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 20px;">
+          Da de alta a operadores con privilegios de gestión global en la infraestructura de RETA Pro App.
+        </p>
+
+        <form id="coAdminForm" onsubmit="event.preventDefault(); registerNewCoAdmin();">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="coCurp">CURP (Identificador)</label>
+              <input type="text" id="coCurp" maxlength="18" placeholder="18 caracteres" required style="text-transform: uppercase; width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+            </div>
+            <div class="input-group">
+              <label for="coNombre">Nombre(s)</label>
+              <input type="text" id="coNombre" placeholder="Nombre" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+            </div>
+            <div class="input-group">
+              <label for="coApellidos">Apellidos</label>
+              <input type="text" id="coApellidos" placeholder="Apellidos" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+            </div>
+            <div class="input-group">
+              <label for="coEmail">Correo Electrónico</label>
+              <input type="email" id="coEmail" placeholder="admin@reta.app" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+            </div>
+            <div class="input-group">
+              <label for="coPassword">Contraseña Temporal</label>
+              <input type="password" id="coPassword" placeholder="••••••••" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+            </div>
+            <div class="input-group">
+              <label for="coTelefono">Teléfono Móvil</label>
+              <input type="tel" id="coTelefono" placeholder="445 123 4567" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+            </div>
+          </div>
+
+          <button type="submit" id="btnSaveCoAdmin" class="btn-login" style="background: linear-gradient(135deg, #ff4757, #ff6b81); margin-top: 10px;">
+            <i class="fa-solid fa-user-plus"></i> Registrar Co-Administrador Super
+          </button>
+        </form>
       </div>
     </div>
 
@@ -253,14 +368,21 @@
       loadActiveTokensHistory();
     });
 
+    // SISTEMA DE PESTAÑAS (SUBMENÚS)
+    function switchAdminTab(tabId, btnElement) {
+      document.querySelectorAll('.admin-section-panel').forEach(panel => panel.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
     // 1. CARGAR MÉTRICAS Y ESTADÍSTICAS DEL SISTEMA
     async function loadSystemMetrics() {
       try {
-        // Total de usuarios
         const { count: usersCount, error: uErr } = await _supabase.from('usuarios').select('*', { count: 'exact', head: true });
         if (!uErr) document.getElementById('metricTotalUsers').innerText = usersCount || 0;
 
-        // Total de ligas y ciudades/estados
         const { data: ligasData, error: lErr } = await _supabase.from('ligas').select('municipio, estado');
         if (!lErr && ligasData) {
           document.getElementById('metricTotalLeagues').innerText = ligasData.length;
@@ -344,7 +466,7 @@
         const { error } = await _supabase
           .from('invitaciones_sistema')
           .insert([{
-            liga_id: null, // Sin liga asignada previamente, el Admin 1 la vincula al registrarse
+            liga_id: null,
             token_codigo: generatedToken,
             rol_permitido: 'ADMIN_LIGA',
             usado: false
@@ -409,6 +531,51 @@
 
       } catch (err) {
         tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error al cargar tokens: ${err.message}</td></tr>`;
+      }
+    }
+
+    // 5. REGISTRAR NUEVO CO-ADMINISTRADOR SUPER
+    async function registerNewCoAdmin() {
+      const curp = document.getElementById('coCurp').value.trim().toUpperCase();
+      const nombre = document.getElementById('coNombre').value.trim();
+      const apellidos = document.getElementById('coApellidos').value.trim();
+      const email = document.getElementById('coEmail').value.trim();
+      const password = document.getElementById('coPassword').value;
+      const telefono = document.getElementById('coTelefono').value.trim();
+
+      if (curp.length !== 18) {
+        alert("La CURP debe contener 18 caracteres exactos.");
+        return;
+      }
+
+      const btn = document.getElementById('btnSaveCoAdmin');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando en Supabase...`;
+
+      try {
+        const { error } = await _supabase
+          .from('usuarios')
+          .upsert([{
+            curp: curp,
+            nombre: nombre,
+            apellidos: apellidos,
+            email: email,
+            password: password,
+            telefono: telefono
+          }], { onConflict: 'curp' });
+
+        if (error) throw error;
+
+        alert(`✓ Co-Administrador Super registrado correctamente con CURP: ${curp}`);
+        document.getElementById('coAdminForm').reset();
+        loadGlobalUsersDirectory();
+        loadSystemMetrics();
+
+      } catch (err) {
+        alert("Error al registrar Co-Admin: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Registrar Co-Administrador Super`;
       }
     }
 
