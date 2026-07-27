@@ -41,10 +41,10 @@
       background: transparent;
       border: none;
       color: #94a3b8;
-      padding: 10px 18px;
+      padding: 10px 16px;
       border-radius: 10px;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       cursor: pointer;
       transition: all 0.25s ease;
       display: flex;
@@ -111,6 +111,12 @@
     .form-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;
     }
+    .input-group label {
+      display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: #00d4ff;
+    }
+    .input-group input, .input-group select {
+      width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,212,255,0.3); border-radius: 8px; color: #fff; font-size: 0.9rem;
+    }
   </style>
 </head>
 <body class="login-body">
@@ -119,7 +125,7 @@
     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
   </a>
 
-  <div class="login-container full-register-container" style="max-width: 1050px; margin: 30px auto;">
+  <div class="login-container full-register-container" style="max-width: 1100px; margin: 30px auto;">
     
     <!-- ENCABEZADO -->
     <div class="login-header">
@@ -127,7 +133,7 @@
         <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
       </div>
       <h2>Super Panel Central <span class="text-gradient">RETA Pro App</span></h2>
-      <p id="panelSubHeader">Control Maestro de Infraestructura Global y Auditoría</p>
+      <p id="panelSubHeader">Control Maestro de Infraestructura Global y Reglas de Negocio</p>
     </div>
 
     <!-- CREDENCIAL DE ACCESO -->
@@ -135,11 +141,11 @@
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div>
           <span class="badge-superadmin"><i class="fa-solid fa-shield-halved"></i> Super Administrador Global</span>
-          <h3 style="color: #fff; font-size: 1.2rem; margin-top: 5px;">Panel Máster Autorizado</h3>
+          <h3 style="color: #fff; font-size: 1.2rem; margin-top: 5px;">Infraestructura Principal Raíz</h3>
         </div>
         <div style="text-align: right;">
           <small style="color: #94a3b8; display: block; font-size: 0.75rem;">Nivel de Seguridad:</small>
-          <strong style="color: #ff4757; font-family: monospace; font-size: 0.95rem;">ACCESO TOTAL ROOT</strong>
+          <strong style="color: #ff4757; font-family: monospace; font-size: 0.95rem;">ACCESO ROOT TOTAL</strong>
         </div>
       </div>
     </div>
@@ -147,16 +153,19 @@
     <!-- MENÚ DE SUBMENÚS (PESTAÑAS DE NAVEGACIÓN) -->
     <div class="super-admin-nav">
       <button type="button" class="nav-tab-btn active" onclick="switchAdminTab('tabMetrics', this)">
-        <i class="fa-solid fa-chart-pie"></i> 1. Dashboard & Métricas
+        <i class="fa-solid fa-chart-pie"></i> 1. Métricas
+      </button>
+      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabLeagues', this)">
+        <i class="fa-solid fa-trophy"></i> 2. Control de Ligas
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabUsers', this)">
-        <i class="fa-solid fa-address-book"></i> 2. Visor de Usuarios
+        <i class="fa-solid fa-address-book"></i> 3. Visor Usuarios
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabTokens', this)">
-        <i class="fa-solid fa-key"></i> 3. Generador de Tokens
+        <i class="fa-solid fa-key"></i> 4. Tokens Máster
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabCoAdmins', this)">
-        <i class="fa-solid fa-user-gear"></i> 4. Alta Co-Admins Super
+        <i class="fa-solid fa-user-gear"></i> 5. Alta Co-Admins
       </button>
     </div>
 
@@ -191,7 +200,69 @@
       </div>
     </div>
 
-    <!-- ================= SUBMENÚ 2: VISOR GLOBAL DE USUARIOS ================= -->
+    <!-- ================= SUBMENÚ 2: CONTROL MAESTRO DE LIGAS ================= -->
+    <div id="tabLeagues" class="admin-section-panel">
+      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+          <h3 style="color: #fff; font-size: 1.1rem;">
+            <i class="fa-solid fa-shield-cat" style="color: #00d4ff;"></i> Directorio y Alta de Ligas en el Sistema
+          </h3>
+          <button type="button" onclick="loadMasterLeaguesDirectory()" class="btn-sm-action">
+            <i class="fa-solid fa-rotate-right"></i> Actualizar Ligas
+          </button>
+        </div>
+
+        <!-- Formulario exprés para dar de alta liga desde Superadmin si es necesario -->
+        <div style="background: rgba(0,212,255,0.05); padding: 15px; border-radius: 10px; border: 1px dashed rgba(0,212,255,0.3); margin-bottom: 20px;">
+          <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-plus-circle"></i> Alta Directa de Liga por Superadmin</h4>
+          <form id="masterLeagueForm" onsubmit="event.preventDefault(); createMasterLeague();">
+            <div class="form-grid">
+              <div class="input-group">
+                <label>Nombre de la Liga</label>
+                <input type="text" id="mlName" placeholder="Ej. Liga Municipal Moroleón" required>
+              </div>
+              <div class="input-group">
+                <label>Clave Única (Siglas)</label>
+                <input type="text" id="mlKey" placeholder="Ej. LMM2027" required style="text-transform: uppercase;">
+              </div>
+              <div class="input-group">
+                <label>Municipio / Ciudad</label>
+                <input type="text" id="mlCity" placeholder="Moroleón" required>
+              </div>
+              <div class="input-group">
+                <label>Estado</label>
+                <input type="text" id="mlState" placeholder="Guanajuato" required>
+              </div>
+            </div>
+            <button type="submit" id="btnCreateLeague" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold; padding: 8px 16px; margin-top: 5px;">
+              <i class="fa-solid fa-check"></i> Crear Liga en Infraestructura
+            </button>
+          </form>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="tokens-table">
+            <thead>
+              <tr>
+                <th>Clave Liga</th>
+                <th>Nombre Oficial</th>
+                <th>Sede (Municipio, Estado)</th>
+                <th>Acciones / Estatus</th>
+              </tr>
+            </thead>
+            <tbody id="masterLeaguesTableBody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: #64748b; padding: 15px;">
+                  Cargando ligas maestras...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SUBMENÚ 3: VISOR GLOBAL DE USUARIOS ================= -->
     <div id="tabUsers" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
@@ -203,7 +274,6 @@
           </button>
         </div>
 
-        <!-- Barra de Filtrado por CURP -->
         <div class="search-filter-box">
           <input type="text" id="filterCurpInput" placeholder="🔍 Filtrar usuario por CURP (18 caracteres)..." oninput="filterUsersByCurp()">
         </div>
@@ -232,7 +302,7 @@
       </div>
     </div>
 
-    <!-- ================= SUBMENÚ 3: GENERADOR DE TOKENS ================= -->
+    <!-- ================= SUBMENÚ 4: GENERADOR DE TOKENS ================= -->
     <div id="tabTokens" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
@@ -257,7 +327,6 @@
           </button>
         </div>
 
-        <!-- MUESTRA DEL TOKEN GENERADO -->
         <div id="generatedTokenBox" style="display: none; margin-top: 20px; background: rgba(0, 212, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px dashed #00d4ff;">
           <span style="color: #aaa; font-size: 0.75rem; display: block;">✓ Token Máster Creado Exitosamente:</span>
           <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
@@ -274,7 +343,6 @@
         </div>
       </div>
 
-      <!-- HISTORIAL DE TOKENS -->
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h3 style="color: #fff; font-size: 1.05rem;">
@@ -308,7 +376,7 @@
       </div>
     </div>
 
-    <!-- ================= SUBMENÚ 4: ALTA DE CO-ADMINISTRADORS SUPER ================= -->
+    <!-- ================= SUBMENÚ 5: ALTA DE CO-ADMINISTRADORS SUPER ================= -->
     <div id="tabCoAdmins" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,71,87,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
@@ -322,31 +390,31 @@
           <div class="form-grid">
             <div class="input-group">
               <label for="coCurp">CURP (Identificador)</label>
-              <input type="text" id="coCurp" maxlength="18" placeholder="18 caracteres" required style="text-transform: uppercase; width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+              <input type="text" id="coCurp" maxlength="18" placeholder="18 caracteres" required style="text-transform: uppercase;">
             </div>
             <div class="input-group">
               <label for="coNombre">Nombre(s)</label>
-              <input type="text" id="coNombre" placeholder="Nombre" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+              <input type="text" id="coNombre" placeholder="Nombre" required>
             </div>
             <div class="input-group">
               <label for="coApellidos">Apellidos</label>
-              <input type="text" id="coApellidos" placeholder="Apellidos" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+              <input type="text" id="coApellidos" placeholder="Apellidos" required>
             </div>
             <div class="input-group">
               <label for="coEmail">Correo Electrónico</label>
-              <input type="email" id="coEmail" placeholder="admin@reta.app" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+              <input type="email" id="coEmail" placeholder="admin@reta.app" required>
             </div>
             <div class="input-group">
               <label for="coPassword">Contraseña Temporal</label>
-              <input type="password" id="coPassword" placeholder="••••••••" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+              <input type="password" id="coPassword" placeholder="••••••••" required>
             </div>
             <div class="input-group">
               <label for="coTelefono">Teléfono Móvil</label>
-              <input type="tel" id="coTelefono" placeholder="445 123 4567" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+              <input type="tel" id="coTelefono" placeholder="445 123 4567" required>
             </div>
           </div>
 
-          <button type="submit" id="btnSaveCoAdmin" class="btn-login" style="background: linear-gradient(135deg, #ff4757, #ff6b81); margin-top: 10px;">
+          <button type="submit" id="btnSaveCoAdmin" class="btn-login" style="background: linear-gradient(135deg, #ff4757, #ff6b81); margin-top: 10px; width: 100%; border: none; padding: 12px; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer;">
             <i class="fa-solid fa-user-plus"></i> Registrar Co-Administrador Super
           </button>
         </form>
@@ -364,6 +432,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       loadSystemMetrics();
+      loadMasterLeaguesDirectory();
       loadGlobalUsersDirectory();
       loadActiveTokensHistory();
     });
@@ -377,7 +446,7 @@
       btnElement.classList.add('active');
     }
 
-    // 1. CARGAR MÉTRICAS Y ESTADÍSTICAS DEL SISTEMA
+    // 1. MÉTRICAS GLOBALES
     async function loadSystemMetrics() {
       try {
         const { count: usersCount, error: uErr } = await _supabase.from('usuarios').select('*', { count: 'exact', head: true });
@@ -402,7 +471,70 @@
       }
     }
 
-    // 2. DIRECTORIO GLOBAL DE USUARIOS Y FILTRADO POR CURP
+    // 2. CONTROL MAESTRO DE LIGAS
+    async function loadMasterLeaguesDirectory() {
+      const tbody = document.getElementById('masterLeaguesTableBody');
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando ligas...</td></tr>`;
+
+      try {
+        const { data: ligas, error } = await _supabase.from('ligas').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        if (!ligas || ligas.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #64748b; padding: 15px;">No hay ligas registradas en la infraestructura.</td></tr>`;
+          return;
+        }
+
+        let html = '';
+        ligas.forEach(l => {
+          html += `
+            <tr>
+              <td style="font-family: monospace; font-weight: bold; color: #00d4ff;">${l.clave_liga}</td>
+              <td style="color: #fff; font-weight: 600;">${l.nombre_liga}</td>
+              <td style="color: #94a3b8;">${l.municipio || 'S/C'}, ${l.estado || 'S/E'}</td>
+              <td><span class="status-pill status-active">ACTIVA</span></td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #ef4444;">Error al cargar ligas: ${err.message}</td></tr>`;
+      }
+    }
+
+    async function createMasterLeague() {
+      const nombre = document.getElementById('mlName').value.trim();
+      const clave = document.getElementById('mlKey').value.trim().toUpperCase();
+      const municipio = document.getElementById('mlCity').value.trim();
+      const estado = document.getElementById('mlState').value.trim();
+
+      const btn = document.getElementById('btnCreateLeague');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creando...`;
+
+      try {
+        const { error } = await _supabase.from('ligas').insert([{
+          nombre_liga: nombre,
+          clave_liga: clave,
+          municipio: municipio,
+          estado: estado
+        }]);
+
+        if (error) throw error;
+
+        alert(`✓ Liga "${nombre}" creada exitosamente en la infraestructura.`);
+        document.getElementById('masterLeagueForm').reset();
+        loadMasterLeaguesDirectory();
+        loadSystemMetrics();
+      } catch (err) {
+        alert("Error al crear la liga: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> Crear Liga en Infraestructura`;
+      }
+    }
+
+    // 3. VISOR DE USUARIOS
     async function loadGlobalUsersDirectory() {
       const tbody = document.getElementById('usersDirectoryTableBody');
       tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando usuarios...</td></tr>`;
@@ -413,7 +545,6 @@
 
         globalUsersCache = usuarios || [];
         renderUsersTable(globalUsersCache);
-
       } catch (err) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Error al cargar usuarios: ${err.message}</td></tr>`;
       }
@@ -453,7 +584,7 @@
       renderUsersTable(filtered);
     }
 
-    // 3. GENERAR TOKEN MÁSTER DESDE SUPERADMIN
+    // 4. TOKENS MÁSTER
     async function generateSuperToken() {
       const btn = document.querySelector('button[onclick="generateSuperToken()"]');
       btn.disabled = true;
@@ -476,9 +607,7 @@
 
         document.getElementById('displayTokenValue').innerText = generatedToken;
         document.getElementById('generatedTokenBox').style.display = 'block';
-
         loadActiveTokensHistory();
-
       } catch (err) {
         alert("Error al generar token máster: " + err.message);
       } finally {
@@ -487,7 +616,6 @@
       }
     }
 
-    // 4. HISTORIAL DE TOKENS
     async function loadActiveTokensHistory() {
       const tbody = document.getElementById('tokensTableBody');
       tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Consultando tokens...</td></tr>`;
@@ -526,15 +654,13 @@
             </tr>
           `;
         });
-
         tbody.innerHTML = html;
-
       } catch (err) {
         tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error al cargar tokens: ${err.message}</td></tr>`;
       }
     }
 
-    // 5. REGISTRAR NUEVO CO-ADMINISTRADOR SUPER
+    // 5. ALTA DE CO-ADMINS
     async function registerNewCoAdmin() {
       const curp = document.getElementById('coCurp').value.trim().toUpperCase();
       const nombre = document.getElementById('coNombre').value.trim();
@@ -570,7 +696,6 @@
         document.getElementById('coAdminForm').reset();
         loadGlobalUsersDirectory();
         loadSystemMetrics();
-
       } catch (err) {
         alert("Error al registrar Co-Admin: " + err.message);
       } finally {
