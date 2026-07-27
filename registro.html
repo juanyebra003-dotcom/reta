@@ -1645,7 +1645,7 @@
       }
     }
 
-    /* FUNCIÓN CORREGIDA CON MAPEO EXACTO DE LAS 3 TABLAS EN SUPABASE */
+    /* INSERCIÓN SÍNCRONA ACTUALIZADA CON NIVEL_CATEGORIA PARA ÁRBITROS */
     async function submitFullRegistrationToSupabase() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = document.getElementById('roleSelect').value;
@@ -1661,7 +1661,7 @@
       const photoUrl = localStorage.getItem('temp_player_photo') || '';
 
       try {
-        // 1. GUARDAR EN TABLA "usuarios" (sin el campo problemático rol_actual)
+        // 1. GUARDAR EN TABLA "usuarios"
         const userObj = {
           curp: curpVal,
           nombre: fname,
@@ -1682,7 +1682,7 @@
 
         if (uErr) console.error("Aviso guardando usuario:", uErr.message);
 
-        // 2. GUARDAR EN TABLA "fichas_medicas" (usando únicamente los campos comprobados)
+        // 2. GUARDAR EN TABLA "fichas_medicas"
         if (roleName === 'JUGADOR' || roleName === 'ARBITRO') {
           const { error: medErr } = await _supabase
             .from('fichas_medicas')
@@ -1697,17 +1697,19 @@
           if (medErr) console.error("Aviso guardando ficha médica:", medErr.message);
         }
 
-        // 3. SI ES ARBITRO: GUARDAR EN TABLA "expedientes_arbitros"
+        // 3. SI ES ÁRBITRO: GUARDAR EN TABLA "expedientes_arbitros" (Usando nivel_categoria)
         if (roleName === 'ARBITRO') {
-          await _supabase
+          const { error: arbErr } = await _supabase
             .from('expedientes_arbitros')
             .insert([{
               curp_arbitro: curpVal,
               colegio: document.getElementById('arbitroColegio').value.trim(),
-              nivel: document.getElementById('arbitroNivel').value,
+              nivel_categoria: document.getElementById('arbitroNivel').value,
               licencia: document.getElementById('arbitroLicencia').value.trim(),
               sede: document.getElementById('arbitroSede').value.trim()
             }]);
+
+          if (arbErr) console.error("Error guardando expediente de árbitro:", arbErr.message);
         }
 
         // DETERMINAR OBTENCIÓN DE LIGA O EQUIPO VÁLIDO
@@ -1738,20 +1740,22 @@
           if (newTeam) targetTeamId = newTeam.id;
         }
 
-        // 4. GUARDAR EN TABLA "equipo_jugadores" (Ajustado al esquema original de la imagen 1)
-        const officialCode = document.getElementById('credUniqueCode').innerText || generateOfficialRetaCode();
+        // 4. GUARDAR EN TABLA "equipo_jugadores" (Si aplica para rol jugador)
+        if (roleName === 'JUGADOR') {
+          const officialCode = document.getElementById('credUniqueCode').innerText || generateOfficialRetaCode();
 
-        const { error: eqErr } = await _supabase
-          .from('equipo_jugadores')
-          .insert([{
-            curp_jugador: curpVal,
-            equipo_id: targetTeamId,
-            codigo_reta: officialCode,
-            posicion_juego: 'DELANTERO',
-            numero_dorsal: '--'
-          }]);
+          const { error: eqErr } = await _supabase
+            .from('equipo_jugadores')
+            .insert([{
+              curp_jugador: curpVal,
+              equipo_id: targetTeamId,
+              codigo_reta: officialCode,
+              posicion_juego: 'DELANTERO',
+              numero_dorsal: '--'
+            }]);
 
-        if (eqErr) console.error("Aviso vinculando equipo_jugadores:", eqErr.message);
+          if (eqErr) console.error("Aviso vinculando equipo_jugadores:", eqErr.message);
+        }
 
         // MARCAR TOKEN DE INVITACIÓN COMO USADO SI APLICA
         if (verifiedContext.tokenCode) {
