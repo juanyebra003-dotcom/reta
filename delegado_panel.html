@@ -345,6 +345,19 @@
 
   <main class="main-container">
 
+    <!-- BARRA DE IDENTIFICACIÓN / LOGIN DE DELEGADO SI NO ESTÁ GUARDADO -->
+    <div id="delegadoAuthCard" style="background: rgba(0, 212, 255, 0.08); border: 1px solid var(--primary); padding: 12px; border-radius: 12px; margin-bottom: 15px;">
+      <label style="color: var(--primary); font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 6px;">
+        <i class="fa-solid fa-id-card"></i> IDENTIFICACIÓN DEL DELEGADO / D.T. (CURP):
+      </label>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="inputDelegadoCurp" placeholder="Ingresa tu CURP de Delegado" style="flex:1; padding:8px 12px; background:rgba(0,0,0,0.6); border:1px solid var(--border-color); border-radius:8px; color:#fff; text-transform:uppercase; font-size:0.85rem;">
+        <button type="button" onclick="saveDelegadoCurpAndLoad()" style="background:var(--primary); color:#000; font-weight:bold; border:none; padding:8px 15px; border-radius:8px; cursor:pointer; font-size:0.8rem;">
+          Cargar <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+      </div>
+    </div>
+
     <!-- Selector Contextual de Plantilla -->
     <div class="team-selector-card">
       <label><i class="fa-solid fa-layer-group"></i> Selecciona la Plantilla a Administrar:</label>
@@ -422,65 +435,164 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let currentDelegadoCurp = localStorage.getItem('reta_delegado_curp') || '';
     let currentTab = 'PENDIENTE';
     let loadedPlayers = [];
     let occupiedDorsals = new Set();
     let selectedPlayerForApproval = null;
 
     document.addEventListener('DOMContentLoaded', () => {
+      if (currentDelegadoCurp) {
+        document.getElementById('inputDelegadoCurp').value = currentDelegadoCurp;
+        document.getElementById('delegadoCurpDisplay').innerText = currentDelegadoCurp;
+      }
       loadDelegadoTeams();
     });
 
-    // 1. Cargar las Plantillas vinculadas al Delegado
+    function saveDelegadoCurpAndLoad() {
+      const val = document.getElementById('inputDelegadoCurp').value.trim().toUpperCase();
+      if (val) {
+        currentDelegadoCurp = val;
+        localStorage.setItem('reta_delegado_curp', currentDelegadoCurp);
+        document.getElementById('delegadoCurpDisplay').innerText = currentDelegadoCurp;
+        loadDelegadoTeams();
+      } else {
+        alert("Por favor ingresa una CURP de Delegado válida.");
+      }
+    }
+
+    // 1. Cargar las Plantillas vinculadas al Delegado (Consulta Robusta en Dos Pasos)
     async function loadDelegadoTeams() {
       const select = document.getElementById('teamSelect');
-      try {
-        const { data: equipos, error } = await _supabase
-          .from('equipos')
-          .select('id, nombre_equipo, categoria, ligas(nombre_liga)');
+      select.innerHTML = `<option value="" disabled selected>Consultando plantillas...</option>`;
 
-        if (equipos && equipos.length > 0) {
-          select.innerHTML = equipos.map(e => `
-            <option value="${e.id}">
-              ${e.ligas ? e.ligas.nombre_liga : 'Liga'} - ${e.nombre_equipo} (${e.categoria})
-            </option>
-          `).join('');
-          
-          loadTeamPlayers();
-        } else {
+      try {
+        // PASO A: Consultar tabla equipos
+        let query = _supabase.from('equipos').select('id, nombre_equipo, categoria, liga_id');
+        if (currentDelegadoCurp) {
+          query = query.eq('curp_delegado', currentDelegadoCurp);
+        }
+
+        let { data: equipos, error: eqErr } = await query;
+
+        // Fallback: Si no hay filtro por curp_delegado, obtener todos los equipos activos
+        if (eqErr || !equipos || equipos.length === 0) {
+          const { data: allEquipos } = await _supabase.from('equipos').select('id, nombre_equipo, categoria, liga_id');
+          equipos = allEquipos || [];
+        }
+
+        if (!equipos || equipos.length === 0) {
           select.innerHTML = `<option value="">No hay plantillas registradas</option>`;
           document.getElementById('playersListContainer').innerHTML = `
             <p style="text-align:center; color:var(--text-sub); margin-top:30px;">
               No tienes equipos asignados como Delegado.
             </p>`;
+          return;
         }
+
+        // PASO B: Consultar los nombres de ligas asociadas
+        const ligaIds = equipos.map(e => e.liga_id).filter(id => id);
+        let ligasDict = {};
+
+        if (ligaIds.length > 0) {
+          const { data: ligas } = await _supabase
+            .from('ligas')
+            .select('id, nombre_liga, clave_liga')
+            .in('id', ligaIds);
+
+          if (ligas) {
+            ligas.forEach(l => {
+              ligasDict[l.id] = l.nombre_liga || l.clave_liga;
+            });
+          }
+        }
+
+        select.innerHTML = equipos.map(e => {
+          const ligaNombre = ligasDict[e.liga_id] || 'Liga RETA';
+          return `<option value="${e.id}">${ligaNombre} - ${e.nombre_equipo} (${e.categoria || 'Libre'})</option>`;
+        }).join('');
+        
+        loadTeamPlayers();
+
       } catch (err) {
         console.error("Error al cargar plantillas:", err);
+        select.innerHTML = `<option value="">Error al cargar equipos</option>`;
       }
     }
 
-    // 2. Cargar Jugadores de la Plantilla Seleccionada
+    // 2. Cargar Jugadores de la Plantilla Seleccionada (Consulta Secuencial para evadir errores RLS/JOIN)
     async function loadTeamPlayers() {
       const equipoId = document.getElementById('teamSelect').value;
       if (!equipoId) return;
 
       const container = document.getElementById('playersListContainer');
-      container.innerHTML = `<p style="text-align:center; color:var(--text-sub); margin-top:20px;">Cargando plantilla...</p>`;
+      container.innerHTML = `<p style="text-align:center; color:var(--text-sub); margin-top:20px;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando plantilla...</p>`;
 
       try {
-        const { data, error } = await _supabase
+        // PASO A: Obtener registros en equipo_jugadores
+        const { data: relaciones, error: relErr } = await _supabase
           .from('equipo_jugadores')
-          .select('*, usuarios(*)')
+          .select('*')
           .eq('equipo_id', equipoId);
 
-        if (error) throw error;
+        if (relErr) throw relErr;
 
-        loadedPlayers = data || [];
-        
+        if (!relaciones || relaciones.length === 0) {
+          loadedPlayers = [];
+          updateCounters();
+          renderPlayersList();
+          return;
+        }
+
+        // PASO B: Obtener datos biográficos de los usuarios
+        const userIds = relaciones.map(r => r.usuario_id).filter(id => id);
+        const curps = relaciones.map(r => r.curp_jugador).filter(c => c);
+
+        let usuariosDict = {};
+
+        if (userIds.length > 0 || curps.length > 0) {
+          let uQuery = _supabase.from('usuarios').select('id, curp, nombre, apellidos, edad, foto_url');
+          if (userIds.length > 0) {
+            uQuery = uQuery.in('id', userIds);
+          } else {
+            uQuery = uQuery.in('curp', curps);
+          }
+
+          const { data: usuariosData } = await uQuery;
+
+          if (usuariosData) {
+            usuariosData.forEach(u => {
+              if (u.id) usuariosDict[u.id] = u;
+              if (u.curp) usuariosDict[u.curp] = u;
+            });
+          }
+        }
+
+        // Combinar información en memoria
+        loadedPlayers = relaciones.map(rel => {
+          const uInfo = usuariosDict[rel.usuario_id] || usuariosDict[rel.curp_jugador] || {
+            nombre: rel.nombre_jugador || 'Jugador',
+            apellidos: rel.apellidos_jugador || '',
+            curp: rel.curp_jugador || '---',
+            edad: '--'
+          };
+
+          // Normalizar estatus
+          let estatusNorm = (rel.estatus_delegado || rel.estatus || 'PENDIENTE').toUpperCase();
+          if (estatusNorm.includes('PENDIENTE')) estatusNorm = 'PENDIENTE';
+          else if (estatusNorm.includes('APROBADO') || estatusNorm.includes('OFICIAL')) estatusNorm = 'APROBADO';
+
+          return {
+            ...rel,
+            estatus_delegado: estatusNorm,
+            usuarios: uInfo
+          };
+        });
+
         // Mapear dorsales ocupados únicamente en ESTA plantilla
         occupiedDorsals = new Set(
           loadedPlayers
-            .filter(p => p.estatus_delegado === 'APROBADO' && p.numero_dorsal !== '#--')
+            .filter(p => p.estatus_delegado === 'APROBADO' && p.numero_dorsal && p.numero_dorsal !== '#--')
             .map(p => p.numero_dorsal.toString())
         );
 
@@ -563,8 +675,8 @@
       if (!selectedPlayerForApproval) return;
 
       const u = selectedPlayerForApproval.usuarios || {};
-      document.getElementById('modalPlayerName').innerText = `${u.nombre} ${u.apellidos} (${u.curp})`;
-      document.getElementById('modalDorsalInput').value = selectedPlayerForApproval.numero_dorsal !== '#--' ? selectedPlayerForApproval.numero_dorsal : '';
+      document.getElementById('modalPlayerName').innerText = `${u.nombre || ''} ${u.apellidos || ''} (${u.curp || ''})`;
+      document.getElementById('modalDorsalInput').value = (selectedPlayerForApproval.numero_dorsal && selectedPlayerForApproval.numero_dorsal !== '#--') ? selectedPlayerForApproval.numero_dorsal : '';
       
       buildDorsalGrid();
       document.getElementById('approvalModal').style.display = 'flex';
@@ -574,10 +686,11 @@
       const grid = document.getElementById('dorsalGridContainer');
       grid.innerHTML = '';
 
+      const currentDorsalStr = (selectedPlayerForApproval && selectedPlayerForApproval.numero_dorsal) ? selectedPlayerForApproval.numero_dorsal.toString() : '';
+
       for (let i = 1; i <= 99; i++) {
         const numStr = i.toString();
-        const isOccupied = occupiedDorsals.has(numStr) && 
-          (selectedPlayerForApproval.numero_dorsal.toString() !== numStr);
+        const isOccupied = occupiedDorsals.has(numStr) && (currentDorsalStr !== numStr);
 
         const item = document.createElement('div');
         item.className = `dorsal-item ${isOccupied ? 'occupied' : 'free'}`;
@@ -601,8 +714,8 @@
       const alertBox = document.getElementById('dorsalAlert');
       const btn = document.getElementById('btnConfirmApproval');
 
-      const isOccupied = occupiedDorsals.has(valStr) && 
-        (selectedPlayerForApproval.numero_dorsal.toString() !== valStr);
+      const currentDorsalStr = (selectedPlayerForApproval && selectedPlayerForApproval.numero_dorsal) ? selectedPlayerForApproval.numero_dorsal.toString() : '';
+      const isOccupied = occupiedDorsals.has(valStr) && (currentDorsalStr !== valStr);
 
       if (isOccupied) {
         alertBox.style.display = 'block';
