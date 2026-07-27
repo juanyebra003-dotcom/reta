@@ -29,7 +29,7 @@
     /* Sistema de Submenús / Pestañas */
     .super-admin-nav {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 25px;
       flex-wrap: wrap;
       background: rgba(255, 255, 255, 0.03);
@@ -41,15 +41,15 @@
       background: transparent;
       border: none;
       color: #94a3b8;
-      padding: 10px 16px;
+      padding: 10px 14px;
       border-radius: 10px;
       font-weight: 600;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       cursor: pointer;
       transition: all 0.25s ease;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .nav-tab-btn:hover {
       color: #fff;
@@ -125,7 +125,7 @@
     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
   </a>
 
-  <div class="login-container full-register-container" style="max-width: 1100px; margin: 30px auto;">
+  <div class="login-container full-register-container" style="max-width: 1150px; margin: 30px auto;">
     
     <!-- ENCABEZADO -->
     <div class="login-header">
@@ -133,7 +133,7 @@
         <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
       </div>
       <h2>Super Panel Central <span class="text-gradient">RETA Pro App</span></h2>
-      <p id="panelSubHeader">Control Maestro de Infraestructura Global y Reglas de Negocio</p>
+      <p id="panelSubHeader">Control Maestro y Auditoría Operativa Global</p>
     </div>
 
     <!-- CREDENCIAL DE ACCESO -->
@@ -150,26 +150,29 @@
       </div>
     </div>
 
-    <!-- MENÚ DE SUBMENÚS (PESTAÑAS DE NAVEGACIÓN) -->
+    <!-- MENÚ DE SUBMENÚS (PESTAÑAS DE NAVEGACIÓN AMPLIADO) -->
     <div class="super-admin-nav">
       <button type="button" class="nav-tab-btn active" onclick="switchAdminTab('tabMetrics', this)">
         <i class="fa-solid fa-chart-pie"></i> 1. Métricas
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabLeagues', this)">
-        <i class="fa-solid fa-trophy"></i> 2. Control de Ligas
+        <i class="fa-solid fa-trophy"></i> 2. Ligas
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabUsers', this)">
-        <i class="fa-solid fa-address-book"></i> 3. Visor Usuarios
+        <i class="fa-solid fa-address-book"></i> 3. Usuarios
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabTokens', this)">
-        <i class="fa-solid fa-key"></i> 4. Tokens Máster
+        <i class="fa-solid fa-key"></i> 4. Tokens
       </button>
-      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabCoAdmins', this)">
-        <i class="fa-solid fa-user-gear"></i> 5. Alta Co-Admins
+      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabCedulas', this)">
+        <i class="fa-solid fa-file-contract"></i> 5. Cédulas & Partidos
+      </button>
+      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabStatsRules', this)">
+        <i class="fa-solid fa-gavel"></i> 6. Estadísticas & Sanciones
       </button>
     </div>
 
-    <!-- ================= SUBMENÚ 1: DASHBOARD Y MÉTRICAS ================= -->
+    <!-- ================= 1. MÉTRICAS ================= -->
     <div id="tabMetrics" class="admin-section-panel active">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 15px;">
@@ -200,21 +203,20 @@
       </div>
     </div>
 
-    <!-- ================= SUBMENÚ 2: CONTROL MAESTRO DE LIGAS ================= -->
+    <!-- ================= 2. CONTROL DE LIGAS ================= -->
     <div id="tabLeagues" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <h3 style="color: #fff; font-size: 1.1rem;">
-            <i class="fa-solid fa-shield-cat" style="color: #00d4ff;"></i> Directorio y Alta de Ligas en el Sistema
+            <i class="fa-solid fa-shield-cat" style="color: #00d4ff;"></i> Directorio y Alta de Ligas (Tabla `ligas`)
           </h3>
           <button type="button" onclick="loadMasterLeaguesDirectory()" class="btn-sm-action">
-            <i class="fa-solid fa-rotate-right"></i> Actualizar Ligas
+            <i class="fa-solid fa-rotate-right"></i> Actualizar
           </button>
         </div>
 
-        <!-- Formulario exprés para dar de alta liga desde Superadmin si es necesario -->
         <div style="background: rgba(0,212,255,0.05); padding: 15px; border-radius: 10px; border: 1px dashed rgba(0,212,255,0.3); margin-bottom: 20px;">
-          <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-plus-circle"></i> Alta Directa de Liga por Superadmin</h4>
+          <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-plus-circle"></i> Alta Directa de Liga</h4>
           <form id="masterLeagueForm" onsubmit="event.preventDefault(); createMasterLeague();">
             <div class="form-grid">
               <div class="input-group">
@@ -235,7 +237,7 @@
               </div>
             </div>
             <button type="submit" id="btnCreateLeague" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold; padding: 8px 16px; margin-top: 5px;">
-              <i class="fa-solid fa-check"></i> Crear Liga en Infraestructura
+              <i class="fa-solid fa-check"></i> Registrar Liga
             </button>
           </form>
         </div>
@@ -247,13 +249,13 @@
                 <th>Clave Liga</th>
                 <th>Nombre Oficial</th>
                 <th>Sede (Municipio, Estado)</th>
-                <th>Acciones / Estatus</th>
+                <th>Estatus</th>
               </tr>
             </thead>
             <tbody id="masterLeaguesTableBody">
               <tr>
                 <td colspan="4" style="text-align: center; color: #64748b; padding: 15px;">
-                  Cargando ligas maestras...
+                  Cargando ligas...
                 </td>
               </tr>
             </tbody>
@@ -262,15 +264,15 @@
       </div>
     </div>
 
-    <!-- ================= SUBMENÚ 3: VISOR GLOBAL DE USUARIOS ================= -->
+    <!-- ================= 3. VISOR DE USUARIOS ================= -->
     <div id="tabUsers" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <h3 style="color: #fff; font-size: 1.1rem;">
-            <i class="fa-solid fa-address-book" style="color: #00d4ff;"></i> Directorio General de Usuarios Registrados
+            <i class="fa-solid fa-address-book" style="color: #00d4ff;"></i> Directorio General de Usuarios (Tabla `usuarios`)
           </h3>
           <button type="button" onclick="loadGlobalUsersDirectory()" class="btn-sm-action">
-            <i class="fa-solid fa-rotate-right"></i> Refrescar Directorio
+            <i class="fa-solid fa-rotate-right"></i> Refrescar
           </button>
         </div>
 
@@ -293,7 +295,7 @@
             <tbody id="usersDirectoryTableBody">
               <tr>
                 <td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">
-                  Cargando base de datos de usuarios...
+                  Cargando usuarios...
                 </td>
               </tr>
             </tbody>
@@ -302,14 +304,14 @@
       </div>
     </div>
 
-    <!-- ================= SUBMENÚ 4: GENERADOR DE TOKENS ================= -->
+    <!-- ================= 4. TOKENS MÁSTER ================= -->
     <div id="tabTokens" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
-          <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens para Administradores Titulares (Admin 1)
+          <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens (`invitaciones_sistema`)
         </h3>
         <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 18px;">
-          Emite fichas de invitación directas para permitir que nuevos directivos den de alta sus ligas en el sistema.
+          Emite invitaciones para Administradores Titulares (Admin 1).
         </p>
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
@@ -318,7 +320,7 @@
               Rol de Destino Autorizado:
             </label>
             <select id="tokenRoleSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
-              <option value="ADMIN_LIGA" selected>👑 Administrador Titular de Liga (Admin 1 - Alta de Liga)</option>
+              <option value="ADMIN_LIGA" selected>👑 Administrador Titular de Liga (Admin 1)</option>
             </select>
           </div>
 
@@ -328,7 +330,7 @@
         </div>
 
         <div id="generatedTokenBox" style="display: none; margin-top: 20px; background: rgba(0, 212, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px dashed #00d4ff;">
-          <span style="color: #aaa; font-size: 0.75rem; display: block;">✓ Token Máster Creado Exitosamente:</span>
+          <span style="color: #aaa; font-size: 0.75rem; display: block;">✓ Token Creado:</span>
           <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
             <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.4rem; letter-spacing: 2px; font-family: monospace;">---</strong>
             <div style="display: flex; gap: 8px;">
@@ -346,7 +348,7 @@
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h3 style="color: #fff; font-size: 1.05rem;">
-            <i class="fa-solid fa-list-check" style="color: #00d4ff;"></i> Historial de Tokens Máster Emitidos
+            <i class="fa-solid fa-list-check" style="color: #00d4ff;"></i> Historial de Tokens Emitidos
           </h3>
           <button type="button" onclick="loadActiveTokensHistory()" class="btn-sm-action">
             <i class="fa-solid fa-rotate-right"></i> Actualizar
@@ -367,7 +369,7 @@
             <tbody id="tokensTableBody">
               <tr>
                 <td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">
-                  Cargando tokens emitidos...
+                  Cargando tokens...
                 </td>
               </tr>
             </tbody>
@@ -376,48 +378,51 @@
       </div>
     </div>
 
-    <!-- ================= SUBMENÚ 5: ALTA DE CO-ADMINISTRADORS SUPER ================= -->
-    <div id="tabCoAdmins" class="admin-section-panel">
-      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,71,87,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+    <!-- ================= 5. CÉDULAS & PARTIDOS (MONITOREO GLOBAL) ================= -->
+    <div id="tabCedulas" class="admin-section-panel">
+      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
-          <i class="fa-solid fa-user-shield" style="color: #ff4757;"></i> Registro de Nuevo Co-Administrador Super (Global)
+          <i class="fa-solid fa-file-contract" style="color: #00d4ff;"></i> Auditoría de Cédulas Arbitrales y Marcadores en Tiempo Real
         </h3>
         <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 20px;">
-          Da de alta a operadores con privilegios de gestión global en la infraestructura de RETA Pro App.
+          Supervisa el estatus de las 3 fases de la cédula y la sincronización con el marcador global del `index`.
         </p>
 
-        <form id="coAdminForm" onsubmit="event.preventDefault(); registerNewCoAdmin();">
-          <div class="form-grid">
-            <div class="input-group">
-              <label for="coCurp">CURP (Identificador)</label>
-              <input type="text" id="coCurp" maxlength="18" placeholder="18 caracteres" required style="text-transform: uppercase;">
-            </div>
-            <div class="input-group">
-              <label for="coNombre">Nombre(s)</label>
-              <input type="text" id="coNombre" placeholder="Nombre" required>
-            </div>
-            <div class="input-group">
-              <label for="coApellidos">Apellidos</label>
-              <input type="text" id="coApellidos" placeholder="Apellidos" required>
-            </div>
-            <div class="input-group">
-              <label for="coEmail">Correo Electrónico</label>
-              <input type="email" id="coEmail" placeholder="admin@reta.app" required>
-            </div>
-            <div class="input-group">
-              <label for="coPassword">Contraseña Temporal</label>
-              <input type="password" id="coPassword" placeholder="••••••••" required>
-            </div>
-            <div class="input-group">
-              <label for="coTelefono">Teléfono Móvil</label>
-              <input type="tel" id="coTelefono" placeholder="445 123 4567" required>
-            </div>
-          </div>
-
-          <button type="submit" id="btnSaveCoAdmin" class="btn-login" style="background: linear-gradient(135deg, #ff4757, #ff6b81); margin-top: 10px; width: 100%; border: none; padding: 12px; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer;">
-            <i class="fa-solid fa-user-plus"></i> Registrar Co-Administrador Super
+        <div style="background: rgba(0,212,255,0.06); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,212,255,0.2); text-align: center;">
+          <i class="fa-solid fa-futbol" style="font-size: 2.5rem; color: #00d4ff; margin-bottom: 10px;"></i>
+          <h4 style="color: #fff; margin-bottom: 6px;">Módulo de Sincronización en Directo</h4>
+          <p style="color: #94a3b8; font-size: 0.85rem; max-width: 600px; margin: 0 auto 15px auto;">
+            Aquí se reflejarán los partidos en curso, goles minuto a minuto y las firmas digitales de validación (Árbitro, Equipo A y Equipo B).
+          </p>
+          <button type="button" onclick="alert('Módulo de cédulas en vivo sincronizado con la infraestructura principal.')" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold; padding: 10px 20px;">
+            <i class="fa-solid fa-sync"></i> Verificar Conexión de Partidos
           </button>
-        </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 6. ESTADÍSTICAS & SANCIONES (REGLAS DE NEGOCIO) ================= -->
+    <div id="tabStatsRules" class="admin-section-panel">
+      <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,71,87,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
+        <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
+          <i class="fa-solid fa-gavel" style="color: #ff4757;"></i> Configuración de Reglas de Sanción y Fair Play
+        </h3>
+        <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 20px;">
+          Establece los criterios automáticos que el sistema aplicará para bloquear jugadores por acumulación de tarjetas.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+          <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+            <h4 style="color: #f1c40f; font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-square" style="color: #f1c40f;"></i> Acumulación de Amarillas</h4>
+            <p style="color: #94a3b8; font-size: 0.78rem; margin-bottom: 10px;">Número de tarjetas amarillas que generan 1 partido de suspensión automática.</p>
+            <input type="number" value="3" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; border-radius: 6px; color: #fff; text-align: center;">
+          </div>
+          <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+            <h4 style="color: #e74c3c; font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-square" style="color: #e74c3c;"></i> Tarjeta Roja Directa</h4>
+            <p style="color: #94a3b8; font-size: 0.78rem; margin-bottom: 10px;">Partidos de suspensión base por expulsión con roja directa.</p>
+            <input type="number" value="1" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; border-radius: 6px; color: #fff; text-align: center;">
+          </div>
+        </div>
       </div>
     </div>
 
@@ -471,13 +476,13 @@
       }
     }
 
-    // 2. CONTROL MAESTRO DE LIGAS
+    // 2. CONTROL MAESTRO DE LIGAS (SIN CRITERIO CREATED_AT INEXISTENTE)
     async function loadMasterLeaguesDirectory() {
       const tbody = document.getElementById('masterLeaguesTableBody');
       tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando ligas...</td></tr>`;
 
       try {
-        const { data: ligas, error } = await _supabase.from('ligas').select('*').order('created_at', { ascending: false });
+        const { data: ligas, error } = await _supabase.from('ligas').select('*');
         if (error) throw error;
 
         if (!ligas || ligas.length === 0) {
@@ -489,7 +494,7 @@
         ligas.forEach(l => {
           html += `
             <tr>
-              <td style="font-family: monospace; font-weight: bold; color: #00d4ff;">${l.clave_liga}</td>
+              <td style="font-family: monospace; font-weight: bold; color: #00d4ff;">${l.clave_liga || l.id}</td>
               <td style="color: #fff; font-weight: 600;">${l.nombre_liga}</td>
               <td style="color: #94a3b8;">${l.municipio || 'S/C'}, ${l.estado || 'S/E'}</td>
               <td><span class="status-pill status-active">ACTIVA</span></td>
@@ -522,7 +527,7 @@
 
         if (error) throw error;
 
-        alert(`✓ Liga "${nombre}" creada exitosamente en la infraestructura.`);
+        alert(`✓ Liga "${nombre}" creada exitosamente.`);
         document.getElementById('masterLeagueForm').reset();
         loadMasterLeaguesDirectory();
         loadSystemMetrics();
@@ -530,7 +535,7 @@
         alert("Error al crear la liga: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-check"></i> Crear Liga en Infraestructura`;
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> Registrar Liga`;
       }
     }
 
@@ -540,7 +545,7 @@
       tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando usuarios...</td></tr>`;
 
       try {
-        const { data: usuarios, error } = await _supabase.from('usuarios').select('*').order('created_at', { ascending: false });
+        const { data: usuarios, error } = await _supabase.from('usuarios').select('*');
         if (error) throw error;
 
         globalUsersCache = usuarios || [];
@@ -623,8 +628,7 @@
       try {
         const { data: tokens, error } = await _supabase
           .from('invitaciones_sistema')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select('*');
 
         if (error) throw error;
 
@@ -637,7 +641,7 @@
         tokens.forEach(t => {
           const statusClass = t.usado ? 'status-used' : 'status-active';
           const statusText = t.usado ? 'UTILIZADO' : 'ACTIVO';
-          const dateStr = new Date(t.created_at).toLocaleDateString() + ' ' + new Date(t.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+          const dateStr = t.created_at ? (new Date(t.created_at).toLocaleDateString() + ' ' + new Date(t.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})) : 'N/D';
 
           html += `
             <tr>
@@ -657,50 +661,6 @@
         tbody.innerHTML = html;
       } catch (err) {
         tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error al cargar tokens: ${err.message}</td></tr>`;
-      }
-    }
-
-    // 5. ALTA DE CO-ADMINS
-    async function registerNewCoAdmin() {
-      const curp = document.getElementById('coCurp').value.trim().toUpperCase();
-      const nombre = document.getElementById('coNombre').value.trim();
-      const apellidos = document.getElementById('coApellidos').value.trim();
-      const email = document.getElementById('coEmail').value.trim();
-      const password = document.getElementById('coPassword').value;
-      const telefono = document.getElementById('coTelefono').value.trim();
-
-      if (curp.length !== 18) {
-        alert("La CURP debe contener 18 caracteres exactos.");
-        return;
-      }
-
-      const btn = document.getElementById('btnSaveCoAdmin');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando en Supabase...`;
-
-      try {
-        const { error } = await _supabase
-          .from('usuarios')
-          .upsert([{
-            curp: curp,
-            nombre: nombre,
-            apellidos: apellidos,
-            email: email,
-            password: password,
-            telefono: telefono
-          }], { onConflict: 'curp' });
-
-        if (error) throw error;
-
-        alert(`✓ Co-Administrador Super registrado correctamente con CURP: ${curp}`);
-        document.getElementById('coAdminForm').reset();
-        loadGlobalUsersDirectory();
-        loadSystemMetrics();
-      } catch (err) {
-        alert("Error al registrar Co-Admin: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Registrar Co-Administrador Super`;
       }
     }
 
