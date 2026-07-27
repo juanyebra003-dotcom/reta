@@ -1290,7 +1290,6 @@
       document.getElementById('formContainer').style.display = 'none';
     }
 
-    // CARGA LIGAS DESDE SUPABASE Y ASIGNA UUID CORRECTO AL VALUE
     async function loadLigasFromSupabase() {
       const select = document.getElementById('leagueSelect');
       const delSelect = document.getElementById('delegadoLeague');
@@ -1578,12 +1577,16 @@
 
       const officialRetaCode = generateOfficialRetaCode();
 
+      // SINCRONIZACIÓN DE FOTO CORREGIDA PARA CUALQUIER ROL (INCLUYENDO ÁRBITROS)
       const savedPhoto = localStorage.getItem('temp_player_photo');
+      const previewImg = document.getElementById('playerPhotoPreview');
+      const targetCredPhoto = document.getElementById('credPlayerPhoto');
+
       if (savedPhoto) {
-        document.getElementById('credPlayerPhoto').src = savedPhoto;
-      } else {
-        const previewSrc = document.getElementById('playerPhotoPreview').src;
-        if (previewSrc) document.getElementById('credPlayerPhoto').src = previewSrc;
+        targetCredPhoto.src = savedPhoto;
+        previewImg.src = savedPhoto;
+      } else if (previewImg && previewImg.src) {
+        targetCredPhoto.src = previewImg.src;
       }
 
       const roleIndicator = document.getElementById('roleColorIndicator');
@@ -1645,7 +1648,7 @@
       }
     }
 
-    /* INSERCIÓN SÍNCRONA ACTUALIZADA CON NIVEL_CATEGORIA PARA ÁRBITROS */
+    /* INSERCIÓN SÍNCRONA LIMPIA (SIN LA COLUMNA LICENCIA INEXISTENTE) */
     async function submitFullRegistrationToSupabase() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = document.getElementById('roleSelect').value;
@@ -1697,7 +1700,7 @@
           if (medErr) console.error("Aviso guardando ficha médica:", medErr.message);
         }
 
-        // 3. SI ES ÁRBITRO: GUARDAR EN TABLA "expedientes_arbitros" (Usando nivel_categoria)
+        // 3. SI ES ÁRBITRO: GUARDAR EN TABLA "expedientes_arbitros" (Removido campo 'licencia' que no existe en tabla)
         if (roleName === 'ARBITRO') {
           const { error: arbErr } = await _supabase
             .from('expedientes_arbitros')
@@ -1705,7 +1708,6 @@
               curp_arbitro: curpVal,
               colegio: document.getElementById('arbitroColegio').value.trim(),
               nivel_categoria: document.getElementById('arbitroNivel').value,
-              licencia: document.getElementById('arbitroLicencia').value.trim(),
               sede: document.getElementById('arbitroSede').value.trim()
             }]);
 
