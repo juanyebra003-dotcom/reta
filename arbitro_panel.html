@@ -10,24 +10,28 @@
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    /* CONTENEDOR CONTRA FLEXBOX GLOBAL DEL BODY */
-    .body-wrapper-fix {
+    /* ANULACIÓN ABSOLUTA DE FLEXBOX EN BODY PARA EVITAR QUE SE VAYAN A UN COSTADO */
+    body.login-body {
       display: block !important;
-      width: 100% !important;
+      flex-direction: unset !important;
+      align-items: unset !important;
+      justify-content: unset !important;
+      padding: 10px;
       box-sizing: border-box;
-      padding: 0 10px;
     }
 
-    /* BARRA SUPERIOR DE SUBMENÚS */
+    /* BARRA SUPERIOR DE SUBMENÚS (100% ANCHO Y ARRIBA DE TODO) */
     .arbitro-top-nav-wrapper {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 15px auto 15px auto;
+      width: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      margin: 10px 0 20px 0 !important;
+      box-sizing: border-box;
     }
     .arbitro-nav-tabs {
-      display: flex;
+      display: flex !important;
+      flex-direction: row !important;
       gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
@@ -132,19 +136,17 @@
 </head>
 <body class="login-body">
 
-  <div class="body-wrapper-fix">
-    <a href="admin_super_panel.html" class="btn-back" style="display:inline-block; margin-bottom:10px;">
-      <i class="fa-solid fa-arrow-left"></i> Volver al Panel
-    </a>
+  <a href="admin_super_panel.html" class="btn-back" style="display:inline-block; margin: 10px 0;">
+    <i class="fa-solid fa-arrow-left"></i> Volver al Panel
+  </a>
 
-    <!-- SECCIÓN DE SUBMENÚS ARRIBA DEL ACTA DE JUEGO OFICIAL -->
-    <div class="arbitro-top-nav-wrapper">
-      <div class="arbitro-nav-tabs">
-        <button type="button" class="nav-tab-btn active" onclick="cambiarSeccion('cedula', this)"><i class="fa-solid fa-file-lines"></i> Cédula Arbitral Activa</button>
-        <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('jugadores', this)"><i class="fa-solid fa-users-viewfinder"></i> Estatus de Jugadores</button>
-        <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('designaciones', this)"><i class="fa-solid fa-calendar-check"></i> Mis Designaciones</button>
-        <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('ranking', this)"><i class="fa-solid fa-star"></i> Ranking y Evaluaciones</button>
-      </div>
+  <!-- SECCIÓN DE SUBMENÚS COLOCADA ARRIBA DE TODO -->
+  <div class="arbitro-top-nav-wrapper">
+    <div class="arbitro-nav-tabs">
+      <button type="button" class="nav-tab-btn active" onclick="cambiarSeccion('cedula', this)"><i class="fa-solid fa-file-lines"></i> Cédula Arbitral Activa</button>
+      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('jugadores', this)"><i class="fa-solid fa-users-viewfinder"></i> Estatus de Jugadores</button>
+      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('designaciones', this)"><i class="fa-solid fa-calendar-check"></i> Mis Designaciones</button>
+      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('ranking', this)"><i class="fa-solid fa-star"></i> Ranking y Evaluaciones</button>
     </div>
   </div>
 
