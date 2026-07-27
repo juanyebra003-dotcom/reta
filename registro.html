@@ -307,22 +307,18 @@
 
         <form id="fullRegisterForm" onsubmit="event.preventDefault();">
 
-          <!-- ================= PASO 1: IDENTIFICACIÓN Y DATOS GENERALES ================= -->
+          <!-- ================= PASO 1: IDENTIFICACIÓN Y DATOS PERSONALES ================= -->
           <div class="wizard-step active" id="wizard-step-1">
             <h3 class="step-title"><i class="fa-solid fa-id-card"></i> Paso 1: Identificación y Datos Personales</h3>
             
-            <div class="form-row" style="margin-bottom: 20px;">
-              <div class="input-group">
-                <label for="roleSelect"><i class="fa-solid fa-user-shield"></i> Rol con el que te Registras en la Plataforma (*)</label>
-                <select id="roleSelect" required onchange="handleRoleSelectionChange()">
-                  <option value="JUGADOR" selected>⚽ Jugador / Atleta</option>
-                  <option value="DELEGADO">📋 Delegado / Director Técnico</option>
-                  <option value="ARBITRO">🏁 Árbitro / Colegiado</option>
-                  <option value="SUPERVISOR">👁️ Administrador Pro RETA / Supervisor</option>
-                  <option value="ADMIN_LIGA">👑 Administrador / Propietario de Liga</option>
-                </select>
-              </div>
-            </div>
+            <!-- CAMPO DE SELECCIÓN DE ROL OCULTO (SE DEFINE EN EL PASO INICIAL AUTOMÁTICAMENTE) -->
+            <select id="roleSelect" required onchange="handleRoleSelectionChange()" style="display: none;">
+              <option value="JUGADOR" selected>⚽ Jugador / Atleta</option>
+              <option value="DELEGADO">📋 Delegado / Director Técnico</option>
+              <option value="ARBITRO">🏁 Árbitro / Colegiado</option>
+              <option value="SUPERVISOR">👁️ Administrador Pro RETA / Supervisor</option>
+              <option value="ADMIN_LIGA">👑 Administrador / Propietario de Liga</option>
+            </select>
 
             <!-- SECCIÓN CON TOKEN PRECARGADO Y VALIDADO -->
             <div id="adminAuthCodeSection" class="form-row" style="display: none; background: rgba(0,212,255,0.08); padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
@@ -1124,7 +1120,7 @@
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE PARTICIPACIÓN, ASUNCIÓN DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR Y ÁRBITROS:</strong> Autorizo voluntariamente la participación del menor bajo mi tutela en las jornadas deportivas del torneo. Reconozco que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto (tales como esguinces, fracturas, contusiones o eventualidades mayores). Por ende, bajo la figura de asunción de riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES Y PROPIETARIOS DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, daño patrimonial o eventualidad que sufra el menor antes, durante o después de los partidos o traslados.</li>
               <li style="margin-bottom: 6px;"><strong>DECLARACIÓN DE APTITUD FÍSICA Y SALUD DEL MENOR:</strong> Declaro bajo protesta de decir verdad que el menor se encuentra en estado óptimo de salud física, mental y cardiovascular para la práctica de deporte competitivo. Confirmo que no padece padecimientos preexistentes, afecciones cardíacas, neurológicas ni secuelas de lesiones no consolidadas. Asumo la responsabilidad legal absoluta en caso de omisión u ocultamiento de información médica del menor.</li>
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de emergencia médica o traumatismo del menor durante el evento, autorizo expresamente al personal médico o delegados a brindarle primeros auxilios o trasladarlo a un centro hospitalario. Acepto que los gastos médicos, farmacéuticos y hospitalarios serán cubiertos en su totalidad por mi persona o por mi esquema de seguro médico, deslindando a la organización y a RETA PRO APP de cualquier responsabilidad económica.</li>
-              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines strictly administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
+              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines estrictamente administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
             </ol>
 
             <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
