@@ -483,6 +483,18 @@
               </div>
             </div>
 
+            <!-- CAMPOS NUEVOS: CONTRASEÑA Y DOBLE VALIDACIÓN -->
+            <div class="form-row">
+              <div class="input-group">
+                <label for="userPassword"><i class="fa-solid fa-lock"></i> Contraseña de Acceso (*)</label>
+                <input type="password" id="userPassword" placeholder="••••••••" required onchange="playBeepSound()">
+              </div>
+              <div class="input-group">
+                <label for="userPasswordConfirm"><i class="fa-solid fa-lock"></i> Confirmar Contraseña (*)</label>
+                <input type="password" id="userPasswordConfirm" placeholder="••••••••" required onchange="playBeepSound()">
+              </div>
+            </div>
+
             <div class="terms-container">
               <label class="custom-checkbox-row">
                 <input type="checkbox" id="verifyEmailCheckbox" required onchange="playBeepSound()">
@@ -1467,15 +1479,22 @@
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
       const emailVal = document.getElementById('userEmail').value.trim();
+      const passVal = document.getElementById('userPassword').value;
+      const passConfirmVal = document.getElementById('userPasswordConfirm').value;
       const ageVal = parseInt(document.getElementById('age').value) || 0;
 
-      if (!fname || !lname || !curpVal || !emailVal) {
+      if (!fname || !lname || !curpVal || !emailVal || !passVal) {
         alert("Por favor completa los campos obligatorios.");
         return;
       }
 
       if (curpVal.length !== 18) {
         alert("La CURP debe contener 18 caracteres exactos.");
+        return;
+      }
+
+      if (passVal !== passConfirmVal) {
+        alert("🛑 Las contraseñas no coinciden. Por favor verifícalas.");
         return;
       }
 
@@ -1510,6 +1529,7 @@
         nombre: fname,
         apellidos: lname,
         email: emailVal,
+        password: passVal,
         telefono: document.getElementById('userPhone').value.trim(),
         edad: ageVal,
         genero: document.getElementById('gender').value,
@@ -1655,6 +1675,7 @@
       const fname = document.getElementById('firstName').value.trim();
       const lname = document.getElementById('lastName').value.trim();
       const emailVal = document.getElementById('userEmail').value.trim();
+      const passVal = document.getElementById('userPassword').value;
       const phoneVal = document.getElementById('userPhone').value.trim();
       const ageVal = parseInt(document.getElementById('age').value) || 0;
       const genderVal = document.getElementById('gender').value;
@@ -1664,12 +1685,13 @@
       const photoUrl = localStorage.getItem('temp_player_photo') || '';
 
       try {
-        // 1. GUARDAR EN TABLA "usuarios"
+        // 1. GUARDAR EN TABLA "usuarios" (Incluyendo contraseña para validación posterior)
         const userObj = {
           curp: curpVal,
           nombre: fname,
           apellidos: lname,
           email: emailVal,
+          password: passVal,
           telefono: phoneVal,
           edad: ageVal,
           genero: genderVal,
@@ -1700,7 +1722,7 @@
           if (medErr) console.error("Aviso guardando ficha médica:", medErr.message);
         }
 
-        // 3. SI ES ÁRBITRO: GUARDAR EN TABLA "expedientes_arbitros" (Usando numero_licencia y sede_principal)
+        // 3. SI ES ÁRBITRO: GUARDAR EN TABLA "expedientes_arbitros"
         if (roleName === 'ARBITRO') {
           const { error: arbErr } = await _supabase
             .from('expedientes_arbitros')
@@ -1715,7 +1737,6 @@
           if (arbErr) console.error("Error guardando expediente de árbitro:", arbErr.message);
         }
 
-        // DETERMINAR OBTENCIÓN DE LIGA O EQUIPO VÁLIDO
         let activeLeagueUuid = verifiedContext.leagueId || null;
         if (!activeLeagueUuid) {
           const lSel = document.getElementById('leagueSelect');
@@ -1743,7 +1764,7 @@
           if (newTeam) targetTeamId = newTeam.id;
         }
 
-        // 4. GUARDAR EN TABLA "equipo_jugadores" (Si aplica para rol jugador)
+        // 4. GUARDAR EN TABLA "equipo_jugadores"
         if (roleName === 'JUGADOR') {
           const officialCode = document.getElementById('credUniqueCode').innerText || generateOfficialRetaCode();
 
@@ -1760,7 +1781,6 @@
           if (eqErr) console.error("Aviso vinculando equipo_jugadores:", eqErr.message);
         }
 
-        // MARCAR TOKEN DE INVITACIÓN COMO USADO SI APLICA
         if (verifiedContext.tokenCode) {
           await _supabase
             .from('invitaciones_sistema')
@@ -1782,7 +1802,6 @@
       btn.disabled = true;
       btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando en Supabase...`;
 
-      // Esperar la respuesta asíncrona de Supabase antes de desplegar el modal
       await submitFullRegistrationToSupabase();
 
       btn.disabled = false;
