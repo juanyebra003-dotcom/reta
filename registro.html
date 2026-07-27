@@ -314,11 +314,12 @@
               </div>
             </div>
 
+            <!-- CAMPO DE TOKEN O CLAVE DE AUTORIZACIÓN (BLINDADO) -->
             <div id="adminAuthCodeSection" class="form-row" style="display: none; background: rgba(0,212,255,0.08); padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
               <div class="input-group">
-                <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización RETA (*)</label>
-                <input type="password" id="adminAuthToken" placeholder="Ingresa el token de invitación o clave máster" onchange="playBeepSound()">
-                <small style="color:#94a3b8;">Requerido para roles de gestión y administración.</small>
+                <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización Obligatorio (*)</label>
+                <input type="password" id="adminAuthToken" placeholder="Ingresa tu Token de Invitación o Clave Máster" onchange="playBeepSound()">
+                <small id="tokenHelpLabel" style="color:#94a3b8;">Requerido para verificar tu autorización de acceso en este rol.</small>
               </div>
             </div>
 
@@ -822,7 +823,7 @@
           Tu preregistro ha sido enviado para autorización en dos etapas: primero de tu <strong>Delegado de Equipo</strong> y posteriormente del <strong>Administrador de la Liga</strong>. Por favor, regresa más tarde para verificar el estatus de tu credencial.
         </p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px; line-height: 1.5;">
-          Tu borrador de credencial digital ha sido generado. Quedará activa en cuanto reciba ambas autorizaciones.
+          Tu borrador de credencial digital ha sido generado con estado <strong style="color:#ffb703;">PENDIENTE_DELEGADO</strong>. Quedará oficializada en cuanto reciba ambas autorizaciones.
         </p>
       </div>
 
@@ -869,7 +870,7 @@
       
       <div class="terms-scroll-body">
         <h4>1. ACEPTACIÓN DE RIESGOS INHERENTES A LA PRÁCTICA DEPORTIVA</h4>
-        <p>Al registrarse y participar en cualquier torneo, liga o evento organizado, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento.</p>
+        <p>Al registrarse y participar en cualquier torneo, liga o evento organized, administrado o afiliado a la plataforma <strong>RETA</strong>, el participante declara bajo protesta de decir verdad que se encuentra en aptitud física, mental y médica adecuada para la práctica de actividad física de alto rendimiento.</p>
       </div>
 
       <div class="modal-footer-terms">
@@ -900,7 +901,9 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // TOKENS MÁSTER PARA CREACIÓN INICIAL Y SUPERVISIÓN
     const MASTER_ADMIN_TOKEN = 'RETA2026ADMIN';
+    const MASTER_SUPERVISOR_TOKEN = 'RETA-SUPERVISOR-2026';
 
     const ENTIDADES_CURP = {
       'AS': 'Aguascalientes', 'BC': 'Baja California', 'BS': 'Baja California Sur', 'CC': 'Campeche',
@@ -1111,7 +1114,11 @@
     function selectVisualRole(roleValue) {
       playBeepSound();
       if (roleValue === 'ADMIN_LIGA') {
-        window.location.href = 'liga_registrar.html';
+        // Validación previa en Paso 1 antes de redirigir
+        document.getElementById('roleSelectionStep').style.display = 'none';
+        document.getElementById('formContainer').style.display = 'block';
+        document.getElementById('roleSelect').value = roleValue;
+        handleRoleSelectionChange();
         return;
       }
 
@@ -1217,16 +1224,27 @@
       }
     }
 
+    // GESTIÓN DE ROLES CON CONTROL DE CAMPO DE TOKEN VISIBLE
     function handleRoleSelectionChange() {
       playBeepSound();
       const role = document.getElementById('roleSelect').value;
       const authSection = document.getElementById('adminAuthCodeSection');
+      const helpLabel = document.getElementById('tokenHelpLabel');
       const btnStep1 = document.getElementById('btnStep1');
 
-      if (role === 'ADMIN_LIGA' || role === 'SUPERVISOR' || role === 'ARBITRO' || role === 'DELEGADO') {
-        authSection.style.display = 'block';
-      } else {
+      if (role === 'JUGADOR') {
         authSection.style.display = 'none';
+      } else {
+        authSection.style.display = 'block';
+        if (role === 'DELEGADO') {
+          helpLabel.innerText = "Requerido Token de Delegado otorgado por la Liga o Clave de Liga.";
+        } else if (role === 'ARBITRO') {
+          helpLabel.innerText = "Requerido Token del Colegio de Árbitros o Clave de Autorización.";
+        } else if (role === 'ADMIN_LIGA') {
+          helpLabel.innerText = "Clave Máster RETA (Para crear Liga) o Token de Invitación (Admin 2 / 3).";
+        } else if (role === 'SUPERVISOR') {
+          helpLabel.innerText = "Clave de Acceso Máster exclusiva para personal RETA Pro.";
+        }
       }
 
       document.querySelectorAll('.role-specific-section').forEach(el => el.style.display = 'none');
@@ -1244,7 +1262,7 @@
         document.getElementById('formSubAdminPro').style.display = 'block';
         btnStep1.innerHTML = `Siguiente: Datos Admin Pro <i class="fa-solid fa-arrow-right"></i>`;
       } else if (role === 'ADMIN_LIGA') {
-        btnStep1.innerHTML = `Ir a Registro de Liga <i class="fa-solid fa-crown"></i>`;
+        btnStep1.innerHTML = `Validar Token e Ir a Registro <i class="fa-solid fa-crown"></i>`;
       }
     }
 
@@ -1300,7 +1318,7 @@
       }
     }
 
-    /* FUNCION DE VALIDACION CON CONTROL DE TOKENS SUPABASE */
+    /* SISTEMA DE VALIDACIÓN Y CONTROL BLINDADO POR ROL */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -1322,13 +1340,47 @@
         return;
       }
 
-      // VALIDACIÓN BLINDADA PARA ADMINISTRADORES
-      if (roleVal === 'ADMIN_LIGA') {
+      // ================= CANDO 1: SUPERVISOR MÁSTER RETA =================
+      if (roleVal === 'SUPERVISOR') {
+        if (!tokenInput || tokenInput !== MASTER_SUPERVISOR_TOKEN) {
+          alert("🛑 ACCESO RESTRINGIDO\n\nClave de Supervisor RETA no válida o ausente.");
+          return;
+        }
+      }
+
+      // ================= CANDADO 2: DELEGADO Y ÁRBITRO =================
+      if (roleVal === 'DELEGADO' || roleVal === 'ARBITRO') {
         if (!tokenInput) {
-          alert("🛑 ACCESO DENEGADO\n\nDebes ingresar la Clave de Autorización RETA o un Token de Invitación de Liga.");
+          alert(`🛑 ACCESO RESTRINGIDO\n\nPara registrarte como ${roleVal}, debes ingresar tu Token de Autorización o Clave de Liga.`);
           return;
         }
 
+        // Consultar token en Supabase
+        const { data: invite, error } = await _supabase
+          .from('invitaciones_sistema')
+          .select('id, usado, rol_permitido')
+          .eq('token_codigo', tokenInput)
+          .single();
+
+        if (error || !invite || invite.rol_permitido !== roleVal) {
+          alert("🛑 TOKEN INVÁLIDO\n\nEl código ingresado no existe o no corresponde a este rol.");
+          return;
+        }
+
+        if (invite.usado) {
+          alert("🛑 TOKEN EXPIRADO\n\nEste código de invitación ya fue utilizado anteriormente.");
+          return;
+        }
+      }
+
+      // ================= CANDADO 3: ADMINISTRADOR DE LIGA (1, 2 Y 3) =================
+      if (roleVal === 'ADMIN_LIGA') {
+        if (!tokenInput) {
+          alert("🛑 ACCESO DENEGADO\n\nDebes ingresar la Clave Máster RETA (para crear Liga) o tu Token de Co-Administrador.");
+          return;
+        }
+
+        // Admin 1 (Creador Propietario)
         if (tokenInput === MASTER_ADMIN_TOKEN) {
           localStorage.setItem('reta_admin_curp', curpVal);
           localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
@@ -1336,34 +1388,37 @@
           return;
         }
 
-        // Consultar Token de Invitación de Co-Admin (Admin 2 o Admin 3)
+        // Co-Admin (Admin 2 o 3)
         try {
           const { data: invite, error } = await _supabase
-            .from('invitaciones_admin')
+            .from('invitaciones_sistema')
             .select('liga_id, token_codigo, usado')
             .eq('token_codigo', tokenInput)
+            .eq('rol_permitido', 'ADMIN_LIGA')
             .single();
 
           if (error || !invite) {
-            alert("🛑 CÓDIGO INVÁLIDO\n\nEl Token ingresado no existe o no está registrado.");
+            alert("🛑 CÓDIGO INVÁLIDO\n\nEl Token ingresado no pertenece a un Administrador de Liga registrado.");
             return;
           }
 
           if (invite.usado) {
-            alert("🛑 TOKEN EXPIRADO\n\nEste Token de invitación ya fue utilizado anteriormente.");
+            alert("🛑 TOKEN EXPIRADO\n\nEste Token de Co-Administrador ya fue utilizado.");
             return;
           }
 
+          // Verificar tope máximo de 3 Administradores
           const { data: adminCount } = await _supabase
             .from('liga_administradores')
             .select('id', { count: 'exact' })
             .eq('liga_id', invite.liga_id);
 
           if (adminCount && adminCount.length >= 3) {
-            alert("🛑 LÍMITE ALCANZADO\n\nEsta liga ya cuenta con el número máximo de Administradores (3/3).");
+            alert("🛑 LÍMITE ALCANZADO (3/3)\n\nEsta liga ya cuenta con los 3 administradores permitidos por el sistema RETA Pro.");
             return;
           }
 
+          // Asignar Administrador en Supabase
           await _supabase.from('liga_administradores').insert([{
             liga_id: invite.liga_id,
             curp_admin: curpVal,
@@ -1371,9 +1426,10 @@
             nivel_admin: (adminCount ? adminCount.length + 1 : 2)
           }]);
 
-          await _supabase.from('invitaciones_admin').update({ usado: true }).eq('token_codigo', tokenInput);
+          // Quemar el token
+          await _supabase.from('invitaciones_sistema').update({ usado: true }).eq('token_codigo', tokenInput);
 
-          alert("¡Bienvenido! Te has registrado exitosamente como Administrador secundario.");
+          alert("¡Autenticación Correcta! Has sido registrado como Co-Administrador.");
           window.location.href = 'admin_panel.html';
           return;
 
@@ -1548,7 +1604,7 @@
       }
     }
 
-    /* REGISTRO DE JUGADOR EN ESTADO PENDIENTE DELEGADO EN SUPABASE */
+    /* GUARDA EL REGISTRO DE JUGADOR EN SUPABASE EN ESTADO PENDIENTE DELEGADO */
     function executeValidationAndDownload() {
       playBeepSound();
       
