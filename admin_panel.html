@@ -1,0 +1,97 @@
+<!-- MÓDULO DE GENERACIÓN DE TOKENS E INVITACIONES -->
+<div class="glass-card" style="padding: 20px; border: 1px solid #00d4ff; border-radius: 12px; margin-bottom: 25px;">
+  <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 10px;">
+    <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens de Invitación Oficiales
+  </h3>
+  <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 15px;">
+    Emite claves únicas para autorizar el registro de Co-Administradores, Delegados o Árbitros en tu liga.
+  </p>
+
+  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+    <div style="flex: 1; min-width: 200px;">
+      <label style="color: #00d4ff; font-size: 0.75rem; display: block; margin-bottom: 5px;">Tipo de Rol a Invitar</label>
+      <select id="tokenRoleSelect" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; border-radius: 8px; color: #fff;">
+        <option value="ADMIN_LIGA">👑 Co-Administrador de Liga (Admin 2 / 3)</option>
+        <option value="DELEGADO">📋 Delegado / Director Técnico</option>
+        <option value="ARBITRO">🏁 Árbitro / Colegiado</option>
+      </select>
+    </div>
+
+    <button type="button" onclick="generateSystemToken()" style="background: #00d4ff; color: #000; font-weight: bold; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer;">
+      <i class="fa-solid fa-plus-circle"></i> Generar Nuevo Token
+    </button>
+  </div>
+
+  <!-- RESULTADO DEL TOKEN GENERADO -->
+  <div id="generatedTokenBox" style="display: none; margin-top: 15px; background: rgba(0, 212, 255, 0.1); padding: 12px; border-radius: 8px; border: 1px dashed #00d4ff;">
+    <span style="color: #aaa; font-size: 0.75rem; display: block;">Token Generado con Éxito:</span>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+      <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.2rem; letter-spacing: 2px;">---</strong>
+      <button type="button" onclick="copyTokenToClipboard()" style="background: transparent; border: 1px solid #00d4ff; color: #fff; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.75rem;">
+        <i class="fa-solid fa-copy"></i> Copiar Token
+      </button>
+    </div>
+    <small style="color: #94a3b8; font-size: 0.7rem; display: block; margin-top: 8px;">
+      Proporciona este Token junto con tu CURP al usuario destinatario para que pueda validar su registro.
+    </small>
+  </div>
+</div>
+
+<script>
+  // FUNCIONALIDAD PARA GENERAR TOKENS EN SUPABASE
+  async function generateSystemToken() {
+    const rolTarget = document.getElementById('tokenRoleSelect').value;
+    
+    // Recuperar el ID de la Liga actual guardado en sesión
+    const currentLigaId = localStorage.getItem('reta_admin_liga_id'); 
+    
+    if (!currentLigaId) {
+      alert("No se detectó una liga activa seleccionada.");
+      return;
+    }
+
+    // Si es Co-Admin, verificar que no rebase los 3 administradores
+    if (rolTarget === 'ADMIN_LIGA') {
+      const { data: currentAdmins } = await _supabase
+        .from('liga_administradores')
+        .select('id')
+        .eq('liga_id', currentLigaId);
+
+      if (currentAdmins && currentAdmins.length >= 3) {
+        alert("🛑 LÍMITE ALCANZADO: Tu liga ya cuenta con los 3 Administradores máximos permitidos.");
+        return;
+      }
+    }
+
+    // Crear código aleatorio según el rol
+    const prefix = rolTarget === 'ADMIN_LIGA' ? 'ADM' : (rolTarget === 'DELEGADO' ? 'DEL' : 'ARB');
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    const generatedToken = `RETA-${prefix}-${randomNum}`;
+
+    try {
+      const { error } = await _supabase
+        .from('invitaciones_sistema')
+        .insert([{
+          liga_id: currentLigaId,
+          token_codigo: generatedToken,
+          rol_permitido: rolTarget,
+          usado: false
+        }]);
+
+      if (error) throw error;
+
+      // Mostrar Token en Pantalla
+      document.getElementById('displayTokenValue').innerText = generatedToken;
+      document.getElementById('generatedTokenBox').style.display = 'block';
+
+    } catch (err) {
+      alert("Error al generar el token: " + err.message);
+    }
+  }
+
+  function copyTokenToClipboard() {
+    const token = document.getElementById('displayTokenValue').innerText;
+    navigator.clipboard.writeText(token);
+    alert("¡Token copiado al portapapeles!");
+  }
+</script>
