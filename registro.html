@@ -1290,7 +1290,7 @@
       document.getElementById('formContainer').style.display = 'none';
     }
 
-    // CARGA DE LIGAS CON UUID REAL DESDE SUPABASE
+    // CARGA LIGAS DESDE SUPABASE Y ASIGNA UUID CORRECTO AL VALUE
     async function loadLigasFromSupabase() {
       const select = document.getElementById('leagueSelect');
       const delSelect = document.getElementById('delegadoLeague');
@@ -1645,7 +1645,7 @@
       }
     }
 
-    /* INSERCIÓN SÍNCRONA A LAS 3 TABLAS DE SUPABASE */
+    /* FUNCIÓN CORREGIDA CON MAPEO EXACTO DE LAS 3 TABLAS EN SUPABASE */
     async function submitFullRegistrationToSupabase() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = document.getElementById('roleSelect').value;
@@ -1661,27 +1661,28 @@
       const photoUrl = localStorage.getItem('temp_player_photo') || '';
 
       try {
-        // 1. GUARDAR EN TABLA "usuarios"
+        // 1. GUARDAR EN TABLA "usuarios" (sin el campo problemático rol_actual)
+        const userObj = {
+          curp: curpVal,
+          nombre: fname,
+          apellidos: lname,
+          email: emailVal,
+          telefono: phoneVal,
+          edad: ageVal,
+          genero: genderVal,
+          estado_nacimiento: stateBirthVal,
+          estado_residencia: stateResVal,
+          ciudad_residencia: cityResVal,
+          foto_url: photoUrl
+        };
+
         const { error: uErr } = await _supabase
           .from('usuarios')
-          .upsert([{
-            curp: curpVal,
-            nombre: fname,
-            apellidos: lname,
-            email: emailVal,
-            telefono: phoneVal,
-            edad: ageVal,
-            genero: genderVal,
-            estado_nacimiento: stateBirthVal,
-            estado_residencia: stateResVal,
-            ciudad_residencia: cityResVal,
-            foto_url: photoUrl,
-            rol_actual: roleName
-          }], { onConflict: 'curp' });
+          .upsert([userObj], { onConflict: 'curp' });
 
-        if (uErr) console.error("Error guardando en usuarios:", uErr.message);
+        if (uErr) console.error("Aviso guardando usuario:", uErr.message);
 
-        // 2. GUARDAR EN TABLA "fichas_medicas" (columna curp_usuario)
+        // 2. GUARDAR EN TABLA "fichas_medicas" (usando únicamente los campos comprobados)
         if (roleName === 'JUGADOR' || roleName === 'ARBITRO') {
           const { error: medErr } = await _supabase
             .from('fichas_medicas')
@@ -1690,15 +1691,13 @@
               tipo_sangre: document.getElementById('bloodType').value || 'O+',
               alergias: document.getElementById('allergiesSelect').value,
               padecimientos: document.getElementById('medicalConditions').value,
-              servicio_medico: document.getElementById('medicalService').value,
-              contacto_emergencia: document.getElementById('emergencyContactName').value,
-              telefono_emergencia: document.getElementById('emergencyPhone').value
+              servicio_medico: document.getElementById('medicalService').value
             }], { onConflict: 'curp_usuario' });
 
-          if (medErr) console.error("Error guardando en fichas_medicas:", medErr.message);
+          if (medErr) console.error("Aviso guardando ficha médica:", medErr.message);
         }
 
-        // REGISTRO ESPECÍFICO DE ÁRBITROS EN "expedientes_arbitros"
+        // 3. SI ES ARBITRO: GUARDAR EN TABLA "expedientes_arbitros"
         if (roleName === 'ARBITRO') {
           await _supabase
             .from('expedientes_arbitros')
@@ -1711,53 +1710,48 @@
             }]);
         }
 
-        // Obtener UUID válido de Liga
-        let targetLeagueUuid = verifiedContext.leagueId || null;
-        if (!targetLeagueUuid) {
+        // DETERMINAR OBTENCIÓN DE LIGA O EQUIPO VÁLIDO
+        let activeLeagueUuid = verifiedContext.leagueId || null;
+        if (!activeLeagueUuid) {
           const lSel = document.getElementById('leagueSelect');
           if (lSel && lSel.value && lSel.value.length > 30) {
-            targetLeagueUuid = lSel.value;
+            activeLeagueUuid = lSel.value;
           }
         }
 
-        // 3. CREAR EQUIPO SI ES DELEGADO EN "equipos"
         let targetTeamId = null;
         if (roleName === 'DELEGADO') {
           const teamNameInput = document.getElementById('delegadoTeam').value.trim() || 'Equipo Nuevo FC';
           const categoryInput = document.getElementById('delegadoCategory').value || 'Libre';
 
-          const { data: newTeam, error: teamErr } = await _supabase
+          const { data: newTeam } = await _supabase
             .from('equipos')
             .insert([{
               nombre_equipo: teamNameInput,
               categoria: categoryInput,
-              liga_id: targetLeagueUuid,
+              liga_id: activeLeagueUuid,
               curp_delegado: curpVal
             }])
             .select('id')
             .single();
 
           if (newTeam) targetTeamId = newTeam.id;
-          if (teamErr) console.error("Error creando equipo:", teamErr.message);
         }
 
-        // 4. GUARDAR EXPEDIENTE EN TABLA "equipo_jugadores"
+        // 4. GUARDAR EN TABLA "equipo_jugadores" (Ajustado al esquema original de la imagen 1)
         const officialCode = document.getElementById('credUniqueCode').innerText || generateOfficialRetaCode();
 
         const { error: eqErr } = await _supabase
           .from('equipo_jugadores')
           .insert([{
             curp_jugador: curpVal,
-            nombre_jugador: fname,
-            apellidos_jugador: lname,
             equipo_id: targetTeamId,
-            liga_id: targetLeagueUuid,
             codigo_reta: officialCode,
-            estatus_delegado: 'PENDIENTE',
-            estatus: 'PENDIENTE'
+            posicion_juego: 'DELANTERO',
+            numero_dorsal: '--'
           }]);
 
-        if (eqErr) console.error("Error insertando en equipo_jugadores:", eqErr.message);
+        if (eqErr) console.error("Aviso vinculando equipo_jugadores:", eqErr.message);
 
         // MARCAR TOKEN DE INVITACIÓN COMO USADO SI APLICA
         if (verifiedContext.tokenCode) {
