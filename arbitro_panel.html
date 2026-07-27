@@ -33,10 +33,7 @@
     .cedula-header h1 { font-size: 1.1rem; font-weight: 800; color: #fff; text-transform: uppercase; margin: 0; }
     .cedula-header span { font-size: 0.75rem; color: #00d4ff; display: block; }
     
-    .logo-reta-img {
-      max-height: 48px;
-      filter: drop-shadow(0 0 8px rgba(0,212,255,0.6));
-    }
+    .logo-reta-img { max-height: 48px; filter: drop-shadow(0 0 8px rgba(0,212,255,0.6)); }
 
     .folio-box {
       background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; padding: 6px 10px;
@@ -51,9 +48,7 @@
       background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: #00d4ff;
       padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; transition: 0.3s;
     }
-    .nav-tab-btn.active, .nav-tab-btn:hover {
-      background: #00d4ff; color: #000;
-    }
+    .nav-tab-btn.active, .nav-tab-btn:hover { background: #00d4ff; color: #000; }
 
     .panel-seccion { display: none; }
     .panel-seccion.active { display: block; }
@@ -117,13 +112,13 @@
       <div style="text-align: left; display: flex; align-items: center; gap: 10px;">
         <img src="logo_reta.png" alt="Reta Pro Logo" class="logo-reta-img" onerror="this.src='img/logo_reta.png'">
         <div>
-          <strong style="color: #00d4ff; font-size: 0.75rem;">RETA PRO APP</strong><br>
-          <span style="font-size: 0.65rem; color: #94a3b8;">Sistema Oficial</span>
+          <strong style="color: #00d4ff; font-size: 0.75rem;" id="lblLigaNombre">COORDINACIÓN LIGA MUNICIPAL</strong><br>
+          <span style="font-size: 0.65rem; color: #94a3b8;">Sistema Oficial Reta Pro</span>
         </div>
       </div>
       <div>
-        <h1>Panel del Árbitro / Cédula Virtual</h1>
-        <span>Control Total Árbitro y Validación Flexible (Delegado o Capitán)</span>
+        <h1>Acta de Juego Oficial</h1>
+        <span>Control Total Árbitro y Validación (Delegado / Capitán)</span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
         <div class="folio-box" id="lblFolioConsecutivo">FOLIO: RETA-2027-001</div>
@@ -131,15 +126,39 @@
       </div>
     </div>
 
+    <!-- DATOS GENERALES DE LA CÉDULA (SEDE, CANCHA, HORA, FECHA, RAMA, CATEGORÍA, JORNADA) -->
+    <table class="table-excel" style="margin-bottom: 15px;">
+      <tr>
+        <th>Ciudad</th>
+        <th>Instalación / Sede</th>
+        <th>Cancha</th>
+        <th>Hora</th>
+        <th>Fecha</th>
+        <th>Rama</th>
+        <th>Categoría</th>
+        <th>Jornada</th>
+      </tr>
+      <tr>
+        <td><input type="text" class="input-excel" id="metaCiudad" value="Moroleón, Gto."></td>
+        <td><input type="text" class="input-excel" id="metaSede" value="Unidad Deportiva Municipal"></td>
+        <td><input type="text" class="input-excel" id="metaCancha" value="Cancha Sintética #1"></td>
+        <td><input type="text" class="input-excel" id="metaHora" value="16:00 hrs"></td>
+        <td><input type="text" class="input-excel" id="metaFecha" value="10/01/2027"></td>
+        <td><input type="text" class="input-excel" id="metaRama" value="Varonil"></td>
+        <td><input type="text" class="input-excel" id="metaCategoria" value="Libre Pro"></td>
+        <td><input type="text" class="input-excel" id="metaJornada" value="Jornada 1"></td>
+      </tr>
+    </table>
+
     <!-- SUBMENÚS DEL PANEL DE ÁRBITRO -->
     <div class="arbitro-nav-tabs">
       <button type="button" class="nav-tab-btn active" onclick="cambiarSeccion('cedula', this)"><i class="fa-solid fa-file-lines"></i> Cédula Arbitral Activa</button>
-      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('jugadores', this)"><i class="fa-solid fa-users-viewfinder"></i> Estatus de Jugadores (Activos / Inactivos / Suspendidos)</button>
+      <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('jugadores', this)"><i class="fa-solid fa-users-viewfinder"></i> Estatus de Jugadores</button>
       <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('designaciones', this)"><i class="fa-solid fa-calendar-check"></i> Mis Designaciones</button>
       <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('ranking', this)"><i class="fa-solid fa-star"></i> Ranking y Evaluaciones</button>
     </div>
 
-    <!-- SECCIÓN 1: CÉDULA ARBITRAL (CONTENEDOR PRINCIPAL) -->
+    <!-- SECCIÓN 1: CÉDULA ARBITRAL -->
     <div id="seccion-cedula" class="panel-seccion active">
 
       <!-- CRONÓMETRO ÁRBITRO EN VIVO CON BOTÓN DE PAUSA INDEPENDIENTE -->
@@ -172,10 +191,10 @@
         </div>
       </div>
 
-      <!-- MARCADOR POR PERIODOS -->
+      <!-- MARCADOR POR PERIODOS (EQUIPOS DINÁMICOS) -->
       <div class="grid-equipo-header">
-        <div class="team-title-box">LOCAL (Credenciales Validadas)</div>
-        <div class="team-title-box">VISITANTE (Credenciales Validadas)</div>
+        <div class="team-title-box"><input type="text" id="nombreEquipoLocal" class="input-excel" value="DEPORTIVO ATLAS" style="font-weight:bold; color:#00d4ff;"></div>
+        <div class="team-title-box"><input type="text" id="nombreEquipoVisitor" class="input-excel" value="REAL MADRID FC" style="font-weight:bold; color:#ff4757;"></div>
       </div>
 
       <table class="table-excel">
@@ -201,7 +220,7 @@
         </tr>
       </table>
 
-      <!-- ALINEACIONES (CON DISTINTIVO DE CAPITÁN C) -->
+      <!-- ALINEACIONES -->
       <div class="grid-equipo-header" style="margin-top: 15px;">
         <div>
           <table class="table-excel" id="tablaLocalRoster">
@@ -477,13 +496,11 @@
 
     // Extracción automática del nombre del Capitán seleccionado en la tabla
     function obtenerNombreCapitan(equipo) {
-      const tablaId = equipo === 'Local' ? 'tablaLocalRoster' : 'tablaVisitorRoster';
       const radios = document.querySelectorAll(`input[name="capitan_${equipo}"]`);
       let nombreCapitan = `Capitán ${equipo}`;
       
-      radios.forEach((radio, index) => {
+      radios.forEach((radio) => {
         if (radio.checked) {
-          // Buscamos el input de nombre en la misma fila del radio button
           const fila = radio.closest('tr');
           const inputNombre = fila.querySelector('input[type="text"][style*="text-align:left"]');
           if (inputNombre && inputNombre.value) {
@@ -513,7 +530,6 @@
         btnCap.disabled = true;
       }
 
-      // Marcar al equipo como validado con cualquiera de los dos roles
       equipoValidado[equipo] = true;
       verificarSincronizacionTotal();
     }
@@ -543,7 +559,7 @@
 
     function sincronizarCedulaDefinitiva() {
       if (equipoValidado.Local && equipoValidado.Visitante && arbitroValidado) {
-        alert("✓ Cédula arbitral oficial sincronizada con éxito en Supabase (Modo Híbrido Offline/Online).");
+        alert("✓ Cédula arbitral oficial sincronizada con éxito en Supabase.");
         localStorage.clear();
         window.location.href = "admin_super_panel.html";
       } else {
@@ -551,7 +567,7 @@
       }
     }
 
-    // Cronómetro y reglas
+    // Cronómetro y Pausa Independiente
     function avanzarFaseCronometro() {
       const modalidad = document.getElementById('modalidadSelect').value;
       const esCuatroTiempos = (modalidad === '6');
