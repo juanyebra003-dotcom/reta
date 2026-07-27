@@ -10,20 +10,40 @@
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    /* CONTENEDOR GLOBAL SUPERIOR PARA LOS SUBMENÚS DEL ÁRBITRO */
-    .arbitro-top-nav-container {
-      max-width: 1400px;
-      margin: 15px auto 10px auto;
+    /* CONTENEDOR SUPERIOR ABSOLUTO PARA LOS SUBMENÚS (ARRIBA DE TODO) */
+    .arbitro-top-nav-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 15px 0 10px 0;
       padding: 0 10px;
+      box-sizing: border-box;
     }
     .arbitro-nav-tabs {
-      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 1400px;
+      width: 100%;
     }
     .nav-tab-btn {
-      background: rgba(0, 212, 255, 0.1); border: 2px solid rgba(0, 212, 255, 0.4); color: #00d4ff;
-      padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: 0.3s;
+      background: rgba(0, 212, 255, 0.12);
+      border: 2px solid rgba(0, 212, 255, 0.5);
+      color: #00d4ff;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.3s;
     }
-    .nav-tab-btn.active, .nav-tab-btn:hover { background: #00d4ff; color: #000; box-shadow: 0 0 15px rgba(0,212,255,0.6); }
+    .nav-tab-btn.active, .nav-tab-btn:hover {
+      background: #00d4ff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0,212,255,0.6);
+    }
 
     .panel-seccion { display: none; }
     .panel-seccion.active { display: block; }
@@ -110,8 +130,8 @@
     <i class="fa-solid fa-arrow-left"></i> Volver al Panel
   </a>
 
-  <!-- SECCIÓN DE SUBMENÚS ARRIBA DEL ACTA DE JUEGO OFICIAL -->
-  <div class="arbitro-top-nav-container">
+  <!-- SECCIÓN DE SUBMENÚS COLOCADA EN LA PARTE SUPERIOR ABSOLUTA, ARRIBA DE TODO -->
+  <div class="arbitro-top-nav-wrapper">
     <div class="arbitro-nav-tabs">
       <button type="button" class="nav-tab-btn active" onclick="cambiarSeccion('cedula', this)"><i class="fa-solid fa-file-lines"></i> Cédula Arbitral Activa</button>
       <button type="button" class="nav-tab-btn" onclick="cambiarSeccion('jugadores', this)"><i class="fa-solid fa-users-viewfinder"></i> Estatus de Jugadores</button>
