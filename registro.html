@@ -950,6 +950,15 @@
 
     let pendingTargetRole = null;
 
+    // VARIABLE GLOBAL DE CONTEXTO DE VINCULACIÓN VALIDADO POR GATEKEEPER
+    let verifiedContext = {
+      adminCurp: null,
+      leagueId: null,
+      leagueName: null,
+      tokenCode: null,
+      targetRole: null
+    };
+
     const ENTIDADES_CURP = {
       'AS': 'Aguascalientes', 'BC': 'Baja California', 'BS': 'Baja California Sur', 'CC': 'Campeche',
       'CL': 'Coahuila', 'CM': 'Colima', 'CS': 'Chiapas', 'CH': 'Chihuahua', 'DF': 'Ciudad de México',
@@ -1115,7 +1124,7 @@
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE PARTICIPACIÓN, ASUNCIÓN DE RIESGO Y DESLINDE AL COMITÉ ORGANIZADOR Y ÁRBITROS:</strong> Autorizo voluntariamente la participación del menor bajo mi tutela en las jornadas deportivas del torneo. Reconozco que la práctica deportiva (fútbol y disciplinas afines) conlleva riesgos inherentes e inseparables a la actividad física intensa y de contacto (tales como esguinces, fracturas, contusiones o eventualidades mayores). Por ende, bajo la figura de asunción de riesgo y de conformidad con las disposiciones del Código Civil aplicables, LIBERO Y EXONERO DE MANERA PRIMORDIAL Y TOTAL DE TODA RESPONSABILIDAD LEGAL al COMITÉ ORGANIZADOR DEL TORNEO, A LA DIRECTIVA DE LA LIGA, AL CUERPO ARBITRAL, DELEGADOS DE CAMPO, OFICIALES Y PROPIETARIOS DE LAS INSTALACIONES DEPORTIVAS por cualquier accidente, lesión corporal, daño patrimonial o eventualidad que sufra el menor antes, durante o después de los partidos o traslados.</li>
               <li style="margin-bottom: 6px;"><strong>DECLARACIÓN DE APTITUD FÍSICA Y SALUD DEL MENOR:</strong> Declaro bajo protesta de decir verdad que el menor se encuentra en estado óptimo de salud física, mental y cardiovascular para la práctica de deporte competitivo. Confirmo que no padece padecimientos preexistentes, afecciones cardíacas, neurológicas ni secuelas de lesiones no consolidadas. Asumo la responsabilidad legal absoluta en caso de omisión u ocultamiento de información médica del menor.</li>
               <li style="margin-bottom: 6px;"><strong>AUTORIZACIÓN DE ATENCIÓN MÉDICA Y PRIMEROS AUXILIOS:</strong> En caso de emergencia médica o traumatismo del menor durante el evento, autorizo expresamente al personal médico o delegados a brindarle primeros auxilios o trasladarlo a un centro hospitalario. Acepto que los gastos médicos, farmacéuticos y hospitalarios serán cubiertos en su totalidad por mi persona o por mi esquema de seguro médico, deslindando a la organización y a RETA PRO APP de cualquier responsabilidad económica.</li>
-              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines estrictamente administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
+              <li style="margin-bottom: 6px;"><strong>PROTECCIÓN DE DATOS PERSONALES Y DERECHOS DE IMAGEN DEL MENOR:</strong> Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), autorizo el tratamiento de los datos del menor para fines strictly administrativos del torneo en RETA PRO APP. Asimismo, otorgo mi consentimiento para el uso de su imagen únicamente en material fotográfico o transmisiones informativas y promocionales no lucrativas de la liga o torneo.</li>
             </ol>
 
             <p style="text-align: justify; margin-top: 10px; margin-bottom: 25px;">
@@ -1163,7 +1172,7 @@
 
       // SI ES JUGADOR: ACCESO ABIERTO DIRECTO
       if (roleValue === 'JUGADOR') {
-        openRegistrationForm('JUGADOR', '');
+        openRegistrationForm('JUGADOR', '', null);
         return;
       }
 
@@ -1254,7 +1263,7 @@
 
         if (pendingTargetRole === 'SUPERVISOR' && tokenVal === MASTER_SUPERVISOR_TOKEN) {
           closeGatekeeperModal();
-          openRegistrationForm('SUPERVISOR', tokenVal);
+          openRegistrationForm('SUPERVISOR', tokenVal, null);
           return;
         }
 
@@ -1282,7 +1291,18 @@
           throw new Error("Este Token de invitación ya fue utilizado previamente.");
         }
 
-        // 4. VERIFICAR QUE EL ADMIN 1 SEA PROPIETARIO REAL DE LA LIGA
+        // 4. CONSULTAR DATOS DE LA LIGA VINCULADA A PARTIR DEL LIGA_ID DEL TOKEN
+        const { data: ligaObj, error: ligaErr } = await _supabase
+          .from('ligas')
+          .select('id, nombre_liga, clave_liga, municipio, estado')
+          .eq('id', invite.liga_id)
+          .single();
+
+        if (ligaErr || !ligaObj) {
+          throw new Error("No se encontró la liga asociada a este Token de Invitación.");
+        }
+
+        // 5. VERIFICAR QUE EL ADMIN 1 SEA PROPIETARIO REAL DE LA LIGA
         const { data: ligaAdmin, error: adminErr } = await _supabase
           .from('liga_administradores')
           .select('id')
@@ -1295,7 +1315,7 @@
           throw new Error("La CURP ingresada no coincide con el Administrador Titular registrado para esta liga.");
         }
 
-        // 5. SI ES CO-ADMINISTRADOR (ADMIN 2 / 3), VERIFICAR LÍMITE TOPE DE 3
+        // 6. SI ES CO-ADMINISTRADOR (ADMIN 2 / 3), VERIFICAR LÍMITE TOPE DE 3
         if (pendingTargetRole === 'ADMIN_LIGA') {
           const { data: adminCount } = await _supabase
             .from('liga_administradores')
@@ -1307,10 +1327,19 @@
           }
         }
 
+        // GUARDAR CONTEXTO RECUPERADO
+        verifiedContext = {
+          adminCurp: adminCurpVal,
+          leagueId: ligaObj.id,
+          leagueName: `${ligaObj.nombre_liga} (${ligaObj.clave_liga})`,
+          tokenCode: tokenVal,
+          targetRole: pendingTargetRole
+        };
+
         // ¡ACCESO AUTORIZADO! DESBLOQUEAR FORMULARIO PRINCIPAL
-        alert("✓ Autorización Validada Correctamente. Acceso Desbloqueado.");
+        alert(`✓ Autorización Validada Correctamente.\n\nLiga Asignada: ${verifiedContext.leagueName}\nAdmin Titular CURP: ${verifiedContext.adminCurp}`);
         closeGatekeeperModal();
-        openRegistrationForm(pendingTargetRole, tokenVal);
+        openRegistrationForm(pendingTargetRole, tokenVal, verifiedContext);
 
       } catch (err) {
         feedback.innerText = "🛑 " + err.message;
@@ -1321,7 +1350,8 @@
       }
     }
 
-    function openRegistrationForm(roleValue, verifiedToken) {
+    /* APERTURA Y CONFIGURACIÓN DEL FORMULARIO CON BANNERS E INYECCIÓN DE LIGA */
+    function openRegistrationForm(roleValue, verifiedToken, context) {
       document.getElementById('roleSelectionStep').style.display = 'none';
       document.getElementById('formContainer').style.display = 'block';
 
@@ -1331,7 +1361,81 @@
       const tokenField = document.getElementById('adminAuthToken');
       if (tokenField) tokenField.value = verifiedToken || '';
 
+      // INYECTAR O ACTUALIZAR LA MICROVENTANA / BANNER SUPERIOR DE VINCULACIÓN
+      renderBindingContextBanner(context || verifiedContext);
+
+      // VINCULAR Y BLOQUEAR LA LIGA CORRESPONDIENTE EN EL PASO 2
+      applyLeagueBindingToForm(context || verifiedContext);
+
       handleRoleSelectionChange();
+    }
+
+    /* RENDERIZADO DE LA MICROVENTANA / BANNER FLOTANTE SUPERIOR */
+    function renderBindingContextBanner(context) {
+      let banner = document.getElementById('bindingContextBanner');
+      
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'bindingContextBanner';
+        banner.style.cssText = `
+          background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 85, 255, 0.15));
+          border: 1px solid #00d4ff;
+          border-radius: 12px;
+          padding: 10px 15px;
+          margin-bottom: 20px;
+          color: #fff;
+          font-size: 0.8rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 10px;
+          box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+        `;
+        const formCard = document.querySelector('.register-wizard-card');
+        if (formCard) {
+          formCard.insertBefore(banner, formCard.children[1]);
+        }
+      }
+
+      if (context && context.leagueName) {
+        banner.innerHTML = `
+          <div>
+            <i class="fa-solid fa-link" style="color: #00d4ff;"></i> 
+            <strong style="color: #00d4ff;">REGISTRO VINCULADO DE LIGA</strong>
+          </div>
+          <div>
+            <strong>Liga:</strong> <span style="color: #fff;">${context.leagueName}</span> | 
+            <strong>Admin Titular CURP:</strong> <span style="color: #00d4ff; font-family: monospace;">${context.adminCurp}</span>
+          </div>
+        `;
+        banner.style.display = 'flex';
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+
+    /* APLICAR LA LIGA VALIDADA AL SELECTOR DEL PASO 2 Y DESHABILITAR OTROS */
+    function applyLeagueBindingToForm(context) {
+      if (!context || !context.leagueId) return;
+
+      // Actualizar selector de Liga para Delegado
+      const delegadoSelect = document.getElementById('delegadoLeague');
+      if (delegadoSelect) {
+        delegadoSelect.innerHTML = `<option value="${context.leagueId}" selected>${context.leagueName}</option>`;
+        delegadoSelect.disabled = true; // Previene cambio erróneo
+        delegadoSelect.style.background = 'rgba(0, 212, 255, 0.1)';
+        delegadoSelect.style.color = '#00d4ff';
+      }
+
+      // Actualizar selector de Liga general / Jugador
+      const generalLeagueSelect = document.getElementById('leagueSelect');
+      if (generalLeagueSelect) {
+        generalLeagueSelect.innerHTML = `<option value="${context.leagueId}" selected>${context.leagueName}</option>`;
+        generalLeagueSelect.disabled = true;
+        generalLeagueSelect.style.background = 'rgba(0, 212, 255, 0.1)';
+        generalLeagueSelect.style.color = '#00d4ff';
+      }
     }
 
     function resetRoleSelection() {
@@ -1651,7 +1755,7 @@
       document.getElementById('credRoleBadge').innerText = roleName;
 
       if (roleName === 'DELEGADO') {
-        document.getElementById('credLeagueName').innerText = (document.getElementById('delegadoLeague').value || 'LIGA PREMIER HEROES').toUpperCase();
+        document.getElementById('credLeagueName').innerText = (verifiedContext.leagueName || document.getElementById('delegadoLeague').value || 'LIGA PREMIER HEROES').toUpperCase();
         document.getElementById('credTeamName').innerText = document.getElementById('delegadoTeam').value || 'Cuerpo Técnico';
         document.getElementById('credCatBranch').innerText = `${document.getElementById('delegadoCategory').value} / ${document.getElementById('delegadoCargo').value}`;
         document.getElementById('credBlood').innerText = 'N/A';
@@ -1664,7 +1768,7 @@
         document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
       } else {
         const leagueSelect = document.getElementById('leagueSelect');
-        const selectedText = leagueSelect.options[leagueSelect.selectedIndex] ? leagueSelect.options[leagueSelect.selectedIndex].text : '';
+        const selectedText = verifiedContext.leagueName || (leagueSelect.options[leagueSelect.selectedIndex] ? leagueSelect.options[leagueSelect.selectedIndex].text : '');
         if (selectedText) document.getElementById('credLeagueName').innerText = selectedText.toUpperCase();
         document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Libre';
         document.getElementById('credCatBranch').innerText = `${document.getElementById('categorySelect').value} / ${document.getElementById('branchSelect').value}`;
