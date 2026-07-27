@@ -317,7 +317,7 @@
             <div id="adminAuthCodeSection" class="form-row" style="display: none; background: rgba(0,212,255,0.08); padding: 15px; border-radius: 12px; border: 1px solid #00d4ff; margin-bottom: 20px;">
               <div class="input-group">
                 <label for="adminAuthToken" style="color:#00d4ff;"><i class="fa-solid fa-key"></i> Clave / Token de Autorización RETA (*)</label>
-                <input type="password" id="adminAuthToken" placeholder="Ingresa el token de invitación" onchange="playBeepSound()">
+                <input type="password" id="adminAuthToken" placeholder="Ingresa el token de invitación o clave máster" onchange="playBeepSound()">
                 <small style="color:#94a3b8;">Requerido para roles de gestión y administración.</small>
               </div>
             </div>
@@ -739,7 +739,7 @@
             
             <div class="digital-credential-card glass-card" id="digitalCredential" style="background: linear-gradient(135deg, #0b1329, #131d38); border: 2px solid #00d4ff; padding:20px; border-radius:16px;">
               
-              <!-- ENCABEZADO CORREGIDO EN GRIS PLATA METÁLICO -->
+              <!-- ENCABEZADO EN GRIS PLATA METÁLICO -->
               <div class="credential-header-silver">
                 <div class="reta-logo-container" style="background: transparent !important; border:none !important; box-shadow:none !important; padding:0 !important;">
                   <img src="img/logo_reta.png" alt="RETA Logo" class="cred-reta-logo">
@@ -749,12 +749,9 @@
 
               <div class="credential-body" style="display:flex; gap:15px; margin-top:15px; align-items:center;">
                 
-                <!-- FOTO CON BADGE CORREGIDO (#--) Y DISTINTIVO DE ROL ABAJO -->
                 <div class="cred-photo-box">
                   <img id="credPlayerPhoto" class="cred-photo-img" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80" alt="Foto Oficial">
-                  <!-- BADGE DEL DORSAL COMPACTO SIN TAPAR ROSTRO -->
                   <span class="cred-dorsal-fixed" id="credDorsal">#--</span>
-                  <!-- DISTINTIVO DE COLOR POR ROL -->
                   <div id="roleColorIndicator" class="role-color-strip role-strip-jugador"></div>
                 </div>
 
@@ -812,7 +809,7 @@
     </div>
   </div>
 
-  <!-- MODAL EMERGENTE GARANTIZADO EN PANTALLA COMPLETA -->
+  <!-- MODAL EMERGENTE EN PANTALLA COMPLETA -->
   <div class="modal-overlay" id="validationNoticeModal" style="display: none;">
     <div class="glass-card modal-card" style="max-width: 520px; text-align: center; border: 2px solid #00d4ff; background:#0a0f1d; padding:25px; border-radius:16px; margin:20px; box-shadow: 0 0 35px rgba(0,212,255,0.5);">
       <div class="modal-header">
@@ -822,10 +819,10 @@
 
       <div style="margin: 15px 0; text-align: left; background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 12px; border-left: 4px solid #00d4ff;">
         <p style="font-size: 0.95rem; color: #ffffff; line-height: 1.5; font-weight: 600;">
-          Tu preregistro ha sido enviado para autorización de tu delegado. Por favor, regresa más tarde para verificar el estatus de tu registro.
+          Tu preregistro ha sido enviado para autorización en dos etapas: primero de tu <strong>Delegado de Equipo</strong> y posteriormente del <strong>Administrador de la Liga</strong>. Por favor, regresa más tarde para verificar el estatus de tu credencial.
         </p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px; line-height: 1.5;">
-          Tu credencial digital ha sido descargada en tu dispositivo. Tu trámite seguirá el protocolo de aprobación correspondiente.
+          Tu borrador de credencial digital ha sido generado. Quedará activa en cuanto reciba ambas autorizaciones.
         </p>
       </div>
 
@@ -837,7 +834,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE VERIFICACIÓN DE CÓDIGO OTP POR CORREO -->
+  <!-- MODAL DE VERIFICACIÓN DE CÓDIGO OTP -->
   <div class="modal-overlay" id="otpValidationModal" style="display: none;">
     <div class="glass-card modal-card" style="max-width: 450px; text-align: center;">
       <div class="modal-header">
@@ -860,7 +857,7 @@
     </div>
   </div>
 
-  <!-- MODAL JURÍDICO: TÉRMINOS Y CONDICIONES -->
+  <!-- MODAL JURÍDICO -->
   <div class="modal-overlay" id="termsModal" style="display: none;">
     <div class="glass-card modal-card terms-modal-card">
       <button type="button" class="close-modal" onclick="closeModal('termsModal')">&times;</button>
@@ -1138,7 +1135,7 @@
         const { data: ligas } = await _supabase.from('ligas').select('id, nombre_liga, clave_liga, municipio, estado');
         if (ligas && ligas.length > 0) {
           select.innerHTML = '<option value="" disabled selected>Selecciona la Liga / Torneo</option>' + 
-            ligas.map(l => `<option value="${l.nombre_liga}" data-state="${l.estado || 'GUANAJUATO'}" data-city="${l.municipio || 'GUA'}" data-code="${l.clave_liga || 'LPHE'}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
+            ligas.map(l => `<option value="${l.id}" data-state="${l.estado || 'GUANAJUATO'}" data-city="${l.municipio || 'GUA'}" data-code="${l.clave_liga || 'LPHE'}">${l.nombre_liga} (${l.clave_liga})</option>`).join('');
         }
       } catch (e) {
         console.warn("Usando opciones por defecto.");
@@ -1214,7 +1211,7 @@
       if (opt.dataset.city) document.getElementById('tournamentCity').value = opt.dataset.city;
       if (opt.dataset.state) document.getElementById('tournamentState').value = opt.dataset.state;
       
-      const selectedLeagueName = select.value.toUpperCase();
+      const selectedLeagueName = select.options[select.selectedIndex].text.toUpperCase();
       if (selectedLeagueName) {
         document.getElementById('credLeagueName').innerText = selectedLeagueName;
       }
@@ -1303,6 +1300,7 @@
       }
     }
 
+    /* FUNCION DE VALIDACION CON CONTROL DE TOKENS SUPABASE */
     async function validateStep1AndProceed() {
       playBeepSound();
 
@@ -1324,9 +1322,65 @@
         return;
       }
 
-      if ((roleVal === 'ADMIN_LIGA' || roleVal === 'SUPERVISOR' || roleVal === 'ARBITRO' || roleVal === 'DELEGADO') && !tokenInput) {
-        alert("Debes ingresar la Clave / Token de Autorización RETA para este rol.");
-        return;
+      // VALIDACIÓN BLINDADA PARA ADMINISTRADORES
+      if (roleVal === 'ADMIN_LIGA') {
+        if (!tokenInput) {
+          alert("🛑 ACCESO DENEGADO\n\nDebes ingresar la Clave de Autorización RETA o un Token de Invitación de Liga.");
+          return;
+        }
+
+        if (tokenInput === MASTER_ADMIN_TOKEN) {
+          localStorage.setItem('reta_admin_curp', curpVal);
+          localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
+          window.location.href = 'liga_registrar.html';
+          return;
+        }
+
+        // Consultar Token de Invitación de Co-Admin (Admin 2 o Admin 3)
+        try {
+          const { data: invite, error } = await _supabase
+            .from('invitaciones_admin')
+            .select('liga_id, token_codigo, usado')
+            .eq('token_codigo', tokenInput)
+            .single();
+
+          if (error || !invite) {
+            alert("🛑 CÓDIGO INVÁLIDO\n\nEl Token ingresado no existe o no está registrado.");
+            return;
+          }
+
+          if (invite.usado) {
+            alert("🛑 TOKEN EXPIRADO\n\nEste Token de invitación ya fue utilizado anteriormente.");
+            return;
+          }
+
+          const { data: adminCount } = await _supabase
+            .from('liga_administradores')
+            .select('id', { count: 'exact' })
+            .eq('liga_id', invite.liga_id);
+
+          if (adminCount && adminCount.length >= 3) {
+            alert("🛑 LÍMITE ALCANZADO\n\nEsta liga ya cuenta con el número máximo de Administradores (3/3).");
+            return;
+          }
+
+          await _supabase.from('liga_administradores').insert([{
+            liga_id: invite.liga_id,
+            curp_admin: curpVal,
+            nombre_admin: `${fname} ${lname}`,
+            nivel_admin: (adminCount ? adminCount.length + 1 : 2)
+          }]);
+
+          await _supabase.from('invitaciones_admin').update({ usado: true }).eq('token_codigo', tokenInput);
+
+          alert("¡Bienvenido! Te has registrado exitosamente como Administrador secundario.");
+          window.location.href = 'admin_panel.html';
+          return;
+
+        } catch (err) {
+          alert("Error de autenticación: " + err.message);
+          return;
+        }
       }
 
       if (ageVal >= 18) {
@@ -1369,13 +1423,6 @@
       };
 
       localStorage.setItem('reta_temp_user', JSON.stringify(userPayload));
-
-      if (roleVal === 'ADMIN_LIGA') {
-        localStorage.setItem('reta_admin_curp', curpVal);
-        localStorage.setItem('reta_admin_name', `${fname} ${lname}`);
-        window.location.href = 'liga_registrar.html';
-        return;
-      }
 
       goToStep(2);
     }
@@ -1473,8 +1520,9 @@
         document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'O+';
         document.getElementById('credAllergies').innerText = document.getElementById('allergiesSelect').value;
       } else {
-        const leagueName = document.getElementById('leagueSelect').value;
-        if (leagueName) document.getElementById('credLeagueName').innerText = leagueName.toUpperCase();
+        const leagueSelect = document.getElementById('leagueSelect');
+        const selectedText = leagueSelect.options[leagueSelect.selectedIndex] ? leagueSelect.options[leagueSelect.selectedIndex].text : '';
+        if (selectedText) document.getElementById('credLeagueName').innerText = selectedText.toUpperCase();
         document.getElementById('credTeamName').innerText = document.getElementById('teamSelect').value || 'Libre';
         document.getElementById('credCatBranch').innerText = `${document.getElementById('categorySelect').value} / ${document.getElementById('branchSelect').value}`;
         document.getElementById('credBlood').innerText = document.getElementById('bloodType').value || 'O+';
@@ -1492,7 +1540,6 @@
       prepareAndShowCredential();
     }
 
-    /* DESPLEGADO DIRECTO DEL MODAL SOBREESCRIBIENDO CUALQUIER ESTILO BLOQUEANTE */
     function openValidationModal() {
       const modal = document.getElementById('validationNoticeModal');
       if (modal) {
@@ -1501,14 +1548,12 @@
       }
     }
 
-    /* APERTURA GARANTIZADA DEL MODAL Y POSTERIOR PROCESO DE DESCARGA */
+    /* REGISTRO DE JUGADOR EN ESTADO PENDIENTE DELEGADO EN SUPABASE */
     function executeValidationAndDownload() {
       playBeepSound();
       
-      // PASO 1: ABRIR EL MODAL DE INMEDIATO
       openValidationModal();
 
-      // PASO 2: DISPARAR DESCARGA EN SEGUNDO PLANO
       const curpVal = document.getElementById('curp').value.trim().toUpperCase() || 'USUARIO';
       const cardElement = document.getElementById('digitalCredential');
 
