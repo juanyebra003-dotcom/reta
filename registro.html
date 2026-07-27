@@ -1290,6 +1290,7 @@
       document.getElementById('formContainer').style.display = 'none';
     }
 
+    // CARGA DE LIGAS CON UUID REAL DESDE SUPABASE
     async function loadLigasFromSupabase() {
       const select = document.getElementById('leagueSelect');
       const delSelect = document.getElementById('delegadoLeague');
@@ -1644,7 +1645,7 @@
       }
     }
 
-    /* INSERCIÓN SÍNCRONA CORREGIDA PARA VACIAR A SUPABASE */
+    /* INSERCIÓN SÍNCRONA A LAS 3 TABLAS DE SUPABASE */
     async function submitFullRegistrationToSupabase() {
       const curpVal = document.getElementById('curp').value.trim().toUpperCase();
       const roleName = document.getElementById('roleSelect').value;
@@ -1660,7 +1661,7 @@
       const photoUrl = localStorage.getItem('temp_player_photo') || '';
 
       try {
-        // 1. USUARIOS
+        // 1. GUARDAR EN TABLA "usuarios"
         const { error: uErr } = await _supabase
           .from('usuarios')
           .upsert([{
@@ -1680,7 +1681,7 @@
 
         if (uErr) console.error("Error guardando en usuarios:", uErr.message);
 
-        // 2. FICHAS MÉDICAS (Usando curp_usuario según tu esquema)
+        // 2. GUARDAR EN TABLA "fichas_medicas" (columna curp_usuario)
         if (roleName === 'JUGADOR' || roleName === 'ARBITRO') {
           const { error: medErr } = await _supabase
             .from('fichas_medicas')
@@ -1697,7 +1698,7 @@
           if (medErr) console.error("Error guardando en fichas_medicas:", medErr.message);
         }
 
-        // 3. REGISTRO DE ÁRBITROS EN expedientes_arbitros
+        // REGISTRO ESPECÍFICO DE ÁRBITROS EN "expedientes_arbitros"
         if (roleName === 'ARBITRO') {
           await _supabase
             .from('expedientes_arbitros')
@@ -1710,7 +1711,7 @@
             }]);
         }
 
-        // Determinar ID de Liga en formato UUID
+        // Obtener UUID válido de Liga
         let targetLeagueUuid = verifiedContext.leagueId || null;
         if (!targetLeagueUuid) {
           const lSel = document.getElementById('leagueSelect');
@@ -1719,7 +1720,7 @@
           }
         }
 
-        // 4. CREAR EQUIPO SI ES DELEGADO
+        // 3. CREAR EQUIPO SI ES DELEGADO EN "equipos"
         let targetTeamId = null;
         if (roleName === 'DELEGADO') {
           const teamNameInput = document.getElementById('delegadoTeam').value.trim() || 'Equipo Nuevo FC';
@@ -1740,7 +1741,7 @@
           if (teamErr) console.error("Error creando equipo:", teamErr.message);
         }
 
-        // 5. VINCULACIÓN EN equipo_jugadores
+        // 4. GUARDAR EXPEDIENTE EN TABLA "equipo_jugadores"
         const officialCode = document.getElementById('credUniqueCode').innerText || generateOfficialRetaCode();
 
         const { error: eqErr } = await _supabase
@@ -1758,6 +1759,7 @@
 
         if (eqErr) console.error("Error insertando en equipo_jugadores:", eqErr.message);
 
+        // MARCAR TOKEN DE INVITACIÓN COMO USADO SI APLICA
         if (verifiedContext.tokenCode) {
           await _supabase
             .from('invitaciones_sistema')
@@ -1765,7 +1767,7 @@
             .eq('token_codigo', verifiedContext.tokenCode);
         }
 
-        console.log("✓ REGISTRO FINALIZADO Y ASENTADO EN SUPABASE CON ÉXITO.");
+        console.log("✓ DATOS INSERTADOS EN SUPABASE EXITOSAMENTE");
 
       } catch (e) {
         console.error("Excepción en submitFullRegistrationToSupabase:", e);
@@ -1779,7 +1781,7 @@
       btn.disabled = true;
       btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registrando en Supabase...`;
 
-      // Esperar activamente a que Supabase responda antes de desplegar el modal
+      // Esperar la respuesta asíncrona de Supabase antes de desplegar el modal
       await submitFullRegistrationToSupabase();
 
       btn.disabled = false;
@@ -1810,7 +1812,7 @@
             document.body.removeChild(link);
           }
         } catch (e) {
-          console.warn("Proceso de imagen canvas completado.");
+          console.warn("Proceso de descarga completado.");
         }
       }, 250);
     }
