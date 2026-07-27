@@ -123,7 +123,7 @@
       </div>
       <div>
         <h1>Panel del Árbitro / Cédula Virtual</h1>
-        <span>Control Total Árbitro y Sincronización Triple Firma</span>
+        <span>Control Total Árbitro y Validación Dual (Delegado o Capitán)</span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
         <div class="folio-box" id="lblFolioConsecutivo">FOLIO: RETA-2027-001</div>
@@ -201,16 +201,16 @@
         </tr>
       </table>
 
-      <!-- ALINEACIONES -->
+      <!-- ALINEACIONES (CON DISTINTIVO DE CAPITÁN C) -->
       <div class="grid-equipo-header" style="margin-top: 15px;">
         <div>
           <table class="table-excel" id="tablaLocalRoster">
-            <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (Local)</th></tr>
+            <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 55px;">Dorsal</th><th style="width: 50px;">Cap (C)</th><th>Jugador Validado (Local)</th></tr>
           </table>
         </div>
         <div>
           <table class="table-excel" id="tablaVisitorRoster">
-            <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (Visitante)</th></tr>
+            <tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 55px;">Dorsal</th><th style="width: 50px;">Cap (C)</th><th>Jugador Validado (Visitante)</th></tr>
           </table>
         </div>
       </div>
@@ -300,8 +300,8 @@
         </div>
       </div>
 
-      <!-- OBSERVACIONES Y VALIDACIÓN DE DELEGADOS -->
-      <div style="font-weight: bold; color: #00d4ff; margin: 20px 0 5px 0; text-transform: uppercase;">OBSERVACIONES Y VALIDACIÓN DE DELEGADOS</div>
+      <!-- OBSERVACIONES Y VALIDACIÓN DUAL (DELEGADO O CAPITÁN) -->
+      <div style="font-weight: bold; color: #00d4ff; margin: 20px 0 5px 0; text-transform: uppercase;">OBSERVACIONES Y VALIDACIÓN (DELEGADO / CAPITÁN)</div>
       <div class="grid-equipo-header">
         <div>
           <div style="font-size: 0.75rem; color:#00d4ff; margin-bottom: 3px;">LOCAL</div>
@@ -315,16 +315,16 @@
 
       <div class="grid-equipo-header" style="margin-top: 15px; background: rgba(0,212,255,0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2);">
         <div style="text-align: center;">
-          <span style="font-size: 0.75rem; color: #00d4ff; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado Equipo A (Local)</span>
+          <span style="font-size: 0.75rem; color: #00d4ff; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado o Capitán (Local)</span>
           <button type="button" onclick="validarFirma('Local')" id="btnDelegadoLocal" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-            <i class="fa-solid fa-file-signature"></i> Validar Cédula (Delegado Local)
+            <i class="fa-solid fa-file-signature"></i> Validar Cédula (Local: Delegado / Cap)
           </button>
           <div id="statusDelegadoLocal" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
         </div>
         <div style="text-align: center;">
-          <span style="font-size: 0.75rem; color: #ff4757; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado Equipo B (Visitante)</span>
+          <span style="font-size: 0.75rem; color: #ff4757; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado o Capitán (Visitante)</span>
           <button type="button" onclick="validarFirma('Visitante')" id="btnDelegadoVisitor" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-            <i class="fa-solid fa-file-signature"></i> Validar Cédula (Delegado Visitante)
+            <i class="fa-solid fa-file-signature"></i> Validar Cédula (Visitante: Delegado / Cap)
           </button>
           <div id="statusDelegadoVisitor" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
         </div>
@@ -603,20 +603,22 @@
 
     function renderRosterTabla(tablaId, titCount, supCount, equipo) {
       const tabla = document.getElementById(tablaId);
-      let html = `<tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (${equipo})</th></tr>`;
+      let html = `<tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 55px;">Dorsal</th><th style="width: 50px;">Cap (C)</th><th>Jugador Validado (${equipo})</th></tr>`;
       
-      html += `<tr><td colspan="4" style="background: rgba(0,212,255,0.1); font-weight:bold; color:#00d4ff; text-align:left; padding-left:10px;">TITULARES (Mínimo: ${titCount})</td></tr>`;
+      html += `<tr><td colspan="5" style="background: rgba(0,212,255,0.1); font-weight:bold; color:#00d4ff; text-align:left; padding-left:10px;">TITULARES (Mínimo: ${titCount})</td></tr>`;
       for (let i = 1; i <= titCount; i++) {
         const dorsalReal = (i * 3) % 99 + 1;
+        const esCapitan = (i === 1) ? 'checked' : ''; // Por defecto el jugador #1 o seleccionado es Capitán (C)
         html += `<tr>
           <td style="font-weight: bold; color: #00d4ff;">${i}</td>
           <td><input type="checkbox" checked></td>
           <td><input type="text" class="input-excel" value="${dorsalReal}" style="color:#f1c40f; font-weight:bold;" maxlength="3"></td>
+          <td><input type="radio" name="capitan_${equipo}" ${esCapitan} title="Seleccionar como Capitán"></td>
           <td><input type="text" class="input-excel" value="Jugador Credencial ${equipo} ${i}" style="text-align:left; color:#10b981; font-weight:600;"></td>
         </tr>`;
       }
 
-      html += `<tr><td colspan="4" style="background: rgba(255,255,255,0.05); font-weight:bold; color:#94a3b8; text-align:left; padding-left:10px;">SUPLENTES (Plazas: ${supCount})</td></tr>`;
+      html += `<tr><td colspan="5" style="background: rgba(255,255,255,0.05); font-weight:bold; color:#94a3b8; text-align:left; padding-left:10px;">SUPLENTES (Plazas: ${supCount})</td></tr>`;
       for (let j = 1; j <= supCount; j++) {
         const numConsecutivo = titCount + j;
         const dorsalSuplente = j <= 3 ? (50 + j) : '';
@@ -625,6 +627,7 @@
           <td style="font-weight: bold; color: #94a3b8;">${numConsecutivo}</td>
           <td><input type="checkbox"></td>
           <td><input type="text" class="input-excel" value="${dorsalSuplente}" placeholder="#" maxlength="3"></td>
+          <td><input type="radio" name="capitan_${equipo}" title="Seleccionar como Capitán"></td>
           <td><input type="text" class="input-excel" value="${nombreSuplente}" placeholder="Plaza vacante #${numConsecutivo}" style="text-align:left; color:#94a3b8;"></td>
         </tr>`;
       }
@@ -663,7 +666,7 @@
       if (firmasValidadas.Local && firmasValidadas.Visitante && firmasValidadas.Arbitro) {
         const btnSync = document.getElementById('btnSincronizar');
         btnSync.classList.add('active');
-        alert("✓ Triple validación completada (Delegados y Árbitro). Botón de sincronización definitiva habilitado.");
+        alert("✓ Triple validación completada (Delegado/Capitán y Árbitro). Botón de sincronización definitiva habilitado.");
       }
     }
 
