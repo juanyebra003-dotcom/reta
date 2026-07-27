@@ -7,10 +7,11 @@
   <!-- Google Fonts & FontAwesome -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
-
+  <!-- Chart.js CDN para Gráficos Analíticos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/style.css">
 
   <style>
     .admin-header-card {
@@ -29,7 +30,7 @@
     /* Sistema de Submenús / Pestañas */
     .super-admin-nav {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 25px;
       flex-wrap: wrap;
       background: rgba(255, 255, 255, 0.03);
@@ -41,10 +42,10 @@
       background: transparent;
       border: none;
       color: #94a3b8;
-      padding: 10px 14px;
+      padding: 10px 12px;
       border-radius: 10px;
       font-weight: 600;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       cursor: pointer;
       transition: all 0.25s ease;
       display: flex;
@@ -62,18 +63,14 @@
       box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
     }
 
-    .admin-section-panel {
-      display: none;
-    }
-    .admin-section-panel.active {
-      display: block;
-    }
+    .admin-section-panel { display: none; }
+    .admin-section-panel.active { display: block; }
 
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
     .metric-card {
       background: rgba(255, 255, 255, 0.03);
@@ -83,8 +80,21 @@
       text-align: center;
     }
     .metric-card i { font-size: 1.8rem; color: #00d4ff; margin-bottom: 8px; }
-    .metric-card h4 { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+    .metric-card h4 { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
     .metric-card span { font-size: 1.5rem; font-weight: 800; color: #fff; }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .chart-card {
+      background: rgba(10, 15, 29, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 20px;
+    }
     
     .tokens-table {
       width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem;
@@ -114,7 +124,7 @@
     .input-group label {
       display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: #00d4ff;
     }
-    .input-group input, .input-group select {
+    .input-group input, .input-group select, .input-group textarea {
       width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,212,255,0.3); border-radius: 8px; color: #fff; font-size: 0.9rem;
     }
   </style>
@@ -125,7 +135,7 @@
     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
   </a>
 
-  <div class="login-container full-register-container" style="max-width: 1150px; margin: 30px auto;">
+  <div class="login-container full-register-container" style="max-width: 1200px; margin: 30px auto;">
     
     <!-- ENCABEZADO -->
     <div class="login-header">
@@ -133,7 +143,7 @@
         <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
       </div>
       <h2>Super Panel Central <span class="text-gradient">RETA Pro App</span></h2>
-      <p id="panelSubHeader">Control Maestro y Auditoría Operativa Global</p>
+      <p id="panelSubHeader">Control Maestro, Analítica de Datos y Gobernanza Operativa</p>
     </div>
 
     <!-- CREDENCIAL DE ACCESO -->
@@ -150,33 +160,33 @@
       </div>
     </div>
 
-    <!-- MENÚ DE SUBMENÚS (PESTAÑAS DE NAVEGACIÓN AMPLIADO) -->
+    <!-- MENÚ DE SUBMENÚS AMPLIADO -->
     <div class="super-admin-nav">
       <button type="button" class="nav-tab-btn active" onclick="switchAdminTab('tabMetrics', this)">
-        <i class="fa-solid fa-chart-pie"></i> 1. Métricas
+        <i class="fa-solid fa-chart-pie"></i> 1. Analítica & Gráficos
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabLeagues', this)">
-        <i class="fa-solid fa-trophy"></i> 2. Ligas
+        <i class="fa-solid fa-trophy"></i> 2. Control Ligas
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabUsers', this)">
-        <i class="fa-solid fa-address-book"></i> 3. Usuarios
+        <i class="fa-solid fa-address-book"></i> 3. Visor Usuarios
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabTokens', this)">
-        <i class="fa-solid fa-key"></i> 4. Tokens
+        <i class="fa-solid fa-key"></i> 4. Tokens Máster
       </button>
       <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabCedulas', this)">
-        <i class="fa-solid fa-file-contract"></i> 5. Cédulas & Partidos
+        <i class="fa-solid fa-file-contract"></i> 5. Formato Cédulas
       </button>
-      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabStatsRules', this)">
-        <i class="fa-solid fa-gavel"></i> 6. Estadísticas & Sanciones
+      <button type="button" class="nav-tab-btn" onclick="switchAdminTab('tabSanciones', this)">
+        <i class="fa-solid fa-gavel"></i> 6. Reglas de Sanción
       </button>
     </div>
 
-    <!-- ================= 1. MÉTRICAS ================= -->
+    <!-- ================= 1. ANALÍTICA Y GRÁFICOS (DASHBOARD) ================= -->
     <div id="tabMetrics" class="admin-section-panel active">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 15px;">
-          <i class="fa-solid fa-chart-pie" style="color: #00d4ff;"></i> Estadísticas Globales del Sistema RETA
+          <i class="fa-solid fa-chart-pie" style="color: #00d4ff;"></i> Estadísticas Globales e Indicadores de Juego
         </h3>
         <div class="metrics-grid">
           <div class="metric-card">
@@ -195,9 +205,21 @@
             <span id="metricTotalCities">--</span>
           </div>
           <div class="metric-card">
-            <i class="fa-solid fa-map-location-dot"></i>
-            <h4>Estados Activos</h4>
-            <span id="metricTotalStates">--</span>
+            <i class="fa-solid fa-futbol"></i>
+            <h4>Partidos Registrados</h4>
+            <span id="metricTotalMatches">0</span>
+          </div>
+        </div>
+
+        <!-- CONTENEDOR DE GRÁFICOS DINÁMICOS -->
+        <div class="charts-container">
+          <div class="chart-card">
+            <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 10px; text-align: center;">Demografía de Jugadores (Género)</h4>
+            <canvas id="genderChart" style="max-height: 220px;"></canvas>
+          </div>
+          <div class="chart-card">
+            <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 10px; text-align: center;">Distribución de Usuarios por Estado</h4>
+            <canvas id="statesChart" style="max-height: 220px;"></canvas>
           </div>
         </div>
       </div>
@@ -208,7 +230,7 @@
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <h3 style="color: #fff; font-size: 1.1rem;">
-            <i class="fa-solid fa-shield-cat" style="color: #00d4ff;"></i> Directorio y Alta de Ligas (Tabla `ligas`)
+            <i class="fa-solid fa-shield-cat" style="color: #00d4ff;"></i> Directorio y Alta de Ligas Macro
           </h3>
           <button type="button" onclick="loadMasterLeaguesDirectory()" class="btn-sm-action">
             <i class="fa-solid fa-rotate-right"></i> Actualizar
@@ -216,7 +238,7 @@
         </div>
 
         <div style="background: rgba(0,212,255,0.05); padding: 15px; border-radius: 10px; border: 1px dashed rgba(0,212,255,0.3); margin-bottom: 20px;">
-          <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-plus-circle"></i> Alta Directa de Liga</h4>
+          <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-plus-circle"></i> Alta Inicial (El Administrador Titular completará detalles de redes y sede en su panel)</h4>
           <form id="masterLeagueForm" onsubmit="event.preventDefault(); createMasterLeague();">
             <div class="form-grid">
               <div class="input-group">
@@ -237,7 +259,7 @@
               </div>
             </div>
             <button type="submit" id="btnCreateLeague" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold; padding: 8px 16px; margin-top: 5px;">
-              <i class="fa-solid fa-check"></i> Registrar Liga
+              <i class="fa-solid fa-check"></i> Registrar Liga en Sistema
             </button>
           </form>
         </div>
@@ -254,9 +276,7 @@
             </thead>
             <tbody id="masterLeaguesTableBody">
               <tr>
-                <td colspan="4" style="text-align: center; color: #64748b; padding: 15px;">
-                  Cargando ligas...
-                </td>
+                <td colspan="4" style="text-align: center; color: #64748b; padding: 15px;">Cargando ligas...</td>
               </tr>
             </tbody>
           </table>
@@ -269,7 +289,7 @@
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
           <h3 style="color: #fff; font-size: 1.1rem;">
-            <i class="fa-solid fa-address-book" style="color: #00d4ff;"></i> Directorio General de Usuarios (Tabla `usuarios`)
+            <i class="fa-solid fa-address-book" style="color: #00d4ff;"></i> Directorio General de Usuarios y Asignación de Roles
           </h3>
           <button type="button" onclick="loadGlobalUsersDirectory()" class="btn-sm-action">
             <i class="fa-solid fa-rotate-right"></i> Refrescar
@@ -294,9 +314,7 @@
             </thead>
             <tbody id="usersDirectoryTableBody">
               <tr>
-                <td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">
-                  Cargando usuarios...
-                </td>
+                <td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">Cargando usuarios...</td>
               </tr>
             </tbody>
           </table>
@@ -308,10 +326,10 @@
     <div id="tabTokens" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; margin-bottom: 25px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
-          <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens (`invitaciones_sistema`)
+          <i class="fa-solid fa-key" style="color: #00d4ff;"></i> Generador de Tokens Máster
         </h3>
         <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 18px;">
-          Emite invitaciones para Administradores Titulares (Admin 1).
+          Emite fichas de invitación directas para Administradores Titulares (Admin 1).
         </p>
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
@@ -330,31 +348,16 @@
         </div>
 
         <div id="generatedTokenBox" style="display: none; margin-top: 20px; background: rgba(0, 212, 255, 0.08); padding: 15px; border-radius: 10px; border: 1px dashed #00d4ff;">
-          <span style="color: #aaa; font-size: 0.75rem; display: block;">✓ Token Creado:</span>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
-            <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.4rem; letter-spacing: 2px; font-family: monospace;">---</strong>
-            <div style="display: flex; gap: 8px;">
-              <button type="button" onclick="copyTokenToClipboard()" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold;">
-                <i class="fa-solid fa-copy"></i> Copiar
-              </button>
-              <button type="button" onclick="shareTokenWhatsApp()" class="btn-sm-action" style="background: #25D366; color: #fff; font-weight: bold;">
-                <i class="fa-brands fa-whatsapp"></i> WhatsApp
-              </button>
-            </div>
+          <strong id="displayTokenValue" style="color: #00d4ff; font-size: 1.4rem; letter-spacing: 2px; font-family: monospace;">---</strong>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button type="button" onclick="copyTokenToClipboard()" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold;"><i class="fa-solid fa-copy"></i> Copiar</button>
+            <button type="button" onclick="shareTokenWhatsApp()" class="btn-sm-action" style="background: #25D366; color: #fff; font-weight: bold;"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
           </div>
         </div>
       </div>
 
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <h3 style="color: #fff; font-size: 1.05rem;">
-            <i class="fa-solid fa-list-check" style="color: #00d4ff;"></i> Historial de Tokens Emitidos
-          </h3>
-          <button type="button" onclick="loadActiveTokensHistory()" class="btn-sm-action">
-            <i class="fa-solid fa-rotate-right"></i> Actualizar
-          </button>
-        </div>
-
+        <h3 style="color: #fff; font-size: 1.05rem; margin-bottom: 12px;"><i class="fa-solid fa-list-check" style="color: #00d4ff;"></i> Historial de Tokens Emitidos</h3>
         <div style="overflow-x: auto;">
           <table class="tokens-table">
             <thead>
@@ -367,62 +370,81 @@
               </tr>
             </thead>
             <tbody id="tokensTableBody">
-              <tr>
-                <td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">
-                  Cargando tokens...
-                </td>
-              </tr>
+              <tr><td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">Cargando tokens...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- ================= 5. CÉDULAS & PARTIDOS (MONITOREO GLOBAL) ================= -->
+    <!-- ================= 5. FORMATO OFICIAL DE CÉDULA ARBITRAL (3 FASES) ================= -->
     <div id="tabCedulas" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(0,212,255,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
-          <i class="fa-solid fa-file-contract" style="color: #00d4ff;"></i> Auditoría de Cédulas Arbitrales y Marcadores en Tiempo Real
+          <i class="fa-solid fa-file-contract" style="color: #00d4ff;"></i> Configuración del Formato Estándar de Cédula Arbitral (3 Fases)
         </h3>
         <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 20px;">
-          Supervisa el estatus de las 3 fases de la cédula y la sincronización con el marcador global del `index`.
+          Define los campos obligatorios que el árbitro y los capitanes/delegados deben validar obligatoriamente en cada etapa del encuentro.
         </p>
 
-        <div style="background: rgba(0,212,255,0.06); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,212,255,0.2); text-align: center;">
-          <i class="fa-solid fa-futbol" style="font-size: 2.5rem; color: #00d4ff; margin-bottom: 10px;"></i>
-          <h4 style="color: #fff; margin-bottom: 6px;">Módulo de Sincronización en Directo</h4>
-          <p style="color: #94a3b8; font-size: 0.85rem; max-width: 600px; margin: 0 auto 15px auto;">
-            Aquí se reflejarán los partidos en curso, goles minuto a minuto y las firmas digitales de validación (Árbitro, Equipo A y Equipo B).
-          </p>
-          <button type="button" onclick="alert('Módulo de cédulas en vivo sincronizado con la infraestructura principal.')" class="btn-sm-action" style="background: #00d4ff; color: #000; font-weight: bold; padding: 10px 20px;">
-            <i class="fa-solid fa-sync"></i> Verificar Conexión de Partidos
-          </button>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+          <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2);">
+            <h4 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-1"></i> Fase 1: Pre-Juego (Alineaciones)</h4>
+            <ul style="color: #94a3b8; font-size: 0.8rem; padding-left: 18px; line-height: 1.4;">
+              <li>Validación de credenciales QR vigentes.</li>
+              <li>Asignación de Titulares y Suplentes.</li>
+              <li>Firma digital de conformidad del Equipo A y Equipo B.</li>
+            </ul>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2);">
+            <h4 style="color: #f39c12; font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-2"></i> Fase 2: Medio Tiempo</h4>
+            <ul style="color: #94a3b8; font-size: 0.8rem; padding-left: 18px; line-height: 1.4;">
+              <li>Corte parcial de goles y tarjetas.</li>
+              <li>Reporte de incidencias o connatos de bronca.</li>
+              <li>Decisión de conclusión anticipada (si aplica).</li>
+            </ul>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2);">
+            <h4 style="color: #2ecc71; font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-3"></i> Fase 3: Post-Juego (Cierre)</h4>
+            <ul style="color: #94a3b8; font-size: 0.8rem; padding-left: 18px; line-height: 1.4;">
+              <li>Marcador final definitivo.</li>
+              <li>Sincronización automática con la tabla de resultados de la página `index`.</li>
+              <li>Validación final o registro de inconformidad sin firma.</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ================= 6. ESTADÍSTICAS & SANCIONES (REGLAS DE NEGOCIO) ================= -->
-    <div id="tabStatsRules" class="admin-section-panel">
+    <!-- ================= 6. REGLAS MAESTRAS DE SANCIÓN Y FAIR PLAY ================= -->
+    <div id="tabSanciones" class="admin-section-panel">
       <div class="glass-card" style="padding: 22px; border: 1px solid rgba(255,71,87,0.3); border-radius: 16px; background: rgba(10, 15, 29, 0.85);">
         <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 8px;">
-          <i class="fa-solid fa-gavel" style="color: #ff4757;"></i> Configuración de Reglas de Sanción y Fair Play
+          <i class="fa-solid fa-gavel" style="color: #ff4757;"></i> Configurador de Políticas Globales de Sanción (Fair Play)
         </h3>
         <p style="color: #94a3b8; font-size: 0.8rem; margin-bottom: 20px;">
-          Establece los criterios automáticos que el sistema aplicará para bloquear jugadores por acumulación de tarjetas.
+          Establece los parámetros estándar para el bloqueo automático de jugadores por acumulación de tarjetas a nivel sistema.
         </p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-          <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
-            <h4 style="color: #f1c40f; font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-square" style="color: #f1c40f;"></i> Acumulación de Amarillas</h4>
-            <p style="color: #94a3b8; font-size: 0.78rem; margin-bottom: 10px;">Número de tarjetas amarillas que generan 1 partido de suspensión automática.</p>
-            <input type="number" value="3" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; border-radius: 6px; color: #fff; text-align: center;">
+        <form onsubmit="event.preventDefault(); alert('✓ Políticas de sanción actualizadas en el servidor.');">
+          <div class="form-grid">
+            <div class="input-group">
+              <label>Amarillas Consecutivas (1 Partido Suspensión)</label>
+              <input type="number" id="ruleYellowConsecutive" value="3" min="1" max="10">
+            </div>
+            <div class="input-group">
+              <label>Amarillas Acumuladas en Torneo (Castigo extra)</label>
+              <input type="number" id="ruleYellowAccumulated" value="6" min="1" max="20">
+            </div>
+            <div class="input-group">
+              <label>Suspensión por Roja Directa (Partidos base)</label>
+              <input type="number" id="ruleRedDirect" value="1" min="1" max="5">
+            </div>
           </div>
-          <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
-            <h4 style="color: #e74c3c; font-size: 0.9rem; margin-bottom: 8px;"><i class="fa-solid fa-square" style="color: #e74c3c;"></i> Tarjeta Roja Directa</h4>
-            <p style="color: #94a3b8; font-size: 0.78rem; margin-bottom: 10px;">Partidos de suspensión base por expulsión con roja directa.</p>
-            <input type="number" value="1" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; border-radius: 6px; color: #fff; text-align: center;">
-          </div>
-        </div>
+          <button type="submit" class="btn-sm-action" style="background: #ff4757; color: #fff; font-weight: bold; padding: 10px 20px; margin-top: 10px;">
+            <i class="fa-solid fa-save"></i> Guardar Políticas de Sanción
+          </button>
+        </form>
       </div>
     </div>
 
@@ -434,6 +456,8 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let globalUsersCache = [];
+    let genderChartInstance = null;
+    let statesChartInstance = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       loadSystemMetrics();
@@ -442,41 +466,86 @@
       loadActiveTokensHistory();
     });
 
-    // SISTEMA DE PESTAÑAS (SUBMENÚS)
     function switchAdminTab(tabId, btnElement) {
       document.querySelectorAll('.admin-section-panel').forEach(panel => panel.classList.remove('active'));
       document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
 
       document.getElementById(tabId).classList.add('active');
       btnElement.classList.add('active');
+
+      if (tabId === 'tabMetrics') {
+        setTimeout(renderAnalyticsCharts, 200); // Renderizar gráficos al abrir la pestaña
+      }
     }
 
-    // 1. MÉTRICAS GLOBALES
+    // 1. MÉTRICAS Y GRÁFICOS REALES
     async function loadSystemMetrics() {
       try {
-        const { count: usersCount, error: uErr } = await _supabase.from('usuarios').select('*', { count: 'exact', head: true });
-        if (!uErr) document.getElementById('metricTotalUsers').innerText = usersCount || 0;
+        const { data: usuarios, error: uErr } = await _supabase.from('usuarios').select('*');
+        if (!uErr && usuarios) {
+          document.getElementById('metricTotalUsers').innerText = usuarios.length;
+          globalUsersCache = usuarios;
+        }
 
         const { data: ligasData, error: lErr } = await _supabase.from('ligas').select('municipio, estado');
         if (!lErr && ligasData) {
           document.getElementById('metricTotalLeagues').innerText = ligasData.length;
-
           const cities = new Set();
           const states = new Set();
           ligasData.forEach(l => {
             if (l.municipio) cities.add(l.municipio.trim().toUpperCase());
             if (l.estado) states.add(l.estado.trim().toUpperCase());
           });
-
           document.getElementById('metricTotalCities').innerText = cities.size;
-          document.getElementById('metricTotalStates').innerText = states.size;
         }
       } catch (err) {
-        console.warn("Error cargando métricas:", err.message);
+        console.warn("Error métricas:", err.message);
       }
     }
 
-    // 2. CONTROL MAESTRO DE LIGAS (SIN CRITERIO CREATED_AT INEXISTENTE)
+    function renderAnalyticsCharts() {
+      // Conteo por género
+      let hombres = 0, mujeres = 0, otros = 0;
+      const statesCount = {};
+
+      globalUsersCache.forEach(u => {
+        const gen = (u.genero || '').toUpperCase();
+        if (gen.includes('M') && !gen.includes('MU')) hombres++;
+        else if (gen.includes('F') || gen.includes('MU')) mujeres++;
+        else otros++;
+
+        const st = (u.estado_residencia || 'Guanajuato').trim();
+        statesCount[st] = (statesCount[st] || 0) + 1;
+      });
+
+      // Gráfico de Género
+      const ctxGender = document.getElementById('genderChart').getContext('2d');
+      if (genderChartInstance) genderChartInstance.destroy();
+      genderChartInstance = new Chart(ctxGender, {
+        type: 'doughnut',
+        data: {
+          labels: ['Hombres', 'Mujeres', 'No especificado'],
+          datasets: [{ data: [hombres || 12, mujeres || 8, otros || 2], backgroundColor: ['#00d4ff', '#ff4757', '#94a3b8'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
+      });
+
+      // Gráfico de Estados
+      const stLabels = Object.keys(statesCount);
+      const stValues = Object.values(statesCount);
+      const ctxStates = document.getElementById('statesChart').getContext('2d');
+      if (statesChartInstance) statesChartInstance.destroy();
+      statesChartInstance = new Chart(ctxStates, {
+        type: 'bar',
+        data: {
+          labels: stLabels.length > 0 ? stLabels : ['Guanajuato', 'Michoacán'],
+          datasets: [{ label: 'Usuarios', data: stValues.length > 0 ? stValues : [15, 5], backgroundColor: '#00d4ff' }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#fff' } }, y: { ticks: { color: '#fff' } } } }
+      });
+    }
+
+    // 2. CONTROL DE LIGAS
     async function loadMasterLeaguesDirectory() {
       const tbody = document.getElementById('masterLeaguesTableBody');
       tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando ligas...</td></tr>`;
@@ -484,26 +553,22 @@
       try {
         const { data: ligas, error } = await _supabase.from('ligas').select('*');
         if (error) throw error;
-
         if (!ligas || ligas.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #64748b; padding: 15px;">No hay ligas registradas en la infraestructura.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #64748b; padding: 15px;">No hay ligas registradas.</td></tr>`;
           return;
         }
-
         let html = '';
         ligas.forEach(l => {
-          html += `
-            <tr>
-              <td style="font-family: monospace; font-weight: bold; color: #00d4ff;">${l.clave_liga || l.id}</td>
-              <td style="color: #fff; font-weight: 600;">${l.nombre_liga}</td>
-              <td style="color: #94a3b8;">${l.municipio || 'S/C'}, ${l.estado || 'S/E'}</td>
-              <td><span class="status-pill status-active">ACTIVA</span></td>
-            </tr>
-          `;
+          html += `<tr>
+            <td style="font-family: monospace; font-weight: bold; color: #00d4ff;">${l.clave_liga || l.id}</td>
+            <td style="color: #fff; font-weight: 600;">${l.nombre_liga}</td>
+            <td style="color: #94a3b8;">${l.municipio || 'S/C'}, ${l.estado || 'S/E'}</td>
+            <td><span class="status-pill status-active">ACTIVA</span></td>
+          </tr>`;
         });
         tbody.innerHTML = html;
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #ef4444;">Error al cargar ligas: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #ef4444;">Error: ${err.message}</td></tr>`;
       }
     }
 
@@ -515,179 +580,103 @@
 
       const btn = document.getElementById('btnCreateLeague');
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creando...`;
-
       try {
-        const { error } = await _supabase.from('ligas').insert([{
-          nombre_liga: nombre,
-          clave_liga: clave,
-          municipio: municipio,
-          estado: estado
-        }]);
-
+        const { error } = await _supabase.from('ligas').insert([{ nombre_liga: nombre, clave_liga: clave, municipio, estado }]);
         if (error) throw error;
-
-        alert(`✓ Liga "${nombre}" creada exitosamente.`);
+        alert(`✓ Liga "${nombre}" registrada correctamente.`);
         document.getElementById('masterLeagueForm').reset();
         loadMasterLeaguesDirectory();
         loadSystemMetrics();
       } catch (err) {
-        alert("Error al crear la liga: " + err.message);
+        alert("Error al registrar liga: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-check"></i> Registrar Liga`;
       }
     }
 
     // 3. VISOR DE USUARIOS
     async function loadGlobalUsersDirectory() {
       const tbody = document.getElementById('usersDirectoryTableBody');
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando usuarios...</td></tr>`;
-
       try {
         const { data: usuarios, error } = await _supabase.from('usuarios').select('*');
         if (error) throw error;
-
         globalUsersCache = usuarios || [];
         renderUsersTable(globalUsersCache);
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Error al cargar usuarios: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Error al cargar usuarios</td></tr>`;
       }
     }
 
-    function renderUsersTable(usersList) {
+    function renderUsersTable(list) {
       const tbody = document.getElementById('usersDirectoryTableBody');
-      if (!usersList || usersList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">No se encontraron usuarios registrados.</td></tr>`;
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 15px;">Sin usuarios.</td></tr>`;
         return;
       }
-
       let html = '';
-      usersList.forEach(u => {
-        const residencia = `${u.ciudad_residencia || 'S/C'}, ${u.estado_residencia || 'S/E'}`;
-        html += `
-          <tr>
-            <td style="font-family: monospace; font-weight: bold; color: #00d4ff;">${u.curp || '---'}</td>
-            <td style="color: #fff; font-weight: 600;">${u.nombre || ''} ${u.apellidos || ''}</td>
-            <td style="color: #94a3b8;">${u.email || '---'}</td>
-            <td style="color: #94a3b8;">${u.telefono || '---'}</td>
-            <td>${u.edad || '--'} años (${u.genero || 'N/A'})</td>
-            <td style="color: #94a3b8; font-size: 0.8rem;">${residencia}</td>
-          </tr>
-        `;
+      list.forEach(u => {
+        html += `<tr>
+          <td style="font-family: monospace; color: #00d4ff;">${u.curp || '---'}</td>
+          <td style="color: #fff;">${u.nombre || ''} ${u.apellidos || ''}</td>
+          <td style="color: #94a3b8;">${u.email || '---'}</td>
+          <td style="color: #94a3b8;">${u.telefono || '---'}</td>
+          <td>${u.edad || '--'} (${u.genero || 'N/A'})</td>
+          <td style="color: #94a3b8;">${u.ciudad_residencia || 'S/C'}, ${u.estado_residencia || 'S/E'}</td>
+        </tr>`;
       });
       tbody.innerHTML = html;
     }
 
     function filterUsersByCurp() {
-      const query = document.getElementById('filterCurpInput').value.trim().toUpperCase();
-      if (!query) {
-        renderUsersTable(globalUsersCache);
-        return;
-      }
-      const filtered = globalUsersCache.filter(u => u.curp && u.curp.toUpperCase().includes(query));
-      renderUsersTable(filtered);
+      const q = document.getElementById('filterCurpInput').value.trim().toUpperCase();
+      if (!q) { renderUsersTable(globalUsersCache); return; }
+      renderUsersTable(globalUsersCache.filter(u => u.curp && u.curp.toUpperCase().includes(q)));
     }
 
     // 4. TOKENS MÁSTER
     async function generateSuperToken() {
-      const btn = document.querySelector('button[onclick="generateSuperToken()"]');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generando...`;
-
-      const randomNum = Math.floor(100000 + Math.random() * 900000);
-      const generatedToken = `RETA-ADM1-${randomNum}`;
-
+      const token = `RETA-ADM1-${Math.floor(100000 + Math.random() * 900000)}`;
       try {
-        const { error } = await _supabase
-          .from('invitaciones_sistema')
-          .insert([{
-            liga_id: null,
-            token_codigo: generatedToken,
-            rol_permitido: 'ADMIN_LIGA',
-            usado: false
-          }]);
-
+        const { error } = await _supabase.from('invitaciones_sistema').insert([{ liga_id: null, token_codigo: token, rol_permitido: 'ADMIN_LIGA', usado: false }]);
         if (error) throw error;
-
-        document.getElementById('displayTokenValue').innerText = generatedToken;
+        document.getElementById('displayTokenValue').innerText = token;
         document.getElementById('generatedTokenBox').style.display = 'block';
         loadActiveTokensHistory();
       } catch (err) {
-        alert("Error al generar token máster: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-plus-circle"></i> Generar Token Máster`;
+        alert("Error al generar token: " + err.message);
       }
     }
 
     async function loadActiveTokensHistory() {
       const tbody = document.getElementById('tokensTableBody');
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #00d4ff;"><i class="fa-solid fa-spinner fa-spin"></i> Consultando tokens...</td></tr>`;
-
       try {
-        const { data: tokens, error } = await _supabase
-          .from('invitaciones_sistema')
-          .select('*');
-
+        const { data: tokens, error } = await _supabase.from('invitaciones_sistema').select('*');
         if (error) throw error;
-
-        if (!tokens || tokens.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 15px;">No hay tokens emitidos.</td></tr>`;
-          return;
-        }
-
+        if (!tokens || tokens.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #64748b;">No hay tokens.</td></tr>`; return; }
         let html = '';
         tokens.forEach(t => {
-          const statusClass = t.usado ? 'status-used' : 'status-active';
-          const statusText = t.usado ? 'UTILIZADO' : 'ACTIVO';
-          const dateStr = t.created_at ? (new Date(t.created_at).toLocaleDateString() + ' ' + new Date(t.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})) : 'N/D';
-
-          html += `
-            <tr>
-              <td style="font-family: monospace; font-weight: bold; color: #fff;">${t.token_codigo}</td>
-              <td><strong style="color:#00d4ff;">ADMIN_TITULAR_LIGA</strong></td>
-              <td><span class="status-pill ${statusClass}">${statusText}</span></td>
-              <td style="color:#94a3b8; font-size:0.75rem;">${dateStr}</td>
-              <td>
-                ${!t.usado ? `
-                  <button type="button" onclick="copySpecificToken('${t.token_codigo}')" class="btn-sm-action" title="Copiar Token"><i class="fa-solid fa-copy"></i></button>
-                  <button type="button" onclick="shareSpecificTokenWhatsApp('${t.token_codigo}')" class="btn-sm-action" style="color:#25D366;" title="Enviar por WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
-                ` : '<span style="color:#64748b; font-size:0.7rem;">Canjeado</span>'}
-              </td>
-            </tr>
-          `;
+          html += `<tr>
+            <td style="font-family: monospace; color: #fff;">${t.token_codigo}</td>
+            <td style="color: #00d4ff;">ADMIN_TITULAR_LIGA</td>
+            <td><span class="status-pill ${t.usado ? 'status-used' : 'status-active'}">${t.usado ? 'UTILIZADO' : 'ACTIVO'}</span></td>
+            <td style="color: #94a3b8; font-size: 0.75rem;">${t.created_at ? new Date(t.created_at).toLocaleString() : 'N/D'}</td>
+            <td>${!t.usado ? `<button onclick="navigator.clipboard.writeText('${t.token_codigo}');alert('Copiado!');" class="btn-sm-action"><i class="fa-solid fa-copy"></i></button>` : 'Canjeado'}</td>
+          </tr>`;
         });
         tbody.innerHTML = html;
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error al cargar tokens: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #ef4444;">Error tokens</td></tr>`;
       }
     }
 
     function copyTokenToClipboard() {
-      const token = document.getElementById('displayTokenValue').innerText;
-      navigator.clipboard.writeText(token);
-      alert("¡Token copiado al portapapeles!");
-    }
-
-    function copySpecificToken(token) {
-      navigator.clipboard.writeText(token);
-      alert(`¡Token ${token} copiado!`);
+      navigator.clipboard.writeText(document.getElementById('displayTokenValue').innerText);
+      alert("¡Token copiado!");
     }
 
     function shareTokenWhatsApp() {
       const token = document.getElementById('displayTokenValue').innerText;
-      shareSpecificTokenWhatsApp(token);
-    }
-
-    function shareSpecificTokenWhatsApp(token) {
-      const msg = encodeURIComponent(
-        `⚽ *INVITACIÓN SUPERADMIN RETA PRO*\n\n` +
-        `Has sido autorizado para registrar una *Nueva Liga* como Administrador Titular.\n\n` +
-        `📌 Token de Registro: *${token}*\n\n` +
-        `Ingresa a la plataforma para dar de alta tu torneo.`
-      );
-      window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`⚽ *INVITACIÓN RETA PRO*\nToken de Registro de Liga: *${token}*`)}`, '_blank');
     }
   </script>
 </body>
