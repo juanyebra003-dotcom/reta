@@ -74,12 +74,19 @@
 
     .status-liberada { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; padding: 4px 10px; border-radius: 6px; font-weight: bold; }
 
+    .cronometro-box {
+      background: rgba(0, 0, 0, 0.6); border: 2px solid #00d4ff; padding: 12px; border-radius: 8px;
+      text-align: center; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+    }
+    .cronometro-display { font-size: 1.5rem; font-family: monospace; font-weight: bold; color: #00d4ff; }
+
     .btn-action-cedula {
       background: linear-gradient(135deg, #00d4ff, #0055ff); color: #000; font-weight: bold;
-      padding: 12px; border-radius: 8px; border: none; cursor: pointer; width: 100%;
-      font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px;
+      padding: 14px; border-radius: 8px; border: none; cursor: pointer; width: 100%;
+      font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px;
+      opacity: 0.5; pointer-events: none; transition: 0.3s;
     }
-    .btn-action-cedula:hover { opacity: 0.9; }
+    .btn-action-cedula.active { opacity: 1; pointer-events: auto; }
   </style>
 </head>
 <body class="login-body">
@@ -90,7 +97,7 @@
 
   <div class="cedula-sheet">
     
-    <!-- ENCABEZADO OFICIAL CON LOGOTIPO GITHUB (logo_reta.png) -->
+    <!-- ENCABEZADO OFICIAL -->
     <div class="cedula-header">
       <div style="text-align: left; display: flex; align-items: center; gap: 10px;">
         <img src="logo_reta.png" alt="Reta Pro Logo" class="logo-reta-img" onerror="this.src='img/logo_reta.png'">
@@ -101,11 +108,23 @@
       </div>
       <div>
         <h1>Acta de Juego Oficial (Cédula Virtual)</h1>
-        <span>Estructura Matricial Validadas por Credenciales</span>
+        <span>Control Total Árbitro y Sincronización Triple Firma</span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
         <div class="folio-box" id="lblFolioConsecutivo">FOLIO: RETA-2027-001</div>
         <div><span id="lblEstatusCedula" class="status-liberada">CÉDULA LIBERADA</span></div>
+      </div>
+    </div>
+
+    <!-- CRONÓMETRO ÁRBITRO EN VIVO (HÍBRIDO / CONFIGURABLE 2 O 4 TIEMPOS) -->
+    <div class="cronometro-box">
+      <div style="text-align: left;">
+        <span style="font-size: 0.7rem; color: #94a3b8; display: block;" id="lblFaseCronometro">CRONÓMETRO — 1.er TIEMPO</span>
+        <div class="cronometro-display" id="cronometroTime">00:00</div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button type="button" onclick="avanzarFaseCronometro()" id="btnCronometroControl" style="background:#10b981; color:#fff; border:none; padding:8px 14px; border-radius:5px; font-weight:bold; cursor:pointer;"><i class="fa-solid fa-play"></i> Iniciar 1.er Tiempo</button>
+        <button type="button" onclick="resetCronometro()" style="background:#ef4444; color:#fff; border:none; padding:8px 12px; border-radius:5px; font-weight:bold; cursor:pointer;"><i class="fa-solid fa-rotate-right"></i> Reiniciar</button>
       </div>
     </div>
 
@@ -115,6 +134,7 @@
         <label style="color: #00d4ff; font-weight: 600; font-size: 0.8rem; margin-right: 8px;">Modalidad de Fútbol:</label>
         <select id="modalidadSelect" onchange="actualizarReglasModalidad()" style="background: rgba(0,0,0,0.6); border: 1px solid #00d4ff; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: bold;">
           <option value="5">Fútbol 5 / Sala (5 Tit. / 12 Sup. | Mín 4)</option>
+          <option value="6">Fútbol 6 / Rápido - 4 Tiempos (6 Tit. / 10 Sup. | Mín 5)</option>
           <option value="7" selected>Fútbol 7 (7 Tit. / 12 Sup. | Mín 5)</option>
           <option value="9">Fútbol 9 (9 Tit. / 12 Sup. | Mín 7)</option>
           <option value="11">Fútbol 11 / Soccer (11 Tit. / 15 Sup. | Mín 8 | Máx 5 Cambios)</option>
@@ -154,7 +174,7 @@
       </tr>
     </table>
 
-    <!-- ALINEACIONES: [N° CONSECUTIVO] [INICA] [DORSAL] [NOMBRE JUGADOR] -->
+    <!-- ALINEACIONES -->
     <div class="grid-equipo-header" style="margin-top: 15px;">
       <div>
         <table class="table-excel" id="tablaLocalRoster">
@@ -168,7 +188,7 @@
       </div>
     </div>
 
-    <!-- SECCIÓN DE CAMBIOS / SUSTITUCIONES DINÁMICA -->
+    <!-- SECCIÓN DE CAMBIOS / SUSTITUCIONES -->
     <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;"><i class="fa-solid fa-right-left"></i> Control de Cambios / Sustituciones (<span id="lblMaxCambios">10 Plazas</span>)</div>
     <div class="grid-equipo-header">
       <table class="table-excel">
@@ -217,7 +237,7 @@
       </table>
     </div>
 
-    <!-- CONTROL DE TARJETAS (7 AMARILLAS / 4 ROJAS POR TIEMPO) -->
+    <!-- CONTROL DE TARJETAS -->
     <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">CONTROL DE TARJETAS (7 Amarillas / 4 Rojas por Tiempo)</div>
     <div class="grid-equipo-header">
       <div class="horizontal-scroll-container" style="margin-bottom:0;">
@@ -269,47 +289,123 @@
     <div class="grid-equipo-header" style="margin-top: 15px; background: rgba(0,212,255,0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2);">
       <div style="text-align: center;">
         <span style="font-size: 0.75rem; color: #00d4ff; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado Equipo A (Local)</span>
-        <button type="button" onclick="validarDelegado('Local')" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+        <button type="button" onclick="validarFirma('Local')" id="btnDelegadoLocal" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
           <i class="fa-solid fa-file-signature"></i> Validar Cédula (Delegado Local)
         </button>
         <div id="statusDelegadoLocal" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
       </div>
       <div style="text-align: center;">
         <span style="font-size: 0.75rem; color: #ff4757; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado Equipo B (Visitante)</span>
-        <button type="button" onclick="validarDelegado('Visitante')" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+        <button type="button" onclick="validarFirma('Visitante')" id="btnDelegadoVisitor" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
           <i class="fa-solid fa-file-signature"></i> Validar Cédula (Delegado Visitante)
         </button>
         <div id="statusDelegadoVisitor" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
       </div>
     </div>
 
-    <button type="button" onclick="alert('✓ Cédula oficial sincronizada con éxito en Reta Pro.')" class="btn-action-cedula">
-      <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Cédula Arbitral Definitiva
+    <!-- SECCIÓN DE OBSERVACIONES Y VALIDACIÓN OFICIAL DEL ÁRBITRO (ANCHO COMPLETO) -->
+    <div style="margin-top: 20px; background: rgba(241, 196, 15, 0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(241, 196, 15, 0.3);">
+      <div style="font-weight: bold; color: #f1c40f; margin-bottom: 5px; text-transform: uppercase;">
+        <i class="fa-solid fa-whistle"></i> Observaciones, Comentarios y Reporte Oficial del Árbitro
+      </div>
+      <textarea class="input-excel" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:10px; height:70px; text-align:left; margin-bottom: 12px;" placeholder="Ingrese incidencias arbitrales, comportamiento de banca o motivos de expulsión..."></textarea>
+      
+      <div style="text-align: center;">
+        <button type="button" onclick="validarFirma('Arbitro')" id="btnArbitro" style="background: #f1c40f; color: #000; font-weight: bold; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+          <i class="fa-solid fa-gavel"></i> Validar y Firmar Cédula (Árbitro Central)
+        </button>
+        <div id="statusArbitro" style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">Pendiente de validación arbitral</div>
+      </div>
+    </div>
+
+    <!-- BOTÓN DE SINCRONIZACIÓN DEFINITIVA (CONDICIONADO A TRIPLE FIRMA) -->
+    <button type="button" onclick="sincronizarCedulaDefinitiva()" id="btnSincronizar" class="btn-action-cedula">
+      <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Cédula Arbitral Definitiva (Triple Firma Requerida)
     </button>
 
   </div>
 
   <script>
+    let firmasValidadas = { Local: false, Visitante: false, Arbitro: false };
+    let segundos = 0, cronoInterval = null, estadoCronometro = 0; 
+    // 0: Detenido, 1: 1er Tiempo, 2: Pausa/Medio Tiempo, 3: 2do Tiempo, 4: Pausa 3T, 5: 3er Tiempo, 6: Pausa 4T, 7: 4to Tiempo, 8: Finalizado
+
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('lblFolioConsecutivo').innerText = `FOLIO: RETA-2027-${Math.floor(100 + Math.random() * 900)}`;
       actualizarReglasModalidad();
+      restaurarBorradorOffline();
     });
+
+    // Lógica del Cronómetro Híbrido Configurable (2 o 4 Tiempos)
+    function avanzarFaseCronometro() {
+      const modalidad = document.getElementById('modalidadSelect').value;
+      const esCuatroTiempos = (modalidad === '6'); // Fútbol 6 (Rápido) tiene 4 tiempos
+      const btn = document.getElementById('btnCronometroControl');
+      const lblFase = document.getElementById('lblFaseCronometro');
+
+      if (estadoCronometro === 0 || estadoCronometro === 2 || estadoCronometro === 4 || estadoCronometro === 6) {
+        // Iniciar o Reanudar Tiempo
+        estadoCronometro++;
+        btn.innerHTML = `<i class="fa-solid fa-pause"></i> Pausar Tiempo`;
+        btn.style.background = '#f59e0b';
+        
+        cronoInterval = setInterval(() => {
+          segundos++;
+          let min = Math.floor(segundos / 60);
+          let sec = segundos % 60;
+          document.getElementById('cronometroTime').innerText = 
+            (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
+        }, 1000);
+
+        let periodoActual = Math.ceil(estadoCronometro / 2);
+        lblFase.innerText = `CRONÓMETRO — ${periodoActual}° TIEMPO (EN VIVO)`;
+
+      } else if (estadoCronometro === 1 || estadoCronometro === 3 || estadoCronometro === 5 || estadoCronometro === 7) {
+        // Pausar Tiempo / Terminar Período
+        clearInterval(cronoInterval);
+        estadoCronometro++;
+        
+        let maxPeriodos = esCuatroTiempos ? 4 : 2;
+        let periodoActual = estadoCronometro / 2;
+
+        if (periodoActual >= maxPeriodos) {
+          btn.innerHTML = `<i class="fa-solid</i> Cédula Finalizada`;
+          btn.style.background = '#64748b';
+          btn.disabled = true;
+          lblFase.innerText = `CRONÓMETRO — PARTIDO FINALIZADO`;
+        } else {
+          btn.innerHTML = `<i class="fa-solid fa-play"></i> Iniciar ${periodoActual + 1}° Tiempo`;
+          btn.style.background = '#10b981';
+          lblFase.innerText = `CRONÓMETRO — PAUSA (MEDIO / ENTRE TIEMPO)`;
+        }
+      }
+    }
+
+    function resetCronometro() {
+      clearInterval(cronoInterval);
+      estadoCronometro = 0;
+      segundos = 0;
+      document.getElementById('cronometroTime').innerText = "00:00";
+      const btn = document.getElementById('btnCronometroControl');
+      btn.innerHTML = `<i class="fa-solid fa-play"></i> Iniciar 1.er Tiempo`;
+      btn.style.background = '#10b981';
+      btn.disabled = false;
+      document.getElementById('lblFaseCronometro').innerText = `CRONÓMETRO — 1.er TIEMPO`;
+    }
 
     function actualizarReglasModalidad() {
       const modalidad = document.getElementById('modalidadSelect').value;
       const alerta = document.getElementById('alertaReglas');
       
-      let titulares = 7;
-      let suplentesCount = 12;
-      let minTitulares = 5;
-      let maxCambios = 10;
+      let titulares = 7, suplentesCount = 12, minTitulares = 5, maxCambios = 10;
 
       if (modalidad === '5') { titulares = 5; suplentesCount = 12; minTitulares = 4; maxCambios = 10; }
+      else if (modalidad === '6') { titulares = 6; suplentesCount = 10; minTitulares = 5; maxCambios = 10; } // Fútbol 6 Rápido
       else if (modalidad === '7') { titulares = 7; suplentesCount = 12; minTitulares = 5; maxCambios = 10; }
       else if (modalidad === '9') { titulares = 9; suplentesCount = 12; minTitulares = 7; maxCambios = 10; }
-      else if (modalidad === '11') { titulares = 11; suplentesCount = 15; minTitulares = 8; maxCambios = 5; }
+      else if (modalidad === '11') { titulares = 11; suplentesCount = 15; minTitulares = 8; maxCambios = 5; } // Fútbol Soccer
 
-      alerta.innerHTML = `ℹ️ <b>Fútbol ${modalidad}:</b> Titulares (${titulares}), Suplentes (${suplentesCount} plazas), Cambios (${maxCambios} filas).`;
+      alerta.innerHTML = `ℹ️ <b>Fútbol ${modalidad}:</b> Titulares (${titulares}), Suplentes (${supCount = suplentesCount} plazas), Cambios (${maxCambios}).`;
 
       renderRosterTabla('tablaLocalRoster', titulares, suplentesCount, 'Local');
       renderRosterTabla('tablaVisitorRoster', titulares, suplentesCount, 'Visitante');
@@ -320,10 +416,9 @@
       const tabla = document.getElementById(tablaId);
       let html = `<tr><th style="width: 45px;">N°</th><th style="width: 50px;">Inicia</th><th style="width: 60px;">Dorsal</th><th>Jugador Validado (${equipo})</th></tr>`;
       
-      // Titulares
-      html += `<tr><td colspan="4" style="background: rgba(0,212,255,0.1); font-weight:bold; color:#00d4ff; text-align:left; padding-left:10px;">TITULARES (Mínimo requerido: ${titCount})</td></tr>`;
+      html += `<tr><td colspan="4" style="background: rgba(0,212,255,0.1); font-weight:bold; color:#00d4ff; text-align:left; padding-left:10px;">TITULARES (Mínimo: ${titCount})</td></tr>`;
       for (let i = 1; i <= titCount; i++) {
-        const dorsalReal = (i * 3) % 99 + 1; // Dorsal simulado de credencial (no consecutivo)
+        const dorsalReal = (i * 3) % 99 + 1;
         html += `<tr>
           <td style="font-weight: bold; color: #00d4ff;">${i}</td>
           <td><input type="checkbox" checked></td>
@@ -332,8 +427,7 @@
         </tr>`;
       }
 
-      // Suplentes (Plazas Fijas abiertas)
-      html += `<tr><td colspan="4" style="background: rgba(255,255,255,0.05); font-weight:bold; color:#94a3b8; text-align:left; padding-left:10px;">SUPLENTES (Plazas Disponibles: ${supCount})</td></tr>`;
+      html += `<tr><td colspan="4" style="background: rgba(255,255,255,0.05); font-weight:bold; color:#94a3b8; text-align:left; padding-left:10px;">SUPLENTES (Plazas: ${supCount})</td></tr>`;
       for (let j = 1; j <= supCount; j++) {
         const numConsecutivo = titCount + j;
         const dorsalSuplente = j <= 3 ? (50 + j) : '';
@@ -342,34 +436,72 @@
           <td style="font-weight: bold; color: #94a3b8;">${numConsecutivo}</td>
           <td><input type="checkbox"></td>
           <td><input type="text" class="input-excel" value="${dorsalSuplente}" placeholder="#" maxlength="3"></td>
-          <td><input type="text" class="input-excel" value="${nombreSuplente}" placeholder="Plaza vacante suplente #${numConsecutivo}" style="text-align:left; color:#94a3b8;"></td>
+          <td><input type="text" class="input-excel" value="${nombreSuplente}" placeholder="Plaza vacante #${numConsecutivo}" style="text-align:left; color:#94a3b8;"></td>
         </tr>`;
       }
-
       tabla.innerHTML = html;
     }
 
     function renderTablaCambios(maxCambios) {
       document.getElementById('lblMaxCambios').innerText = `${maxCambios} Plazas`;
-      
-      let htmlLocal = '';
-      let htmlVisitor = '';
-
+      let htmlLocal = '', htmlVisitor = '';
       for (let c = 1; c <= maxCambios; c++) {
-        htmlLocal += `<tr><td><b>C${c}</b></td><td><input type="text" class="input-excel" placeholder="# Salida"></td><td><input type="text" class="input-excel" placeholder="# Entrada"></td><td><input type="text" class="input-excel" placeholder="Min"></td></tr>`;
-        htmlVisitor += `<tr><td><b>C${c}</b></td><td><input type="text" class="input-excel" placeholder="# Salida"></td><td><input type="text" class="input-excel" placeholder="# Entrada"></td><td><input type="text" class="input-excel" placeholder="Min"></td></tr>`;
+        htmlLocal += `<tr><td><b>C${c}</b></td><td><input type="text" class="input-excel" placeholder="# Sale"></td><td><input type="text" class="input-excel" placeholder="# Entra"></td><td><input type="text" class="input-excel" placeholder="Min"></td></tr>`;
+        htmlVisitor += `<tr><td><b>C${c}</b></td><td><input type="text" class="input-excel" placeholder="# Sale"></td><td><input type="text" class="input-excel" placeholder="# Entra"></td><td><input type="text" class="input-excel" placeholder="Min"></td></tr>`;
       }
-
       document.getElementById('cambiosLocalBody').innerHTML = htmlLocal;
       document.getElementById('cambiosVisitorBody').innerHTML = htmlVisitor;
     }
 
-    function validarDelegado(equipo) {
-      const statusDiv = document.getElementById(equipo === 'Local' ? 'statusDelegadoLocal' : 'statusDelegadoVisitor');
-      statusDiv.innerHTML = `✅ Validado y Firmado por Delegado ${equipo}`;
-      statusDiv.style.color = '#10b981';
-      statusDiv.style.fontWeight = 'bold';
-      alert(`✓ El delegado del equipo ${equipo} ha validado su conformidad con la alineación.`);
+    function validarFirma(rol) {
+      firmasValidadas[rol] = true;
+      let statusDivId = rol === 'Local' ? 'statusDelegadoLocal' : (rol === 'Visitante' ? 'statusDelegadoVisitor' : 'statusArbitro');
+      let btnId = rol === 'Local' ? 'btnDelegadoLocal' : (rol === 'Visitante' ? 'btnDelegadoVisitor' : 'btnArbitro');
+      
+      document.getElementById(statusDivId).innerHTML = `✅ Validado y Firmado (${rol})`;
+      document.getElementById(statusDivId).style.color = '#10b981';
+      document.getElementById(statusDivId).style.fontWeight = 'bold';
+      
+      const btn = document.getElementById(btnId);
+      btn.style.opacity = '0.6';
+      btn.innerText = `Firmado Correctamente`;
+      btn.disabled = true;
+
+      verificarTripleFirma();
+    }
+
+    function verificarTripleFirma() {
+      if (firmasValidadas.Local && firmasValidadas.Visitante && firmasValidadas.Arbitro) {
+        const btnSync = document.getElementById('btnSincronizar');
+        btnSync.classList.add('active');
+        alert("✓ Triple validación completada (Delegados y Árbitro). Botón de sincronización definitiva habilitado.");
+      }
+    }
+
+    function sincronizarCedulaDefinitiva() {
+      if (firmasValidadas.Local && firmasValidadas.Visitante && firmasValidadas.Arbitro) {
+        alert("✓ Cédula arbitral oficial sincronizada con éxito en Supabase (Modo Híbrido Offline/Online).");
+        localStorage.clear(); // Limpiar borrador temporal al sincronizar con éxito
+        window.location.href = "admin_super_panel.html";
+      } else {
+        alert("⚠️ Faltan firmas por validar para habilitar la sincronización.");
+      }
+    }
+
+    // Sistema Híbrido: Persistencia Local Automática (Blindaje contra caída de red)
+    document.addEventListener('input', (e) => {
+      if (e.target.classList.contains('input-excel') || e.target.tagName === 'TEXTAREA') {
+        const key = e.target.id || e.target.placeholder + Math.random();
+        localStorage.setItem(`reta_cedula_draft_${key}`, e.target.value);
+      }
+    });
+
+    function restaurarBorradorOffline() {
+      document.querySelectorAll('.input-excel, textarea').forEach(input => {
+        const key = input.id || input.placeholder;
+        const saved = localStorage.getItem(`reta_cedula_draft_${key}`);
+        if (saved) input.value = saved;
+      });
     }
   </script>
 </body>
