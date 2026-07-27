@@ -123,7 +123,7 @@
       </div>
       <div>
         <h1>Panel del Árbitro / Cédula Virtual</h1>
-        <span>Control Total Árbitro y Validación Dual (Delegado o Capitán)</span>
+        <span>Control Total Árbitro y Validación Flexible (Delegado o Capitán)</span>
       </div>
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
         <div class="folio-box" id="lblFolioConsecutivo">FOLIO: RETA-2027-001</div>
@@ -300,37 +300,65 @@
         </div>
       </div>
 
-      <!-- OBSERVACIONES Y VALIDACIÓN DUAL (DELEGADO O CAPITÁN) -->
-      <div style="font-weight: bold; color: #00d4ff; margin: 20px 0 5px 0; text-transform: uppercase;">OBSERVACIONES Y VALIDACIÓN (DELEGADO / CAPITÁN)</div>
+      <!-- OBSERVACIONES Y VALIDACIÓN INDEPENDIENTE (DELEGADO O CAPITÁN) -->
+      <div style="font-weight: bold; color: #00d4ff; margin: 20px 0 5px 0; text-transform: uppercase;">OBSERVACIONES Y VALIDACIÓN OFICIAL POR EQUIPO</div>
       <div class="grid-equipo-header">
         <div>
-          <div style="font-size: 0.75rem; color:#00d4ff; margin-bottom: 3px;">LOCAL</div>
+          <div style="font-size: 0.75rem; color:#00d4ff; margin-bottom: 3px;">LOCAL — REPORTE</div>
           <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Reportes equipo local..."></textarea>
         </div>
         <div>
-          <div style="font-size: 0.75rem; color:#ff4757; margin-bottom: 3px;">VISITANTE</div>
+          <div style="font-size: 0.75rem; color:#ff4757; margin-bottom: 3px;">VISITANTE — REPORTE</div>
           <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Reportes equipo visitante..."></textarea>
         </div>
       </div>
 
+      <!-- BLOQUES DE VALIDACIÓN SEPARADOS: DELEGADO VS CAPITÁN -->
       <div class="grid-equipo-header" style="margin-top: 15px; background: rgba(0,212,255,0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2);">
-        <div style="text-align: center;">
-          <span style="font-size: 0.75rem; color: #00d4ff; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado o Capitán (Local)</span>
-          <button type="button" onclick="validarFirma('Local')" id="btnDelegadoLocal" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-            <i class="fa-solid fa-file-signature"></i> Validar Cédula (Local: Delegado / Cap)
-          </button>
-          <div id="statusDelegadoLocal" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
+        
+        <!-- LOCAL: DELEGADO O CAPITÁN -->
+        <div style="text-align: center; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 10px;">
+          <span style="font-size: 0.75rem; color: #00d4ff; font-weight: bold; display: block; margin-bottom: 5px;">Validación Equipo Local (Basta con uno)</span>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+            <div>
+              <button type="button" onclick="validarRol('Local', 'Delegado')" id="btnDelegadoLocal" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; width: 100%;">
+                <i class="fa-solid fa-user-tie"></i> Firmar Delegado (Lic. Mario Local)
+              </button>
+              <div id="statusDelegadoLocal" style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">Pendiente</div>
+            </div>
+            <div>
+              <button type="button" onclick="validarRol('Local', 'Capitan')" id="btnCapitanLocal" style="background: #3b82f6; color: #fff; font-weight: bold; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; width: 100%;">
+                <i class="fa-solid fa-shield-halved"></i> Firmar Capitán (Auto-extraído)
+              </button>
+              <div id="statusCapitanLocal" style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">Pendiente</div>
+            </div>
+          </div>
         </div>
-        <div style="text-align: center;">
-          <span style="font-size: 0.75rem; color: #ff4757; font-weight: bold; display: block; margin-bottom: 8px;">Firma / Validación Delegado o Capitán (Visitante)</span>
-          <button type="button" onclick="validarFirma('Visitante')" id="btnDelegadoVisitor" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
-            <i class="fa-solid fa-file-signature"></i> Validar Cédula (Visitante: Delegado / Cap)
-          </button>
-          <div id="statusDelegadoVisitor" style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Pendiente de firma</div>
+
+        <!-- VISITANTE: DELEGADO O CAPITÁN -->
+        <div style="text-align: center; padding-left: 10px;">
+          <span style="font-size: 0.75rem; color: #ff4757; font-weight: bold; display: block; margin-bottom: 5px;">Validación Equipo Visitante (Basta con uno)</span>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+            <div>
+              <button type="button" onclick="validarRol('Visitante', 'Delegado')" id="btnDelegadoVisitor" style="background: #10b981; color: #fff; font-weight: bold; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; width: 100%;">
+                <i class="fa-solid fa-user-tie"></i> Firmar Delegado (Lic. Juan Visitante)
+              </button>
+              <div id="statusDelegadoVisitor" style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">Pendiente</div>
+            </div>
+            <div>
+              <button type="button" onclick="validarRol('Visitante', 'Capitan')" id="btnCapitanVisitor" style="background: #3b82f6; color: #fff; font-weight: bold; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; width: 100%;">
+                <i class="fa-solid fa-shield-halved"></i> Firmar Capitán (Auto-extraído)
+              </button>
+              <div id="statusCapitanVisitor" style="font-size: 0.68rem; color: #94a3b8; margin-top: 2px;">Pendiente</div>
+            </div>
+          </div>
         </div>
+
       </div>
 
-      <!-- SECCIÓN DE OBSERVACIONES Y VALIDACIÓN OFICIAL DEL ÁRBITRO (ANCHO COMPLETO) -->
+      <!-- SECCIÓN DE OBSERVACIONES Y VALIDACIÓN OFICIAL DEL ÁRBITRO -->
       <div style="margin-top: 20px; background: rgba(241, 196, 15, 0.04); padding: 15px; border-radius: 10px; border: 1px solid rgba(241, 196, 15, 0.3);">
         <div style="font-weight: bold; color: #f1c40f; margin-bottom: 5px; text-transform: uppercase;">
           <i class="fa-solid fa-whistle"></i> Observaciones, Comentarios y Reporte Oficial del Árbitro
@@ -338,26 +366,26 @@
         <textarea class="input-excel" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:10px; height:70px; text-align:left; margin-bottom: 12px;" placeholder="Ingrese incidencias arbitrales, comportamiento de banca o motivos de expulsión..."></textarea>
         
         <div style="text-align: center;">
-          <button type="button" onclick="validarFirma('Arbitro')" id="btnArbitro" style="background: #f1c40f; color: #000; font-weight: bold; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+          <button type="button" onclick="validarArbitro()" id="btnArbitro" style="background: #f1c40f; color: #000; font-weight: bold; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
             <i class="fa-solid fa-gavel"></i> Validar y Firmar Cédula (Árbitro Central)
           </button>
           <div id="statusArbitro" style="font-size: 0.75rem; color: #94a3b8; margin-top: 5px;">Pendiente de validación arbitral</div>
         </div>
       </div>
 
-      <!-- BOTÓN DE SINCRONIZACIÓN DEFINITIVA (CONDICIONADO A TRIPLE FIRMA) -->
+      <!-- BOTÓN DE SINCRONIZACIÓN DEFINITIVA -->
       <button type="button" onclick="sincronizarCedulaDefinitiva()" id="btnSincronizar" class="btn-action-cedula">
-        <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Cédula Arbitral Definitiva (Triple Firma Requerida)
+        <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Cédula Arbitral Definitiva (Triple Validación Requerida)
       </button>
 
     </div> <!-- FIN SECCIÓN CÉDULA -->
 
 
-    <!-- SECCIÓN 2: ESTATUS DE JUGADORES (ACTIVOS / INACTIVOS / SUSPENDIDOS) -->
+    <!-- SECCIÓN 2: ESTATUS DE JUGADORES -->
     <div id="seccion-jugadores" class="panel-seccion">
       <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
         <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-shield-halved"></i> Consulta de Estatus de Jugadores (Ligas Registradas)</h3>
-        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px;">Verifique en tiempo real si un jugador cuenta con habilitación vigente, está dado de baja del torneo o se encuentra suspendido por acumulación de tarjetas / expulsión directa.</p>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px;">Verifique en tiempo real si un jugador cuenta con habilitación vigente, está dado de baja del torneo o se encuentra suspendido.</p>
         
         <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
           <input type="text" id="filtroJugador" placeholder="Buscar por Nombre, CURP o Dorsal..." style="background: rgba(0,0,0,0.5); border: 1px solid #00d4ff; color: #fff; padding: 6px 12px; border-radius: 6px; flex: 1; min-width: 220px; font-size: 0.78rem;" onkeyup="filtrarTablaJugadores()">
@@ -373,75 +401,37 @@
       <div class="horizontal-scroll-container">
         <table class="table-excel" id="tablaEstatusJugadores">
           <thead>
-            <tr>
-              <th>Liga / Torneo</th>
-              <th>Equipo</th>
-              <th>N° Dorsal</th>
-              <th>Nombre del Jugador</th>
-              <th>Estatus Oficial</th>
-              <th>Motivo / Sanción (Si aplica)</th>
-            </tr>
+            <tr><th>Liga / Torneo</th><th>Equipo</th><th>N° Dorsal</th><th>Nombre del Jugador</th><th>Estatus Oficial</th><th>Motivo / Sanción</th></tr>
           </thead>
           <tbody>
             <tr>
-              <td>Liga Municipal Moroleón</td>
-              <td>Deportivo Atlas</td>
-              <td><b>#10</b></td>
-              <td>Carlos Alberto Gómez</td>
-              <td><span style="color: #10b981; font-weight: bold;">✅ ACTIVO</span></td>
-              <td>Ninguna</td>
+              <td>Liga Municipal Moroleón</td><td>Deportivo Atlas</td><td><b>#10</b></td><td>Carlos Alberto Gómez</td>
+              <td><span style="color: #10b981; font-weight: bold;">✅ ACTIVO</span></td><td>Ninguna</td>
             </tr>
             <tr>
-              <td>Liga Municipal Moroleón</td>
-              <td>Real Madrid FC</td>
-              <td><b>#7</b></td>
-              <td>Miguel Ángel Yebra</td>
-              <td><span style="color: #ef4444; font-weight: bold;">⛔ SUSPENDIDO</span></td>
-              <td>Tarjeta Roja Directa (Jornada Anterior) - 1 Partido</td>
-            </tr>
-            <tr>
-              <td>Liga Sabatina Reta Pro</td>
-              <td>Inter de Milán</td>
-              <td><b>#14</b></td>
-              <td>Roberto Carlos Pérez</td>
-              <td><span style="color: #f59e0b; font-weight: bold;">⚠️ BAJA DE TORNEO</span></td>
-              <td>Baja voluntaria / Solicitud de Delegado</td>
+              <td>Liga Municipal Moroleón</td><td>Real Madrid FC</td><td><b>#7</b></td><td>Miguel Ángel Yebra</td>
+              <td><span style="color: #ef4444; font-weight: bold;">⛔ SUSPENDIDO</span></td><td>Tarjeta Roja Directa - 1 Partido</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-
-    <!-- SECCIÓN 3: MIS DESIGNACIONES -->
+    <!-- SECCIÓN 3: DESIGNACIONES -->
     <div id="seccion-designaciones" class="panel-seccion">
       <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
         <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-clipboard-list"></i> Calendario de Designaciones Arbitrales</h3>
-        <p style="font-size: 0.75rem; color: #94a3b8; margin: 0;">Partidos asignados por el Administrador de Liga para su arbitraje central o de banda.</p>
       </div>
       <table class="table-excel">
-        <thead>
-          <tr><th>Fecha / Hora</th><th>Liga / Cancha</th><th>Encuentro (Local vs Visitante)</th><th>Modalidad</th><th>Estatus</th></tr>
-        </thead>
+        <thead><tr><th>Fecha / Hora</th><th>Liga / Cancha</th><th>Encuentro</th><th>Modalidad</th><th>Estatus</th></tr></thead>
         <tbody>
-          <tr>
-            <td>Sábado 01 Ago, 16:00 hrs</td>
-            <td>Cancha Sintética #1</td>
-            <td><b>Deportivo Atlas vs Real Madrid FC</b></td>
-            <td>Fútbol 7</td>
-            <td><span style="color: #10b981; font-weight: bold;">Asignado (Activo)</span></td>
-          </tr>
+          <tr><td>Sábado 01 Ago, 16:00 hrs</td><td>Cancha Sintética #1</td><td><b>Deportivo Atlas vs Real Madrid FC</b></td><td>Fútbol 7</td><td><span style="color: #10b981; font-weight: bold;">Asignado</span></td></tr>
         </tbody>
       </table>
     </div>
 
-
-    <!-- SECCIÓN 4: RANKING Y EVALUACIONES -->
+    <!-- SECCIÓN 4: RANKING -->
     <div id="seccion-ranking" class="panel-seccion">
-      <div style="background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-        <h3 style="color: #00d4ff; margin-top: 0; text-transform: uppercase; font-size: 0.95rem;"><i class="fa-solid fa-award"></i> Mi Ranking y Calificación Arbitral</h3>
-        <p style="font-size: 0.75rem; color: #94a3b8; margin: 0;">Evaluación promedio otorgada por los delegados de los equipos y auditada por la administración de la liga.</p>
-      </div>
       <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(0,212,255,0.2);">
         <div style="font-size: 2.5rem; font-weight: bold; color: #f1c40f;">4.8 / 5.0 ⭐</div>
         <div style="font-size: 0.8rem; color: #fff; margin-top: 5px;">Calificación General Excelente (Basado en 24 partidos dirigidos)</div>
@@ -451,9 +441,9 @@
   </div>
 
   <script>
-    let firmasValidadas = { Local: false, Visitante: false, Arbitro: false };
-    let segundos = 0, cronoInterval = null, estadoCronometro = 0; 
-    let enPausaIncidente = false;
+    let equipoValidado = { Local: false, Visitante: false };
+    let arbitroValidado = false;
+    let segundos = 0, cronoInterval = null, estadoCronometro = 0, enPausaIncidente = false;
 
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('lblFolioConsecutivo').innerText = `FOLIO: RETA-2027-${Math.floor(100 + Math.random() * 900)}`;
@@ -461,16 +451,13 @@
       restaurarBorradorOffline();
     });
 
-    // Control de Submenús del Árbitro
     function cambiarSeccion(seccionId, btnElement) {
       document.querySelectorAll('.panel-seccion').forEach(sec => sec.classList.remove('active'));
       document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
-
       document.getElementById(`seccion-${seccionId}`).classList.add('active');
       btnElement.classList.add('active');
     }
 
-    // Filtro para la tabla de jugadores activos/inactivos
     function filtrarTablaJugadores() {
       const input = document.getElementById('filtroJugador').value.toLowerCase();
       const select = document.getElementById('filtroEstatus').value;
@@ -479,22 +466,92 @@
       filas.forEach(fila => {
         const textoFila = fila.innerText.toLowerCase();
         const estatusTexto = fila.querySelector('span').innerText.toLowerCase();
-        
         let coincideTexto = textoFila.includes(input);
         let coincideEstatus = (select === 'todos') || 
                               (select === 'activo' && estatusTexto.includes('activo')) ||
                               (select === 'suspendido' && estatusTexto.includes('suspendido')) ||
                               (select === 'baja' && estatusTexto.includes('baja'));
-
-        if (coincideTexto && coincideEstatus) {
-          fila.style.display = '';
-        } else {
-          fila.style.display = 'none';
-        }
+        fila.style.display = (coincideTexto && coincideEstatus) ? '' : 'none';
       });
     }
 
-    // Lógica del Cronómetro con Botón de Pausa Independiente
+    // Extracción automática del nombre del Capitán seleccionado en la tabla
+    function obtenerNombreCapitan(equipo) {
+      const tablaId = equipo === 'Local' ? 'tablaLocalRoster' : 'tablaVisitorRoster';
+      const radios = document.querySelectorAll(`input[name="capitan_${equipo}"]`);
+      let nombreCapitan = `Capitán ${equipo}`;
+      
+      radios.forEach((radio, index) => {
+        if (radio.checked) {
+          // Buscamos el input de nombre en la misma fila del radio button
+          const fila = radio.closest('tr');
+          const inputNombre = fila.querySelector('input[type="text"][style*="text-align:left"]');
+          if (inputNombre && inputNombre.value) {
+            nombreCapitan = inputNombre.value;
+          }
+        }
+      });
+      return nombreCapitan;
+    }
+
+    function validarRol(equipo, rol) {
+      const btnDel = document.getElementById(equipo === 'Local' ? 'btnDelegadoLocal' : 'btnDelegadoVisitor');
+      const btnCap = document.getElementById(equipo === 'Local' ? 'btnCapitanLocal' : 'btnCapitanVisitor');
+      const statusDiv = document.getElementById(equipo === 'Local' ? (rol === 'Delegado' ? 'statusDelegadoLocal' : 'statusCapitanLocal') : (rol === 'Delegado' ? 'statusDelegadoVisitor' : 'statusCapitanVisitor'));
+
+      let nombreFirma = (rol === 'Delegado') ? `Lic. ${equipo} (Delegado)` : obtenerNombreCapitan(equipo);
+
+      statusDiv.innerHTML = `✅ Validado por ${rol}: <b>${nombreFirma}</b>`;
+      statusDiv.style.color = '#10b981';
+      statusDiv.style.fontWeight = 'bold';
+
+      if (rol === 'Delegado') {
+        btnDel.style.opacity = '0.6';
+        btnDel.disabled = true;
+      } else {
+        btnCap.style.opacity = '0.6';
+        btnCap.disabled = true;
+      }
+
+      // Marcar al equipo como validado con cualquiera de los dos roles
+      equipoValidado[equipo] = true;
+      verificarSincronizacionTotal();
+    }
+
+    function validarArbitro() {
+      arbitroValidado = true;
+      const status = document.getElementById('statusArbitro');
+      const btn = document.getElementById('btnArbitro');
+      
+      status.innerHTML = `✅ Validado y Firmado (Árbitro Central)`;
+      status.style.color = '#10b981';
+      status.style.fontWeight = 'bold';
+      btn.style.opacity = '0.6';
+      btn.innerText = `Arbitraje Validado`;
+      btn.disabled = true;
+
+      verificarSincronizacionTotal();
+    }
+
+    function verificarSincronizacionTotal() {
+      if (equipoValidado.Local && equipoValidado.Visitante && arbitroValidado) {
+        const btnSync = document.getElementById('btnSincronizar');
+        btnSync.classList.add('active');
+        alert("✓ Validación completa (Equipos y Árbitro). Botón de sincronización definitiva habilitado.");
+      }
+    }
+
+    function sincronizarCedulaDefinitiva() {
+      if (equipoValidado.Local && equipoValidado.Visitante && arbitroValidado) {
+        alert("✓ Cédula arbitral oficial sincronizada con éxito en Supabase (Modo Híbrido Offline/Online).");
+        localStorage.clear();
+        window.location.href = "admin_super_panel.html";
+      } else {
+        alert("⚠️ Faltan validaciones requeridas por equipo o del árbitro.");
+      }
+    }
+
+    // Cronómetro y reglas
     function avanzarFaseCronometro() {
       const modalidad = document.getElementById('modalidadSelect').value;
       const esCuatroTiempos = (modalidad === '6');
@@ -510,20 +567,14 @@
         btnPausa.style.display = 'inline-block';
         btnPausa.innerHTML = `<i class="fa-solid fa-pause"></i> Pausa`;
         btnPausa.style.background = '#f59e0b';
-        
         iniciarIntervaloReloj();
-
-        let periodoActual = Math.ceil(estadoCronometro / 2);
-        lblFase.innerText = `CRONÓMETRO — ${periodoActual}° TIEMPO (EN VIVO)`;
-
+        lblFase.innerText = `CRONÓMETRO — ${Math.ceil(estadoCronometro / 2)}° TIEMPO (EN VIVO)`;
       } else {
         clearInterval(cronoInterval);
         estadoCronometro++;
         btnPausa.style.display = 'none';
-        
         let maxPeriodos = esCuatroTiempos ? 4 : 2;
         let periodoActualCompletado = Math.floor(estadoCronometro / 2);
-
         if (periodoActualCompletado >= maxPeriodos) {
           btn.innerHTML = `<i class="fa-solid fa-check"></i> Partido Finalizado`;
           btn.style.background = '#64748b';
@@ -540,7 +591,6 @@
     function togglePausaCronometro() {
       const btnPausa = document.getElementById('btnPausaCronometro');
       const lblFase = document.getElementById('lblFaseCronometro');
-
       if (!enPausaIncidente) {
         clearInterval(cronoInterval);
         enPausaIncidente = true;
@@ -552,8 +602,7 @@
         btnPausa.innerHTML = `<i class="fa-solid fa-pause"></i> Pausa`;
         btnPausa.style.background = '#f59e0b';
         iniciarIntervaloReloj();
-        let periodoActual = Math.ceil(estadoCronometro / 2);
-        lblFase.innerText = `CRONÓMETRO — ${periodoActual}° TIEMPO (EN VIVO)`;
+        lblFase.innerText = `CRONÓMETRO — ${Math.ceil(estadoCronometro / 2)}° TIEMPO (EN VIVO)`;
       }
     }
 
@@ -563,21 +612,17 @@
         segundos++;
         let min = Math.floor(segundos / 60);
         let sec = segundos % 60;
-        document.getElementById('cronometroTime').innerText = 
-          (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
+        document.getElementById('cronometroTime').innerText = (min < 10 ? '0' + min : min) + ':' + (sec < 10 ? '0' + sec : sec);
       }, 1000);
     }
 
     function resetCronometro() {
       clearInterval(cronoInterval);
-      estadoCronometro = 0;
-      segundos = 0;
-      enPausaIncidente = false;
+      estadoCronometro = 0; segundos = 0; enPausaIncidente = false;
       document.getElementById('cronometroTime').innerText = "00:00";
       const btn = document.getElementById('btnCronometroControl');
       btn.innerHTML = `<i class="fa-solid fa-play"></i> Iniciar 1.er Tiempo`;
-      btn.style.background = '#10b981';
-      btn.disabled = false;
+      btn.style.background = '#10b981'; btn.disabled = false;
       document.getElementById('btnPausaCronometro').style.display = 'none';
       document.getElementById('lblFaseCronometro').innerText = `CRONÓMETRO — 1.er TIEMPO`;
     }
@@ -585,17 +630,15 @@
     function actualizarReglasModalidad() {
       const modalidad = document.getElementById('modalidadSelect').value;
       const alerta = document.getElementById('alertaReglas');
-      
-      let titulares = 7, suplentesCount = 12, minTitulares = 5, maxCambios = 10;
+      let titulares = 7, suplentesCount = 12, maxCambios = 10;
 
-      if (modalidad === '5') { titulares = 5; suplentesCount = 12; minTitulares = 4; maxCambios = 10; }
-      else if (modalidad === '6') { titulares = 6; suplentesCount = 10; minTitulares = 5; maxCambios = 10; }
-      else if (modalidad === '7') { titulares = 7; suplentesCount = 12; minTitulares = 5; maxCambios = 10; }
-      else if (modalidad === '9') { titulares = 9; suplentesCount = 12; minTitulares = 7; maxCambios = 10; }
-      else if (modalidad === '11') { titulares = 11; suplentesCount = 15; minTitulares = 8; maxCambios = 5; }
+      if (modalidad === '5') { titulares = 5; suplentesCount = 12; maxCambios = 10; }
+      else if (modalidad === '6') { titulares = 6; suplentesCount = 10; maxCambios = 10; }
+      else if (modalidad === '7') { titulares = 7; suplentesCount = 12; maxCambios = 10; }
+      else if (modalidad === '9') { titulares = 9; suplentesCount = 12; maxCambios = 10; }
+      else if (modalidad === '11') { titulares = 11; suplentesCount = 15; maxCambios = 5; }
 
       alerta.innerHTML = `ℹ️ <b>Fútbol ${modalidad}:</b> Titulares (${titulares}), Suplentes (${suplentesCount} plazas), Cambios (${maxCambios}).`;
-
       renderRosterTabla('tablaLocalRoster', titulares, suplentesCount, 'Local');
       renderRosterTabla('tablaVisitorRoster', titulares, suplentesCount, 'Visitante');
       renderTablaCambios(maxCambios);
@@ -608,7 +651,7 @@
       html += `<tr><td colspan="5" style="background: rgba(0,212,255,0.1); font-weight:bold; color:#00d4ff; text-align:left; padding-left:10px;">TITULARES (Mínimo: ${titCount})</td></tr>`;
       for (let i = 1; i <= titCount; i++) {
         const dorsalReal = (i * 3) % 99 + 1;
-        const esCapitan = (i === 1) ? 'checked' : ''; // Por defecto el jugador #1 o seleccionado es Capitán (C)
+        const esCapitan = (i === 1) ? 'checked' : '';
         html += `<tr>
           <td style="font-weight: bold; color: #00d4ff;">${i}</td>
           <td><input type="checkbox" checked></td>
@@ -645,42 +688,6 @@
       document.getElementById('cambiosVisitorBody').innerHTML = htmlVisitor;
     }
 
-    function validarFirma(rol) {
-      firmasValidadas[rol] = true;
-      let statusDivId = rol === 'Local' ? 'statusDelegadoLocal' : (rol === 'Visitante' ? 'statusDelegadoVisitor' : 'statusArbitro');
-      let btnId = rol === 'Local' ? 'btnDelegadoLocal' : (rol === 'Visitante' ? 'btnDelegadoVisitor' : 'btnArbitro');
-      
-      document.getElementById(statusDivId).innerHTML = `✅ Validado y Firmado (${rol})`;
-      document.getElementById(statusDivId).style.color = '#10b981';
-      document.getElementById(statusDivId).style.fontWeight = 'bold';
-      
-      const btn = document.getElementById(btnId);
-      btn.style.opacity = '0.6';
-      btn.innerText = `Firmado Correctamente`;
-      btn.disabled = true;
-
-      verificarTripleFirma();
-    }
-
-    function verificarTripleFirma() {
-      if (firmasValidadas.Local && firmasValidadas.Visitante && firmasValidadas.Arbitro) {
-        const btnSync = document.getElementById('btnSincronizar');
-        btnSync.classList.add('active');
-        alert("✓ Triple validación completada (Delegado/Capitán y Árbitro). Botón de sincronización definitiva habilitado.");
-      }
-    }
-
-    function sincronizarCedulaDefinitiva() {
-      if (firmasValidadas.Local && firmasValidadas.Visitante && firmasValidadas.Arbitro) {
-        alert("✓ Cédula arbitral oficial sincronizada con éxito en Supabase (Modo Híbrido Offline/Online).");
-        localStorage.clear();
-        window.location.href = "admin_super_panel.html";
-      } else {
-        alert("⚠️ Faltan firmas por validar para habilitar la sincronización.");
-      }
-    }
-
-    // Persistencia Local Automática (Offline-First)
     document.addEventListener('input', (e) => {
       if (e.target.classList.contains('input-excel') || e.target.tagName === 'TEXTAREA') {
         const key = e.target.id || e.target.placeholder + Math.random();
