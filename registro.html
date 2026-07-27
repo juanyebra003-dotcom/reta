@@ -56,20 +56,6 @@
     .sport-role-card i { font-size: 1.5rem; color: #00d4ff; }
     .sport-role-card h4 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px; text-transform: uppercase; }
     .sport-role-card p { font-size: 0.72rem; color: #94a3b8; line-height: 1.2; }
-    
-    .superadmin-badge-option {
-      grid-column: 1 / -1;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-      margin-top: 5px;
-    }
-    .superadmin-badge-option:hover { border-color: #ff4757; background: rgba(255, 71, 87, 0.08); }
-    .superadmin-badge-option span { font-size: 0.75rem; color: #cbd5e1; font-weight: 600; }
-    .superadmin-badge-option small { display: block; font-size: 0.65rem; color: #64748b; font-style: italic; }
 
     /* MEJORA VISUAL DE LOGOS RETA (MARGEN Y FONDO TRASLÚCIDO CON REALCE) */
     .reta-logo-container {
@@ -83,6 +69,21 @@
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
+    }
+
+    /* ENCABEZADO CON FONDO BLANCO TENUE EXCLUSIVO PARA EL LOGO Y MENÚ */
+    .login-header {
+      background: rgba(255, 255, 255, 0.12) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      border-radius: 16px !important;
+      padding: 15px 10px !important;
+      margin-bottom: 20px !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      text-align: center !important;
     }
 
     /* ENCABEZADO DE CREDENCIAL EN GRIS PLATA METÁLICO PARA MÁXIMO REALCE DE LIGA Y LOGO */
@@ -245,7 +246,7 @@
   <div class="login-container full-register-container">
     <div class="glass-card login-card register-wizard-card">
       
-      <!-- Encabezado con Logo Resaltado -->
+      <!-- Encabezado con Logo Resaltado y Fondo Blanco Tenue -->
       <div class="login-header">
         <a href="index.html" onclick="playBeepSound()" class="reta-logo-container">
           <img src="img/logo_reta.png" alt="RETA Logo" class="login-logo-glow">
@@ -282,11 +283,6 @@
             <p>Registra y administra tu liga, torneos, sedes y calendarios.</p>
           </div>
 
-          <div class="superadmin-badge-option" onclick="selectVisualRole('SUPERVISOR')">
-            <span><i class="fa-solid fa-shield-halved" style="color:#ff4757;"></i> Administrador Sub-Base / Supervisor</span>
-            <small>Únicamente para personal autorizado Reta Pro App</small>
-          </div>
-
         </div>
       </div>
 
@@ -316,7 +312,6 @@
               <option value="JUGADOR" selected>⚽ Jugador / Atleta</option>
               <option value="DELEGADO">📋 Delegado / Director Técnico</option>
               <option value="ARBITRO">🏁 Árbitro / Colegiado</option>
-              <option value="SUPERVISOR">👁️ Administrador Pro RETA / Supervisor</option>
               <option value="ADMIN_LIGA">👑 Administrador / Propietario de Liga</option>
             </select>
 
@@ -641,24 +636,6 @@
               </div>
             </div>
 
-            <!-- SUB-FORMULARIO D: ADMIN PRO RETA -->
-            <div id="formSubAdminPro" class="role-specific-section" style="display: none;">
-              <h3 class="step-title"><i class="fa-solid fa-shield-halved"></i> Paso 2: Asignación de Nivel Sub-Base Pro RETA</h3>
-              <div class="form-row">
-                <div class="input-group">
-                  <label for="adminProZona"><i class="fa-solid fa-map-marked-alt"></i> Zona / Sede Sub-Base Asignada (*)</label>
-                  <input type="text" id="adminProZona" placeholder="Ej. Zona Centro / Bajío" onchange="playBeepSound()">
-                </div>
-                <div class="input-group">
-                  <label for="adminProLevel"><i class="fa-solid fa-user-gear"></i> Nivel de Acceso y Operación (*)</label>
-                  <select id="adminProLevel" onchange="playBeepSound()">
-                    <option value="SUPERVISOR_CAMPO">Supervisor de Campo / Validador</option>
-                    <option value="ADMIN_SUBBASE">Administrador Sub-Base Regional</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
             <div class="wizard-buttons">
               <button type="button" class="btn-secondary-action" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
               <button type="button" id="btnNextStep2" class="btn-login" onclick="processStep2Next()">
@@ -899,7 +876,6 @@
 
     // TOKENS MÁSTER MÁXIMA AUTORIDAD
     const MASTER_ADMIN_TOKEN = 'RETA2026ADMIN';
-    const MASTER_SUPERVISOR_TOKEN = 'RETA-SUPERVISOR-2026';
 
     let pendingTargetRole = null;
 
@@ -1094,11 +1070,6 @@
         subtitle.innerText = "Ingresa la CURP del Admin 1 de la Liga o Colegio y el Token de Autorización Arbitral.";
         curpBox.style.display = 'block';
         tokenLabel.innerText = "Token de Árbitro (*)";
-      } else if (roleValue === 'SUPERVISOR') {
-        title.innerText = "Acceso Administrador Sub-Base RETA Pro";
-        subtitle.innerText = "Ingresa la Clave de Infraestructura Máster para personal RETA Pro.";
-        curpBox.style.display = 'none';
-        tokenLabel.innerText = "Clave Máster Supervisor (*)";
       }
 
       modal.classList.add('active');
@@ -1143,12 +1114,6 @@
         if (pendingTargetRole === 'ADMIN_LIGA' && tokenVal === MASTER_ADMIN_TOKEN) {
           closeGatekeeperModal();
           window.location.href = 'liga_registrar.html';
-          return;
-        }
-
-        if (pendingTargetRole === 'SUPERVISOR' && tokenVal === MASTER_SUPERVISOR_TOKEN) {
-          closeGatekeeperModal();
-          openRegistrationForm('SUPERVISOR', tokenVal, null);
           return;
         }
 
@@ -1412,9 +1377,6 @@
       } else if (role === 'ARBITRO') {
         document.getElementById('formSubArbitro').style.display = 'block';
         btnStep1.innerHTML = `Siguiente: Expediente Árbitro <i class="fa-solid fa-arrow-right"></i>`;
-      } else if (role === 'SUPERVISOR') {
-        document.getElementById('formSubAdminPro').style.display = 'block';
-        btnStep1.innerHTML = `Siguiente: Datos Admin Pro <i class="fa-solid fa-arrow-right"></i>`;
       } else if (role === 'ADMIN_LIGA') {
         btnStep1.innerHTML = `Ir a Registro de Liga <i class="fa-solid fa-crown"></i>`;
       }
@@ -1551,8 +1513,6 @@
         goToStep(3);
       } else if (roleVal === 'DELEGADO') {
         prepareAndShowCredential('DELEGADO');
-      } else if (roleVal === 'SUPERVISOR') {
-        openValidationModal();
       }
     }
 
