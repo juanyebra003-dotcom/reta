@@ -133,56 +133,81 @@
     }
     .btn-action-cedula.active { opacity: 1; pointer-events: auto; }
 
-    /* ESTILOS SCROLL DE PATROCINIOS */
+    /* ESTILOS MEJORADOS SCROLL DE PATROCINIOS (CENTRADO, TAMAÑO Y ZOOM) */
+    .sponsors-footer-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 30px 0 20px 0;
+      box-sizing: border-box;
+      padding: 0 10px;
+    }
     .sponsors-footer-scroll {
       max-width: 1400px;
-      margin: 25px auto 10px auto;
-      background: rgba(10, 15, 29, 0.95);
-      border: 2px solid rgba(0, 212, 255, 0.3);
-      border-radius: 12px;
-      padding: 15px;
+      width: 100%;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(10, 15, 29, 0.98));
+      border: 2px solid rgba(0, 212, 255, 0.4);
+      border-radius: 14px;
+      padding: 20px;
       text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
     .sponsors-title {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       color: #00d4ff;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
-      margin-bottom: 12px;
-      letter-spacing: 1px;
+      margin-bottom: 15px;
+      letter-spacing: 1.2px;
     }
     .sponsors-track {
       display: flex;
       overflow-x: auto;
-      gap: 20px;
+      gap: 25px;
       align-items: center;
-      justify-content: flex-start;
-      padding-bottom: 5px;
+      justify-content: center;
+      padding-bottom: 8px;
       scrollbar-width: thin;
       scrollbar-color: #00d4ff rgba(0,0,0,0.3);
     }
-    .sponsor-card {
-      background: rgba(0, 212, 255, 0.05);
-      border: 1px solid rgba(0, 212, 255, 0.2);
-      border-radius: 8px;
-      padding: 10px 15px;
-      min-width: 180px;
+    @media (max-width: 900px) {
+      .sponsors-track { justify-content: flex-start; }
+    }
+    .sponsor-link {
+      text-decoration: none;
+      display: block;
       flex: 0 0 auto;
+    }
+    .sponsor-card {
+      background: rgba(0, 212, 255, 0.06);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 10px;
+      padding: 14px 20px;
+      min-width: 200px;
+      height: 90px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+    .sponsor-card:hover {
+      transform: scale(1.08);
+      background: rgba(0, 212, 255, 0.15);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
     }
     .sponsor-card img {
-      height: 35px;
-      max-width: 120px;
+      height: 42px;
+      max-width: 140px;
       object-fit: contain;
-      filter: drop-shadow(0 0 5px rgba(0,212,255,0.4));
+      filter: drop-shadow(0 0 6px rgba(0,212,255,0.5));
     }
     .sponsor-card span {
-      font-size: 0.7rem;
-      color: #94a3b8;
-      font-weight: 600;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
   </style>
 </head>
@@ -499,11 +524,11 @@
       <div class="grid-equipo-header">
         <div>
           <div style="font-size: 0.75rem; color:#00d4ff; margin-bottom: 3px;">LOCAL — REPORTE</div>
-          <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Comentarios equipo local/Sin comentarios..."></textarea>
+          <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Reportes equipo local..."></textarea>
         </div>
         <div>
           <div style="font-size: 0.75rem; color:#ff4757; margin-bottom: 3px;">VISITANTE — REPORTE</div>
-          <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Comentarios equipo visitante/Sin comentarios..."></textarea>
+          <textarea class="input-excel" style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:8px; height:50px; text-align:left;" placeholder="Reportes equipo visitante..."></textarea>
         </div>
       </div>
 
@@ -634,25 +659,40 @@
 
   </div>
 
-  <!-- SCROLL DE PATROCINIOS INFERIOR -->
-  <div class="sponsors-footer-scroll">
-    <div class="sponsors-title"><i class="fa-solid fa-handshake"></i> Patrocinadores Oficiales Reta Pro</div>
-    <div class="sponsors-track">
-      <div class="sponsor-card">
-        <img src="https://via.placeholder.com/120x35/00d4ff/000000?text=Hidratante+Pro" alt="Hidratación" onerror="this.src='https://placehold.co/120x35/00d4ff/000?text=Hidratante'">
-        <span>Hidratación Oficial</span>
-      </div>
-      <div class="sponsor-card">
-        <img src="https://via.placeholder.com/120x35/10b981/ffffff?text=SportsWear" alt="Uniformes Deportivos" onerror="this.src='https://placehold.co/120x35/10b981/fff?text=Uniformes'">
-        <span>Uniformes Deportivos</span>
-      </div>
-      <div class="sponsor-card">
-        <img src="https://via.placeholder.com/120x35/ef4444/ffffff?text=MediSport" alt="Servicios Médicos" onerror="this.src='https://placehold.co/120x35/ef4444/fff?text=Medisport'">
-        <span>Servicios Médicos</span>
-      </div>
-      <div class="sponsor-card">
-        <img src="logo_reta.png" alt="Logo Reta" onerror="this.src='https://placehold.co/120x35/00d4ff/000?text=RETA+PRO'">
-        <span>Reta Pro Official</span>
+  <!-- SCROLL DE PATROCINIOS INFERIOR (CENTRADO, MÁS GRANDE, CON ZOOM Y HIPERVÍNCULOS) -->
+  <div class="sponsors-footer-wrapper">
+    <div class="sponsors-footer-scroll">
+      <div class="sponsors-title"><i class="fa-solid fa-handshake"></i> Patrocinadores Oficiales Reta Pro</div>
+      <div class="sponsors-track">
+        
+        <a href="https://example.com/hidratacion" target="_blank" class="sponsor-link">
+          <div class="sponsor-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/3076/3076136.png" alt="Hidratación" onerror="this.src='https://placehold.co/140x42/00d4ff/000?text=Hidratacion'">
+            <span>Hidratación Oficial</span>
+          </div>
+        </a>
+
+        <a href="https://example.com/uniformes" target="_blank" class="sponsor-link">
+          <div class="sponsor-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/892/892692.png" alt="Uniformes Deportivos" onerror="this.src='https://placehold.co/140x42/10b981/fff?text=Uniformes'">
+            <span>Uniformes Deportivos</span>
+          </div>
+        </a>
+
+        <a href="https://example.com/medicos" target="_blank" class="sponsor-link">
+          <div class="sponsor-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" alt="Servicios Médicos" onerror="this.src='https://placehold.co/140x42/ef4444/fff?text=Medisport'">
+            <span>Servicios Médicos</span>
+          </div>
+        </a>
+
+        <a href="https://example.com/reta" target="_blank" class="sponsor-link">
+          <div class="sponsor-card">
+            <img src="logo_reta.png" alt="Logo Reta" onerror="this.src='https://placehold.co/140x42/00d4ff/000?text=RETA+PRO'">
+            <span>Reta Pro Official</span>
+          </div>
+        </a>
+
       </div>
     </div>
   </div>
@@ -904,87 +944,53 @@
 
     // LÓGICA DE CÁLCULO DINÁMICO DE TOTALES
     function configurarCalculoDinamicoTotales() {
-      // Función genérica para contar inputs con valor numérico/texto válido en filas de dorsal
-      function calcularTotalesSeccion(selectorContenedor, idSalida) {
-        const contenedor = document.querySelector(selectorContenedor);
-        if (!contenedor) return;
-        const inputs = contenedor.querySelectorAll('tr:nth-child(2) input.input-excel');
-        let total = 0;
-        inputs.forEach(inp => {
-          if (inp.value && inp.value.trim() !== '' && inp.value.trim() !== '#' && inp.value.trim() !== '# R') {
-            total++;
-          }
-        });
-        const out = document.getElementById(idSalida);
-        if (out) out.innerText = total;
-      }
-
       document.addEventListener('input', (e) => {
         if (e.target.classList.contains('input-excel')) {
-          // Goles Local (fila de dorsal en la primera tabla de goles local)
           const tablasGoles = document.querySelectorAll('#seccion-cedula .horizontal-scroll-container');
           if (tablasGoles.length >= 4) {
-            // Local Goles está en la tabla 0
             let golesLocalInputs = tablasGoles[0].querySelectorAll('tr:nth-child(2) input.input-excel');
             let countGL = 0;
             golesLocalInputs.forEach(i => { if(i.value.trim() !== '') countGL++; });
             document.getElementById('totalGolesLocal').innerText = countGL;
 
-            // Visitor Goles está en la tabla 1
             let golesVisInputs = tablasGoles[1].querySelectorAll('tr:nth-child(2) input.input-excel');
             let countGV = 0;
             golesVisInputs.forEach(i => { if(i.value.trim() !== '') countGV++; });
             document.getElementById('totalGolesVisitor').innerText = countGV;
 
-            // Local Faltas está en la tabla 2
             let faltasLocalInputs = tablasGoles[2].querySelectorAll('tr:nth-child(2) input.input-excel');
             let countFL = 0;
             faltasLocalInputs.forEach(i => { if(i.value.trim() !== '') countFL++; });
             document.getElementById('totalFaltasLocal').innerText = countFL;
 
-            // Visitor Faltas está en la tabla 3
             let faltasVisInputs = tablasGoles[3].querySelectorAll('tr:nth-child(2) input.input-excel');
             let countFV = 0;
             faltasVisInputs.forEach(i => { if(i.value.trim() !== '') countFV++; });
             document.getElementById('totalFaltasVisitor').innerText = countFV;
           }
 
-          // Tarjetas Amarillas y Rojas Local / Visitante
-          // Buscamos dentro de control de tarjetas
-          const tablasTarjetas = document.querySelectorAll('#seccion-cedula .grid-equipo-header + div .table-excel, #seccion-cedula .horizontal-scroll-container table');
-          // Tarjetas Local Amarillas (14 columnas)
           let amarillasLocalCount = 0;
           let rojasLocalCount = 0;
           let amarillasVisCount = 0;
           let rojasVisCount = 0;
 
-          // Recorrer inputs en control de tarjetas si tienen id/clase o posición
-          // Simplificado buscando todos los inputs dentro de los contenedores de tarjetas
-          const contenedoresTarjetas = document.querySelectorAll('#seccion-cedula .grid-equipo-header');
-          if (contenedoresTarjetas.length > 0) {
-            // Evaluamos contenedor de tarjetas local (primer bloque de tarjetas)
-            const cardBlocks = document.querySelectorAll('.grid-equipo-header .horizontal-scroll-container');
-            if (cardBlocks.length >= 2) {
-              // Local Amarillas (fila 3 de la tabla local, 14 inputs)
-              const amLocInputs = cardBlocks[0].querySelectorAll('tr:nth-child(3) input.input-excel');
-              amLocInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '#') amarillasLocalCount++; });
-              document.getElementById('totalAmarillasLocal').innerText = amarillasLocalCount;
+          const cardBlocks = document.querySelectorAll('.grid-equipo-header .horizontal-scroll-container');
+          if (cardBlocks.length >= 2) {
+            const amLocInputs = cardBlocks[0].querySelectorAll('tr:nth-child(3) input.input-excel');
+            amLocInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '#') amarillasLocalCount++; });
+            document.getElementById('totalAmarillasLocal').innerText = amarillasLocalCount;
 
-              // Local Rojas (fila 6, 8 inputs)
-              const rjLocInputs = cardBlocks[0].querySelectorAll('tr:nth-child(6) input.input-excel');
-              rjLocInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '# R') rojasLocalCount++; });
-              document.getElementById('totalRojasLocal').innerText = rojasLocalCount;
+            const rjLocInputs = cardBlocks[0].querySelectorAll('tr:nth-child(6) input.input-excel');
+            rjLocInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '# R') rojasLocalCount++; });
+            document.getElementById('totalRojasLocal').innerText = rojasLocalCount;
 
-              // Visitante Amarillas
-              const amVisInputs = cardBlocks[1].querySelectorAll('tr:nth-child(3) input.input-excel');
-              amVisInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '#') amarillasVisCount++; });
-              document.getElementById('totalAmarillasVisitor').innerText = amarillasVisCount;
+            const amVisInputs = cardBlocks[1].querySelectorAll('tr:nth-child(3) input.input-excel');
+            amVisInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '#') amarillasVisCount++; });
+            document.getElementById('totalAmarillasVisitor').innerText = amarillasVisCount;
 
-              // Visitante Rojas
-              const rjVisInputs = cardBlocks[1].querySelectorAll('tr:nth-child(6) input.input-excel');
-              rjVisInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '# R') rojasVisCount++; });
-              document.getElementById('totalRojasVisitor').innerText = rojasVisCount;
-            }
+            const rjVisInputs = cardBlocks[1].querySelectorAll('tr:nth-child(6) input.input-excel');
+            rjVisInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '# R') rojasVisCount++; });
+            document.getElementById('totalRojasVisitor').innerText = rojasVisCount;
           }
 
           const key = e.target.id || e.target.placeholder + Math.random();
