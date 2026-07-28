@@ -829,7 +829,7 @@
 
       <div style="margin: 15px 0; text-align: left; background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 12px; border-left: 4px solid #00d4ff;">
         <p style="font-size: 0.95rem; color: #ffffff; line-height: 1.5; font-weight: 600;">
-          Tu preregistro ha sido enviado para autorización en দুই etapas: primero de tu <strong>Delegado de Equipo</strong> y posteriormente del <strong>Administrador de la Liga</strong>. Por favor, regresa más tarde para verificar el estatus de tu credencial.
+          Tu preregistro ha sido enviado para autorización en dos etapas: primero de tu <strong>Delegado de Equipo</strong> y posteriormente del <strong>Administrador de la Liga</strong>. Por favor, regresa más tarde para verificar el estatus de tu credencial.
         </p>
         <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px; line-height: 1.5;">
           Tu borrador de credencial digital ha sido generado con estado <strong style="color:#ffb703;">PENDIENTE_DELEGADO</strong>. Quedará oficializada en cuanto reciba ambas autorizaciones.
@@ -1695,6 +1695,21 @@
           if (lSel && lSel.value && lSel.value.length > 30) {
             activeLeagueUuid = lSel.value;
           }
+        }
+
+        // 3.1. SI ES DELEGADO: GUARDAR EN TABLA "expedientes_delegados"
+        if (roleName === 'DELEGADO') {
+          const { error: delErr } = await _supabase
+            .from('expedientes_delegados')
+            .insert([{
+              curp_delegado: curpVal,
+              liga_id: activeLeagueUuid,
+              nombre_equipo: document.getElementById('delegadoTeam').value.trim(),
+              categoria: document.getElementById('delegadoCategory').value,
+              cargo: document.getElementById('delegadoCargo').value
+            }]);
+
+          if (delErr) console.error("Error guardando expediente de delegado:", delErr.message);
         }
 
         let targetTeamId = null;
