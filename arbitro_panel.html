@@ -132,6 +132,58 @@
       opacity: 0.5; pointer-events: none; transition: 0.3s;
     }
     .btn-action-cedula.active { opacity: 1; pointer-events: auto; }
+
+    /* ESTILOS SCROLL DE PATROCINIOS */
+    .sponsors-footer-scroll {
+      max-width: 1400px;
+      margin: 25px auto 10px auto;
+      background: rgba(10, 15, 29, 0.95);
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+    }
+    .sponsors-title {
+      font-size: 0.8rem;
+      color: #00d4ff;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    .sponsors-track {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      align-items: center;
+      justify-content: flex-start;
+      padding-bottom: 5px;
+      scrollbar-width: thin;
+      scrollbar-color: #00d4ff rgba(0,0,0,0.3);
+    }
+    .sponsor-card {
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 15px;
+      min-width: 180px;
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .sponsor-card img {
+      height: 35px;
+      max-width: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 5px rgba(0,212,255,0.4));
+    }
+    .sponsor-card span {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body class="login-body">
@@ -284,76 +336,162 @@
         </table>
       </div>
 
-      <!-- GOLES (EXTENDIDO HASTA 25) -->
+      <!-- GOLES (EXTENDIDO HASTA 25 CON TOTAL) -->
       <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">GOLES (Minuto a Minuto del 1 al 25)</div>
       <div class="horizontal-scroll-container">
-        <table class="table-excel" style="min-width: 1100px;">
-          <tr><th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Goles</th><th>Gol</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-          <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
-          <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
+        <table class="table-excel" style="min-width: 1180px;">
+          <tr>
+            <th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Goles</th>
+            <th>Gol</th>
+            <script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script>
+            <th style="background: rgba(0,212,255,0.3); color:#00d4ff;">Total Goles</th>
+          </tr>
+          <tr>
+            <td>N° Dorsal</td>
+            <script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script>
+            <td rowspan="2" style="background: rgba(0,212,255,0.1); font-size: 1.1rem; font-weight: bold; color: #00d4ff;" id="totalGolesLocal">0</td>
+          </tr>
+          <tr>
+            <td>Minuto</td>
+            <script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script>
+          </tr>
         </table>
       </div>
 
       <div class="horizontal-scroll-container">
-        <table class="table-excel" style="min-width: 1100px;">
-          <tr><th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Goles</th><th>Gol</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-          <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
-          <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
+        <table class="table-excel" style="min-width: 1180px;">
+          <tr>
+            <th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Goles</th>
+            <th>Gol</th>
+            <script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script>
+            <th style="background: rgba(255,71,87,0.3); color:#ff4757;">Total Goles</th>
+          </tr>
+          <tr>
+            <td>N° Dorsal</td>
+            <script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script>
+            <td rowspan="2" style="background: rgba(255,71,87,0.1); font-size: 1.1rem; font-weight: bold; color: #ff4757;" id="totalGolesVisitor">0</td>
+          </tr>
+          <tr>
+            <td>Minuto</td>
+            <script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script>
+          </tr>
         </table>
       </div>
 
-      <!-- FALTAS ACUMULATIVAS (EXTENDIDO HASTA 25) -->
+      <!-- FALTAS ACUMULATIVAS (EXTENDIDO HASTA 25 CON TOTAL) -->
       <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">FALTAS ACUMULATIVAS (Del 1 al 25)</div>
       <div class="horizontal-scroll-container">
-        <table class="table-excel" style="min-width: 1100px;">
-          <tr><th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Faltas</th><th>Falta</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-          <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
-          <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
+        <table class="table-excel" style="min-width: 1180px;">
+          <tr>
+            <th rowspan="3" style="width: 120px; vertical-align: middle;">LOCAL<br>Faltas</th>
+            <th>Falta</th>
+            <script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script>
+            <th style="background: rgba(0,212,255,0.3); color:#00d4ff;">Total Faltas</th>
+          </tr>
+          <tr>
+            <td>N° Dorsal</td>
+            <script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script>
+            <td rowspan="2" style="background: rgba(0,212,255,0.1); font-size: 1.1rem; font-weight: bold; color: #00d4ff;" id="totalFaltasLocal">0</td>
+          </tr>
+          <tr>
+            <td>Minuto</td>
+            <script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script>
+          </tr>
         </table>
       </div>
 
       <div class="horizontal-scroll-container">
-        <table class="table-excel" style="min-width: 1100px;">
-          <tr><th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Faltas</th><th>Falta</th><script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script></tr>
-          <tr><td>N° Dorsal</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script></tr>
-          <tr><td>Minuto</td><script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script></tr>
+        <table class="table-excel" style="min-width: 1180px;">
+          <tr>
+            <th rowspan="3" style="width: 120px; vertical-align: middle; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE<br>Faltas</th>
+            <th>Falta</th>
+            <script>for(let i=1;i<=25;i++) document.write(`<th>${i}</th>`);</script>
+            <th style="background: rgba(255,71,87,0.3); color:#ff4757;">Total Faltas</th>
+          </tr>
+          <tr>
+            <td>N° Dorsal</td>
+            <script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="2"></td>`);</script>
+            <td rowspan="2" style="background: rgba(255,71,87,0.1); font-size: 1.1rem; font-weight: bold; color: #ff4757;" id="totalFaltasVisitor">0</td>
+          </tr>
+          <tr>
+            <td>Minuto</td>
+            <script>for(let i=1;i<=25;i++) document.write(`<td><input type="text" class="input-excel" maxlength="3"></td>`);</script>
+          </tr>
         </table>
       </div>
 
-      <!-- CONTROL DE TARJETAS -->
+      <!-- CONTROL DE TARJETAS CON TOTALES AMARILLAS Y ROJAS -->
       <div style="font-weight: bold; color: #00d4ff; margin: 15px 0 5px 0; text-transform: uppercase;">CONTROL DE TARJETAS (7 Amarillas / 4 Rojas por Tiempo)</div>
       <div class="grid-equipo-header">
+        
+        <!-- TARJETAS LOCAL -->
         <div class="horizontal-scroll-container" style="margin-bottom:0;">
-          <table class="table-excel" style="min-width: 600px;">
+          <table class="table-excel" style="min-width: 650px;">
             <tr>
               <th rowspan="2" style="vertical-align: middle; width: 80px;">LOCAL</th>
               <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">1.er T (7 Amarillas)</th>
               <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">2.do T (7 Amarillas)</th>
+              <th rowspan="2" style="background: rgba(241, 196, 15, 0.3); color: #f1c40f; vertical-align: middle;">Total Amarillas</th>
             </tr>
             <tr><script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script></tr>
-            <tr><td>N° Dorsal</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
-            <tr><td>Min.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script></tr>
-            <tr><th colspan="15" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T)</th></tr>
-            <tr><td>N° Dorsal</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
-            <tr><td>Min.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
+            <tr>
+              <td>N° Dorsal</td>
+              <script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script>
+              <td rowspan="2" style="font-weight: bold; color: #f1c40f; font-size: 1rem; background: rgba(241,196,15,0.1);" id="totalAmarillasLocal">0</td>
+            </tr>
+            <tr>
+              <td>Min.</td>
+              <script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script>
+            </tr>
+            <tr><th colspan="16" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T) & Total</th></tr>
+            <tr>
+              <td>N° Dorsal</td>
+              <script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script>
+              <td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td>
+              <td rowspan="2" style="font-weight: bold; color: #e74c3c; font-size: 1rem; background: rgba(231,76,60,0.1);" id="totalRojasLocal">0</td>
+            </tr>
+            <tr>
+              <td>Min.</td>
+              <script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script>
+              <td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td>
+            </tr>
           </table>
         </div>
 
+        <!-- TARJETAS VISITANTE -->
         <div class="horizontal-scroll-container" style="margin-bottom:0;">
-          <table class="table-excel" style="min-width: 600px;">
+          <table class="table-excel" style="min-width: 650px;">
             <tr>
               <th rowspan="2" style="vertical-align: middle; width: 80px; background: rgba(255,71,87,0.15); color:#ff4757;">VISITANTE</th>
               <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">1.er T (7 Amarillas)</th>
               <th colspan="7" style="background: rgba(241, 196, 15, 0.2); color: #f1c40f;">2.do T (7 Amarillas)</th>
+              <th rowspan="2" style="background: rgba(241, 196, 15, 0.3); color: #f1c40f; vertical-align: middle;">Total Amarillas</th>
             </tr>
             <tr><script>for(let a=1; a<=14; a++) document.write(`<th style="font-size:0.65rem; color:#f1c40f;">A${a<=7?a:a-7}</th>`);</script></tr>
-            <tr><td>N° Dorsal</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script></tr>
-            <tr><td>Min.</td><script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script></tr>
-            <tr><th colspan="15" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T)</th></tr>
-            <tr><td>N° Dorsal</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
-            <tr><td>Min.</td><script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script><td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td></tr>
+            <tr>
+              <td>N° Dorsal</td>
+              <script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="#"></td>`);</script>
+              <td rowspan="2" style="font-weight: bold; color: #f1c40f; font-size: 1rem; background: rgba(241,196,15,0.1);" id="totalAmarillasVisitor">0</td>
+            </tr>
+            <tr>
+              <td>Min.</td>
+              <script>for(let i=1; i<=14; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script>
+            </tr>
+            <tr><th colspan="16" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">TARJETAS ROJAS (4 en 1.er T / 4 en 2.do T) & Total</th></tr>
+            <tr>
+              <td>N° Dorsal</td>
+              <script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="# R"></td>`);</script>
+              <td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td>
+              <td rowspan="2" style="font-weight: bold; color: #e74c3c; font-size: 1rem; background: rgba(231,76,60,0.1);" id="totalRojasVisitor">0</td>
+            </tr>
+            <tr>
+              <td>Min.</td>
+              <script>for(let i=1; i<=8; i++) document.write(`<td><input type="text" class="input-excel" placeholder="Min"></td>`);</script>
+              <td colspan="6" style="background: rgba(0,0,0,0.3); color:#64748b; font-size:0.7rem;">N/A</td>
+            </tr>
           </table>
         </div>
+
       </div>
 
       <!-- OBSERVACIONES Y VALIDACIÓN INDEPENDIENTE (DELEGADO O CAPITÁN) -->
@@ -496,6 +634,29 @@
 
   </div>
 
+  <!-- SCROLL DE PATROCINIOS INFERIOR -->
+  <div class="sponsors-footer-scroll">
+    <div class="sponsors-title"><i class="fa-solid fa-handshake"></i> Patrocinadores Oficiales Reta Pro</div>
+    <div class="sponsors-track">
+      <div class="sponsor-card">
+        <img src="https://via.placeholder.com/120x35/00d4ff/000000?text=Hidratante+Pro" alt="Hidratación" onerror="this.src='https://placehold.co/120x35/00d4ff/000?text=Hidratante'">
+        <span>Hidratación Oficial</span>
+      </div>
+      <div class="sponsor-card">
+        <img src="https://via.placeholder.com/120x35/10b981/ffffff?text=SportsWear" alt="Uniformes Deportivos" onerror="this.src='https://placehold.co/120x35/10b981/fff?text=Uniformes'">
+        <span>Uniformes Deportivos</span>
+      </div>
+      <div class="sponsor-card">
+        <img src="https://via.placeholder.com/120x35/ef4444/ffffff?text=MediSport" alt="Servicios Médicos" onerror="this.src='https://placehold.co/120x35/ef4444/fff?text=Medisport'">
+        <span>Servicios Médicos</span>
+      </div>
+      <div class="sponsor-card">
+        <img src="logo_reta.png" alt="Logo Reta" onerror="this.src='https://placehold.co/120x35/00d4ff/000?text=RETA+PRO'">
+        <span>Reta Pro Official</span>
+      </div>
+    </div>
+  </div>
+
   <script>
     let equipoValidado = { Local: false, Visitante: false };
     let arbitroValidado = false;
@@ -505,6 +666,7 @@
       document.getElementById('lblFolioConsecutivo').innerText = `FOLIO: RETA-2027-${Math.floor(100 + Math.random() * 900)}`;
       actualizarReglasModalidad();
       restaurarBorradorOffline();
+      configurarCalculoDinamicoTotales();
     });
 
     function cambiarSeccion(seccionId, btnElement) {
@@ -740,12 +902,96 @@
       document.getElementById('cambiosVisitorBody').innerHTML = htmlVisitor;
     }
 
-    document.addEventListener('input', (e) => {
-      if (e.target.classList.contains('input-excel') || e.target.tagName === 'TEXTAREA') {
-        const key = e.target.id || e.target.placeholder + Math.random();
-        localStorage.setItem(`reta_cedula_draft_${key}`, e.target.value);
+    // LÓGICA DE CÁLCULO DINÁMICO DE TOTALES
+    function configurarCalculoDinamicoTotales() {
+      // Función genérica para contar inputs con valor numérico/texto válido en filas de dorsal
+      function calcularTotalesSeccion(selectorContenedor, idSalida) {
+        const contenedor = document.querySelector(selectorContenedor);
+        if (!contenedor) return;
+        const inputs = contenedor.querySelectorAll('tr:nth-child(2) input.input-excel');
+        let total = 0;
+        inputs.forEach(inp => {
+          if (inp.value && inp.value.trim() !== '' && inp.value.trim() !== '#' && inp.value.trim() !== '# R') {
+            total++;
+          }
+        });
+        const out = document.getElementById(idSalida);
+        if (out) out.innerText = total;
       }
-    });
+
+      document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('input-excel')) {
+          // Goles Local (fila de dorsal en la primera tabla de goles local)
+          const tablasGoles = document.querySelectorAll('#seccion-cedula .horizontal-scroll-container');
+          if (tablasGoles.length >= 4) {
+            // Local Goles está en la tabla 0
+            let golesLocalInputs = tablasGoles[0].querySelectorAll('tr:nth-child(2) input.input-excel');
+            let countGL = 0;
+            golesLocalInputs.forEach(i => { if(i.value.trim() !== '') countGL++; });
+            document.getElementById('totalGolesLocal').innerText = countGL;
+
+            // Visitor Goles está en la tabla 1
+            let golesVisInputs = tablasGoles[1].querySelectorAll('tr:nth-child(2) input.input-excel');
+            let countGV = 0;
+            golesVisInputs.forEach(i => { if(i.value.trim() !== '') countGV++; });
+            document.getElementById('totalGolesVisitor').innerText = countGV;
+
+            // Local Faltas está en la tabla 2
+            let faltasLocalInputs = tablasGoles[2].querySelectorAll('tr:nth-child(2) input.input-excel');
+            let countFL = 0;
+            faltasLocalInputs.forEach(i => { if(i.value.trim() !== '') countFL++; });
+            document.getElementById('totalFaltasLocal').innerText = countFL;
+
+            // Visitor Faltas está en la tabla 3
+            let faltasVisInputs = tablasGoles[3].querySelectorAll('tr:nth-child(2) input.input-excel');
+            let countFV = 0;
+            faltasVisInputs.forEach(i => { if(i.value.trim() !== '') countFV++; });
+            document.getElementById('totalFaltasVisitor').innerText = countFV;
+          }
+
+          // Tarjetas Amarillas y Rojas Local / Visitante
+          // Buscamos dentro de control de tarjetas
+          const tablasTarjetas = document.querySelectorAll('#seccion-cedula .grid-equipo-header + div .table-excel, #seccion-cedula .horizontal-scroll-container table');
+          // Tarjetas Local Amarillas (14 columnas)
+          let amarillasLocalCount = 0;
+          let rojasLocalCount = 0;
+          let amarillasVisCount = 0;
+          let rojasVisCount = 0;
+
+          // Recorrer inputs en control de tarjetas si tienen id/clase o posición
+          // Simplificado buscando todos los inputs dentro de los contenedores de tarjetas
+          const contenedoresTarjetas = document.querySelectorAll('#seccion-cedula .grid-equipo-header');
+          if (contenedoresTarjetas.length > 0) {
+            // Evaluamos contenedor de tarjetas local (primer bloque de tarjetas)
+            const cardBlocks = document.querySelectorAll('.grid-equipo-header .horizontal-scroll-container');
+            if (cardBlocks.length >= 2) {
+              // Local Amarillas (fila 3 de la tabla local, 14 inputs)
+              const amLocInputs = cardBlocks[0].querySelectorAll('tr:nth-child(3) input.input-excel');
+              amLocInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '#') amarillasLocalCount++; });
+              document.getElementById('totalAmarillasLocal').innerText = amarillasLocalCount;
+
+              // Local Rojas (fila 6, 8 inputs)
+              const rjLocInputs = cardBlocks[0].querySelectorAll('tr:nth-child(6) input.input-excel');
+              rjLocInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '# R') rojasLocalCount++; });
+              document.getElementById('totalRojasLocal').innerText = rojasLocalCount;
+
+              // Visitante Amarillas
+              const amVisInputs = cardBlocks[1].querySelectorAll('tr:nth-child(3) input.input-excel');
+              amVisInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '#') amarillasVisCount++; });
+              document.getElementById('totalAmarillasVisitor').innerText = amarillasVisCount;
+
+              // Visitante Rojas
+              const rjVisInputs = cardBlocks[1].querySelectorAll('tr:nth-child(6) input.input-excel');
+              rjVisInputs.forEach(inp => { if(inp.value.trim() !== '' && inp.value.trim() !== '# R') rojasVisCount++; });
+              document.getElementById('totalRojasVisitor').innerText = rojasVisCount;
+            }
+          }
+
+          const key = e.target.id || e.target.placeholder + Math.random();
+          localStorage.setItem(`reta_cedula_draft_${key}`, e.target.value);
+        }
+      });
+    }
 
     function restaurarBorradorOffline() {
       document.querySelectorAll('.input-excel, textarea').forEach(input => {
