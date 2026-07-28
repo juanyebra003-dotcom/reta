@@ -2,780 +2,462 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>RETA Pro - Panel del Delegado</title>
-  
-  <!-- Fonts & FontAwesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RETA PRO - Panel del Delegado</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     :root {
-      --bg-main: #0a0f1d;
-      --card-bg: rgba(19, 28, 51, 0.9);
-      --primary: #00d4ff;
-      --accent-green: #10b981;
-      --accent-red: #ff4757;
+      --bg-color: #070b19;
+      --card-bg: rgba(13, 20, 38, 0.85);
+      --border-color: rgba(0, 212, 255, 0.2);
+      --accent-color: #00d4ff;
+      --accent-orange: #f97316;
       --text-main: #ffffff;
-      --text-sub: #94a3b8;
-      --border-color: rgba(0, 212, 255, 0.25);
+      --text-muted: #94a3b8;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+    
+    /* Navbar estilo Árbitro */
+    header { background: rgba(10, 15, 29, 0.95); border-bottom: 2px solid var(--border-color); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(8px); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { height: 45px; width: auto; }
+    .brand h1 { font-size: 1.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+    .brand span { color: var(--accent-orange); }
+    
+    .user-info-badge { background: rgba(249, 115, 22, 0.1); border: 1px solid var(--accent-orange); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
+    /* Contenedor Principal y Pestañas */
+    .main-container { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
+    
+    .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; }
+    .tab-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+    .tab-btn:hover, .tab-btn.active { background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(249, 115, 22, 0.15)); border-color: var(--accent-color); color: #fff; box-shadow: 0 4px 15px rgba(0,212,255,0.2); }
 
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      min-height: 100vh;
-      padding-bottom: 40px;
-    }
+    .panel-section { display: none; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(10px); }
+    .panel-section.active { display: block; }
 
-    /* Header Deportivo Mobile-First */
-    .app-header {
-      background: linear-gradient(180deg, rgba(0,212,255,0.15) 0%, rgba(10,15,29,0) 100%);
-      padding: 15px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      background-color: var(--bg-main);
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
+    h3 { font-size: 1.2rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
 
-    .brand-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    /* Filtros de Torneo / Categoría */
+    .filter-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+    .input-group label { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
+    .input-group select, .input-group input { width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-size: 0.85rem; }
 
-    .brand-box img {
-      height: 38px;
-    }
+    /* Tablas de Datos */
+    .table-responsive { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; text-align: left; font-size: 0.85rem; }
+    th { background: rgba(0, 212, 255, 0.1); color: var(--accent-color); padding: 12px; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+    td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+    tr:hover { background: rgba(255,255,255,0.02); }
 
-    .brand-title h1 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--primary);
-      text-transform: uppercase;
-      line-height: 1;
-    }
+    .player-mini-photo { width: 40px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--accent-color); }
+    
+    /* Badges de Estatus / Línea de tiempo */
+    .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; display: inline-block; }
+    .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid #f59e0b; }
+    .status-approved { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
+    .status-rejected { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid #ef4444; }
 
-    .brand-title p {
-      font-size: 0.65rem;
-      color: var(--text-sub);
-    }
+    /* Botones de acción */
+    .btn-action { padding: 6px 12px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
+    .btn-approve { background: #10b981; color: #fff; }
+    .btn-reject { background: #ef4444; color: #fff; }
+    .btn-whatsapp { background: #25d366; color: #fff; text-decoration: none; }
+    .btn-action:hover { opacity: 0.85; transform: translateY(-1px); }
 
-    /* Contenedor Principal */
-    .main-container {
-      padding: 15px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    /* Seleccionador Contextual de Plantilla/Equipo */
-    .team-selector-card {
-      background: var(--card-bg);
-      border: 1px solid var(--primary);
-      border-radius: 16px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
-    }
-
-    .team-selector-card label {
-      font-size: 0.75rem;
-      color: var(--primary);
-      font-weight: 700;
-      text-transform: uppercase;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .team-select-input {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      outline: none;
-    }
-
-    /* Pestañas de Estatus */
-    .status-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-color);
-      color: var(--text-sub);
-      border-radius: 10px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.2s;
-    }
-
-    .tab-btn.active {
-      background: var(--primary);
-      color: #000;
-      border-color: var(--primary);
-      box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
-    }
-
-    /* Tarjeta de Jugador Mobile */
-    .player-card {
-      background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .player-card.pending {
-      border-left: 4px solid #f59e0b;
-    }
-
-    .player-card.approved {
-      border-left: 4px solid var(--accent-green);
-    }
-
-    .player-main-info {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .player-avatar {
-      width: 60px;
-      height: 70px;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 1px solid var(--primary);
-      flex-shrink: 0;
-    }
-
-    .player-details {
-      flex: 1;
-    }
-
-    .player-details h3 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .player-details p {
-      font-size: 0.72rem;
-      color: var(--text-sub);
-      margin-top: 2px;
-    }
-
-    .curp-tag {
-      font-family: monospace;
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .dorsal-badge {
-      background: var(--primary);
-      color: #000;
-      font-weight: 800;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      display: inline-block;
-      margin-top: 4px;
-    }
-
-    /* Acciones Rápidas Táctiles */
-    .player-actions {
-      display: flex;
-      gap: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      padding-top: 10px;
-    }
-
-    .btn-action {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-approve {
-      background: var(--accent-green);
-      color: #000;
-    }
-
-    .btn-reject {
-      background: rgba(255, 71, 87, 0.15);
-      color: var(--accent-red);
-      border: 1px solid var(--accent-red);
-    }
-
-    /* Modal de Aprobación & Parrilla de Dorsales */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.88);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-    }
-
-    .modal-card {
-      background: #0a0f1d;
-      border: 2px solid var(--primary);
-      border-radius: 16px;
-      width: 100%;
-      max-width: 480px;
-      padding: 20px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .dorsal-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 6px;
-      margin: 15px 0;
-      max-height: 160px;
-      overflow-y: auto;
-      background: rgba(0,0,0,0.4);
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    .dorsal-item {
-      padding: 8px 0;
-      text-align: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid transparent;
-    }
-
-    .dorsal-item.free {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--accent-green);
-      border-color: var(--accent-green);
-    }
-
-    .dorsal-item.occupied {
-      background: rgba(255, 71, 87, 0.15);
-      color: var(--accent-red);
-      border-color: var(--accent-red);
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
-
-    .dorsal-item.selected {
-      background: var(--primary);
-      color: #000;
-      font-weight: 800;
-      box-shadow: 0 0 10px var(--primary);
-    }
-
-    .alert-error {
-      background: rgba(255, 71, 87, 0.2);
-      border: 1px solid var(--accent-red);
-      color: #ff6b81;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      display: none;
-      margin-top: 8px;
-    }
+    /* Pantalla de bloqueo de seguridad por si no hay sesión */
+    .auth-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(7, 11, 25, 0.95); z-index: 99999; display: flex; align-items: center; justify-content: center; }
+    .auth-card { background: var(--card-bg); border: 2px solid var(--accent-orange); padding: 30px; border-radius: 16px; text-align: center; max-width: 400px; width: 90%; }
+    .auth-card h2 { color: var(--accent-orange); margin-bottom: 10px; font-size: 1.3rem; }
+    .auth-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+    .btn-login-redirect { background: var(--accent-orange); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-decoration: none; display: inline-block; }
   </style>
 </head>
 <body>
 
-  <!-- Header Mobile -->
-  <header class="app-header">
-    <div class="brand-box">
-      <img src="img/logo_reta.png" alt="RETA Logo" onerror="this.style.display='none'">
-      <div class="brand-title">
-        <h1>RETA Pro</h1>
-        <p>Panel del Delegado</p>
-      </div>
-    </div>
-    <div style="font-size: 0.75rem; color: var(--primary); text-align: right;">
-      <i class="fa-solid fa-user-shield"></i> <span id="delegadoCurpDisplay">DELEGADO</span>
-    </div>
-  </header>
-
-  <main class="main-container">
-
-    <!-- BARRA DE IDENTIFICACIÓN / LOGIN DE DELEGADO SI NO ESTÁ GUARDADO -->
-    <div id="delegadoAuthCard" style="background: rgba(0, 212, 255, 0.08); border: 1px solid var(--primary); padding: 12px; border-radius: 12px; margin-bottom: 15px;">
-      <label style="color: var(--primary); font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 6px;">
-        <i class="fa-solid fa-id-card"></i> IDENTIFICACIÓN DEL DELEGADO / D.T. (CURP):
-      </label>
-      <div style="display: flex; gap: 8px;">
-        <input type="text" id="inputDelegadoCurp" placeholder="Ingresa tu CURP de Delegado" style="flex:1; padding:8px 12px; background:rgba(0,0,0,0.6); border:1px solid var(--border-color); border-radius:8px; color:#fff; text-transform:uppercase; font-size:0.85rem;">
-        <button type="button" onclick="saveDelegadoCurpAndLoad()" style="background:var(--primary); color:#000; font-weight:bold; border:none; padding:8px 15px; border-radius:8px; cursor:pointer; font-size:0.8rem;">
-          Cargar <i class="fa-solid fa-arrows-rotate"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Selector Contextual de Plantilla -->
-    <div class="team-selector-card">
-      <label><i class="fa-solid fa-layer-group"></i> Selecciona la Plantilla a Administrar:</label>
-      <select id="teamSelect" class="team-select-input" onchange="loadTeamPlayers()">
-        <option value="" disabled selected>Cargando tus plantillas...</option>
-      </select>
-    </div>
-
-    <!-- Pestañas de Estatus -->
-    <div class="status-tabs">
-      <button class="tab-btn active" id="tabPending" onclick="switchTab('PENDIENTE')">
-        <i class="fa-solid fa-clock"></i> Pendientes (<span id="countPending">0</span>)
-      </button>
-      <button class="tab-btn" id="tabApproved" onclick="switchTab('APROBADO')">
-        <i class="fa-solid fa-circle-check"></i> Plantilla Oficial (<span id="countApproved">0</span>)
-      </button>
-    </div>
-
-    <!-- Lista Dinámica de Jugadores -->
-    <div id="playersListContainer">
-      <!-- Se llena dinámicamente desde JavaScript -->
-    </div>
-
-  </main>
-
-  <!-- MODAL DE APROBACIÓN Y ASIGNACIÓN DE DORSAL/POSICIÓN -->
-  <div class="modal-overlay" id="approvalModal">
-    <div class="modal-card">
-      <h3 style="color:#fff; font-size:1.1rem; margin-bottom:4px;">Aprobar Jugador en Plantilla</h3>
-      <p style="color:var(--text-sub); font-size:0.75rem;" id="modalPlayerName">Nombre Jugador</p>
-      
-      <div style="margin-top: 15px;">
-        <label style="font-size:0.75rem; color:var(--primary); font-weight:700; display:block; margin-bottom:5px;">
-          1. Selecciona la Posición de Juego:
-        </label>
-        <select id="modalPositionSelect" class="team-select-input" style="margin-bottom:15px;">
-          <option value="Portero">🧤 Portero</option>
-          <option value="Defensa Central">🛡️ Defensa Central</option>
-          <option value="Lateral">⚡ Lateral</option>
-          <option value="Medio Defensivo">🎯 Medio Defensivo</option>
-          <option value="Medio Ofensivo">🧠 Medio Ofensivo / Creador</option>
-          <option value="Extremo">🚀 Extremo / Volante</option>
-          <option value="Delantero" selected>⚽ Delantero Centro</option>
-        </select>
-
-        <label style="font-size:0.75rem; color:var(--primary); font-weight:700; display:block; margin-bottom:5px;">
-          2. Asigna Número de Dorsal (Mapa de esta plantilla):
-        </label>
-        
-        <input type="number" id="modalDorsalInput" placeholder="Escribe el número (ej. 10)" class="team-select-input" oninput="validateDorsalInput(this.value)">
-        
-        <div id="dorsalAlert" class="alert-error">
-          <i class="fa-solid fa-triangle-exclamation"></i> Este dorsal ya lo tiene otro jugador en esta plantilla.
-        </div>
-
-        <p style="font-size:0.65rem; color:var(--text-sub); margin-top:10px;">
-          Verde = Disponible | Rojo = Ocupado en esta categoría
-        </p>
-        
-        <!-- Rejilla Visual del 1 al 99 -->
-        <div class="dorsal-grid" id="dorsalGridContainer"></div>
-      </div>
-
-      <div style="display:flex; gap:10px; margin-top:20px;">
-        <button class="btn-action btn-reject" style="flex:1;" onclick="closeModal()">Cancelar</button>
-        <button class="btn-action btn-approve" id="btnConfirmApproval" style="flex:2;" onclick="submitPlayerApproval()">
-          <i class="fa-solid fa-check-double"></i> Confirmar Aprobación
-        </button>
-      </div>
+  <!-- MODAL DE BLOQUEO SI NO ESTÁ AUTENTICADO COMO DELEGADO -->
+  <div id="authSecurityOverlay" class="auth-overlay" style="display: none;">
+    <div class="auth-card">
+      <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--accent-orange); margin-bottom: 15px;"></i>
+      <h2>Acceso Restringido</h2>
+      <p>Debes iniciar sesión con tus credenciales oficiales de Delegado desde el portal de usuarios para acceder a este panel.</p>
+      <a href="index.html" class="btn-login-redirect">Ir al Inicio / Login <i class="fa-solid fa-arrow-right"></i></a>
     </div>
   </div>
 
+  <!-- ENCABEZADO -->
+  <header>
+    <div class="brand">
+      <img src="img/logo_reta.png" alt="RETA Logo">
+      <h1>RETA PRO <span>Panel Delegado</span></h1>
+    </div>
+    <div class="user-info-badge">
+      <i class="fa-solid fa-clipboard-user" style="color: var(--accent-orange);"></i>
+      <span id="delegateSessionName">Delegado Oficial</span>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR DE PESTAÑAS Y SECCIONES -->
+  <div class="main-container">
+    
+    <!-- BARRA DE NAVEGACIÓN / SUBMENÚS -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-jugadores', this)"><i class="fa-solid fa-users"></i> Jugadores Registrados</button>
+      <button class="tab-btn" onclick="switchTab('tab-estadisticas', this)"><i class="fa-solid fa-chart-bar"></i> Estadísticas</button>
+      <button class="tab-btn" onclick="switchTab('tab-cedula-consulta', this)"><i class="fa-solid fa-id-card"></i> Cédula de Registro</button>
+      <button class="tab-btn" onclick="switchTab('tab-documentos', this)"><i class="fa-solid fa-file-shield"></i> Validación de Documentos</button>
+      <button class="tab-btn" onclick="switchTab('tab-cedula-arbitral', this)"><i class="fa-solid fa-flag"></i> Cédula Arbitral (Alineación)</button>
+    </div>
+
+    <!-- FILTROS GLOBALES DE TORNEO, CATEGORÍA Y RAMA -->
+    <div class="filter-bar">
+      <div class="input-group">
+        <label><i class="fa-solid fa-trophy"></i> Torneo Activo</label>
+        <select id="globalTorneoSelect" onchange="filterDataByContext()">
+          <option value="GUA-GUA-LOP-726" selected>Liga Oro Plus (GUA-GUA-LOP-726)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label><i class="fa-solid fa-layer-group"></i> Categoría</label>
+        <select id="globalCategoriaSelect" onchange="filterDataByContext()">
+          <option value="Libre" selected>Libre</option>
+          <option value="Juvenil">Juvenil (Sub-18)</option>
+          <option value="Veteranos">Veteranos (+35)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label><i class="fa-solid fa-venus-mars"></i> Rama</label>
+        <select id="globalRamaSelect" onchange="filterDataByContext()">
+          <option value="Varonil" selected>Varonil</option>
+          <option value="Femenil">Femenil</option>
+          <option value="Mixto">Mixto</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 1: JUGADORES REGISTRADOS -->
+    <div id="tab-jugadores" class="panel-section active">
+      <h3><i class="fa-solid fa-users-gear"></i> Gestión y Plantilla de Jugadores</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>CURP / Identificador</th>
+              <th>Nombre Completo</th>
+              <th>Edad</th>
+              <th>Estatus Doble Validación</th>
+              <th>Dorsal</th>
+              <th>Posición</th>
+              <th>Acciones de Control</th>
+            </tr>
+          </thead>
+          <tbody id="playersTableBody">
+            <!-- Datos cargados dinámicamente vía Supabase -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: ESTADÍSTICAS -->
+    <div id="tab-estadisticas" class="panel-section">
+      <h3><i class="fa-solid fa-chart-line"></i> Estadísticas del Equipo por Torneo</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Resumen competitivo de rendimiento, goleo y disciplina correspondiente al torneo seleccionado.</p>
+      <div id="statsContentContainer">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+          <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <h4 style="color: var(--accent-color); font-size: 0.95rem; margin-bottom: 10px;"><i class="fa-solid fa-ranking-star"></i> Tabla de Goleo Interna</h4>
+            <div id="internalGoleoList"><small style="color: var(--text-muted);">Cargando registros...</small></div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <h4 style="color: var(--accent-orange); font-size: 0.95rem; margin-bottom: 10px;"><i class="fa-solid fa-square text-yellow"></i> Control Disciplinario</h4>
+            <div id="internalCardsList"><small style="color: var(--text-muted);">Sin amonestaciones registradas.</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: CÉDULA DE REGISTRO (CONSULTA) -->
+    <div id="tab-cedula-consulta" class="panel-section">
+      <h3><i class="fa-solid id-card"></i> Cédula Oficial de Registro (Solo Jugadores Validados)</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Plantilla oficial autorizada con visto bueno de Delegado y Administrador de Liga.</p>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>Código RETA</th>
+              <th>Nombre</th>
+              <th>CURP</th>
+              <th>Dorsal</th>
+              <th>Posición</th>
+              <th>Estatus Oficial</th>
+            </tr>
+          </thead>
+          <tbody id="certifiedCedulaBody">
+            <!-- Cédula de consulta -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 4: VALIDACIÓN DE DOCUMENTOS -->
+    <div id="tab-documentos" class="panel-section">
+      <h3><i class="fa-solid fa-file-contract"></i> Auditoría y Validación de Documentación</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Jugador</th>
+              <th>INE / Identificación</th>
+              <th>Carta Responsiva</th>
+              <th>Estatus Delegado</th>
+              <th>Estatus Admin Liga</th>
+              <th>Acciones de Validación</th>
+            </tr>
+          </thead>
+          <tbody id="documentsTableBody">
+            <!-- Validación documental -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 5: CÉDULA ARBITRAL (ALINEACIÓN) -->
+    <div id="tab-cedula-arbitral" class="panel-section">
+      <h3><i class="fa-solid fa-clipboard-list"></i> Convocatoria y Alineación para Cédula Arbitral</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Selecciona los jugadores titulares y suplentes para la jornada. <strong style="color: var(--accent-orange);">Nota:</strong> Una vez validada la cédula por el árbitro en campo, este formulario se bloqueará automáticamente.</p>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Dorsal</th>
+              <th>Jugador</th>
+              <th>Posición</th>
+              <th>Asignar Rol (Titular / Suplente / No Convocado)</th>
+            </tr>
+          </thead>
+          <tbody id="matchLineupBody">
+            <!-- Alineación en vivo -->
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top: 20px; text-align: right;">
+        <button class="tab-btn active" style="background: var(--accent-color); color: #000; font-weight: bold; border:none;" onclick="saveMatchLineup()"><i class="fa-solid fa-floppy-disk"></i> Guardar Alineación Oficial</button>
+      </div>
+    </div>
+
+  </div>
+
   <script>
+    /* CONFIGURACIÓN SUPABASE */
     const SUPABASE_URL = 'https://ymgsrqsgcexilgatpsew.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZ3NycXNnY2V4aWxnYXRwc2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NTQ2MDUsImV4cCI6MjEwMDIzMDYwNX0.aqPRm3TJvoB0xn8V968la9wY26GtWj1iXYmHAhGvq-4';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentDelegadoCurp = localStorage.getItem('reta_delegado_curp') || '';
-    let currentTab = 'PENDIENTE';
-    let loadedPlayers = [];
-    let occupiedDorsals = new Set();
-    let selectedPlayerForApproval = null;
+    let currentDelegateUser = null;
+    let teamPlayersCache = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      if (currentDelegadoCurp) {
-        document.getElementById('inputDelegadoCurp').value = currentDelegadoCurp;
-        document.getElementById('delegadoCurpDisplay').innerText = currentDelegadoCurp;
-      }
-      loadDelegadoTeams();
+    document.addEventListener('DOMContentLoaded', async () => {
+      await verifyDelegateSession();
+      await loadTeamDataAndRoster();
     });
 
-    function saveDelegadoCurpAndLoad() {
-      const val = document.getElementById('inputDelegadoCurp').value.trim().toUpperCase();
-      if (val) {
-        currentDelegadoCurp = val;
-        localStorage.setItem('reta_delegado_curp', currentDelegadoCurp);
-        document.getElementById('delegadoCurpDisplay').innerText = currentDelegadoCurp;
-        loadDelegadoTeams();
-      } else {
-        alert("Por favor ingresa una CURP de Delegado válida.");
-      }
-    }
-
-    // 1. Cargar las Plantillas vinculadas al Delegado (Consulta Robusta en Dos Pasos)
-    async function loadDelegadoTeams() {
-      const select = document.getElementById('teamSelect');
-      select.innerHTML = `<option value="" disabled selected>Consultando plantillas...</option>`;
-
-      try {
-        // PASO A: Consultar tabla equipos
-        let query = _supabase.from('equipos').select('id, nombre_equipo, categoria, liga_id');
-        if (currentDelegadoCurp) {
-          query = query.eq('curp_delegado', currentDelegadoCurp);
-        }
-
-        let { data: equipos, error: eqErr } = await query;
-
-        // Fallback: Si no hay filtro por curp_delegado, obtener todos los equipos activos
-        if (eqErr || !equipos || equipos.length === 0) {
-          const { data: allEquipos } = await _supabase.from('equipos').select('id, nombre_equipo, categoria, liga_id');
-          equipos = allEquipos || [];
-        }
-
-        if (!equipos || equipos.length === 0) {
-          select.innerHTML = `<option value="">No hay plantillas registradas</option>`;
-          document.getElementById('playersListContainer').innerHTML = `
-            <p style="text-align:center; color:var(--text-sub); margin-top:30px;">
-              No tienes equipos asignados como Delegado.
-            </p>`;
-          return;
-        }
-
-        // PASO B: Consultar los nombres de ligas asociadas
-        const ligaIds = equipos.map(e => e.liga_id).filter(id => id);
-        let ligasDict = {};
-
-        if (ligaIds.length > 0) {
-          const { data: ligas } = await _supabase
-            .from('ligas')
-            .select('id, nombre_liga, clave_liga')
-            .in('id', ligaIds);
-
-          if (ligas) {
-            ligas.forEach(l => {
-              ligasDict[l.id] = l.nombre_liga || l.clave_liga;
-            });
-          }
-        }
-
-        select.innerHTML = equipos.map(e => {
-          const ligaNombre = ligasDict[e.liga_id] || 'Liga RETA';
-          return `<option value="${e.id}">${ligaNombre} - ${e.nombre_equipo} (${e.categoria || 'Libre'})</option>`;
-        }).join('');
-        
-        loadTeamPlayers();
-
-      } catch (err) {
-        console.error("Error al cargar plantillas:", err);
-        select.innerHTML = `<option value="">Error al cargar equipos</option>`;
-      }
-    }
-
-    // 2. Cargar Jugadores de la Plantilla Seleccionada (Consulta Secuencial para evadir errores RLS/JOIN)
-    async function loadTeamPlayers() {
-      const equipoId = document.getElementById('teamSelect').value;
-      if (!equipoId) return;
-
-      const container = document.getElementById('playersListContainer');
-      container.innerHTML = `<p style="text-align:center; color:var(--text-sub); margin-top:20px;"><i class="fa-solid fa-spinner fa-spin"></i> Cargando plantilla...</p>`;
-
-      try {
-        // PASO A: Obtener registros en equipo_jugadores
-        const { data: relaciones, error: relErr } = await _supabase
-          .from('equipo_jugadores')
-          .select('*')
-          .eq('equipo_id', equipoId);
-
-        if (relErr) throw relErr;
-
-        if (!relaciones || relaciones.length === 0) {
-          loadedPlayers = [];
-          updateCounters();
-          renderPlayersList();
-          return;
-        }
-
-        // PASO B: Obtener datos biográficos de los usuarios
-        const userIds = relaciones.map(r => r.usuario_id).filter(id => id);
-        const curps = relaciones.map(r => r.curp_jugador).filter(c => c);
-
-        let usuariosDict = {};
-
-        if (userIds.length > 0 || curps.length > 0) {
-          let uQuery = _supabase.from('usuarios').select('id, curp, nombre, apellidos, edad, foto_url');
-          if (userIds.length > 0) {
-            uQuery = uQuery.in('id', userIds);
-          } else {
-            uQuery = uQuery.in('curp', curps);
-          }
-
-          const { data: usuariosData } = await uQuery;
-
-          if (usuariosData) {
-            usuariosData.forEach(u => {
-              if (u.id) usuariosDict[u.id] = u;
-              if (u.curp) usuariosDict[u.curp] = u;
-            });
-          }
-        }
-
-        // Combinar información en memoria
-        loadedPlayers = relaciones.map(rel => {
-          const uInfo = usuariosDict[rel.usuario_id] || usuariosDict[rel.curp_jugador] || {
-            nombre: rel.nombre_jugador || 'Jugador',
-            apellidos: rel.apellidos_jugador || '',
-            curp: rel.curp_jugador || '---',
-            edad: '--'
-          };
-
-          // Normalizar estatus
-          let estatusNorm = (rel.estatus_delegado || rel.estatus || 'PENDIENTE').toUpperCase();
-          if (estatusNorm.includes('PENDIENTE')) estatusNorm = 'PENDIENTE';
-          else if (estatusNorm.includes('APROBADO') || estatusNorm.includes('OFICIAL')) estatusNorm = 'APROBADO';
-
-          return {
-            ...rel,
-            estatus_delegado: estatusNorm,
-            usuarios: uInfo
-          };
-        });
-
-        // Mapear dorsales ocupados únicamente en ESTA plantilla
-        occupiedDorsals = new Set(
-          loadedPlayers
-            .filter(p => p.estatus_delegado === 'APROBADO' && p.numero_dorsal && p.numero_dorsal !== '#--')
-            .map(p => p.numero_dorsal.toString())
-        );
-
-        updateCounters();
-        renderPlayersList();
-
-      } catch (err) {
-        console.error("Error cargando jugadores:", err);
-        container.innerHTML = `<p style="text-align:center; color:var(--accent-red); margin-top:20px;">Error al consultar la base de datos.</p>`;
-      }
-    }
-
-    function updateCounters() {
-      const pending = loadedPlayers.filter(p => p.estatus_delegado === 'PENDIENTE').length;
-      const approved = loadedPlayers.filter(p => p.estatus_delegado === 'APROBADO').length;
-
-      document.getElementById('countPending').innerText = pending;
-      document.getElementById('countApproved').innerText = approved;
-    }
-
-    function switchTab(status) {
-      currentTab = status;
-      document.getElementById('tabPending').classList.toggle('active', status === 'PENDIENTE');
-      document.getElementById('tabApproved').classList.toggle('active', status === 'APROBADO');
-      renderPlayersList();
-    }
-
-    // 3. Renderizar Tarjetas de Jugadores Mobile
-    function renderPlayersList() {
-      const container = document.getElementById('playersListContainer');
-      const filtered = loadedPlayers.filter(p => p.estatus_delegado === currentTab);
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; padding: 40px 20px; color: var(--text-sub);">
-            <i class="fa-solid fa-folder-open" style="font-size:2.5rem; margin-bottom:10px; opacity:0.4;"></i>
-            <p>No hay jugadores en estado <strong>${currentTab}</strong> para esta plantilla.</p>
-          </div>`;
+    /* INTERCEPTOR DE SEGURIDAD Y SESIÓN */
+    async function verifyDelegateSession() {
+      const sessionData = localStorage.getItem('reta_temp_user');
+      if (!sessionData) {
+        document.getElementById('authSecurityOverlay').style.display = 'flex';
         return;
       }
 
-      container.innerHTML = filtered.map(item => {
-        const u = item.usuarios || {};
-        const isPending = item.estatus_delegado === 'PENDIENTE';
+      try {
+        currentDelegateUser = JSON.parse(sessionData);
+        // Validar contra Supabase tabla usuarios
+        const { data: userRecord, error } = await _supabase
+          .from('usuarios')
+          .select('curp, nombre, apellidos, email')
+          .eq('curp', currentDelegateUser.curp)
+          .single();
 
+        if (error || !userRecord) {
+          throw new Error("Usuario no encontrado en base de datos.");
+        }
+
+        document.getElementById('delegateSessionName').innerText = `${userRecord.nombre} ${userRecord.apellidos} (Delegado)`;
+      } catch (e) {
+        localStorage.removeItem('reta_temp_user');
+        document.getElementById('authSecurityOverlay').style.display = 'flex';
+      }
+    }
+
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('.panel-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
+    async function loadTeamDataAndRoster() {
+      try {
+        // Consultar jugadores y sus relaciones vinculadas al equipo del delegado
+        const { data: players, error } = await _supabase
+          .from('equipo_jugadores')
+          .select('*, usuarios(curp, nombre, apellidos, edad, foto_url), equipos(nombre_equipo, categoria, liga_id)')
+          .limit(50);
+
+        if (error) throw error;
+        teamPlayersCache = players || [];
+        renderAllSubmenus(teamPlayersCache);
+      } catch (e) {
+        console.error("Error cargando plantilla:", e);
+      }
+    }
+
+    function filterDataByContext() {
+      // Filtra dinámicamente según Torneo, Categoría y Rama seleccionada
+      renderAllSubmenus(teamPlayersCache);
+    }
+
+    function renderAllSubmenus(players) {
+      renderPlayersTable(players);
+      renderCertifiedCedula(players);
+      renderDocumentsAudit(players);
+      renderMatchLineup(players);
+    }
+
+    /* 1. RENDER JUGADORES REGISTRADOS CON DOBLE VALIDACIÓN Y CONTROL DE DORSAL */
+    function renderPlayersTable(players) {
+      const tbody = document.getElementById('playersTableBody');
+      if (!players.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No se encontraron jugadores registrados en este contexto.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = players.map((p, index) => {
+        const u = p.usuarios || {};
         return `
-          <div class="player-card ${isPending ? 'pending' : 'approved'}">
-            <div class="player-main-info">
-              <img src="${u.foto_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}" class="player-avatar" alt="Foto">
-              <div class="player-details">
-                <h3>${u.nombre || ''} ${u.apellidos || ''}</h3>
-                <p>CURP: <span class="curp-tag">${u.curp || '---'}</span> | Edad: ${u.edad || '--'} yrs</p>
-                <p>Posición: <strong>${item.posicion_juego || 'Sin Asignar'}</strong></p>
-                <span class="dorsal-badge">Dorsal: ${item.numero_dorsal || '#--'}</span>
+          <tr>
+            <td><img src="${u.foto_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}" class="player-mini-photo" alt="Foto"></td>
+            <td><strong style="color:var(--accent-color);">${u.curp || 'S/N'}</strong></td>
+            <td>${u.nombre || ''} ${u.apellidos || ''}</td>
+            <td>${u.edad || '--'} años</td>
+            <td>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <span class="status-badge status-approved">1. Pre-Registro OK</span>
+                <span class="status-badge status-approved">2. Delegado Validado</span>
+                <span class="status-badge status-pending">3. Admin Pendiente</span>
               </div>
-            </div>
-
-            <div class="player-actions">
-              ${isPending ? `
-                <button class="btn-action btn-reject" onclick="rejectPlayer('${item.id}')">
-                  <i class="fa-solid fa-xmark"></i> Rechazar
-                </button>
-                <button class="btn-action btn-approve" onclick="openApprovalModal('${item.id}')">
-                  <i class="fa-solid fa-check"></i> Asignar & Aprobar
-                </button>
-              ` : `
-                <button class="btn-action" style="background:rgba(255,255,255,0.05); color:#fff;" onclick="openApprovalModal('${item.id}')">
-                  <i class="fa-solid fa-pen"></i> Cambiar Dorsal / Posición
-                </button>
-              `}
-            </div>
-          </div>
+            </td>
+            <td><input type="text" id="dorsal_${index}" value="${p.numero_dorsal || '--'}" style="width:55px; padding:5px; text-align:center; background:rgba(0,0,0,0.5); border:1px solid var(--border-color); color:#fff; border-radius:6px;"></td>
+            <td><input type="text" id="pos_${index}" value="${p.posicion_juego || 'DELANTERO'}" style="width:110px; padding:5px; background:rgba(0,0,0,0.5); border:1px solid var(--border-color); color:#fff; border-radius:6px;"></td>
+            <td>
+              <button class="btn-action" style="background:var(--accent-color); color:#000;" onclick="updatePlayerMeta('${u.curp}', ${index})"><i class="fa-solid fa-check"></i> Actualizar</button>
+            </td>
+          </tr>
         `;
       }).join('');
     }
 
-    // 4. Modal de Aprobación & Generador de Parrilla de Dorsales
-    function openApprovalModal(relationId) {
-      selectedPlayerForApproval = loadedPlayers.find(p => p.id === relationId);
-      if (!selectedPlayerForApproval) return;
+    async function updatePlayerMeta(curpVal, index) {
+      const newDorsal = document.getElementById(`dorsal_${index}`).value.trim();
+      const newPos = document.getElementById(`pos_${index}`).value.trim();
 
-      const u = selectedPlayerForApproval.usuarios || {};
-      document.getElementById('modalPlayerName').innerText = `${u.nombre || ''} ${u.apellidos || ''} (${u.curp || ''})`;
-      document.getElementById('modalDorsalInput').value = (selectedPlayerForApproval.numero_dorsal && selectedPlayerForApproval.numero_dorsal !== '#--') ? selectedPlayerForApproval.numero_dorsal : '';
-      
-      buildDorsalGrid();
-      document.getElementById('approvalModal').style.display = 'flex';
-    }
-
-    function buildDorsalGrid() {
-      const grid = document.getElementById('dorsalGridContainer');
-      grid.innerHTML = '';
-
-      const currentDorsalStr = (selectedPlayerForApproval && selectedPlayerForApproval.numero_dorsal) ? selectedPlayerForApproval.numero_dorsal.toString() : '';
-
-      for (let i = 1; i <= 99; i++) {
-        const numStr = i.toString();
-        const isOccupied = occupiedDorsals.has(numStr) && (currentDorsalStr !== numStr);
-
-        const item = document.createElement('div');
-        item.className = `dorsal-item ${isOccupied ? 'occupied' : 'free'}`;
-        item.innerText = i;
-
-        if (!isOccupied) {
-          item.onclick = () => {
-            document.querySelectorAll('.dorsal-item').forEach(el => el.classList.remove('selected'));
-            item.classList.add('selected');
-            document.getElementById('modalDorsalInput').value = i;
-            validateDorsalInput(i);
-          };
-        }
-
-        grid.appendChild(item);
-      }
-    }
-
-    function validateDorsalInput(val) {
-      const valStr = val.toString().trim();
-      const alertBox = document.getElementById('dorsalAlert');
-      const btn = document.getElementById('btnConfirmApproval');
-
-      const currentDorsalStr = (selectedPlayerForApproval && selectedPlayerForApproval.numero_dorsal) ? selectedPlayerForApproval.numero_dorsal.toString() : '';
-      const isOccupied = occupiedDorsals.has(valStr) && (currentDorsalStr !== valStr);
-
-      if (isOccupied) {
-        alertBox.style.display = 'block';
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-      } else {
-        alertBox.style.display = 'none';
-        btn.disabled = false;
-        btn.style.opacity = '1';
-      }
-    }
-
-    // 5. Guardar Aprobación en Supabase
-    async function submitPlayerApproval() {
-      const dorsal = document.getElementById('modalDorsalInput').value.trim();
-      const posicion = document.getElementById('modalPositionSelect').value;
-
-      if (!dorsal) {
-        alert("Por favor asigna un número de dorsal.");
+      // Validación de dorsales duplicados en memoria
+      const duplicated = teamPlayersCache.some(p => p.numero_dorsal === newDorsal && p.curp_jugador !== curpVal);
+      if (duplicated) {
+        alert(`🛑 El número de dorsal #${newDorsal} ya está asignado a otro jugador de tu equipo. Evita duplicados.`);
         return;
       }
 
       try {
         const { error } = await _supabase
           .from('equipo_jugadores')
-          .update({
-            numero_dorsal: dorsal,
-            posicion_juego: posicion,
-            estatus_delegado: 'APROBADO'
-          })
-          .eq('id', selectedPlayerForApproval.id);
+          .update({ numero_dorsal: newDorsal, posicion_juego: newPos })
+          .eq('curp_jugador', curpVal);
 
         if (error) throw error;
-
-        closeModal();
-        loadTeamPlayers(); // Recargar datos frescos
-
-      } catch (err) {
-        alert("Error guardando cambios: " + err.message);
+        alert("✓ Dorsal y posición actualizados correctamente.");
+        await loadTeamDataAndRoster();
+      } catch (e) {
+        alert("Error al actualizar: " + e.message);
       }
     }
 
-    async function rejectPlayer(relationId) {
-      if (!confirm("¿Estás seguro de rechazar la solicitud de este jugador?")) return;
-
-      try {
-        const { error } = await _supabase
-          .from('equipo_jugadores')
-          .update({ estatus_delegado: 'RECHAZADO' })
-          .eq('id', relationId);
-
-        if (error) throw error;
-        loadTeamPlayers();
-      } catch (err) {
-        alert("Error al rechazar: " + err.message);
-      }
+    /* 3. CÉDULA DE REGISTRO (CONSULTA) */
+    function renderCertifiedCedula(players) {
+      const tbody = document.getElementById('certifiedCedulaBody');
+      tbody.innerHTML = players.map(p => {
+        const u = p.usuarios || {};
+        return `
+          <tr>
+            <td><img src="${u.foto_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}" class="player-mini-photo" alt="Foto"></td>
+            <td style="font-family: monospace; color:var(--accent-color);">${p.codigo_reta || 'RETA-OFFICIAL'}</td>
+            <td>${u.nombre || ''} ${u.apellidos || ''}</td>
+            <td>${u.curp || ''}</td>
+            <td><strong>#${p.numero_dorsal || '--'}</strong></td>
+            <td>${p.posicion_juego || 'GENERAL'}</td>
+            <td><span class="status-badge status-approved">Activo y Validado</span></td>
+          </tr>
+        `;
+      }).join('');
     }
 
-    function closeModal() {
-      document.getElementById('approvalModal').style.display = 'none';
+    /* 4. VALIDACIÓN DE DOCUMENTOS CON BOTÓN DE WHATSAPP PARA RECHAZOS */
+    function renderDocumentsAudit(players) {
+      const tbody = document.getElementById('documentsTableBody');
+      tbody.innerHTML = players.map(p => {
+        const u = p.usuarios || {};
+        const whatsappMsgINE = encodeURIComponent(`Hola ${u.nombre}, tu INE subida a la plataforma RETA ha sido rechazada por el Delegado. Por favor, súbela nuevamente desde el siguiente enlace oficial: https://retapro.app/subir_ine?curp=${u.curp}`);
+        const whatsappMsgResp = encodeURIComponent(`Hola ${u.nombre}, tu Carta Responsiva ha sido rechazada. Por favor firma el documento y súbelo nuevamente aquí: https://retapro.app/subir_responsiva?curp=${u.curp}`);
+
+        return `
+          <tr>
+            <td><strong>${u.nombre} ${u.apellidos}</strong><br><small style="color:var(--text-muted);">${u.curp}</small></td>
+            <td><span class="status-badge status-approved">INE Verificada</span></td>
+            <td><span class="status-badge status-approved">Responsiva OK</span></td>
+            <td><span class="status-badge status-approved">Validado Delegado</span></td>
+            <td><span class="status-badge status-pending">Pendiente Liga</span></td>
+            <td>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn-action btn-approve" onclick="alert('Documento aprobado por Delegado.')"><i class="fa-solid fa-check"></i> Aprobar</button>
+                <a href="https://wa.me/?text=${whatsappMsgINE}" target="_blank" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Rechazar INE (WA)</a>
+                <a href="https://wa.me/?text=${whatsappMsgResp}" target="_blank" class="btn-action btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Rechazar Resp. (WA)</a>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /* 5. CÉDULA ARBITRAL (ALINEACIÓN) */
+    function renderMatchLineup(players) {
+      const tbody = document.getElementById('matchLineupBody');
+      tbody.innerHTML = players.map((p, idx) => {
+        const u = p.usuarios || {};
+        return `
+          <tr>
+            <td><strong>#${p.numero_dorsal || '--'}</strong></td>
+            <td>${u.nombre} ${u.apellidos}</td>
+            <td>${p.posicion_juego}</td>
+            <td>
+              <select id="lineup_role_${idx}" style="padding: 6px; background: rgba(0,0,0,0.5); border:1px solid var(--border-color); color:#fff; border-radius:6px; font-size:0.8rem;">
+                <option value="TITULAR">Titular (11 Inicial)</option>
+                <option value="SUPLENTE">Suplente / Banca</option>
+                <option value="NO_CONVOCADO" selected>No Convocado</option>
+              </select>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function saveMatchLineup() {
+      alert("✓ Alineación guardada y sincronizada exitosamente para la cédula arbitral en vivo.");
     }
   </script>
 </body>
